@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="cmyLCQEgRd3XoKtGDBZVbG">
+<head data-page-node-id="5nNqhFZfak3cvEv9x7PYy7">
+<meta charset="UTF-8" data-page-node-id="I8zEmtQqw5bvBRJefuTJcA" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="RXF4wWWnZiq2UsQa7iFA4N" />
+<title>概念学习：大模型的上下文（Context Window）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #1a6fb4;
+    --accent-soft: #e7f1fa;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .formula {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 14px;
+    text-align: center;
+    color: var(--ink);
+  }
+</style>
+</head>
+<body data-page-node-id="CS5qsFZWxq5yLMpmrSvHTu">
+<div class="wrap" data-page-node-id="hjkMw80FPTsPSHgSIVCNPw">
+
+<header class="cover" data-page-node-id="Z37BSktxktGkuzZqG04m3F">
+  <span class="tag" data-page-node-id="AQHiFccf9CMXZQ2wVyuI9g">概念学习 · LLM 基础</span>
+  <h1 data-page-node-id="rP83dkVDgQytDA45ZdKwHV">大模型的上下文（Context Window）</h1>
+  <p class="subtitle" data-page-node-id="WdqXmByQshV1youEXo2ddB">一项把模型的「短期记忆」量化的工程概念 · 生成时间 2026-09-05</p>
+</header>
+
+<section data-page-node-id="PyKkU4Ecop29KqFoW9rygC">
+  <h2 data-page-node-id="q16nyNpXfVcwZX6gLru9DA">1 · 一句话定义</h2>
+  <p class="def" data-page-node-id="GoD2iVoANf2gRXW9zRD5Ff">上下文窗口是 Transformer 大模型在一次推理中能同时读入并参考的全部 token 数量上限，它决定了模型这一轮能看到的所有信息。</p>
+</section>
+
+<section data-page-node-id="jReDfS9Y23LFTHsmAUbNHD">
+  <h2 data-page-node-id="7WGJVJsn67tncNvAIzZkyo">2 · 个人解释</h2>
+  <p data-page-node-id="HcD4L6kVYX5UtWab3GoHKi">把大模型想象成一张固定大小的办公桌。所有要让它「同时看见」的东西——系统提示、整段历史对话、上传的文档、检索回来的片段、它接下来要写的回答——都必须摆在桌面上。桌子就这么大，你摆不下时，最早摆上来的东西会被挤掉。</p>
+  <p data-page-node-id="eeVAm7q5W4sN0Yh40TpLuZ">这张桌子有个奇怪特性：它不是按「汉字」或「单词」计数的，而是按 <strong data-page-node-id="d7i0Dgw7NHObeDTsbH37AR">token</strong> 计数的。英文里一个单词大概一个 token，中文因为最小单位是字，每个汉字平均要 1.5–2 个 token。所以同样一段话，中文比英文「占桌子」。</p>
+  <p data-page-node-id="Pn3Bt8Pgjrme215K54ANs5">为什么会有这张桌子？因为大模型读东西用的是<strong data-page-node-id="NUXfkGqbhuA5dk97zUMA7K">自注意力机制</strong>——每个字都要和所有其他字两两比对一下「关系有多重要」。1000 个字要算 100 万次关系，10000 个字要算 1 亿次。桌面越大，背后的算力开销按平方级上涨，超出训练长度甚至会让推理质量骤降。这种硬件与数学的双重成本，迫使模型必须有一张「有限桌面」。</p>
+  <p data-page-node-id="elTJIKSlK0y18pGuyZsabr">假设一个虚拟场景：你用 8K 窗口的模型做客服问答。系统提示占 1K、历史对话已经堆到 4K、保留回答给 1K，剩下的 2K 才能塞知识库。一旦用户连发几轮，对话就会被悄悄截断到开头，模型突然「忘了」五分钟前的约定——这就是你日常看到的「AI 失忆」。</p>
+</section>
+
+<section data-page-node-id="8LL9eOWz8OQ2VPKRYSh7DS">
+  <h2 data-page-node-id="aWE71uNyTJNdpd8Vlb5Dm3">3 · 核心机制</h2>
+  <ol data-page-node-id="C3VHaYRSKBgw0X1asidgGd">
+    <li data-page-node-id="TS6T2BCZfJhhRFepJKhgTo"><strong data-page-node-id="miebsU557TbJAuzc8eS97y">Token 化输入</strong>：所有文本先用 BPE 等子词分词算法切成 token 序列，让模型用统一的「数字筹码」处理多语言和生词。<br  data-page-node-id="RVSZ3WCat5m1hZZvb8k5VR"/>为什么重要：没有这步，模型无法跨语言工作，也无法处理词典外的新词。</li>
+    <li data-page-node-id="yd6JszotYXqQmm7JoAyJ27"><strong data-page-node-id="1QuA2U48sNnlcAxD2xGLj6">位置编码 + 自注意力叠加</strong>：每个 token 生成位置向量，再与所有其他 token 计算注意力分数，得到当前轮的「全图印象」。<br  data-page-node-id="L4Z5BoS6SyiuwJdKKAgkrs"/>为什么重要：这是模型能「读懂上下文」的物理基础，序列越长计算量按 <em data-page-node-id="WDBEbePySZDNGgQXRUR9p3">n²</em> 增长。</li>
+    <li data-page-node-id="xN9Dgg7aHGGqkToqA3veGJ"><strong data-page-node-id="rmMkspEbhW4eM8IuPVLjLt">总长度判断与截断</strong>：当 prompt + 历史 + 工具结果 + 预留输出 > 窗口上限，要么报错，要么按策略丢弃最早内容（静默截断）。<br  data-page-node-id="lE9shRykeQy2XUf3qmzqMM"/>为什么重要：这一步决定模型实际「看得见什么」，工程上所有「AI 失忆」问题都从这里来。</li>
+    <li data-page-node-id="LddZ6spYcppxdSY1sq5OG6"><strong data-page-node-id="InDYn7mtTBHuBExpcNBq6h">注意力权重偏移</strong>：哪怕内容没超限，模型对开头系统提示和末尾当前提问的注意力最强，夹在中间的长文档容易「Lost in the Middle」。<br  data-page-node-id="r0FZvDAvUvwtGMd8bRqg8h"/>为什么重要：解释为什么「关键信息不要丢在中间」是一条普适工程经验。</li>
+  </ol>
+  <div class="formula" data-page-node-id="K4rhC6eo29QVQXpmWkA58A">窗口包含 = 系统提示 + 历史对话 + 参考材料 + 预留输出 ≤ N tokens</div>
+</section>
+
+<section data-page-node-id="pi1vSuJ2QNohqj69TM7N5H">
+  <h2 data-page-node-id="ffnvHP5GCQGCiBh1JeLehy">4 · 应用场景</h2>
+  <div class="scenario" data-page-node-id="qUuEszEn18N75yrpu4CSY6">
+    <h3 data-page-node-id="H2dDkoDahQ3Hd9ENap1TVb">场景 1 · 多轮代码助手（32K~128K）</h3>
+    <p data-page-node-id="HcugIDFj485IeXFyNXvJfS"><span class="label" data-page-node-id="L65g2xObjRqntsz8pHsbQi">背景：</span>工程师让 Claude Code 维护一个中型项目，反复多次编辑同一组文件。</p>
+    <p data-page-node-id="PJQvP620q4rGf2dbHiMbMS"><span class="label" data-page-node-id="Z5yEHBFzUyodMjlQNmNUud">如何应用：</span>把系统提示、项目 README、最近几轮修改过的文件、最新报错统一塞进上下文，保证模型每次回复都能看到「同一张地图」。</p>
+    <p data-page-node-id="XsswCYyOC4qOETD7UOoe41"><span class="label" data-page-node-id="q4XxS4LMYxfIZbOxjgtQfQ">结果：</span>模型改 5 号文件时还记得 1 号文件里定义过的接口约定，避免反复问人类。</p>
+  </div>
+  <div class="scenario" data-page-node-id="InubZqFLLBx8jzRE2e1wJm">
+    <h3 data-page-node-id="QtgompFThJ1bY5pZjMhDV8">场景 2 · RAG 检索增强问答（8K~32K）</h3>
+    <p data-page-node-id="qFerZgxp2VpuoKl8Sw2VdB"><span class="label" data-page-node-id="vRzpyjSRCXirp8IUxEOjwr">背景：</span>企业知识库有 10 万份 PDF，用户每次只问一个问题。</p>
+    <p data-page-node-id="EixCgi3b8IfSuCTYZWr2Zo"><span class="label" data-page-node-id="ztrz5BAFQCHFAg6Xbp7uXU">如何应用：</span>先把用户问题做向量检索，从库里捞出最相关的 5 个片段（约 2K token），连同问题、回答模板一并送进窗口。</p>
+    <p data-page-node-id="LoKHtUpPLZllshHl7xGqwk"><span class="label" data-page-node-id="7LUMF8vq2BmvtGqABYoajC">结果：</span>在不大窗口的前提下获得「整库知识」，单次成本下降一个数量级。</p>
+  </div>
+  <div class="scenario" data-page-node-id="JNEjHKlk4pSFBXoNClT2Yf">
+    <h3 data-page-node-id="ZIKFab0CU3nlkl6ZoZNaOF">场景 3 · 长篇视频/书全本解读（200K~1M+）</h3>
+    <p data-page-node-id="TvZXO0FvERfjKCKD0dedT5"><span class="label" data-page-node-id="HISDZL8GGgVn7yk4707hng">背景：</span>要把一本 30 万字的小说或一段 2 小时会议录像转写稿一次性喂给模型，要求跨章节回答。</p>
+    <p data-page-node-id="zj96AWKGSeIivRrJ09U6l4"><span class="label" data-page-node-id="DfbHzdMSE1QaUkImEI87n7">如何应用：</span>用 Gemini 1.5 Pro 等具备百万级窗口的模型，整本输入后直接问「第 12 章埋的伏笔是什么」。</p>
+    <p data-page-node-id="TdWDFP7Tmn5nF59S4QGx9T"><span class="label" data-page-node-id="ZL51oxWcQeGokrUixOubKs">结果：</span>免去切片+拼接的复杂工程范式，仅靠一次超长输入即可完成跨段关联回答。</p>
+  </div>
+</section>
+
+<section data-page-node-id="IJLQdkFU3izG2oHG22ncdi">
+  <h2 data-page-node-id="16faRPySmvkfbLjByCEFaH">5 · 边界辨析</h2>
+  <h3 data-page-node-id="T0oZIxAggSkwY2KCfLFo5S">5.1 不是什么</h3>
+  <ul data-page-node-id="EFfuuoiiTmzAcD6dE3qtBS">
+    <li data-page-node-id="EtZiLcPfR2KNB29MZCzS99"><strong data-page-node-id="oZewMglfW0dkMFvkIFKaTB">不是模型的全部知识</strong>：模型的预训练知识是参数里固化下来的「长期记忆」，跨会话可用；上下文是「本次桌子上的便签」，会话结束就清空。</li>
+    <li data-page-node-id="5G1daAEthgiMd41BtqDAEU"><strong data-page-node-id="GGlUwxL3opV9wA1B1dA0gC">不是越大越好</strong>：窗口从 4K 涨到 200K，单次推理成本按平方级上升，响应延迟也显著放大，需要业务场景上算账。</li>
+    <li data-page-node-id="GqTbRymZwpjzchccYuEViM"><strong data-page-node-id="XRpxXpxMBWiSfYjUEvaXGB">不是简单的字符数</strong>：同一个 PDF 用不同 tokenizer 切出来的 token 数差很大，估算时一定要按目标模型的 tokenizer 算。</li>
+  </ul>
+  <h3 data-page-node-id="CEIHPs7TSbQQajqGwAbnT5">5.2 常见误解</h3>
+  <ul data-page-node-id="H2WMNJSx4VDyo70adGc0SH">
+    <li data-page-node-id="Jdj5FsVRNZU83ZAkgKROeN">「窗口大 = 模型变聪明」——并不。模型对窗口中间的内容注意力天然偏弱，「Lost in the Middle」是普遍现象。</li>
+    <li data-page-node-id="N5dYpCkEPgL6XBw9R8eDH4">「超出会报错」——大多数商用 API 默认<em data-page-node-id="JDC1AoBtWLfgvAvOuv50Fd">静默截断</em>，先丢弃最早内容让请求成功，所以「失忆」经常表现为莫名其妙的前后矛盾。</li>
+    <li data-page-node-id="G8bk2hKqDFuz97KOzt24Yg">「上下文 = 上下文长度」——后者是模型架构的理论上限，前者是实际推理时考虑的输入，二者通常不等。</li>
+  </ul>
+  <h3 data-page-node-id="I0SPY4Bl995wqXhLDcBEg3">5.3 适用与不适用</h3>
+  <table data-page-node-id="f8TZKZ0Ic0NH6Pxjh9fsAS">
+    <thead data-page-node-id="ElBxec272VuWU3hx8vgJhG"><tr data-page-node-id="47rGOGmsDtI6th1YVh5xPh"><th data-page-node-id="vzoZ9SymqSRCVxSxwUyHLE">用大窗口</th><th data-page-node-id="vptgR1yCJ59HU7cjqAGZZx">用 RAG 或摘要</th></tr></thead>
+    <tbody data-page-node-id="GMarduNH4ZeKafReItT18H">
+      <tr data-page-node-id="blLWygHpkNB6Pe0hCXA7ON"><td data-page-node-id="FjaJ5s6ZAmaUAB3FVoxI30">同一文档内的跨段关联推理（全书 QA）</td><td data-page-node-id="D1Xw6H7F8ows0xW0UrqAYc">信息分布稀疏、只要局部片段</td></tr>
+      <tr data-page-node-id="JFFCFXwJu1dXuMC6sFbEpY"><td data-page-node-id="xyyayhs6MZcCDIUk9NABXq">长链路 Agent（多步工具调用保留全状态）</td><td data-page-node-id="TbN3vAKywEij5ciMdsOBKB">高频、低延迟、低成本场景</td></tr>
+      <tr data-page-node-id="rqU7wr2hXvEDiDd1CUGovH"><td data-page-node-id="l7k1TzNuziEOk17JQ1ie63">对截断敏感（合同全文审查）</td><td data-page-node-id="Mw4eNsNJEalGky9d0HC6jl">可接受分块、合并的总结型任务</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources" data-page-node-id="pde0ImP22hsOqi2Djmo87f">
+  <h2 data-page-node-id="LWQbO5GPGHbz36pIErCyTl">6 · 来源链接</h2>
+  <ol data-page-node-id="DNwPqF0TRgj5hB82tOOaXs">
+    <li data-page-node-id="ckJKQKllryPdArg4NEs1GI"><a href="https://baike.baidu.com/item/上下文窗口/67367067" data-page-node-id="WbnH1CKpHVaIX26ZAud2kK">上下文窗口 · 百度百科</a> — 上下文窗口与上下文长度的区分、主流模型规格演进。</li>
+    <li data-page-node-id="pYyJzk9Uq5qk9Bg0ooCgzN"><a href="https://news.qq.com/rain/a/20230621A01GGN00" data-page-node-id="AWXxJQBJCvCcj2NEYDhC4L">语言大模型 100K 上下文窗口的秘诀 · 腾讯新闻（2023-06-21）</a> — Transformer 原生长度限制、RoPE/位置外推等技术分析。</li>
+    <li data-page-node-id="AoUnXm16sEXFGahAijEBDF"><a href="https://www.163.com/dy/article/K2BG83T60511AQHO.html" data-page-node-id="pkbGUIQltEwv0OwR9o7QWl">信息过载时代，如何真正「懂」LLM · 网易（2024）</a> — MIT 50 题整理，解释 token/注意力/上下文窗口的基础。</li>
+    <li data-page-node-id="oaQZzDEjyciS2jkPCVPG5U"><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills" data-page-node-id="dP1AFF4SBumi9U8yQhFg94">Equipping agents for the real world with Agent Skills · Anthropic</a> — 官方在 Agent 上下文中如何用 Skills 控制上下文增长的设计分析。</li>
+  </ol>
+</section>
+
+<section data-page-node-id="84OAngkJIw99KFZPsiftrL">
+  <h2 data-page-node-id="1CR3C8zvNXSKL28iIBwlaR">7 · 一句话回顾</h2>
+  <p class="takeaway" data-page-node-id="tpK7vFASPaF35ELl0uUROn">上下文窗口是模型的「短期记忆」办公桌——尺寸按 token 计算，受注意力平方成本硬约束，决定了模型这一轮能看见什么、记不得什么。</p>
+</section>
+
+<footer data-page-node-id="2aTre5VyP6X3CWa9XFwcI9">由 concept-explainer Skill 自动生成 · 2026-09-05</footer>
+
+</div>
+</body>
+</html>

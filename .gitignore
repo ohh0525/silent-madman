@@ -1,0 +1,253 @@
+# =========================================================================
+# silent-madman · .gitignore
+# 目标：自动排除敏感信息（API Key / 密码 / 私钥）+ 与本仓库类型相关的杂物
+# 维护：最后更新 2026-09-05
+# 触发追踪的兜底：一旦有东西不该入版本库，必须先在这里加规则，再提交
+# =========================================================================
+
+# ---------- 1. 敏感信息 / Secrets（任何情况下都不要入版本库） ----------
+# 严禁提交，PR 时若发现必须立即撤销并轮换密钥
+*.env
+*.env.*
+.env
+.env.*
+!.env.example
+
+# 各类 Key / Token / Secret 文件
+*.pem
+*.key
+*.pub
+*.p12
+*.pfx
+*.keystore
+*.jks
+*.asc
+credentials.json
+credentials.yaml
+credentials.yml
+service-account*.json
+gcloud-service-account.json
+firebase-adminsdk*.json
+
+# Linux/macOS 私钥
+id_rsa
+id_rsa.pub
+id_dsa
+id_dsa.pub
+id_ecdsa
+id_ecdsa.pub
+id_ed25519
+id_ed25519.pub
+
+# Windows 凭据
+*.pfx
+*.p12
+$RECYCLE.BIN/
+
+# Secret 扫描兜底（哪怕以其它后缀保存）
+*secret*
+*secrets.*
+*password*
+*passwords.*
+*passwd*
+
+# 工作流/CI 里常见的密钥命名
+.aws/credentials
+.aws/config
+.gcp/
+.gh-token
+.netrc
+.npmrc
+.pypirc
+
+# ---------- 2. 本仓库专属 (silent-madman) ----------
+
+# Skill 的运行时缓存：每次会话会重写，没必要入版本库
+.workbuddy/sessions/
+.workbuddy/cache/
+.workbuddy/logs/
+.workbuddy/temp/
+
+# 工作日志按日期新增，本身就是要存档的；如需排除取消下一行的注释
+# .workbuddy/memory/
+
+# 草稿、未完成的学习笔记（以 _draft 或 .draft 结尾才忽略，正式资料请去掉前缀）
+*_draft.md
+*.draft.md
+*.scratch.md
+
+# 个人解释阶段的临时 md，避免学习资料污染
+drafts/
+scratch/
+
+# 临时文件
+*.swp
+*.swo
+*~
+
+# ---------- 3. 操作系统 / 编辑器 ----------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+[Ii]pconfig*.tmp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.Trash-*
+.nfs*
+
+# IDE / 编辑器
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.fleet/
+.cursor/
+*.swp
+*.swo
+.project
+.classpath
+.settings/
+
+# ---------- 4. 编程语言运行时 / 依赖 ----------
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.eggs/
+.pyc
+build/
+dist/
+htmlcov/
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+.cache
+pip-log.txt
+pip-build.log
+pip-wheel.log
+.venv/
+venv/
+env/
+.python-version
+
+# Node / TypeScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.npm/
+.eslintcache
+.parcel-cache/
+.next/
+.nuxt/
+out/
+coverage/
+*.tsbuildinfo
+
+# Java / JVM
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+.mvn/
+target/
+.gradle/
+build/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+vendor/
+
+# Rust
+target/
+Cargo.lock.bak
+**/*.rs.bk
+
+# ---------- 5. 静态站点 / 构建产物 ----------
+# 可能用作学习资料附录站点
+public/build/
+.cache/
+.tmp/
+.output/
+
+# ---------- 6. 日志 / 临时 / 测试 ----------
+*.log
+*.tmp
+*.bak
+*.swp
+*.orig
+*.rej
+
+# 测试产物
+coverage/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# ---------- 7. 数据库 / 数据文件 ----------
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.dump
+data/
+datasets/
+
+# ---------- 8. 大型素材 ----------
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.iso
+*.dmg
+
+# ---------- 9. 文档工具产物 ----------
+# LaTeX 中间文件
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Jupyter
+.ipynb_checkpoints/
+
+# =========================================================================
+# 使用建议
+#
+# 1. 提交前先跑：git status，确认没有任何新文件不该入库
+# 2. 即使本文件已包含规则，仍然推荐额外用 gitleaks / trufflehog 做一次扫描
+# 3. 如果某个文件**必须**入库（罕见），用：git add -f <path>
+# 4. 一旦发现密钥已入库：立即轮换密钥，再用 git filter-repo / BFG 清理历史
+# =========================================================================
