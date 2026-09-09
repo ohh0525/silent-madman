@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="56FZh7YgYDEpK3GqTg7ur2">
+<head data-page-node-id="xkjBvMM6DE1IKEbevq75c9">
+<meta charset="UTF-8" data-page-node-id="ei3xfnMuO4H1LFIYJCstGt" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="D77XFYG4BM0DY4gcdujq2s" />
+<title>概念学习：Skill（技能）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #5b3a8a;
+    --accent-soft: #efeaf6;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .diagram {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body data-page-node-id="a5iwy3JhHmfxHmy99vCVmc">
+<div class="wrap" data-page-node-id="RrjtuvdxfcMq7sGoHGh5KH">
+
+<header class="cover" data-page-node-id="7MaaQdGIAlYNHWUybpKI4k">
+  <span class="tag" data-page-node-id="MrebcVGWuVJq9pi5F2qxHn">概念学习 · Anthropic / Claude</span>
+  <h1 data-page-node-id="94a1SE9xzvANkF0cuLkWhE">Skill（技能）</h1>
+  <p class="subtitle" data-page-node-id="VRJumwCUNC38MRWj2R8KP6">一项把「领域经验」打包成可被模型按需加载的能力单元 · 生成时间 2026-09-05</p>
+</header>
+
+<section data-page-node-id="ICqCGiEtAzkwpl6A9WVlRd">
+  <h2 data-page-node-id="hJT6K0sn1vEVFY9Ujqtsrs">1 · 一句话定义</h2>
+  <p class="def" data-page-node-id="r2b8hDzbnPG3B60atUTGc5">Skill 是组织好的指令、脚本与资源文件夹，Claude 在任务相关时按需加载，从而把通用模型变成某个领域的专家。</p>
+</section>
+
+<section data-page-node-id="U3F2ZvdxUi8IqJ2Obsbdl2">
+  <h2 data-page-node-id="WdXFPUIH6mE0r4VPZBareO">2 · 个人解释</h2>
+  <p data-page-node-id="ipE2hdvnNUoI3qbirCdGTx">把 Claude 想象成一位新入职的聪明同事——通识很强，但不了解你公司的报销流程、品牌字体、Excel 模板。一份「Skill」就相当于你为这位同事准备的<strong data-page-node-id="rgCcB6YFLLF1bnFZZLqRWP">入职手册 + 工具箱</strong>：手册里写了规矩，工具箱里放了脚本和模板。新人遇到相关任务时，会自己去翻这本手册。</p>
+  <p data-page-node-id="QXV2NmuPpaAgPWnVjt9Qj9">最精妙的设计叫<strong data-page-node-id="rnrSsXDU2hhjBzFwFQ7A8Y">渐进式披露</strong>（Progressive Disclosure）：Claude 一开始只会看到桌面上每本手册的「目录卡」——也就是 SKILL.md 文件最开头那段 YAML 元数据（name + description），用来判断「这本手册要不要打开」。只有真正相关时，它才会去读 SKILL.md 正文；正文里再点出更细的参考文件，按需加载。这样既能让 Claude 拥有庞大的组织知识，又不会因为「全塞给模型」而撑爆上下文窗口。</p>
+  <p data-page-node-id="z6IET4CMO6VKO97vT8anzN">所以 Skill 不是一个「让模型更聪明」的咒语，它是<strong data-page-node-id="eD4yLQgtBRcDN4YTdyQpIA">一种组织工程经验的方式</strong>——把你已经知道的最佳实践、流程、合规要求、可执行脚本，打包成一份可复用的目录，让任何新会话都能在需要的时候调用。</p>
+  <p data-page-node-id="x4z2nEhRYIZZP2J1TEObgK">假设一个虚拟场景：你为团队做了一个「品牌物料生成」Skill，里面有 logo 模板、调色板、PPT 母版、Logo 安全距离规则。同事让 Claude 做季度汇报 PPT，Claude 看到任务描述里出现「汇报」「PowerPoint」，自动加载 Skill——它知道往哪儿放 logo、用哪几种颜色、字体规范是什么，输出一份符合品牌规范的 PPT，而不是「默认白底微软雅黑」的版本。</p>
+</section>
+
+<section data-page-node-id="E1DyNtj7LSHdlvJNJNzkj0">
+  <h2 data-page-node-id="nS6Hm0qzOBaunWqDwSgYjA">3 · 核心机制</h2>
+  <ol data-page-node-id="4ebxYxPYgEmZcnBKAEhJSV">
+    <li data-page-node-id="mDMfaM2Zx5UZ7x2PeTFmUC"><strong data-page-node-id="Xty8kApDQWLvUdMUo0nhtf">三层披露，按需加载</strong>：第一层是所有 Skill 的 YAML 元数据（始终在系统提示里），第二层是 SKILL.md 正文（相关时整篇加载），第三层是脚本和参考资料（被正文引用后再读）。<br  data-page-node-id="zFGYaBLa0hAGab8fcHVY8H"/>为什么重要：突破「上下文窗口是上限」的束缚，让一个 Skill 能装下任意多的资料。</li>
+    <li data-page-node-id="oGRcVp6UkWf6JVDHCDGTNC"><strong data-page-node-id="dG28DGALu3wsAJBHNhtZqF">任务相关性自动判断</strong>：Claude 在推理时扫描元数据描述，决定是否要加载某个 Skill，整个过程对用户透明。<br  data-page-node-id="0I5gOBIAugkzMwgY6H90mQ"/>为什么重要：用户不需要「选择」Skill，模型自己挑，调用链路自然出现在思维链里，可观测。</li>
+    <li data-page-node-id="3GwD3CMhZkL1D2slNcFJXP"><strong data-page-node-id="ZwKzNArPogmRF6EUs8CNpz">可执行代码作为一等公民</strong>：Skill 目录里可以放脚本，让 Claude 在需要时调用它跑确定性的逻辑（排序、读 PDF、生成图表）。<br  data-page-node-id="3wjpowSTuGPLSXlVJqUevv"/>为什么重要：很多任务靠模型吐 token 比不上执行代码，「程序更可靠的部分交给代码」是 Anthropic 的明确建议。</li>
+    <li data-page-node-id="p3MDEloNYv1BclWCEqfXWT"><strong data-page-node-id="CMDVAu4djZKLsxEZMCCPzu">跨产品同格式</strong>：同一个 Skill 文件夹可用于 Claude 应用、Claude Code、API、Agent SDK，2025-12 后被作为开放标准发布。<br  data-page-node-id="pDRQshvmagFYGdIcHEGKQx"/>为什么重要：避免「在三个产品里重复维护三份知识」的工程负担。</li>
+  </ol>
+  <div class="diagram" data-page-node-id="lN001Bniq9VHw8piCL5rw5">[系统提示]
+  ├── 核心指令
+  ├── Skill A · YAML 元数据（触发条件：PDF 处理）
+  ├── Skill B · YAML 元数据（触发条件：品牌物料）
+  └── Skill C · YAML 元数据（触发条件：合规审查）
+        ↓
+   Claude 扫描描述，判断 Skill B 匹配
+        ↓
+[上下文窗口新增]
+  ├── Skill B · SKILL.md 正文
+  ├── scripts/render_pptx.py
+  └── assets/brand-style.md
+        ↓
+   Claude 完成任务，使用到 Skill B 内资源</div>
+</section>
+
+<section data-page-node-id="nLtnv3Lo0YnmIJkmfXKI1I">
+  <h2 data-page-node-id="FR6ANX5MPZUHCgOgFxHhXr">4 · 应用场景</h2>
+  <div class="scenario" data-page-node-id="LOoQrqDwcsPNRWDzwOkFhi">
+    <h3 data-page-node-id="JUYDlXB7ZHhaKsCX3XueGs">场景 1 · 团队品牌规范落地（Marketing Skill）</h3>
+    <p data-page-node-id="9dXvU1PDa7QFXhBkoYlo2M"><span class="label" data-page-node-id="Pyg1a0GcbcPKfikKcDkQlB">背景：</span>设计部每张 PPT 都跑出来不一样，调色板字体混乱。</p>
+    <p data-page-node-id="XX3EHj2MTRHCNBBLC0o7Mo"><span class="label" data-page-node-id="pJNHD7WYYYN8jysd6RP9Ou">如何应用：</span>做一个「Brand Skill」：SKILL.md 写品牌守则，assets/ 放 logo、调色板、母版，scripts/ 放一键生成脚本。任何同事让 Claude 做 PPT，模型自动调用。</p>
+    <p data-page-node-id="TKvLihAg8Ca4dIJzF7OUme"><span class="label" data-page-node-id="CcO7tmbfexNKEbZQGqCFOi">结果：</span>所有输出默认符合品牌规范，设计师从「逐张审稿」变成「维护 Skill 资产」。</p>
+  </div>
+  <div class="scenario" data-page-node-id="qBDpNGsbLHI1k3qhPbcl8r">
+    <h3 data-page-node-id="mUAHs4VOwh9ps8cXPCE7iy">场景 2 · 内部 SaaS 工作流定制（Linear / Jira Skill）</h3>
+    <p data-page-node-id="ByAsJB7ZWyUl1FiQDEU77K"><span class="label" data-page-node-id="cTweCPWOebsMETnLJgXRlX">背景：</span>工程团队在 Linear 里有一套独特的 ticket 分类规则，但模型默认不知道。</p>
+    <p data-page-node-id="kzKniAcOQgsZojLTDR20hr"><span class="label" data-page-node-id="onTKaRUg3ZNVDZVnY4D14z">如何应用：</span>做一个「Ticket Skill」：放团队的项目代号、标签体系、SLA 模板，附上调用 Linear API 的小脚本。Claude 帮工单分类时直接按团队规范走。</p>
+    <p data-page-node-id="bj5cusbrotQg87HTTOLVGt"><span class="label" data-page-node-id="71BH9Jt7UzYHA5dlKXyTFc">结果：</span>新成员用 Claude 处理 ticket 一上手就符合团队约定，不必再单独培训。</p>
+  </div>
+  <div class="scenario" data-page-node-id="fdPtyFa1aDtjmimCWJmeri">
+    <h3 data-page-node-id="9ckmHoLsA4hd335USNMQsS">场景 3 · PDF 表单批量处理（PDF Skill）</h3>
+    <p data-page-node-id="zsYafSBDpPojf2Hj0LoD3R"><span class="label" data-page-node-id="DWfbCuYC7CZU3hBTqZvdAe">背景：</span>财务部门每周要人工填写 200 份 PDF 报销单。</p>
+    <p data-page-node-id="pWTlQ3aSKymZ4DI9F8Fvll"><span class="label" data-page-node-id="6BGWbGZAaZPQxkaXRb7WBS">如何应用：</span>用 Anthropic 自带的 PDF Skill，它内部封装了 PDF 读取、表单字段识别、值回填的指令与脚本。让 Claude 读 CSV → 调 Skill 批量生成填好的 PDF。</p>
+    <p data-page-node-id="8CkVtqtusbgY2CcaK6oZ5r"><span class="label" data-page-node-id="PoJeVSIDVnX07AEoFLpYXD">结果：</span>原本人工 2 天的工作缩短到 10 分钟，且字段错误率显著下降。</p>
+  </div>
+</section>
+
+<section data-page-node-id="GGFDfI1pAsTEydQsN6C7nO">
+  <h2 data-page-node-id="3CwzAnEZoyBgfnwhtCzg1p">5 · 边界辨析</h2>
+  <h3 data-page-node-id="3rzdHrUOMdhSBC5boRyVX1">5.1 不是什么</h3>
+  <ul data-page-node-id="tGW7wMwsgSUYxeABGlIOA3">
+    <li data-page-node-id="RbwgjEciQG9GgpXL16VIF4"><strong data-page-node-id="rlx8gLumlr2Aqk074rWfyS">不是提示词模板</strong>：提示词是一次对话中的指令；Skill 是跨对话可复用的目录，结构化、可版本化、可被多个产品共享。</li>
+    <li data-page-node-id="5Hu877hIqiyoLbumKWu9ju"><strong data-page-node-id="LHioIVFC6SnFevBmUuUT3b">不是模型微调</strong>：Skill 不改变模型参数，只是把额外知识按需塞进上下文。模型本身的能力不变，变化的是它此刻被告知的「规矩」。</li>
+    <li data-page-node-id="ZCiO0AtgmLbvlPNj33GPbU"><strong data-page-node-id="hk2fYmXwPqbTjpD1mj53C1">不是 MCP（Model Context Protocol）</strong>：MCP 把外部数据/工具接口标准化，是「接通工具」；Skill 是「教模型怎么用工具」，两者经常配合使用。</li>
+  </ul>
+  <h3 data-page-node-id="32R4hrGdw55o7l4GeSQgkd">5.2 常见误解</h3>
+  <ul data-page-node-id="PSijD28XQq2rRLbYGEeBCY">
+    <li data-page-node-id="oNB9InwKVFFWQDX6fca6eh">「越多 Skill 越好」——并不。每个 Skill 都会消耗少量上下文（描述常驻），十个不相关的 Skill 会持续拉高成本和延迟。</li>
+    <li data-page-node-id="jYyNMuOUlzEgOTCxnb1G82">「Skill 等于万能插件」——Skill 依赖代码执行环境（API / Claude Code 开启 beta），且会执行脚本，<em data-page-node-id="3kilZncqX2AawVTRFmv1DK">必须</em>只信任可信来源。</li>
+    <li data-page-node-id="m58gE86uEEDzgyxOnioc3w">「写得越详细越好」——Skill 的描述决定它会不会被加载。<em data-page-node-id="AKeaV6X8wbraaGKqUgJTJc">写得糟糕的描述</em>会让模型永远不调用，或在最不该调用时被加载。</li>
+  </ul>
+  <h3 data-page-node-id="WDKZ9pSFkoDKJJ7bmDXPMB">5.3 适用与不适用</h3>
+  <table data-page-node-id="EUeB7Q6yVyS7BIS4gfaZD1">
+    <thead data-page-node-id="a6IW0pYDeymkABwUmPX5mH"><tr data-page-node-id="3gllGyiC4mrhHVOv9vbt6o"><th data-page-node-id="MAh9fowJYoJBgECDu5FwTp">用 Skill</th><th data-page-node-id="1fM9YE1iOsM5L3WpI23Xzf">用提示词 / 项目</th></tr></thead>
+    <tbody data-page-node-id="eh4yDErX3xzG6x7nqzPcON">
+      <tr data-page-node-id="gfhSPFEoDCpOQMQU0wZ5ZW"><td data-page-node-id="bxVxHcMru2HdmXvBHoMEyz">跨团队、多产品复用的领域流程</td><td data-page-node-id="k0FFTjElZIG9t3UpDPKBe9">一次性、临时性的输入要求</td></tr>
+      <tr data-page-node-id="9tuqLf0qP1rsFWnGwqaDna"><td data-page-node-id="ALdwdKC4way0pjgjXU8L48">需要可执行脚本的复杂任务（PDF、Excel）</td><td data-page-node-id="Gju6wu2iZRPo0ztaM05LxY">静态背景知识（公司说明、术语表）</td></tr>
+      <tr data-page-node-id="vHGTi65HbhFWDscNgQF46c"><td data-page-node-id="dptHILoe7PBpZmFYyHjlxF">需要按相关性动态激活的专家能力</td><td data-page-node-id="HdqRtsVdi3FNfCs7xcF1xk">每次会话都要塞的通用规则</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources" data-page-node-id="yPu6ByvLADBlkQdazVlHJh">
+  <h2 data-page-node-id="tKFDAvGqGRgUljrwJDUTj7">6 · 来源链接</h2>
+  <ol data-page-node-id="dsN9t6wgfzue7MVqV6vPFH">
+    <li data-page-node-id="QxQzpBOQxUJGh8R7V8wtSz"><a href="https://www.anthropic.com/news/skills" data-page-node-id="APoAYJsEk7LlcgCnl5P7LF">Introducing Agent Skills · Anthropic 官方发布</a> — 一手定义 + 4 个特性（Composable / Portable / Efficient / Powerful）。</li>
+    <li data-page-node-id="X95EcYGMva7c4jDCmcfANZ"><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills" data-page-node-id="uSshcIMpYD0jRgfnF9Z83H">Equipping agents for the real world · Anthropic Engineering Blog</a> — 渐进式披露的三级细节设计原理。</li>
+    <li data-page-node-id="Elre8gC2mJU55tfBtdN49j"><a href="https://console.anthropic.com/docs/zh-CN/agents-and-tools/agent-skills/overview" data-page-node-id="0zpDJJsNbI4d8hUztTGBwX">Agent Skills · Anthropic Console 中文文档</a> — Skills 与 Projects / MCP / Custom Instructions 的对照。</li>
+    <li data-page-node-id="YsAH0v7IknTKFF6BwUkywg"><a href="https://support.anthropic.com/en/articles/12512176-what-are-skills" data-page-node-id="5OShcMKETzqXOEeC9y2O9l">What are skills? · Anthropic Help Center</a> — Skills 的四种类型（Anthropic、Custom、Organization、Partner）官方分类。</li>
+    <li data-page-node-id="xKYs4cQNNwrosDmbEKsiXB"><a href="https://baike.baidu.com/item/上下文窗口/67367067" data-page-node-id="WkR4rXqmpUtoWcezHDAMRH">上下文窗口 · 百度百科</a> — Skill 通过三级披露节省上下文的背景知识。</li>
+  </ol>
+</section>
+
+<section data-page-node-id="dHvWOC9RTwiy7a9kVWjmAs">
+  <h2 data-page-node-id="BiqdKxX22qlST5iVCU4P9n">7 · 一句话回顾</h2>
+  <p class="takeaway" data-page-node-id="GJuDoWC7NTJrwzxHkH33gm">Skill 不是「让模型变聪明」，而是「把组织经验打包成可按需加载的目录」，用渐进式披露在有限的上下文里装下无限的专业知识。</p>
+</section>
+
+<footer data-page-node-id="eA4dHMJVnAifAYV6FLNrub">由 concept-explainer Skill 自动生成 · 2026-09-05</footer>
+
+</div>
+</body>
+</html>
