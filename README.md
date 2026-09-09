@@ -36,10 +36,12 @@ silent-madman/
 │   ├── agent.html                  # Agent 智能体
 │   ├── llm-context.html            # 大模型上下文窗口
 │   └── skill.html                  # Skill 技能
-└── .workbuddy/
-    └── skills/
-        └── concept-learning-skill/ # 本仓库专用的 Skill (project 级)
-            └── SKILL.md
+├── .workbuddy/
+│   └── skills/
+│       └── concept-learning-skill/ # 本仓库专用的 Skill (project 级)
+│           └── SKILL.md
+└── tools/
+    └── llm-wiki-agent/             # LLM Wiki Agent (SamurAIGPT, MIT, 2026-09-09)
 ```
 
 此外，WorkBuddy 在 user 级还存了一份同样的 Skill：
@@ -125,4 +127,4 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 ---
 
-**最后更新**：2026-09-05 · 由本人逐条人工核查后入库。
+**最后更新**：2026-09-09 · 新增 `tools/llm-wiki-agent/`(SamurAIGPT, MIT) · 由本人逐条人工核查后入库。
