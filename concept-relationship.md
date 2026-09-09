@@ -209,3 +209,24 @@ flowchart TB
 
 > **上下文是桌面，Skill 是文件夹，Agent 是坐在桌前、按文件夹做事的人。**
 > 三者各司其职，组合起来才是一个真正能干活、不会失忆、又守规矩的智能体。
+
+---
+
+## 延伸案例：GitHub Agentic Workflow
+
+[GitHub Agentic Workflows（gh-aw）](https://github.com/github/gh-aw) 是 2026 年 GitHub 官方推出的「在仓库里以 Markdown 写 AI agent 自动化」机制。它把上述「Agent / 上下文窗口 / Skill」的三者关系**实例化到 GitHub Actions 的工作流里**：
+
+| 三者 | 在 gh-aw 里的对应物 |
+|---|---|
+| **Agent** | YAML frontmatter 中的 `engine`（copilot / codex / claude）+ Markdown body 中的自然语言 prompt |
+| **上下文窗口** | 编译产物 `.lock.yml` 里 `GH_AW_PROMPT`、`GH_AW_PROMPT_CONTENT_*`、`GH_AW_GITHUB_*` 等 env vars 把 trigger 上下文（issue 标题、PR diff、评论原文）一次性塞给 agent |
+| **Skill** | frontmatter 中 `safe-outputs`（限定 agent 能写的副作用）、`skip-bots`/`skip-roles`（限定谁能触发）、`imports:`（复用其他 .md workflow） |
+
+本仓库的 [.github/workflows/agent-triage-issue.md](./.github/workflows/agent-triage-issue.md) 是这一范式的最小可运行示例：
+- **触发**：新 issue 一旦被打开
+- **决定下一步**：由 Copilot agent 读 issue 标题 + 描述
+- **副作用边界**：通过 `safe-outputs.add-labels` 限定只能打 5 个内置标签之一，且每条 issue 最多改 1 次
+
+它是上面那张「Mermaid 流程图」的最简落地——**没有 Skill 加载层、没有工具调用循环**，只是一个观察→分类→打标签的一次性 agent。这就是「概念」与「实例」的对应关系：
+
+> 概念图谱回答「*为什么需要这三者*」，gh-aw 回答「*这三者在 GitHub Actions 里怎么落地*」。
