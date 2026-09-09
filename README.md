@@ -37,9 +37,13 @@ silent-madman/
 │   ├── llm-context.html            # 大模型上下文窗口
 │   └── skill.html                  # Skill 技能
 ├── .workbuddy/
+│   ├── memory/                     # 项目级 daily log + MEMORY.md
 │   └── skills/
 │       └── concept-learning-skill/ # 本仓库专用的 Skill (project 级)
 │           └── SKILL.md
+├── .github/                        # GitHub 平台级配置
+│   └── workflows/
+│       └── agent-triage-issue.md   # GitHub Agentic Workflow 范例: 新 issue 自动分类
 └── tools/
     └── llm-wiki-agent/             # LLM Wiki Agent (SamurAIGPT, MIT, 2026-09-09)
 ```
@@ -127,4 +131,4 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 ---
 
-**最后更新**：2026-09-09 · 新增 `tools/llm-wiki-agent/`(SamurAIGPT, MIT) · 由本人逐条人工核查后入库。
+**最后更新**：2026-09-09 · 新增 `tools/llm-wiki-agent/`(SamurAIGPT, MIT)与 `.github/workflows/agent-triage-issue.md`(GitHub Agentic Workflow 范例)· 由本人逐条人工核查后入库。

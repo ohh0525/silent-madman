@@ -1,0 +1,4 @@
+# Auto-generated lock files from GitHub Agentic Workflows.
+# The source of truth is the matching .md file; do NOT edit .lock.yml by hand.
+.github/workflows/*.lock.yml linguist-generated=true
+.github/workflows/*.lock.yml linguist-documentation=false
