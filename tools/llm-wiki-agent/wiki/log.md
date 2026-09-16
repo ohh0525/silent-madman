@@ -39,3 +39,20 @@ Cause: frontmatter `title` was `LLM Context Window(大模型上下文窗口)`，
 Fixed: `wiki/sources/llm-context.md` title aligned to `LLM Context Window(上下文窗口)` (single-file edit; `log.md` left append-only)
 Re-run result: Empty/Stub 0 ✅ · Index Sync 0 ✅ · Log Coverage 0 ✅
 Note: `raw/` was not modified.
+
+## [2026-09-16] ingest | 上下文工程(Context Engineering)
+
+Source: `raw/learning-materials/context-engineering.html`
+Created: `wiki/sources/context-engineering.md`, `wiki/concepts/ContextEngineering.md`, `wiki/concepts/ContextRot.md`, `wiki/concepts/Compaction.md`
+Entities touched: `wiki/entities/Anthropic.md`
+Updated: `wiki/index.md`, `wiki/overview.md`, `wiki/concepts/ProgressiveDisclosure.md` (cross-link)
+
+## [2026-09-16] ingest | 带溯源的智能体长期记忆(Provenance-Aware Memory)
+
+Source: `raw/learning-materials/agent-memory-provenance.html`
+Created: `wiki/sources/agent-memory-provenance.md`, `wiki/concepts/LongTermMemory.md`, `wiki/concepts/Provenance.md`, `wiki/concepts/CitationLock.md`, `wiki/concepts/Abstention.md`, `wiki/entities/MemGPT.md`, `wiki/entities/AgentZeroMemory.md`, `wiki/entities/LongMemEval.md`, `wiki/entities/Zep.md`
+Updated: `wiki/index.md`, `wiki/overview.md`
+
+## [2026-09-16] graph | Knowledge graph rebuilt
+
+30 nodes, 115 edges (115 extracted, 0 inferred).

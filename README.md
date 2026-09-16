@@ -35,7 +35,9 @@ silent-madman/
 ├── learning-materials/             # 单概念学习资料
 │   ├── agent.html                  # Agent 智能体
 │   ├── llm-context.html            # 大模型上下文窗口
-│   └── skill.html                  # Skill 技能
+│   ├── skill.html                  # Skill 技能
+│   ├── context-engineering.html    # 上下文工程 (2026-09-16)
+│   └── agent-memory-provenance.html # 带溯源的智能体长期记忆 (2026-09-16)
 ├── .workbuddy/
 │   ├── memory/                     # 项目级 daily log + MEMORY.md
 │   └── skills/
@@ -113,7 +115,9 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 | `learning-materials/agent.html` | AI Agent | 单概念 | 橙 |
 | `learning-materials/llm-context.html` | 大模型上下文窗口 | 单概念 | 蓝 |
 | `learning-materials/skill.html` | Skill 技能 | 单概念 | 紫 |
-| `concept-relationship.md` | 三者关联 | 图谱 | — |
+| `learning-materials/context-engineering.html` | 上下文工程 Context Engineering | 单概念 | 青 |
+| `learning-materials/agent-memory-provenance.html` | 带溯源的智能体长期记忆 | 单概念 | 玫红 |
+| `concept-relationship.md` | 五者关联 | 图谱 | — |
 
 > 想新增一个主题，直接告诉我概念名即可，本 Skill 会沿用同一份样式与结构，确保后续 HTML 之间排版一致。
 
@@ -131,4 +135,4 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 ---
 
-**最后更新**：2026-09-09 · 新增 `tools/llm-wiki-agent/`(SamurAIGPT, MIT)与 `.github/workflows/agent-triage-issue.md`(GitHub Agentic Workflow 范例)· 由本人逐条人工核查后入库。
+**最后更新**：2026-09-16 · 新增 `learning-materials/context-engineering.html` 与 `learning-materials/agent-memory-provenance.html`（概念雷达日报 2026-09-16 生成）· 由本人逐条人工核查后入库。
