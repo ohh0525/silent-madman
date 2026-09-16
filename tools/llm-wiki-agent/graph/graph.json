@@ -4,505 +4,345 @@
       "id": "overview",
       "label": "Overview",
       "type": "synthesis",
-      "color": "#9C27B0",
+      "color": "#E91E63",
       "path": "wiki\\overview.md",
       "markdown": "---\ntitle: \"Overview\"\ntype: synthesis\ntags: []\nsources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28]\nlast_updated: 2026-09-16\n---\n\n# Overview\n\n*This page is maintained by the LLM. It is updated on every ingest to reflect the current synthesis across all sources.*\n\n## Current Synthesis (2026-09-16)\n\nFive silent-madman concept-learning documents have been ingested, plus a sixth source: a spec digest of the MCP 2026-07-28 revision. The first three form a cluster around \"how LLMs reason with bounded resources\"; the two added on 2026-09-16 supply the **methodology layer** and the **time dimension** that organize them; the MCP digest refreshes a **protocol** page that had gone stale.\n\n### Cluster A — Bounded resources (2026-09-05)\n- **[[Agent]]** is the autonomous execution layer — a system that picks tools and loops around a goal.\n- **[[LLMContext]]** is the hard constraint Agent operates under — a token-budgeted \"desktop\" bounded by [[Transformer]]'s n² cost.\n- **[[Skill]]** is the unit that lets a general model act like a domain expert without bloating context — via **[[ProgressiveDisclosure]]**.\n\n### Cluster B — Methodology + time (2026-09-16)\n- **[[ContextEngineering]]** answers *who decides what goes on the desk*: it manages the window by layering information by lifespan, retrieving just-in-time, and trimming/re-injecting each turn. It battles **[[ContextRot]]** and uses **[[Compaction]]** for long tasks. Crucially, it reframes Cluster A: [[ProgressiveDisclosure]] is *an instance* of context engineering, not a separate mechanism.\n- **[[LongTermMemory]]** answers *what happens across sessions*: the window cannot hold durable state, so it lives outside and is re-injected. The 2026 design bet is **three parallel memories** (episodic / associative / semantic-HDM) governed by a reading discipline — **[[Provenance]]** (every fact carries origin + time + evidence), **[[CitationLock]]** (cite only what you opened), and **[[Abstention]]** (no sourced evidence ⇒ refuse). Systems: [[MemGPT]], [[AgentZeroMemory]], [[Zep]]; evidence: [[LongMemEval]].\n\n### Cluster C — Protocol refresh (2026-09-16)\n- **[[MCP]]** was the one page that had gone stale. The **MCP 2026-07-28 revision** makes the protocol **stateless at the protocol layer**: the `initialize` handshake (SEP-2575) and `Mcp-Session-Id` (SEP-2567) are gone; every request carries version + client identity in `_meta`; `Mcp-Method`/`Mcp-Name` headers enable body-free routing; list results are cacheable (`ttlMs`/`cacheScope`); server→client requests use MRTR (SEP-2322). The **[[Skill]]** boundary is unchanged. Ecosystem impact: GitHub's server dropped Redis + deep packet inspection; Manufact −83% package size, +25% speed.\n\n### How they connect\n\n```\nContext Engineering  ──manages/crops──▶  LLM Context Window\n        │                                   ▲\n        │ Progressive Disclosure is          │ supplies trusted\n        │ one instance of it                 │ long-term facts\n        ▼                                   │\n      Skill                              Long-Term Memory\n        │                                   ▲\n        └──────loads into────────────────────┘\n                     Agent reads/writes ─────┘\n```\n\nThe five-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand (Progressive Disclosure); Context Engineering decides what belongs in that window each step; and provenance-aware Long-Term Memory lets the Agent remember across sessions — honestly.**\n\n## Cross-Cutting Themes\n- **Bounded context is the central constraint** — every concept traces back to a token / window / cost limit. [[ContextRot]] sharpens it: capacity ≠ effective capacity.\n- **\"On-demand loading\" is the dominant solution shape** — Skills (progressive disclosure), RAG, and memory retrieval all share it. [[ContextEngineering]] names it as a principle.\n- **Trust is the new frontier** — Cluster A assumed more/cleaner context; Cluster B adds that retrieved context must be *sourced and current* ([[Provenance]], [[CitationLock]], [[Abstention]]).\n- **Memory errors compound** — a mistake written to durable memory recurs; this reframes memory as a *reliability subsystem*, not a recall feature.\n- **[[Anthropic]] is the primary vendor** contributing this design vocabulary; [[OpenAI]] complements; memory systems now contribute [[AgentZeroMemory]], [[MemGPT]], [[Zep]].\n\n## Open Questions (suggested next sources)\n- A concrete RAG system case study (vector DB choice, chunking strategy, retrieval quality) — still open from 2026-09-09.\n- ~~The MCP stateless revision (2026-07-28 spec)~~ — **resolved 2026-09-16**: [[MCP]] page rewritten from [[mcp-2026-07-28]].\n- How [[ContextEngineering]] techniques are measured end-to-end (beyond single-provider claims) — needs an independent evaluation.\n- Multi-agent memory sharing and role-based access control on shared persistent memory.\n- MCP **Tasks / MCP Apps / EMA** extensions — now first-class; worth a dedicated page if usage grows.\n\n## Next Ingest Suggestions\n- `raw/papers/rag-survey.md` — RAG foundations\n- ~~`raw/specs/mcp-2026-07-28.md`~~ — **ingested 2026-09-16** ✅\n- `raw/papers/context-engineering-eval.md` — independent context-engineering evaluation\n",
       "preview": "# Overview *This page is maintained by the LLM. It is updated on every ingest to reflect the current synthesis across all sources.* ## Current Synthesis (2026-09-16)",
-      "group": -1,
+      "group": 0,
       "value": 21
     },
     {
       "id": "concepts/Abstention",
       "label": "Abstention",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#E91E63",
       "path": "wiki\\concepts\\Abstention.md",
       "markdown": "---\ntitle: \"Abstention\"\ntype: concept\ntags: [agent-memory, abstention, reliability]\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n# Abstention\n\nThe ability of a memory system to refuse to answer when it lacks sourced evidence — treating \"I don't know\" / \"unknown\" as a correct state transition rather than a failure.\n\n## Mechanism (per [[agent-memory-provenance]])\n- Built into the reading discipline: if no sourced evidence was opened, the system returns an abstention instead of a plausible guess.\n- One of LongMemEval's five core long-term-memory abilities (information extraction, multi-session reasoning, temporal reasoning, knowledge updates, **abstention**).\n- Depends on [[Provenance]] and [[CitationLock]]: without them the system cannot tell an established sourced fact from something merely asserted once.\n\n## Why It Matters\n- The dangerous failure is not a wrong answer per se, but confidently stating something that cannot be traced to a source — poisoning future plans.\n- Benchmark evidence ([[LongMemEval]]): abstention is one of the abilities where commercial assistants and long-context LLMs degrade most.\n- \"Abstention is not the system being dumb\" — hard-answering with a reasonable-sounding guess is what writes hallucination into the future.\n\n## See Also\n- [[agent-memory-provenance]] — primary source\n- [[CitationLock]] · [[Provenance]] — the enabling constraints\n- [[LongMemEval]] — benchmark that scores abstention\n- [[LongTermMemory]] — the system exercising it\n",
       "preview": "# Abstention The ability of a memory system to refuse to answer when it lacks sourced evidence — treating \"I don't know\" / \"unknown\" as a correct state transition rather than a failure. ## Mechanism (per [[agent-memory-p",
-      "group": -1,
+      "group": 0,
       "value": 8
     },
     {
       "id": "concepts/Agent",
       "label": "Agent",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#00BCD4",
       "path": "wiki\\concepts\\Agent.md",
       "markdown": "---\ntitle: \"Agent\"\ntype: concept\ntags: [ai-agent, llm, autonomous-system]\nsources: [agent, skill]\nlast_updated: 2026-09-09\n---\n\n# Agent\n\nA software system driven by a large language model that autonomously decides which tools to call around a target, observes results, and loops until the task completes or control is yielded.\n\n## Definition\nPer [[agent]] source: Agent 是组织好的 LLM + 工具 + 记忆 + 循环。\n\n## Core Mechanism (from [[agent]])\n1. **Receive goal + context** — translate fuzzy intent into executable target\n2. **Reason next action** — ReAct / Chain-of-Thought pick tool + params\n3. **Execute tool + collect observation** — external executor does the work\n4. **Update state + judge stop** — merge observation, decide done or loop back\n\nA canonical pseudo-code:\n\n```\nwhile not done:\n    thought    = model.reason(goal, history)\n    if thought.is_final_answer: return thought.answer\n    tool_call  = model.choose_tool()\n    observation = execute(tool_call)\n    history.append((thought, tool_call, observation))\n```\n\n## Boundary\n- **Not a chatbot** — must dynamically control flow, not just answer questions\n- **Not a fixed automation script** — steps are auto-determined, not pre-encoded\n- **Not AGI** — bounded by permissions, token budget, stopping condition\n\n## Practical Use\n| Use Agent | Use Script |\n|---|---|\n| Steps cannot be enumerated in advance | Steps are fixed, repeated |\n| Need to adapt based on results | Millisecond-SLA hot paths |\n| Single failures acceptable via retry | Any failure is irreversible |\n\n## See Also\n- [[Skill]] — the packaging unit that turns general models into domain experts\n- [[LLMContext]] — Agent operations constrained by context window\n- [[ProgressiveDisclosure]] — load-on-demand that lets Agents use Skills within bounded context\n- [[ReAct]] — reasoning pattern used in Agent's step 2\n- [[Anthropic]] / [[OpenAI]] — primary vendors shaping Agent design vocabulary",
       "preview": "# Agent A software system driven by a large language model that autonomously decides which tools to call around a target, observes results, and loops until the task completes or control is yielded. ## Definition",
-      "group": -1,
+      "group": 1,
       "value": 8
     },
     {
       "id": "concepts/CitationLock",
       "label": "Citation Lock",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#E91E63",
       "path": "wiki\\concepts\\CitationLock.md",
       "markdown": "---\ntitle: \"Citation Lock\"\ntype: concept\ntags: [agent-memory, provenance, hallucination]\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n# Citation Lock\n\nThe reading discipline in which an answer may cite only evidence its reader *actually opened* during this reasoning turn — making fabrication structurally impossible rather than merely discouraged.\n\n## Mechanism (per [[agent-memory-provenance]])\n- Every answer is read under a citation lock: the set of citable evidence is exactly the set the agent opened, not everything retrievable.\n- Combined with [[Provenance]] (every learned item carries origin/timestamp/evidence), fabrication is excluded by construction.\n- Knowledge updates are explicit: newer facts *supersede* older ones (an explicit `superseded_by` link), rather than silent overwrite or unbounded contradiction accretion.\n\n## Why It Matters\n- Turns \"don't hallucinate\" from a prompt-level plea into an architectural invariant.\n- Fixes the \"temporal contradiction\" failure: a flat vector store recalls both \"Adidas\" and \"Nike\" with no notion of which is current; a citation-locked, time-aware store returns only what is true now, with its source.\n- Pairs with [[Abstention]]: when the opened evidence set is empty, the correct output is \"I don't know\".\n\n## See Also\n- [[agent-memory-provenance]] — primary source\n- [[Provenance]] — the write-side constraint this complements\n- [[Abstention]] — the fallback behavior\n- [[LongTermMemory]] — the system enforcing it\n- [[Zep]] — vendor implementation on temporal context graphs\n",
       "preview": "# Citation Lock The reading discipline in which an answer may cite only evidence its reader *actually opened* during this reasoning turn — making fabrication structurally impossible rather than merely discouraged. ## Mec",
-      "group": -1,
+      "group": 0,
       "value": 8
     },
     {
       "id": "concepts/Compaction",
       "label": "Compaction",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#8BC34A",
       "path": "wiki\\concepts\\Compaction.md",
       "markdown": "---\ntitle: \"Compaction\"\ntype: concept\ntags: [context-engineering, long-horizon, anthropic]\nsources: [context-engineering]\nlast_updated: 2026-09-16\n---\n\n# Compaction\n\nOne of the three long-horizon context techniques: summarize the conversation history and restart from the summary, preserving only architectural decisions, open questions, and the most recently accessed files.\n\n## Mechanism (per [[context-engineering]])\n- **Compaction** — summarize history → restart with a compacted context.\n- **Structured notes** — the agent writes progress to a file *outside* context (Claude Code's todo list is this pattern).\n- **Sub-agents** — a dedicated agent digs into a clean window and returns only ~1,000–2,000 high-density tokens to the main agent.\n\n## Why It Matters\n- Tasks spanning tens of minutes to hours cannot fit in any window; state must live outside the dialogue.\n- Improves *recall* first (don't drop the load-bearing decision), then iterate on *precision* (remove redundancy).\n- Over-compression can lose nuance, but doing nothing is worse — the agent simply fails at the limit.\n\n## See Also\n- [[context-engineering]] — primary source\n- [[ContextEngineering]] — parent discipline\n- [[Agent]] — the long-task consumer\n- [[LLMContext]] — the bounded resource being compacted\n",
       "preview": "# Compaction One of the three long-horizon context techniques: summarize the conversation history and restart from the summary, preserving only architectural decisions, open questions, and the most recently accessed file",
-      "group": -1,
+      "group": 2,
       "value": 6
     },
     {
       "id": "concepts/ContextEngineering",
       "label": "Context Engineering",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#8BC34A",
       "path": "wiki\\concepts\\ContextEngineering.md",
       "markdown": "---\ntitle: \"Context Engineering\"\ntype: concept\ntags: [context-engineering, anthropic, prompt-engineering]\nsources: [context-engineering]\nlast_updated: 2026-09-16\n---\n\n# Context Engineering\n\nThe discipline of deciding, at every inference step, which tokens to place into the bounded context window — targeting the *minimal set of high-signal tokens* that produces the target result, rather than maximal volume.\n\n## Mechanism (per [[context-engineering]])\n1. **Layer by information lifespan** — stable boundaries once at start; current state reread right before key steps; large raw payloads kept as identifiers/addresses only.\n2. **Just-in-time retrieval** — replace pre-loading with on-demand fetch; the window holds references, not originals.\n3. **Each turn: trim + re-inject** — tool results return summaries + evidence pointers by default; old processed results are cleared near the limit.\n4. **Long-horizon techniques** — [[Compaction]], structured notes, sub-agents.\n\n## Why It Matters\n- The constraint is architectural: [[Transformer]] attention is an n² budget, so longer context spreads attention thinner.\n- Directly opposes \"bigger window = better\": [[ContextRot]] means effective capacity runs below the nominal ceiling.\n- Evidence: Anthropic cut Claude Code's system prompt by 80%+ with no measurable coding-eval loss; tool definitions dropped 77K → 8.7K tokens (−85%) while accuracy *rose* 79.5% → 88.1%.\n\n## See Also\n- [[context-engineering]] — primary source\n- [[ContextRot]] — the phenomenon it fights\n- [[LLMContext]] — the resource it manages\n- [[Compaction]] — its long-horizon technique\n- [[ProgressiveDisclosure]] & [[Skill]] — knowledge-loading instance of the same principle\n- [[Provenance]] — retrieved memory is only as useful as it is trustworthy\n",
       "preview": "# Context Engineering The discipline of deciding, at every inference step, which tokens to place into the bounded context window — targeting the *minimal set of high-signal tokens* that produces the target result, rather",
-      "group": -1,
+      "group": 2,
       "value": 14
     },
     {
       "id": "concepts/ContextRot",
       "label": "Context Rot",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#8BC34A",
       "path": "wiki\\concepts\\ContextRot.md",
       "markdown": "---\ntitle: \"Context Rot\"\ntype: concept\ntags: [context-engineering, degradation, anthropic]\nsources: [context-engineering]\nlast_updated: 2026-09-16\n---\n\n# Context Rot\n\nThe phenomenon in which a model's ability to accurately retrieve information from its context *continuously declines* as the number of tokens in the window rises. Named by Anthropic.\n\n## Mechanism (per [[context-engineering]])\n- Informally called \"context rot\" in Anthropic's engineering writing.\n- It is a *slope*, not a cliff: the model does not \"crash\" — it grows progressively more likely to misread long inputs.\n- Root cause is the same architectural fact as [[LLMContext]]: attention is a finite budget spread across n² token-pair relationships.\n\n## Why It Matters\n- Explains why \"open the window to 1M tokens and it fits everything\" is a false solution — fitting ≠ using.\n- Justifies [[ContextEngineering]] as active *curation* rather than passive accumulation.\n- Corroborated downstream by [[LongMemEval]]: long-context models lose 30–60% accuracy when forced to read full 115K-token histories.\n\n## See Also\n- [[context-engineering]] — primary source\n- [[ContextEngineering]] — the response to it\n- [[LLMContext]] — capacity ceiling vs. effective capacity\n- [[Transformer]] — n² attention cost as the root\n",
       "preview": "# Context Rot The phenomenon in which a model's ability to accurately retrieve information from its context *continuously declines* as the number of tokens in the window rises. Named by Anthropic. ## Mechanism (per [[con",
-      "group": -1,
+      "group": 2,
       "value": 7
     },
     {
       "id": "concepts/ContextWindow",
       "label": "Context Window",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#8BC34A",
       "path": "wiki\\concepts\\ContextWindow.md",
       "markdown": "---\ntitle: \"Context Window\"\ntype: concept\ntags: [llm, transformer, token, redirect]\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n# Context Window\n\nSame concept as [[LLMContext]]; see that page for the full description.\n\nThis page exists as a redirect / canonical name for searches using the English term \"context window\".",
       "preview": "# Context Window Same concept as [[LLMContext]]; see that page for the full description. This page exists as a redirect / canonical name for searches using the English term \"context window\".",
-      "group": -1,
+      "group": 2,
       "value": 3
     },
     {
       "id": "concepts/LLMContext",
       "label": "LLM Context",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#8BC34A",
       "path": "wiki\\concepts\\LLMContext.md",
       "markdown": "---\ntitle: \"LLM Context\"\ntype: concept\ntags: [llm, context-window, transformer]\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n# LLM Context\n\nThe maximum number of tokens the model can simultaneously read and reference in a single inference pass.\n\n## Definition\nPer [[llm-context]] source: Sizing unit is **token** (BPE sub-word), not character.\n- English: ~1 token / word\n- Chinese: ~1.5–2 tokens / character\n\nThe window includes: system prompt + history + retrieved docs + reserved output, and must satisfy `total ≤ N tokens`.\n\n## Core Mechanism\n1. **BPE tokenization** — uniform processing across languages and out-of-vocab words\n2. **Positional encoding + self-attention** — O(n²) cost scaling (1000 → 1M relations, 10000 → 100M)\n3. **Truncation policy** — most APIs silently truncate oldest content rather than raising\n4. **Attention bias** — strong at start (system) + end (current); middle weakened (\"Lost in the Middle\")\n\n## Boundary\n- **Not = training knowledge** — parameters (long-term) ≠ context (this session)\n- **Not = bigger is better** — cost and latency scale with size; needs business-case ROI\n- **Not = character count** — use the target model's tokenizer\n\n## Practical Use\n| Use Large Window | Use RAG / Summary |\n|---|---|\n| Full-document cross-section QA | Sparse info, only fragments needed |\n| Long-chain Agent (multi-step state) | High-frequency, low-latency, low-cost |\n| Truncation-sensitive review | Acceptable chunk + merge for summarization |\n\n## See Also\n- [[ContextWindow]] — English-name redirect\n- [[Token]] — fundamental unit\n- [[Agent]] — bounded by context budget\n- [[Skill]] — progressive disclosure extends effective \"memory\"\n- [[Transformer]] — architecture whose n² cost sets the bound",
       "preview": "# LLM Context The maximum number of tokens the model can simultaneously read and reference in a single inference pass. ## Definition",
-      "group": -1,
+      "group": 2,
       "value": 17
     },
     {
       "id": "concepts/LongTermMemory",
       "label": "Long-Term Memory",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#E91E63",
       "path": "wiki\\concepts\\LongTermMemory.md",
       "markdown": "---\ntitle: \"Long-Term Memory\"\ntype: concept\ntags: [agent-memory, long-term-memory]\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n# Long-Term Memory\n\nThe out-of-window storage layer that lets an agent carry state and knowledge across sessions and tool calls — the durable counterpart to the ephemeral [[LLMContext]] working set.\n\n## Mechanism (per [[agent-memory-provenance]])\n- Split by purpose rather than one general store; a proven design runs **three parallel memories**:\n  - **Episodic** — an event timeline making *when* and *what changed* first-class.\n  - **Associative** — an entity–event knowledge graph linking people/projects across sessions.\n  - **Semantic** — a curated, [[CitationLock|citation-locked]] Hierarchical Documentary Memory (HDM) of durable facts.\n- Retrieval: **intent gate** → **source router** → **three concurrent agentic searches** → one integrated answer.\n- Governed by [[Provenance]] (every item carries origin/timestamp/evidence) and [[Abstention]] (no sourced evidence ⇒ refuse).\n\n## Why It Matters\n- Resolves the tension [[ContextEngineering]] leaves open: the window cannot hold cross-session state, so state must live elsewhere and be re-injected.\n- Failure is *compounding*: a mistake written to durable memory recurs in every future plan; injection poisoning persists forever.\n- Benchmarks: [[AgentZeroMemory]] 95.60% on [[LongMemEval]]; naive long-context reading drops 30–60%.\n\n## See Also\n- [[agent-memory-provenance]] — primary source\n- [[Provenance]] · [[CitationLock]] · [[Abstention]] — the reading discipline\n- [[MemGPT]] · [[AgentZeroMemory]] · [[Zep]] — systems\n- [[ContextEngineering]] — writes/reads are context-engineering decisions\n- [[LLMContext]] — the bounded working set it complements\n",
       "preview": "# Long-Term Memory The out-of-window storage layer that lets an agent carry state and knowledge across sessions and tool calls — the durable counterpart to the ephemeral [[LLMContext]] working set. ## Mechanism (per [[ag",
-      "group": -1,
+      "group": 0,
       "value": 12
     },
     {
       "id": "concepts/MCP",
       "label": "MCP",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#00BCD4",
       "path": "wiki\\concepts\\MCP.md",
       "markdown": "---\ntitle: \"MCP\"\ntype: concept\ntags: [anthropic, protocol, tools, mcp, stateless]\nsources: [skill, mcp-2026-07-28]\nlast_updated: 2026-09-16\n---\n\n# MCP (Model Context Protocol)\n\nA standard protocol for connecting LLMs to external data sources and tools, originated by [[Anthropic]]. As of the **2026-07-28 specification revision** it is a **stateless, request/response** protocol — see [[mcp-2026-07-28]].\n\n## Core primitives\nServers expose three primitives; each has `/list`, `/get`, and (for tools) `tools/call`:\n\n| Primitive | What it is |\n|---|---|\n| **Tools** | Executable functions the AI app can invoke (file ops, API calls, DB queries) |\n| **Resources** | Data sources providing context (file contents, DB records, API responses) |\n| **Prompts** | Reusable templates structuring interactions (system prompts, few-shot examples) |\n\nClients also expose primitives: **Elicitation** (server asks the user for input/confirmation).\n**Sampling** and **Logging** are **deprecated** as of 2026-07-28.\n\n## Protocol mechanics (post-2026-07-28)\n- **Stateless core** — no `initialize`/`initialized` handshake (SEP-2575), no `Mcp-Session-Id` (SEP-2567). Protocol version, client identity, and capabilities travel in `_meta` **on every request**; an optional `server/discover` RPC can fetch capabilities up front.\n- **Any instance can serve any request** — remote servers become plain HTTPS endpoints, scalable behind a round-robin load balancer with no shared session store.\n- **State, when needed, becomes an explicit handle** — a tool returns e.g. `basket_id`; the model threads it back as an argument. This is *visible* state the model can reason about, preferred over hidden transport state.\n- **Routing headers** — `Mcp-Method` and `Mcp-Name` are now required (SEP-2243) so gateways can route/meter without parsing bodies.\n- **Cacheable listings** — `ttlMs` + `cacheScope` on list/read results (SEP-2549).\n- **MRTR (SEP-2322)** — server→client requests (elicitation) use Multi Round-Trip Requests instead of a held-open stream: server returns `input_required`, client retries with `inputResponses`.\n\n## Boundary with Skill (per [[skill]])\n- **MCP** = \"connect the tool\" (standardizes the interface)\n- **Skill** = \"teach the model how to use the tool\" (organizes the workflow)\n- Often used together — MCP server + Skill that documents when to call which tool\n- Note: the 2026-07-28 revision changes MCP's *transport/state model*, **not** this boundary.\n\n## Why It Matters\n- Solves the \"N×M integrations\" problem (every LLM × every tool); a single MCP server serves multiple LLM clients.\n- Statelessness makes production scaling cheap: GitHub's MCP server removed Redis session storage and deep packet inspection; Manufact cut package size ~83% and gained ~25% speed.\n- Composable with [[ProgressiveDisclosure]] and [[ContextEngineering]] — a Skill can document an MCP tool without inlining its interface, and MCP's \"code execution\" mode keeps large tool payloads out of the context window.\n- Adoption scale: >10,000 servers in production by mid-2026; Tier 1 SDK downloads near half-a-billion/month.\n\n## See Also\n- [[Skill]] — complementary concept\n- [[mcp-2026-07-28]] — the stateless revision source\n- [[Anthropic]] — MCP origin\n- [[Agent]] — typical consumer that combines Skill + MCP\n- [[ContextEngineering]] — MCP code-execution mode is a context-engineering technique\n- [[OpenAI]] — adopted MCP in 2025\n",
       "preview": "# MCP (Model Context Protocol) A standard protocol for connecting LLMs to external data sources and tools, originated by [[Anthropic]]. As of the **2026-07-28 specification revision** it is a **stateless, request/respons",
-      "group": -1,
+      "group": 1,
       "value": 10
     },
     {
       "id": "concepts/ProgressiveDisclosure",
       "label": "Progressive Disclosure",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#00BCD4",
       "path": "wiki\\concepts\\ProgressiveDisclosure.md",
       "markdown": "---\ntitle: \"Progressive Disclosure\"\ntype: concept\ntags: [anthropic, context-engineering, design-pattern]\nsources: [skill]\nlast_updated: 2026-09-09\n---\n\n# Progressive Disclosure\n\nA load-on-demand design pattern that fits arbitrarily many resources into a bounded context window by exposing only metadata initially.\n\n## Mechanism (per [[skill]])\n1. **Layer 1** — YAML metadata (name + description) always in system prompt\n2. **Layer 2** — SKILL.md body loaded when task relevant\n3. **Layer 3** — scripts/assets loaded on demand\n\n## Why It Matters\n- Lets a single Skill carry arbitrary resources without bloating context\n- User doesn't need to \"pick\" — model selects based on description matching\n- Reasoning chain shows the activation, making it observable / debuggable\n\n## See Also\n- [[Skill]] — primary use case\n- [[LLMContext]] — solves the bounded-context problem\n- [[Agent]] — typical consumer of progressive disclosure\n- [[ContextEngineering]] — progressive disclosure is an instance of this broader curation principle",
       "preview": "# Progressive Disclosure A load-on-demand design pattern that fits arbitrarily many resources into a bounded context window by exposing only metadata initially. ## Mechanism (per [[skill]])",
-      "group": -1,
+      "group": 1,
       "value": 10
     },
     {
       "id": "concepts/Provenance",
       "label": "Provenance",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#E91E63",
       "path": "wiki\\concepts\\Provenance.md",
       "markdown": "---\ntitle: \"Provenance\"\ntype: concept\ntags: [agent-memory, provenance, reliability]\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n# Provenance\n\nThe design constraint that every stored fact must carry its origin, timestamp, and an evidence pointer — so the system can always answer \"why is this believed?\" and can grade trust by *source*, not by *relevance alone*.\n\n## Mechanism (per [[agent-memory-provenance]])\n- A memory is not a string; it is a record answering: what claim is stored, which source produced it, is it fact/preference/inference, when observed or last verified, and what condition should replace or expire it.\n- Write-time gate: reject unknown or untrusted sources; grade trust by origin (`human` / `verified_tool` / `self_inferred`), and the agent does not get to fully trust its own guesses.\n- Read-time filter: drop expired / low-trust entries *before* they reach the context window; a retrieved memory without source and time metadata is \"just a persuasive sentence occupying expensive context\".\n\n## Why It Matters\n- Kills two compounding failure modes: **stale facts** (no TTL ⇒ presents a 3-week-old value with the same confidence as a 30-second-old one) and **unbounded growth** (append-only memory buries the right answer under near-duplicates).\n- Makes trust *meaningful*: when every record carries its source, retrieval filters can act on it; without it, trust becomes uniform and therefore meaningless.\n- Directly matches the silent-madman repo's own \"人工核查承诺\" instinct — nothing enters as fact without a traceable source.\n\n## See Also\n- [[agent-memory-provenance]] — primary source\n- [[LongTermMemory]] — the store that carries provenance\n- [[CitationLock]] — the read-side companion\n- [[Abstention]] — what happens when provenance is absent\n",
       "preview": "# Provenance The design constraint that every stored fact must carry its origin, timestamp, and an evidence pointer — so the system can always answer \"why is this believed?\" and can grade trust by *source*, not by *relev",
-      "group": -1,
+      "group": 0,
       "value": 9
     },
     {
       "id": "concepts/ReAct",
       "label": "ReAct",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#00BCD4",
       "path": "wiki\\concepts\\ReAct.md",
       "markdown": "---\ntitle: \"ReAct\"\ntype: concept\ntags: [agent, prompting, reasoning]\nsources: [agent]\nlast_updated: 2026-09-09\n---\n\n# ReAct\n\nA prompting pattern that interleaves Reasoning and Action steps in an Agent loop: **Thought → Action → Observation → Thought → …**.\n\n## Role in Agent\nPer [[agent]] core mechanism step 2, ReAct (along with Chain-of-Thought) is the canonical reasoning pattern for Agent's \"decide next action\" step.\n\n## Strengths\n- Forces explicit reasoning before each tool call → reduces hallucination\n- Traceable — every Thought is inspectable in the log\n- Composable with any tool set\n\n## See Also\n- [[Agent]] — primary use case\n- [[Skill]] — Skill metadata + ReAct reasoning together drive tool selection",
       "preview": "# ReAct A prompting pattern that interleaves Reasoning and Action steps in an Agent loop: **Thought → Action → Observation → Thought → …**. ## Role in Agent",
-      "group": -1,
+      "group": 1,
       "value": 4
     },
     {
       "id": "concepts/Skill",
       "label": "Skill",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#00BCD4",
       "path": "wiki\\concepts\\Skill.md",
       "markdown": "---\ntitle: \"Skill\"\ntype: concept\ntags: [anthropic, skill, progressive-disclosure, design-pattern]\nsources: [skill]\nlast_updated: 2026-09-09\n---\n\n# Skill\n\nAn organized folder of instructions, scripts, and resources that Claude loads on demand when a task is relevant — turning a general model into a domain expert.\n\n## Definition\nPer [[skill]] source: Same Skill folder usable across Claude app / Claude Code / API / Agent SDK. Released as an open standard after 2025-12.\n\n## Core Mechanism\n- **Progressive disclosure (3 layers)**:\n  - Layer 1 — YAML metadata (name + description) always in system prompt\n  - Layer 2 — SKILL.md body loaded when task relevant\n  - Layer 3 — scripts and referenced assets loaded on demand\n- **Auto relevance check** — Claude scans metadata descriptions each turn; user doesn't \"pick\"\n- **Code as first-class** — scripts allow deterministic operations (sort, render PDF, generate chart)\n- **Cross-product portability** — same Skill works in multiple products\n\n## Boundary\n- **Not = prompt template** — template is per-conversation; Skill is cross-conversation, version-controlled, multi-product-shared\n- **Not = fine-tuning** — Skill changes context, not model parameters\n- **Not = MCP** — MCP = \"connect the tool\" (interface standard); Skill = \"teach the model how to use the tool\"\n\n## Practical Use\n| Use Skill | Use Prompt / Project |\n|---|---|\n| Cross-team / multi-product domain workflow | One-off, temporary input requirement |\n| Complex tasks needing executable scripts | Static reference knowledge (glossaries) |\n| Dynamic relevance activation | Always-on rules for every session |\n\n## See Also\n- [[Agent]] — Skill is the unit that empowers Agents\n- [[ProgressiveDisclosure]] — load-on-demand mechanism\n- [[LLMContext]] — Skills operate within bounded context\n- [[MCP]] — complementary tool-connection standard\n- [[Anthropic]] — Skill is an Anthropic product feature",
       "preview": "# Skill An organized folder of instructions, scripts, and resources that Claude loads on demand when a task is relevant — turning a general model into a domain expert. ## Definition",
-      "group": -1,
+      "group": 1,
       "value": 7
     },
     {
       "id": "concepts/Token",
       "label": "Token",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#8BC34A",
       "path": "wiki\\concepts\\Token.md",
       "markdown": "---\ntitle: \"Token\"\ntype: concept\ntags: [llm, tokenization, bpe]\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n# Token\n\nThe fundamental unit by which LLMs count, price, and truncate text — produced by BPE (Byte Pair Encoding) sub-word tokenization.\n\n## Key Facts (per [[llm-context]])\n- English: ~1 token / word on average\n- Chinese: ~1.5–2 tokens / character (smaller unit = more tokens)\n- Same text can yield different token counts across tokenizers — always measure with the target model's tokenizer\n\n## Why It Matters\n- Context window capacity is measured in tokens, not characters\n- Pricing is per-token (input + output)\n- Cross-lingual handling relies on consistent tokenization\n- \"Out of vocabulary\" words are handled by BPE — no `<UNK>` failures\n\n## See Also\n- [[LLMContext]] — context window = token budget\n- [[Transformer]] — operates on token sequences\n- [[Skill]] — progressive disclosure optimizes per-token spend",
       "preview": "# Token The fundamental unit by which LLMs count, price, and truncate text — produced by BPE (Byte Pair Encoding) sub-word tokenization. ## Key Facts (per [[llm-context]])",
-      "group": -1,
+      "group": 2,
       "value": 5
     },
     {
       "id": "concepts/Transformer",
       "label": "Transformer",
       "type": "concept",
-      "color": "#FF9800",
+      "color": "#8BC34A",
       "path": "wiki\\concepts\\Transformer.md",
       "markdown": "---\ntitle: \"Transformer\"\ntype: concept\ntags: [llm, architecture, attention]\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n# Transformer\n\nThe neural architecture underlying modern LLMs, featuring self-attention that lets each token relate to every other token in the context.\n\n## Key Cost Implication (per [[llm-context]])\n- Self-attention is O(n²) in sequence length\n- This is the **physical reason** context windows must be bounded\n- Beyond training length, inference quality can degrade even within the named window\n\n## Components\n- Token embedding + positional encoding\n- Multi-head self-attention\n- Feed-forward layers\n- Residual connections + layer normalization\n\n## See Also\n- [[LLMContext]] — bounded by Transformer's n² cost\n- [[Token]] — input unit\n- [[Skill]] — progressive disclosure works *around* the n² cost",
       "preview": "# Transformer The neural architecture underlying modern LLMs, featuring self-attention that lets each token relate to every other token in the context. ## Key Cost Implication (per [[llm-context]])",
-      "group": -1,
+      "group": 2,
       "value": 9
     },
     {
       "id": "entities/AgentZeroMemory",
       "label": "AgentZeroMemory",
       "type": "entity",
-      "color": "#2196F3",
+      "color": "#E91E63",
       "path": "wiki\\entities\\AgentZeroMemory.md",
       "markdown": "---\ntitle: \"AgentZeroMemory\"\ntype: entity\ntags: [system, memory, provenance, state-of-the-art]\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n# Agent Zero Memory\n\nA provenance-aware long-term memory system (Ming Wu, Pengyuan Zhu, Zero Labs; arXiv:2608.29606, 2026-08-30). Distills a user's conversations, files, and connected sources into **three parallel memories** — an episodic Memory Events timeline, an associative entity–event knowledge graph, and a semantic, curation-locked Hierarchical Documentary Memory (HDM).\n\nSets state of the art on [[LongMemEval]] (95.60%) and LoCoMo (93.60%), improving on the strongest prior systems by +0.73 / +1.10 points. Across 8 backbones, accuracy varies only 3.4 points while per-query cost varies ~30× — the \"memory-driven, not model-driven, quality\" signature. Implements [[Provenance]], [[CitationLock]], and [[Abstention]] as first-class design postulates.\n",
       "preview": "# Agent Zero Memory A provenance-aware long-term memory system (Ming Wu, Pengyuan Zhu, Zero Labs; arXiv:2608.29606, 2026-08-30). Distills a user's conversations, files, and connected sources into **three parallel memorie",
-      "group": -1,
+      "group": 0,
       "value": 9
     },
     {
       "id": "entities/Anthropic",
       "label": "Anthropic",
       "type": "entity",
-      "color": "#2196F3",
+      "color": "#00BCD4",
       "path": "wiki\\entities\\Anthropic.md",
       "markdown": "---\ntitle: \"Anthropic\"\ntype: entity\ntags: [company, ai-vendor, claude]\nsources: [agent, llm-context, skill]\nlast_updated: 2026-09-09\n---\n\n# Anthropic\n\nAI safety company and creator of Claude. Primary source for Agent Skills, progressive disclosure, context management design, and MCP.\n\n## Key Contributions Referenced in This Wiki\n- **Agent definition** (per [[agent]] sources) — autonomous loop driven by reasoning model\n- **Skills + progressive disclosure** (per [[skill]] sources) — 3-layer load-on-demand\n- **Context editing + memory tool** — for long-running agents (referenced in concept-relationship)\n- **MCP** (per [[MCP]]) — Model Context Protocol for tool integration\n\n## Products (as referenced)\n- Claude app / Claude Code / API / Agent SDK — all share the same Skill format\n\n## See Also\n- [[Agent]] — Anthropic's framing\n- [[Skill]] — Anthropic product feature\n- [[MCP]] — Anthropic protocol\n- [[OpenAI]] — complementary AI vendor",
       "preview": "# Anthropic AI safety company and creator of Claude. Primary source for Agent Skills, progressive disclosure, context management design, and MCP. ## Key Contributions Referenced in This Wiki",
-      "group": -1,
+      "group": 1,
       "value": 11
     },
     {
       "id": "entities/BaiduBaike",
       "label": "Baidu Baike",
       "type": "entity",
-      "color": "#2196F3",
+      "color": "#8BC34A",
       "path": "wiki\\entities\\BaiduBaike.md",
       "markdown": "---\ntitle: \"Baidu Baike\"\ntype: entity\ntags: [third-party, encyclopedia, chinese, baidu-baike]\nsources: [llm-context, skill]\nlast_updated: 2026-09-09\n---\n\n# Baidu Baike(百度百科)\n\nChinese encyclopedia referenced for context window basics in [[llm-context]] and [[skill]] sources. Provides a Chinese-language definition of context window vs context length and tracks mainstream-model spec evolution.",
       "preview": "# Baidu Baike(百度百科) Chinese encyclopedia referenced for context window basics in [[llm-context]] and [[skill]] sources. Provides a Chinese-language definition of context window vs context length and tracks mainstream-mod",
-      "group": -1,
+      "group": 2,
       "value": 3
     },
     {
       "id": "entities/LongMemEval",
       "label": "LongMemEval",
       "type": "entity",
-      "color": "#2196F3",
+      "color": "#E91E63",
       "path": "wiki\\entities\\LongMemEval.md",
       "markdown": "---\ntitle: \"LongMemEval\"\ntype: entity\ntags: [benchmark, memory, evaluation]\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n# LongMemEval\n\nA benchmark for long-term interactive memory of chat assistants (Di Wu et al., ICLR 2025, arXiv:2410.10813). 500 curated questions over scalable chat histories (115K–1.5M tokens) testing five abilities: information extraction, multi-session reasoning, temporal reasoning, knowledge updates, and **[[Abstention]]**.\n\nKey findings cited by [[agent-memory-provenance]]: long-context LLMs drop 30–60% accuracy when reading full histories instead of oracle evidence; commercial systems (e.g. GPT-4o) reach only 30–70%. Proposes an index → retrieve → read framework. Used as the primary evidence that naive long context is insufficient and that [[LongTermMemory]] needs structure + discipline.\n",
       "preview": "# LongMemEval A benchmark for long-term interactive memory of chat assistants (Di Wu et al., ICLR 2025, arXiv:2410.10813). 500 curated questions over scalable chat histories (115K–1.5M tokens) testing five abilities: inf",
-      "group": -1,
+      "group": 0,
       "value": 7
     },
     {
       "id": "entities/MemGPT",
       "label": "MemGPT",
       "type": "entity",
-      "color": "#2196F3",
+      "color": "#E91E63",
       "path": "wiki\\entities\\MemGPT.md",
       "markdown": "---\ntitle: \"MemGPT\"\ntype: entity\ntags: [system, memory, os-analogy]\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n# MemGPT\n\nAn OS-inspired LLM system introducing **virtual context management** — treating the context window as constrained main memory and paging data between fast (context) and slow (external storage) tiers via function calls. Paper: *MemGPT: Towards LLMs as Operating Systems* (Packer et al., arXiv:2310.08560, 2023).\n\nThe ancestor of tiered agent memory: the source [[agent-memory-provenance]] notes that virtual memory alone, without [[Provenance|provenance]], merely lets bad state scale elegantly. Related systems: [[AgentZeroMemory]], [[Zep]].\n",
       "preview": "# MemGPT An OS-inspired LLM system introducing **virtual context management** — treating the context window as constrained main memory and paging data between fast (context) and slow (external storage) tiers via function",
-      "group": -1,
+      "group": 0,
       "value": 6
     },
     {
       "id": "entities/OpenAI",
       "label": "OpenAI",
       "type": "entity",
-      "color": "#2196F3",
+      "color": "#00BCD4",
       "path": "wiki\\entities\\OpenAI.md",
       "markdown": "---\ntitle: \"OpenAI\"\ntype: entity\ntags: [company, ai-vendor, gpt]\nsources: [agent, skill]\nlast_updated: 2026-09-09\n---\n\n# OpenAI\n\nAI vendor and creator of GPT / ChatGPT. Complementary view to Anthropic on Agent Skills.\n\n## Key Contributions Referenced in This Wiki\n- **Agent Skills** — OpenAI's framing emphasizes dynamic control of execution flow (per [[agent]] sources)\n- **Custom Instructions** — surface-level similar to Skill metadata, different mechanics (per [[skill]] sources)\n\n## See Also\n- [[Anthropic]] — sibling AI vendor with complementary design vocabulary\n- [[Agent]] — OpenAI's framing\n- [[Skill]] — ChatGPT Custom Instructions is the closest consumer-facing analog",
       "preview": "# OpenAI AI vendor and creator of GPT / ChatGPT. Complementary view to Anthropic on Agent Skills. ## Key Contributions Referenced in This Wiki",
-      "group": -1,
+      "group": 1,
       "value": 8
     },
     {
       "id": "entities/SourceScore",
       "label": "SourceScore",
       "type": "entity",
-      "color": "#2196F3",
+      "color": "#00BCD4",
       "path": "wiki\\entities\\SourceScore.md",
       "markdown": "---\ntitle: \"SourceScore\"\ntype: entity\ntags: [third-party, agent-review, sourcescore]\nsources: [agent]\nlast_updated: 2026-09-09\n---\n\n# SourceScore\n\nThird-party rating site that summarizes AI agents and the loop they run. Referenced in [[agent]] sources for engineering summary of Agent loop and failure modes.",
       "preview": "# SourceScore Third-party rating site that summarizes AI agents and the loop they run. Referenced in [[agent]] sources for engineering summary of Agent loop and failure modes.",
-      "group": -1,
+      "group": 1,
       "value": 2
     },
     {
       "id": "entities/Zep",
       "label": "Zep",
       "type": "entity",
-      "color": "#2196F3",
+      "color": "#E91E63",
       "path": "wiki\\entities\\Zep.md",
       "markdown": "---\ntitle: \"Zep\"\ntype: entity\ntags: [vendor, memory, temporal-graph]\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n# Zep\n\nVendor of an agent-memory platform built on **temporal context graphs** (a \"Context Lake\" of governed context graphs). Framed in its hallucination-reduction writing as pairing *agent memory (provenance + temporality)* with RAG and abstention as the first-line controls against hallucinated / stale answers.\n\nIllustrates [[CitationLock]] and [[Provenance]] in practice: inputs are ingested, entities and facts extracted with validity windows and provenance, and retrieval returns only the relevant, currently-valid slice — so a changed fact (e.g. \"Adidas\" → \"Nike\") is answered with what is true now, not both.\n",
       "preview": "# Zep Vendor of an agent-memory platform built on **temporal context graphs** (a \"Context Lake\" of governed context graphs). Framed in its hallucination-reduction writing as pairing *agent memory (provenance + temporalit",
-      "group": -1,
+      "group": 0,
       "value": 7
     },
     {
       "id": "sources/agent-memory-provenance",
       "label": "带溯源的智能体长期记忆(Provenance-Aware Memory)",
       "type": "source",
-      "color": "#4CAF50",
+      "color": "#E91E63",
       "path": "wiki\\sources\\agent-memory-provenance.md",
       "markdown": "---\ntitle: \"带溯源的智能体长期记忆(Provenance-Aware Memory)\"\ntype: source\ntags: [concept-learning, agent-memory, provenance, long-term-memory, abstention, silent-madman]\ndate: 2026-09-16\nsource_file: raw/learning-materials/agent-memory-provenance.html\nsources: [agent-memory-provenance]\nlast_updated: 2026-09-16\n---\n\n## Summary\nA concept-learning HTML document (7-section format) generated by the silent-madman concept-explainer skill on 2026-09-16. Defines provenance-aware long-term memory as the design discipline in which every stored fact carries its origin, timestamp, and evidence pointer, and every answer is produced under a *citation lock* — it may cite only evidence the reader actually opened. Fabrication is structurally excluded and the system abstains rather than guesses. Anchored by the Agent Zero Memory paper (arXiv:2608.29606) and the LongMemEval benchmark.\n\n## Key Claims\n- A single general-purpose memory store (vector index or knowledge graph) inherits that structure's blind spots; better to run **three parallel purpose-built memories**: episodic (event timeline), associative (entity–event graph), and semantic (citation-locked Hierarchical Documentary Memory, HDM).\n- Retrieval runs an **intent gate** (self-contained turns add no latency) → **source router** → **three concurrent agentic searches** (hybrid embedding + lexical, agent-controlled filters), integrated into one answer with a single confidence.\n- **Reading discipline:** every learned item is a provenanced item (origin + timestamp + evidence pointer); every answer is read under a citation lock, so it may cite only evidence actually opened → fabrication is structurally impossible, and the system abstains instead of guessing.\n- Memory errors **compound**: a one-turn hallucination is transient, but a mistake *written* to durable memory becomes a recurring input to every future plan. Prompt-injection poisoning persists across all future sessions (\"one write, permanent compromise\").\n- Memory writes are **side effects with blast radius** — they should get the same engineering discipline as any external action (source grading, TTL, validation on write, filtering on read, and a real, loggable \"forget\").\n- Quantitative: Agent Zero Memory scores **95.60%** on LongMemEval and **93.60%** on LoCoMo (best prior +0.73 / +1.10); across 8 LLM backbones accuracy varies only **3.4 points** while per-query cost varies **~30×** — the signature of *memory-driven, not model-driven, quality*.\n- LongMemEval shows naive long-context reading of full 115K-token histories drops **30%–60%** accuracy vs. evidence-only; commercial assistants reach only **30%–70%**.\n\n## Key Quotes\n> \"带溯源的长期记忆不是『记得更多』，而是『记得更诚实』——每条事实都带着来源与时间，每次作答都必须引用真正打开过的证据；当没有依据时，正确的输出是『我不知道』。\"\n> \"虚拟内存若没有溯源，只是让坏状态优雅地规模化。\"\n\n## Connections\n- [[AgentZeroMemory]] — the system this source's core design comes from\n- [[LongMemEval]] — the benchmark providing the accuracy-drop evidence\n- [[MemGPT]] — the OS-tiering ancestor of tiered memory\n- [[LongTermMemory]] — concept page this source primarily informs\n- [[Provenance]] — the central design constraint\n- [[CitationLock]] — the reading-discipline mechanism\n- [[Abstention]] — the correct behavior when no sourced evidence exists\n- [[Zep]] — vendor framing: memory (provenance + temporality) as a first-line hallucination control\n- [[LLMContext]] — long-term memory is the out-of-window store that context engineering manages\n- [[ContextEngineering]] — governs when/what to write and how to re-inject retrieved memories\n\n## Contradictions\n- Refines [[LLMContext]]'s \"on-demand loading is the dominant solution\": the source argues on-demand retrieval is necessary but *insufficient* — without provenance and citation locks, a vector store merely scales bad state. This is complementary, not contradictory.\n",
       "preview": "## Summary A concept-learning HTML document (7-section format) generated by the silent-madman concept-explainer skill on 2026-09-16. Defines provenance-aware long-term memory as the design discipline in which every store",
-      "group": -1,
+      "group": 0,
       "value": 11
     },
     {
       "id": "sources/agent",
       "label": "AI Agent(智能体)",
       "type": "source",
-      "color": "#4CAF50",
+      "color": "#00BCD4",
       "path": "wiki\\sources\\agent.md",
       "markdown": "---\ntitle: \"AI Agent(智能体)\"\ntype: source\ntags: [concept-learning, ai-agent, llm, silent-madman]\ndate: 2026-09-05\nsource_file: raw/learning-materials/agent.html\nsources: [agent]\nlast_updated: 2026-09-09\n---\n\n## Summary\nA concept-learning HTML document (7-section format: 一句话定义 / 个人解释 / 核心机制 / 应用场景 / 边界辨析 / 来源链接 / 一句话回顾) generated by the silent-madman concept-explainer skill on 2026-09-05. Defines AI Agent as a software system driven by an LLM that autonomously decides which tools to call around a target, observes results, and loops until the task completes or control is yielded.\n\n## Key Claims\n- Agent is not a new algorithm but an *organization* of (reasoning model + tool calls + memory + loop).\n- The core mechanism is a four-step loop: receive goal + context → reason next action → execute tool + collect observation → update state + judge whether to stop.\n- Common misconception: \"attaching a tool makes an Agent\" — Anthropic and OpenAI both require the model to *dynamically* control the execution flow.\n- Practical scoping: use Agents only when steps cannot be enumerated in advance; use scripts otherwise.\n\n## Key Quotes\n> \"Agent 不是某种新算法,而是把『会推理的模型 + 可以调用的工具 + 一个会停下来的循环』组织在一起,让系统能围绕目标自己挑路径。\"\n\n## Connections\n- [[Anthropic]] — primary source for Agent definition and Agent Skills design\n- [[OpenAI]] — complementary view on Agent Skills\n- [[Agent]] — concept page this source primarily informs\n- [[LLMContext]] — Agent operations constrained by context window budget\n- [[Skill]] — Skill is the packaging unit that empowers Agents\n- [[ReAct]] — reasoning pattern used in step 2 of the Agent loop\n\n## Contradictions\n- None detected at ingest time.",
       "preview": "## Summary A concept-learning HTML document (7-section format: 一句话定义 / 个人解释 / 核心机制 / 应用场景 / 边界辨析 / 来源链接 / 一句话回顾) generated by the silent-madman concept-explainer skill on 2026-09-05. Defines AI Agent as a software system",
-      "group": -1,
+      "group": 1,
       "value": 16
     },
     {
       "id": "sources/context-engineering",
       "label": "上下文工程(Context Engineering)",
       "type": "source",
-      "color": "#4CAF50",
+      "color": "#8BC34A",
       "path": "wiki\\sources\\context-engineering.md",
       "markdown": "---\ntitle: \"上下文工程(Context Engineering)\"\ntype: source\ntags: [concept-learning, context-engineering, context-rot, anthropic, silent-madman]\ndate: 2026-09-16\nsource_file: raw/learning-materials/context-engineering.html\nsources: [context-engineering]\nlast_updated: 2026-09-16\n---\n\n## Summary\nA concept-learning HTML document (7-section format) generated by the silent-madman concept-explainer skill on 2026-09-16. Defines Context Engineering as the discipline of deciding, at every inference step, which tokens to place into the bounded context window — targeting the *minimal set of high-signal tokens* rather than maximal volume. Positions it as the natural evolution of prompt engineering, grounded in the observation that retrieval accuracy degrades (context rot) as token count grows.\n\n## Key Claims\n- Context engineering ≠ prompt engineering: the former governs the composition of *all* tokens in a turn (iterative, per-step), the latter only how a single instruction is phrased (one-shot, discrete).\n- **context rot** — as token count in the window rises, the model's ability to retrieve information accurately declines continuously (a slope, not a cliff). Window size is a capacity ceiling, not effective capacity.\n- \"Bigger window solves everything\" is a false solution: the constraint is architectural — Transformer self-attention costs n² in token-pair relationships, so attention is a finite budget.\n- Long-horizon tasks survive on three techniques: **compaction** (summarize history and restart), **structured notes** (write state to files outside context; e.g. Claude Code's todo list), and **sub-agents** (isolated clean windows that return only 1,000–2,000 high-density tokens).\n- Just-in-time retrieval replaces pre-loading: keep identifiers/addresses instead of raw payloads; reread authoritative state right before key steps.\n- Anthropic removed 80%+ of Claude Code's system prompt with no measurable coding-eval loss — *less* context, *better* results.\n\n## Key Quotes\n> \"上下文工程是在模型推理的每一步，决定往有限的上下文窗口里放入哪些 token 的一整套取舍方法——目标是找到能产出目标结果的「最小高信号 token 集合」。\"\n> \"不是加了新东西让它变强，而是拿掉了旧东西。\"\n\n## Connections\n- [[ContextEngineering]] — concept page this source primarily informs\n- [[ContextRot]] — the degradation phenomenon this source names\n- [[LLMContext]] — the resource being engineered; capacity ≠ effective capacity\n- [[Compaction]] — one of the three long-horizon techniques\n- [[Skill]] — progressive disclosure is a concrete instance of context engineering\n- [[ProgressiveDisclosure]] — the load-on-demand pattern applied to knowledge\n- [[Transformer]] — n² attention cost is the architectural root of the constraint\n- [[Anthropic]] — primary source (engineering blog + Claude product posts)\n- [[Agent]] — the primary consumer of these techniques in long tasks\n\n## Contradictions\n- None detected. Complements [[LLMContext]] (adds the *methodology layer* on top of the physical resource) and sharpens [[ProgressiveDisclosure]] (reframes it as an instance of a broader principle).\n",
       "preview": "## Summary A concept-learning HTML document (7-section format) generated by the silent-madman concept-explainer skill on 2026-09-16. Defines Context Engineering as the discipline of deciding, at every inference step, whi",
-      "group": -1,
+      "group": 2,
       "value": 10
     },
     {
       "id": "sources/llm-context",
       "label": "LLM Context Window(上下文窗口)",
       "type": "source",
-      "color": "#4CAF50",
+      "color": "#8BC34A",
       "path": "wiki\\sources\\llm-context.md",
       "markdown": "---\ntitle: \"LLM Context Window(上下文窗口)\"\ntype: source\ntags: [concept-learning, llm, context-window, silent-madman]\ndate: 2026-09-05\nsource_file: raw/learning-materials/llm-context.html\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n## Summary\nA concept-learning HTML document generated by silent-madman's concept-explainer skill on 2026-09-05. Defines the LLM context window as the maximum number of tokens the model can simultaneously read and reference in a single inference pass. The mechanism covers BPE tokenization, positional encoding + self-attention, total length judgment + truncation, and attention-weight shifting (Lost in the Middle).\n\n## Key Claims\n- Context window is the model's \"short-term memory desktop\" — sized in tokens, not characters (Chinese characters average 1.5–2 tokens each).\n- Self-attention cost grows as n²; 1000 tokens → 1M pair-wise relations, 10000 tokens → 100M.\n- Most commercial APIs *silently truncate* on overflow rather than raising an error — explaining the common \"AI amnesia\" experience.\n- \"Lost in the Middle\": even within window, the model attends strongest to system prompt + current question; middle content gets weaker attention.\n\n## Key Quotes\n> \"上下文窗口是模型的『短期记忆』办公桌——尺寸按 token 计算,受注意力平方成本硬约束,决定了模型这一轮能看见什么、记不得什么。\"\n\n## Connections\n- [[Anthropic]] — context-engineering + Skills 三级披露 designed around context window constraints\n- [[LLMContext]] — concept page this source primarily informs\n- [[ContextWindow]] — alternative naming for the same concept\n- [[Token]] — fundamental unit of context accounting\n- [[Agent]] — Agent operations are bounded by context budget\n- [[Transformer]] — underlying architecture whose n² cost sets the window bound\n\n## Contradictions\n- None detected at ingest time.",
       "preview": "## Summary A concept-learning HTML document generated by silent-madman's concept-explainer skill on 2026-09-05. Defines the LLM context window as the maximum number of tokens the model can simultaneously read and referen",
-      "group": -1,
+      "group": 2,
       "value": 8
     },
     {
       "id": "sources/mcp-2026-07-28",
       "label": "MCP 2026-07-28 Specification(MCP 无状态化修订)",
       "type": "source",
-      "color": "#4CAF50",
+      "color": "#00BCD4",
       "path": "wiki\\sources\\mcp-2026-07-28.md",
       "markdown": "---\ntitle: \"MCP 2026-07-28 Specification(MCP 无状态化修订)\"\ntype: source\ntags: [mcp, spec, protocol, stateless, anthropic]\ndate: 2026-09-16\nsource_file: raw/specs/mcp-2026-07-28.md\nsources: [mcp-2026-07-28]\nlast_updated: 2026-09-16\n---\n\n## Summary\nA digest of the MCP 2026-07-28 specification revision — described as the largest revision of the Model Context Protocol since launch. MCP transforms from a bidirectional stateful protocol into a request/response **stateless** protocol: the `initialize`/`initialized` handshake and the `Mcp-Session-Id` header are removed, and protocol version, client identity, and capabilities travel in `_meta` on every request. Compiled 2026-09-16 from the official spec blog, official architecture docs, AWS, GitHub's changelog, and the Agentic AI Foundation roundup.\n\n## Key Claims\n- **SEP-2575** removes the handshake; **SEP-2567** removes the session ID header. Any request can now land on any server instance behind a plain round-robin load balancer — no sticky sessions, no shared session store.\n- A new optional **`server/discover`** RPC lets clients fetch server capabilities up front; it is not required, because each request is self-describing.\n- **Stateless protocol ≠ stateless application**: servers mint an explicit handle (`basket_id`, `browser_id`, `workflow_run_id`) and the model threads it back as an ordinary argument. Maintainers argue this is often *more powerful* than hidden session state, because the handle becomes a value the model can see and compose.\n- **MRTR (Multi Round-Trip Requests, SEP-2322)** replaces held-open SSE streams: server returns `resultType: \"input_required\"` + `requestState`; the client retries the original call with `inputResponses`.\n- **`Mcp-Method` and `Mcp-Name` headers are now required** (SEP-2243) so gateways/rate-limiters/WAFs route and meter without parsing JSON bodies.\n- **List results are cacheable** (SEP-2549): `tools/list`, `prompts/list`, `resources/list`, `resources/read` carry `ttlMs` + `cacheScope`.\n- **Authorization hardening**: RFC 9207 issuer validation; formal shift from Dynamic Client Registration (DCR) toward Client ID Metadata Documents (CIMD).\n- **Extensions become first-class**: Tasks (long-running ops, moved out of the base protocol) joins MCP Apps and Enterprise Managed Authorization (EMA).\n- **Sampling, Roots, and Logging are deprecated** (12-month minimum window). New implementations should call LLM provider APIs directly and log to stderr / OpenTelemetry.\n- Full **JSON Schema 2020-12** for tools; **W3C Trace Context** propagation in `_meta`.\n- **Backward compatibility**: major SDKs (TS, Python, Go, C#; Rust beta) preserve old-spec compatibility, so existing connections need no immediate migration — but new-revision servers may need a compatibility layer for old clients.\n\n## Key Quotes\n> \"The highlight of this release is a stateless protocol core — MCP is transforming from a bidirectional stateful protocol into a request/response stateless protocol.\" — official release post\n> \"The initialize/initialized handshake is removed (SEP-2575)... The Mcp-Session-Id header and the protocol-level session... are also removed (SEP-2567).\" — official release candidate post\n> \"Removing the protocol-level session does not mean your application has to be stateless.\" — official spec blog\n\n## Connections\n- [[MCP]] — concept page this source primarily updates (was based only on [[skill]] and is now revised)\n- [[Anthropic]] — MCP originator; maintainer driving the revision\n- [[Skill]] — the MCP-vs-Skill boundary remains valid; this revision changes MCP's transport/state model, not that boundary\n- [[Agent]] — the consumer that benefits from stateless scaling\n- [[ContextEngineering]] — header-based routing + cacheable list results reduce context/transport overhead; MCP's \"code execution\" mode is a context-engineering technique\n- [[OpenAI]] — adopted MCP in 2025; an ecosystem adopter\n\n## Contradictions\n- **Supersedes the prior state of [[MCP]]**: the page previously contained no protocol mechanics and implicitly reflected the pre-2026-07-28 (stateful, session-based) design. The revision is a *supersession*, not a contradiction — the MCP-vs-[[Skill]] boundary is unchanged.\n",
       "preview": "## Summary A digest of the MCP 2026-07-28 specification revision — described as the largest revision of the Model Context Protocol since launch. MCP transforms from a bidirectional stateful protocol into a request/respon",
-      "group": -1,
+      "group": 1,
       "value": 8
     },
     {
       "id": "sources/skill",
       "label": "Skill(技能)",
       "type": "source",
-      "color": "#4CAF50",
+      "color": "#00BCD4",
       "path": "wiki\\sources\\skill.md",
       "markdown": "---\ntitle: \"Skill(技能)\"\ntype: source\ntags: [concept-learning, anthropic, skill, progressive-disclosure, silent-madman]\ndate: 2026-09-05\nsource_file: raw/learning-materials/skill.html\nsources: [skill]\nlast_updated: 2026-09-09\n---\n\n## Summary\nA concept-learning HTML document generated by silent-madman's concept-explainer skill on 2026-09-05. Defines Skill as an organized folder of instructions, scripts, and resources that Claude loads on demand when a task is relevant — turning a general model into a domain expert. The core mechanism is *progressive disclosure* (YAML metadata → SKILL.md body → referenced scripts/assets), which fits unlimited expertise into a bounded context window.\n\n## Key Claims\n- Skill is not a prompt template — it is a cross-conversation, version-controlled, multi-product-shared directory.\n- Three-layer progressive disclosure: (1) YAML metadata always in system prompt, (2) SKILL.md body loaded when relevant, (3) scripts/assets loaded on demand.\n- Same Skill folder works across Claude app, Claude Code, API, Agent SDK; released as an open standard after 2025-12.\n- Skill is *not* MCP: Skill teaches the model how to use tools; MCP standardizes the tool connection itself.\n\n## Key Quotes\n> \"Skill 不是『让模型变聪明』,而是『把组织经验打包成可按需加载的目录』,用渐进式披露在有限的上下文里装下无限的专业知识。\"\n\n## Connections\n- [[Anthropic]] — Skill is an Anthropic product feature\n- [[Skill]] — concept page this source primarily informs\n- [[ProgressiveDisclosure]] — the load-on-demand mechanism that makes Skills work\n- [[LLMContext]] — Skills operate within bounded context via progressive disclosure\n- [[Agent]] — Skill is the unit that empowers Agents\n- [[MCP]] — complementary tool-connection standard\n\n## Contradictions\n- None detected at ingest time.",
       "preview": "## Summary A concept-learning HTML document generated by silent-madman's concept-explainer skill on 2026-09-05. Defines Skill as an organized folder of instructions, scripts, and resources that Claude loads on demand whe",
-      "group": -1,
+      "group": 1,
       "value": 17
     }
   ],
   "edges": [
-    {
-      "id": "overview->sources/agent:EXTRACTED",
-      "from": "overview",
-      "to": "sources/agent",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/Compaction:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/Compaction",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/Transformer:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/Transformer",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->entities/AgentZeroMemory:EXTRACTED",
-      "from": "overview",
-      "to": "entities/AgentZeroMemory",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/MCP:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/MCP",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/ProgressiveDisclosure:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/ProgressiveDisclosure",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->entities/MemGPT:EXTRACTED",
-      "from": "overview",
-      "to": "entities/MemGPT",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/Abstention:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/Abstention",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/LongTermMemory:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/LongTermMemory",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->entities/OpenAI:EXTRACTED",
-      "from": "overview",
-      "to": "entities/OpenAI",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->entities/Zep:EXTRACTED",
-      "from": "overview",
-      "to": "entities/Zep",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/ContextRot:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/ContextRot",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->entities/Anthropic:EXTRACTED",
-      "from": "overview",
-      "to": "entities/Anthropic",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/CitationLock:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/CitationLock",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->concepts/Provenance:EXTRACTED",
-      "from": "overview",
-      "to": "concepts/Provenance",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "overview->sources/mcp-2026-07-28:EXTRACTED",
-      "from": "overview",
-      "to": "sources/mcp-2026-07-28",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
     {
       "id": "overview->concepts/ContextEngineering:EXTRACTED",
       "from": "overview",
@@ -524,6 +364,176 @@
       "label": ""
     },
     {
+      "id": "overview->concepts/LongTermMemory:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/LongTermMemory",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->entities/LongMemEval:EXTRACTED",
+      "from": "overview",
+      "to": "entities/LongMemEval",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->sources/mcp-2026-07-28:EXTRACTED",
+      "from": "overview",
+      "to": "sources/mcp-2026-07-28",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->entities/MemGPT:EXTRACTED",
+      "from": "overview",
+      "to": "entities/MemGPT",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/Provenance:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/Provenance",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->sources/agent:EXTRACTED",
+      "from": "overview",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/Transformer:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/Transformer",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->entities/Anthropic:EXTRACTED",
+      "from": "overview",
+      "to": "entities/Anthropic",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->entities/Zep:EXTRACTED",
+      "from": "overview",
+      "to": "entities/Zep",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/ProgressiveDisclosure:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/ProgressiveDisclosure",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->entities/AgentZeroMemory:EXTRACTED",
+      "from": "overview",
+      "to": "entities/AgentZeroMemory",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/Compaction:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/Compaction",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/ContextRot:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/ContextRot",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/MCP:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/MCP",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/Abstention:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/Abstention",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/CitationLock:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/CitationLock",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->entities/OpenAI:EXTRACTED",
+      "from": "overview",
+      "to": "entities/OpenAI",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
       "id": "overview->concepts/LLMContext:EXTRACTED",
       "from": "overview",
       "to": "concepts/LLMContext",
@@ -534,8 +544,38 @@
       "label": ""
     },
     {
-      "id": "overview->entities/LongMemEval:EXTRACTED",
-      "from": "overview",
+      "id": "concepts/Abstention->sources/agent-memory-provenance:EXTRACTED",
+      "from": "concepts/Abstention",
+      "to": "sources/agent-memory-provenance",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Abstention->concepts/LongTermMemory:EXTRACTED",
+      "from": "concepts/Abstention",
+      "to": "concepts/LongTermMemory",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Abstention->concepts/CitationLock:EXTRACTED",
+      "from": "concepts/Abstention",
+      "to": "concepts/CitationLock",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Abstention->entities/LongMemEval:EXTRACTED",
+      "from": "concepts/Abstention",
       "to": "entities/LongMemEval",
       "type": "EXTRACTED",
       "color": "#555555",
@@ -554,69 +594,9 @@
       "label": ""
     },
     {
-      "id": "concepts/Abstention->concepts/LongTermMemory:EXTRACTED",
-      "from": "concepts/Abstention",
-      "to": "concepts/LongTermMemory",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Abstention->sources/agent-memory-provenance:EXTRACTED",
-      "from": "concepts/Abstention",
-      "to": "sources/agent-memory-provenance",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Abstention->entities/LongMemEval:EXTRACTED",
-      "from": "concepts/Abstention",
-      "to": "entities/LongMemEval",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Abstention->concepts/CitationLock:EXTRACTED",
-      "from": "concepts/Abstention",
-      "to": "concepts/CitationLock",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Agent->concepts/ReAct:EXTRACTED",
-      "from": "concepts/Agent",
-      "to": "concepts/ReAct",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
       "id": "concepts/Agent->sources/skill:EXTRACTED",
       "from": "concepts/Agent",
       "to": "sources/skill",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Agent->entities/OpenAI:EXTRACTED",
-      "from": "concepts/Agent",
-      "to": "entities/OpenAI",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -634,9 +614,19 @@
       "label": ""
     },
     {
-      "id": "concepts/Agent->concepts/ProgressiveDisclosure:EXTRACTED",
+      "id": "concepts/Agent->entities/Anthropic:EXTRACTED",
       "from": "concepts/Agent",
-      "to": "concepts/ProgressiveDisclosure",
+      "to": "entities/Anthropic",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Agent->entities/OpenAI:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "entities/OpenAI",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -654,9 +644,9 @@
       "label": ""
     },
     {
-      "id": "concepts/Agent->entities/Anthropic:EXTRACTED",
+      "id": "concepts/Agent->concepts/ProgressiveDisclosure:EXTRACTED",
       "from": "concepts/Agent",
-      "to": "entities/Anthropic",
+      "to": "concepts/ProgressiveDisclosure",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -664,9 +654,19 @@
       "label": ""
     },
     {
-      "id": "concepts/CitationLock->concepts/Provenance:EXTRACTED",
+      "id": "concepts/Agent->concepts/ReAct:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "concepts/ReAct",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/CitationLock->sources/agent-memory-provenance:EXTRACTED",
       "from": "concepts/CitationLock",
-      "to": "concepts/Provenance",
+      "to": "sources/agent-memory-provenance",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -694,39 +694,9 @@
       "label": ""
     },
     {
-      "id": "concepts/CitationLock->sources/agent-memory-provenance:EXTRACTED",
+      "id": "concepts/CitationLock->concepts/Provenance:EXTRACTED",
       "from": "concepts/CitationLock",
-      "to": "sources/agent-memory-provenance",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Compaction->sources/agent:EXTRACTED",
-      "from": "concepts/Compaction",
-      "to": "sources/agent",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Compaction->concepts/ContextEngineering:EXTRACTED",
-      "from": "concepts/Compaction",
-      "to": "concepts/ContextEngineering",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Compaction->sources/context-engineering:EXTRACTED",
-      "from": "concepts/Compaction",
-      "to": "sources/context-engineering",
+      "to": "concepts/Provenance",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -744,9 +714,29 @@
       "label": ""
     },
     {
-      "id": "concepts/ContextEngineering->concepts/Provenance:EXTRACTED",
-      "from": "concepts/ContextEngineering",
-      "to": "concepts/Provenance",
+      "id": "concepts/Compaction->sources/context-engineering:EXTRACTED",
+      "from": "concepts/Compaction",
+      "to": "sources/context-engineering",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Compaction->concepts/ContextEngineering:EXTRACTED",
+      "from": "concepts/Compaction",
+      "to": "concepts/ContextEngineering",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Compaction->sources/agent:EXTRACTED",
+      "from": "concepts/Compaction",
+      "to": "sources/agent",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -774,9 +764,9 @@
       "label": ""
     },
     {
-      "id": "concepts/ContextEngineering->concepts/ProgressiveDisclosure:EXTRACTED",
+      "id": "concepts/ContextEngineering->concepts/Transformer:EXTRACTED",
       "from": "concepts/ContextEngineering",
-      "to": "concepts/ProgressiveDisclosure",
+      "to": "concepts/Transformer",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -794,9 +784,9 @@
       "label": ""
     },
     {
-      "id": "concepts/ContextEngineering->concepts/ContextRot:EXTRACTED",
+      "id": "concepts/ContextEngineering->concepts/ProgressiveDisclosure:EXTRACTED",
       "from": "concepts/ContextEngineering",
-      "to": "concepts/ContextRot",
+      "to": "concepts/ProgressiveDisclosure",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -804,9 +794,19 @@
       "label": ""
     },
     {
-      "id": "concepts/ContextEngineering->concepts/Transformer:EXTRACTED",
+      "id": "concepts/ContextEngineering->concepts/Provenance:EXTRACTED",
       "from": "concepts/ContextEngineering",
-      "to": "concepts/Transformer",
+      "to": "concepts/Provenance",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/ContextEngineering->concepts/ContextRot:EXTRACTED",
+      "from": "concepts/ContextEngineering",
+      "to": "concepts/ContextRot",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -824,9 +824,9 @@
       "label": ""
     },
     {
-      "id": "concepts/ContextRot->concepts/LLMContext:EXTRACTED",
+      "id": "concepts/ContextRot->concepts/Transformer:EXTRACTED",
       "from": "concepts/ContextRot",
-      "to": "concepts/LLMContext",
+      "to": "concepts/Transformer",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -844,9 +844,9 @@
       "label": ""
     },
     {
-      "id": "concepts/ContextRot->concepts/Transformer:EXTRACTED",
+      "id": "concepts/ContextRot->concepts/LLMContext:EXTRACTED",
       "from": "concepts/ContextRot",
-      "to": "concepts/Transformer",
+      "to": "concepts/LLMContext",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -864,9 +864,9 @@
       "label": ""
     },
     {
-      "id": "concepts/LLMContext->sources/agent:EXTRACTED",
+      "id": "concepts/LLMContext->concepts/Token:EXTRACTED",
       "from": "concepts/LLMContext",
-      "to": "sources/agent",
+      "to": "concepts/Token",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -884,9 +884,9 @@
       "label": ""
     },
     {
-      "id": "concepts/LLMContext->concepts/Token:EXTRACTED",
+      "id": "concepts/LLMContext->sources/agent:EXTRACTED",
       "from": "concepts/LLMContext",
-      "to": "concepts/Token",
+      "to": "sources/agent",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -914,9 +914,9 @@
       "label": ""
     },
     {
-      "id": "concepts/LongTermMemory->concepts/Provenance:EXTRACTED",
+      "id": "concepts/LongTermMemory->sources/agent-memory-provenance:EXTRACTED",
       "from": "concepts/LongTermMemory",
-      "to": "concepts/Provenance",
+      "to": "sources/agent-memory-provenance",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -934,9 +934,9 @@
       "label": ""
     },
     {
-      "id": "concepts/LongTermMemory->entities/AgentZeroMemory:EXTRACTED",
+      "id": "concepts/LongTermMemory->entities/Zep:EXTRACTED",
       "from": "concepts/LongTermMemory",
-      "to": "entities/AgentZeroMemory",
+      "to": "entities/Zep",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -944,9 +944,9 @@
       "label": ""
     },
     {
-      "id": "concepts/LongTermMemory->entities/Zep:EXTRACTED",
+      "id": "concepts/LongTermMemory->entities/LongMemEval:EXTRACTED",
       "from": "concepts/LongTermMemory",
-      "to": "entities/Zep",
+      "to": "entities/LongMemEval",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -974,9 +974,9 @@
       "label": ""
     },
     {
-      "id": "concepts/LongTermMemory->sources/agent-memory-provenance:EXTRACTED",
+      "id": "concepts/LongTermMemory->entities/AgentZeroMemory:EXTRACTED",
       "from": "concepts/LongTermMemory",
-      "to": "sources/agent-memory-provenance",
+      "to": "entities/AgentZeroMemory",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -984,9 +984,9 @@
       "label": ""
     },
     {
-      "id": "concepts/LongTermMemory->entities/LongMemEval:EXTRACTED",
+      "id": "concepts/LongTermMemory->concepts/Provenance:EXTRACTED",
       "from": "concepts/LongTermMemory",
-      "to": "entities/LongMemEval",
+      "to": "concepts/Provenance",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -994,9 +994,9 @@
       "label": ""
     },
     {
-      "id": "concepts/MCP->sources/mcp-2026-07-28:EXTRACTED",
+      "id": "concepts/MCP->sources/skill:EXTRACTED",
       "from": "concepts/MCP",
-      "to": "sources/mcp-2026-07-28",
+      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1024,9 +1024,9 @@
       "label": ""
     },
     {
-      "id": "concepts/MCP->sources/skill:EXTRACTED",
+      "id": "concepts/MCP->entities/Anthropic:EXTRACTED",
       "from": "concepts/MCP",
-      "to": "sources/skill",
+      "to": "entities/Anthropic",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1044,6 +1044,16 @@
       "label": ""
     },
     {
+      "id": "concepts/MCP->sources/mcp-2026-07-28:EXTRACTED",
+      "from": "concepts/MCP",
+      "to": "sources/mcp-2026-07-28",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
       "id": "concepts/MCP->concepts/ProgressiveDisclosure:EXTRACTED",
       "from": "concepts/MCP",
       "to": "concepts/ProgressiveDisclosure",
@@ -1054,9 +1064,9 @@
       "label": ""
     },
     {
-      "id": "concepts/MCP->entities/Anthropic:EXTRACTED",
-      "from": "concepts/MCP",
-      "to": "entities/Anthropic",
+      "id": "concepts/ProgressiveDisclosure->sources/skill:EXTRACTED",
+      "from": "concepts/ProgressiveDisclosure",
+      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1067,16 +1077,6 @@
       "id": "concepts/ProgressiveDisclosure->sources/agent:EXTRACTED",
       "from": "concepts/ProgressiveDisclosure",
       "to": "sources/agent",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/ProgressiveDisclosure->sources/skill:EXTRACTED",
-      "from": "concepts/ProgressiveDisclosure",
-      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1104,9 +1104,9 @@
       "label": ""
     },
     {
-      "id": "concepts/ReAct->sources/agent:EXTRACTED",
+      "id": "concepts/ReAct->sources/skill:EXTRACTED",
       "from": "concepts/ReAct",
-      "to": "sources/agent",
+      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1114,9 +1114,9 @@
       "label": ""
     },
     {
-      "id": "concepts/ReAct->sources/skill:EXTRACTED",
+      "id": "concepts/ReAct->sources/agent:EXTRACTED",
       "from": "concepts/ReAct",
-      "to": "sources/skill",
+      "to": "sources/agent",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1134,29 +1134,9 @@
       "label": ""
     },
     {
-      "id": "concepts/Skill->concepts/MCP:EXTRACTED",
+      "id": "concepts/Skill->sources/skill:EXTRACTED",
       "from": "concepts/Skill",
-      "to": "concepts/MCP",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Skill->concepts/ProgressiveDisclosure:EXTRACTED",
-      "from": "concepts/Skill",
-      "to": "concepts/ProgressiveDisclosure",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "concepts/Skill->concepts/LLMContext:EXTRACTED",
-      "from": "concepts/Skill",
-      "to": "concepts/LLMContext",
+      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1174,9 +1154,9 @@
       "label": ""
     },
     {
-      "id": "concepts/Skill->sources/skill:EXTRACTED",
+      "id": "concepts/Skill->concepts/LLMContext:EXTRACTED",
       "from": "concepts/Skill",
-      "to": "sources/skill",
+      "to": "concepts/LLMContext",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1184,9 +1164,19 @@
       "label": ""
     },
     {
-      "id": "concepts/Token->concepts/Transformer:EXTRACTED",
-      "from": "concepts/Token",
-      "to": "concepts/Transformer",
+      "id": "concepts/Skill->concepts/ProgressiveDisclosure:EXTRACTED",
+      "from": "concepts/Skill",
+      "to": "concepts/ProgressiveDisclosure",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Skill->concepts/MCP:EXTRACTED",
+      "from": "concepts/Skill",
+      "to": "concepts/MCP",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1204,9 +1194,9 @@
       "label": ""
     },
     {
-      "id": "concepts/Token->sources/skill:EXTRACTED",
+      "id": "concepts/Token->concepts/Transformer:EXTRACTED",
       "from": "concepts/Token",
-      "to": "sources/skill",
+      "to": "concepts/Transformer",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1214,8 +1204,8 @@
       "label": ""
     },
     {
-      "id": "concepts/Transformer->sources/skill:EXTRACTED",
-      "from": "concepts/Transformer",
+      "id": "concepts/Token->sources/skill:EXTRACTED",
+      "from": "concepts/Token",
       "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
@@ -1234,9 +1224,9 @@
       "label": ""
     },
     {
-      "id": "entities/AgentZeroMemory->concepts/Provenance:EXTRACTED",
-      "from": "entities/AgentZeroMemory",
-      "to": "concepts/Provenance",
+      "id": "concepts/Transformer->sources/skill:EXTRACTED",
+      "from": "concepts/Transformer",
+      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1244,9 +1234,19 @@
       "label": ""
     },
     {
-      "id": "entities/AgentZeroMemory->concepts/Abstention:EXTRACTED",
+      "id": "entities/AgentZeroMemory->entities/LongMemEval:EXTRACTED",
       "from": "entities/AgentZeroMemory",
-      "to": "concepts/Abstention",
+      "to": "entities/LongMemEval",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/AgentZeroMemory->concepts/Provenance:EXTRACTED",
+      "from": "entities/AgentZeroMemory",
+      "to": "concepts/Provenance",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1264,9 +1264,9 @@
       "label": ""
     },
     {
-      "id": "entities/AgentZeroMemory->entities/LongMemEval:EXTRACTED",
+      "id": "entities/AgentZeroMemory->concepts/Abstention:EXTRACTED",
       "from": "entities/AgentZeroMemory",
-      "to": "entities/LongMemEval",
+      "to": "concepts/Abstention",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1364,9 +1364,9 @@
       "label": ""
     },
     {
-      "id": "entities/OpenAI->sources/agent:EXTRACTED",
+      "id": "entities/OpenAI->sources/skill:EXTRACTED",
       "from": "entities/OpenAI",
-      "to": "sources/agent",
+      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1374,9 +1374,9 @@
       "label": ""
     },
     {
-      "id": "entities/OpenAI->sources/skill:EXTRACTED",
+      "id": "entities/OpenAI->sources/agent:EXTRACTED",
       "from": "entities/OpenAI",
-      "to": "sources/skill",
+      "to": "sources/agent",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1414,16 +1414,6 @@
       "label": ""
     },
     {
-      "id": "sources/agent-memory-provenance->entities/AgentZeroMemory:EXTRACTED",
-      "from": "sources/agent-memory-provenance",
-      "to": "entities/AgentZeroMemory",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
       "id": "sources/agent-memory-provenance->entities/Zep:EXTRACTED",
       "from": "sources/agent-memory-provenance",
       "to": "entities/Zep",
@@ -1444,9 +1434,9 @@
       "label": ""
     },
     {
-      "id": "sources/agent->sources/skill:EXTRACTED",
-      "from": "sources/agent",
-      "to": "sources/skill",
+      "id": "sources/agent-memory-provenance->entities/AgentZeroMemory:EXTRACTED",
+      "from": "sources/agent-memory-provenance",
+      "to": "entities/AgentZeroMemory",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1454,9 +1444,9 @@
       "label": ""
     },
     {
-      "id": "sources/context-engineering->sources/agent:EXTRACTED",
-      "from": "sources/context-engineering",
-      "to": "sources/agent",
+      "id": "sources/agent->sources/skill:EXTRACTED",
+      "from": "sources/agent",
+      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1474,19 +1464,9 @@
       "label": ""
     },
     {
-      "id": "sources/context-engineering->concepts/ProgressiveDisclosure:EXTRACTED",
+      "id": "sources/context-engineering->sources/agent:EXTRACTED",
       "from": "sources/context-engineering",
-      "to": "concepts/ProgressiveDisclosure",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "sources/context-engineering->concepts/LLMContext:EXTRACTED",
-      "from": "sources/context-engineering",
-      "to": "concepts/LLMContext",
+      "to": "sources/agent",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1514,9 +1494,19 @@
       "label": ""
     },
     {
-      "id": "sources/llm-context->sources/agent:EXTRACTED",
-      "from": "sources/llm-context",
-      "to": "sources/agent",
+      "id": "sources/context-engineering->concepts/LLMContext:EXTRACTED",
+      "from": "sources/context-engineering",
+      "to": "concepts/LLMContext",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "sources/context-engineering->concepts/ProgressiveDisclosure:EXTRACTED",
+      "from": "sources/context-engineering",
+      "to": "concepts/ProgressiveDisclosure",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1534,9 +1524,29 @@
       "label": ""
     },
     {
+      "id": "sources/llm-context->sources/agent:EXTRACTED",
+      "from": "sources/llm-context",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
       "id": "sources/llm-context->entities/Anthropic:EXTRACTED",
       "from": "sources/llm-context",
       "to": "entities/Anthropic",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "sources/mcp-2026-07-28->sources/skill:EXTRACTED",
+      "from": "sources/mcp-2026-07-28",
+      "to": "sources/skill",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1564,9 +1574,9 @@
       "label": ""
     },
     {
-      "id": "sources/mcp-2026-07-28->sources/skill:EXTRACTED",
+      "id": "sources/mcp-2026-07-28->entities/Anthropic:EXTRACTED",
       "from": "sources/mcp-2026-07-28",
-      "to": "sources/skill",
+      "to": "entities/Anthropic",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
@@ -1577,16 +1587,6 @@
       "id": "sources/mcp-2026-07-28->entities/OpenAI:EXTRACTED",
       "from": "sources/mcp-2026-07-28",
       "to": "entities/OpenAI",
-      "type": "EXTRACTED",
-      "color": "#555555",
-      "confidence": 1.0,
-      "title": "",
-      "label": ""
-    },
-    {
-      "id": "sources/mcp-2026-07-28->entities/Anthropic:EXTRACTED",
-      "from": "sources/mcp-2026-07-28",
-      "to": "entities/Anthropic",
       "type": "EXTRACTED",
       "color": "#555555",
       "confidence": 1.0,
