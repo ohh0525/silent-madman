@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="docx-page-size" content="A4">
+<title>Python 基础语法讲义（第 1–4 课）</title>
+<style>
+  :root {
+    --layout-contentWidth: 165mm;
+    --typography-fontSize-h1: 18pt;
+    --typography-fontSize-h2: 15pt;
+    --typography-fontSize-h3: 13pt;
+    --typography-fontSize-body: 11pt;
+    --typography-fontSize-small: 9pt;
+    --typography-fontSize-title: 24pt;
+    --typography-fontFamily-heading: PingFang SC, 苹方-简, 微软雅黑, sans-serif;
+    --typography-fontFamily-body: PingFang SC, 苹方-简, 微软雅黑, sans-serif;
+    --typography-fontFamily-mono: JetBrains Mono, Fira Code, Consolas, monospace;
+    --typography-lineHeight-body: 1.7;
+    --typography-lineHeight-heading: 1.3;
+    --color-primary: #2563EB;
+    --color-text: #111827;
+    --color-muted: #6B7280;
+    --color-border: #E5E7EB;
+    --color-bg: #FFFFFF;
+    --color-highlight: #FEF3C7;
+    --color-codeBg: #F9FAFB;
+
+    --page-content-width: var(--layout-contentWidth, 15.6cm);
+    --fs-title: var(--typography-fontSize-title, 24pt);
+    --fs-h1: var(--typography-fontSize-h1, 18pt);
+    --fs-h2: var(--typography-fontSize-h2, 15pt);
+    --fs-h3: var(--typography-fontSize-h3, 13pt);
+    --fs-body: var(--typography-fontSize-body, 11pt);
+    --fs-small: var(--typography-fontSize-small, 9pt);
+    --ff-heading: var(--typography-fontFamily-heading, "PingFang SC", sans-serif);
+    --ff-body: var(--typography-fontFamily-body, "PingFang SC", sans-serif);
+    --ff-mono: var(--typography-fontFamily-mono, monospace);
+    --ff-mono-alt: var(--typography-fontFamily-code, monospace);
+    --lh-body: var(--typography-lineHeight-body, 1.6);
+    --lh-heading: var(--typography-lineHeight-heading, 1.3);
+    --fw-bold: var(--typography-fontWeight-heading, 600);
+    --fw-normal: var(--typography-fontWeight-body, 400);
+    --spacing-paragraph: var(--spacing-paragraphValue, 0.6em);
+    --spacing-section: var(--spacing-sectionGap, 2em);
+    --spacing-block: var(--spacing-blockValue, 1em);
+    --margin-page: var(--layout-marginTop, 2.5cm);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--ff-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+    max-width: var(--page-content-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: var(--margin-page);
+    padding-bottom: var(--margin-page);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--ff-heading);
+    line-height: var(--lh-heading);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin-top: var(--spacing-section);
+    margin-bottom: var(--spacing-paragraph);
+  }
+  h1 { font-size: var(--fs-h1); }
+  h2 { font-size: var(--fs-h2); }
+  h3 { font-size: var(--fs-h3); }
+  h4 { font-size: var(--fs-body); }
+
+  p { margin-bottom: var(--spacing-paragraph); }
+
+  ul, ol { padding-left: var(--spacing-section); margin-bottom: var(--spacing-paragraph); }
+  li { margin-bottom: var(--spacing-paragraph); line-height: var(--lh-body); }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: var(--spacing-block);
+    font-size: var(--fs-body);
+  }
+  th, td {
+    padding: var(--spacing-paragraph);
+    border: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+    line-height: var(--lh-body);
+  }
+  th {
+    font-family: var(--ff-heading);
+    font-weight: var(--fw-bold);
+    background: var(--color-codeBg);
+  }
+
+  pre {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-small);
+    line-height: var(--lh-heading);
+    background: var(--color-codeBg);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-block);
+    margin-bottom: var(--spacing-block);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  pre code { font-family: var(--ff-mono); background: transparent; padding: 0; border: none; }
+
+  code {
+    font-family: var(--ff-mono-alt);
+    font-size: var(--fs-small);
+    background: var(--color-codeBg);
+  }
+
+  blockquote {
+    border-left: 3px solid var(--color-primary);
+    background: var(--color-codeBg);
+    padding: var(--spacing-block);
+    margin-bottom: var(--spacing-block);
+    color: var(--color-text);
+    line-height: var(--lh-body);
+  }
+  blockquote p { margin-bottom: 0; }
+
+  strong { font-weight: var(--fw-bold); color: var(--color-text); }
+  em { color: var(--color-muted); }
+
+  .doc-toc {
+    margin-bottom: var(--spacing-section);
+    padding: var(--spacing-block);
+    background: var(--color-codeBg);
+    border: 1px solid var(--color-border);
+  }
+  .toc-title {
+    font-family: var(--ff-heading);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    margin-bottom: var(--spacing-paragraph);
+  }
+  .toc-list, .toc-list ol, .toc-list ul {
+    list-style: none;
+    list-style-type: none;
+    padding-left: var(--spacing-block);
+  }
+  .toc-list li { margin-bottom: var(--spacing-paragraph); line-height: var(--lh-heading); }
+  .toc-list a { color: var(--color-text); text-decoration: none; }
+
+  section[role="cover"] { text-align: center; }
+  .cover-eyebrow {
+    text-align: center;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-small);
+    color: var(--color-muted);
+    margin-bottom: var(--spacing-section);
+  }
+  .cover-title {
+    text-align: center;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-title);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    line-height: var(--lh-heading);
+    margin-bottom: var(--spacing-block);
+  }
+  .cover-subtitle {
+    text-align: center;
+    font-size: var(--fs-h3);
+    color: var(--color-muted);
+    margin-bottom: var(--spacing-section);
+  }
+  .cover-info {
+    margin-top: var(--spacing-section);
+    text-align: left;
+    font-size: var(--fs-body);
+  }
+  .cover-info td { border: none; padding: var(--spacing-paragraph); }
+  .cover-info td:first-child {
+    font-family: var(--ff-heading);
+    font-weight: var(--fw-bold);
+    width: 30%;
+    color: var(--color-muted);
+  }
+
+  .doc-footer {
+    margin-top: var(--spacing-section);
+    color: var(--color-muted);
+    font-size: var(--fs-small);
+  }
+
+  @page {
+    @bottom-center { content: counter(page); }
+  }
+  @page cover {
+    @bottom-center { content: none; }
+  }
+  section[role="cover"] { page: cover; }
+</style>
+</head>
+<body>
+<section role="cover">
+  <p class="cover-eyebrow">课堂讲义</p>
+  <h1 class="cover-title">Python 基础语法讲义（第 1–4 课）</h1>
+  <p class="cover-subtitle">环境与基础语法 · 流程控制与数据结构 · 函数模块与文件 · 统计分析实战</p>
+  <table class="cover-info"><tbody><tr><td>课程名称</td><td>Python 基础语法</td></tr><tr><td>适用课次</td><td>第 1–4 课</td></tr><tr><td>总课时</td><td>8 个半场，每半场 45 分钟</td></tr><tr><td>目标产出</td><td>能独立完成一份数据分析</td></tr></tbody></table>
+</section>
+<section role="body" data-page-restart="1">
+<nav class="doc-toc" aria-label="文档目录"><p class="toc-title">目录</p><ol class="toc-list"><li class="toc-l1"><a href="#section-1">使用说明</a></li><li class="toc-l1"><a href="#section-2">第 1 课 环境搭建与基础语法</a></li><li class="toc-l2"><a href="#section-3">1.1 环境搭建与第一个程序</a></li><li class="toc-l2"><a href="#section-4">1.2 变量与数据类型</a></li><li class="toc-l2"><a href="#section-5">1.3 字符串操作</a></li><li class="toc-l2"><a href="#section-6">1.4 运算符</a></li><li class="toc-l2"><a href="#section-7">1.5 输入输出与注释</a></li><li class="toc-l1"><a href="#section-8">第 2 课 流程控制与数据结构</a></li><li class="toc-l2"><a href="#section-9">2.1 条件判断</a></li><li class="toc-l2"><a href="#section-10">2.2 for 循环</a></li><li class="toc-l2"><a href="#section-11">2.3 while 循环</a></li><li class="toc-l2"><a href="#section-12">2.4 列表</a></li><li class="toc-l2"><a href="#section-13">2.5 元组与集合</a></li><li class="toc-l2"><a href="#section-14">2.6 字典</a></li><li class="toc-l1"><a href="#section-15">第 3 课 函数、模块与文件</a></li><li class="toc-l2"><a href="#section-16">3.1 函数的定义与调用</a></li><li class="toc-l2"><a href="#section-17">3.2 作用域</a></li><li class="toc-l2"><a href="#section-18">3.3 lambda 与常用函数式写法</a></li><li class="toc-l2"><a href="#section-19">3.4 模块与包</a></li><li class="toc-l2"><a href="#section-20">3.5 文件读写</a></li><li class="toc-l2"><a href="#section-21">3.6 异常处理</a></li><li class="toc-l1"><a href="#section-22">第 4 课 统计分析实战</a></li><li class="toc-l2"><a href="#section-23">4.1 NumPy 数组与向量化</a></li><li class="toc-l2"><a href="#section-24">4.2 pandas 数据框入门</a></li><li class="toc-l2"><a href="#section-25">4.3 数据清洗</a></li><li class="toc-l2"><a href="#section-26">4.4 分组聚合</a></li><li class="toc-l2"><a href="#section-27">4.5 实战小项目</a></li></ol></nav>
+<h2 id="section-1">使用说明</h2>
+<p>本讲义配套《Python 基础语法课程教学方案》使用，覆盖 4 次课、8 个半场（每半场 45 分钟）的全部教学内容。</p>
+<p>讲义按课次组织，每课分上半场与下半场两个部分。编写遵循三条原则：</p>
+<ol>
+<li><strong>代码可直接运行</strong>。所有示例都标注了预期输出，请务必自己敲一遍再对照结果，不要只看不写。</li>
+<li><strong>示例围绕数据场景</strong>。全部示例取自"数据整理与统计"这一语境，为第 4 课的分析实战做铺垫。</li>
+<li><strong>标注易错点</strong>。凡是用 <code>注意</code> 标出的地方，都是初学者最容易踩的坑，建议重点留意。</li>
+</ol>
+<p>阅读方式建议：课堂上跟随教师同步输入代码；课后重读讲义时，先把示例的预期输出遮住，自己先猜结果再运行验证。</p>
+<h2 id="section-2">第 1 课 环境搭建与基础语法</h2>
+<p>本课目标：把 Python 环境跑起来，理解变量与数据类型，能对文本和数字做基本操作。</p>
+<h3 id="section-3">1.1 环境搭建与第一个程序</h3>
+<p>安装 Python 最省事的方式是安装 Anaconda 发行版，它一次性包含了 Jupyter Notebook、NumPy、pandas 等后续需要的全部工具。</p>
+<p>安装完成后，打开 Jupyter Notebook，新建一个 Notebook 文件，在第一个单元格中输入以下代码并按 <code>Shift + Enter</code> 运行：</p>
+<pre><code class="language-python">print(&quot;Hello, Python!&quot;)
+print(1 + 1)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>Hello, Python!
+2
+</code></pre>
+<p><strong>关于 Notebook 的工作方式</strong>：Notebook 由一个个"单元格"组成，每个单元格可以单独运行，变量在单元格之间共享。这种"写一段、跑一段、看一段"的方式非常适合数据分析，也是本课程全程使用的主要工具。</p>
+<p>注意：单元格的执行顺序不等于书写顺序。如果发现变量值不符合预期，先检查是不是忘了运行上面某个单元格。</p>
+<h3 id="section-4">1.2 变量与数据类型</h3>
+<p>变量可以理解为"给一个数据贴上的标签"。在 Python 中不需要事先声明类型，直接赋值即可：</p>
+<pre><code class="language-python">name = &quot;张三&quot;
+age = 20
+height = 1.75
+is_student = True
+
+print(name, age, height, is_student)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三 20 1.75 True
+</code></pre>
+<p>Python 的四种基本数据类型：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>示例</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td>整数</td>
+<td><code>20</code>、<code>-3</code>、<code>1000</code></td>
+<td>人数、件数、次数</td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td>浮点数</td>
+<td><code>1.75</code>、<code>3.14</code>、<code>0.5</code></td>
+<td>价格、比例、均值</td>
+</tr>
+<tr>
+<td><code>str</code></td>
+<td>字符串</td>
+<td><code>"张三"</code>、<code>"2024-01"</code></td>
+<td>姓名、分类、日期文本</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td>布尔值</td>
+<td><code>True</code>、<code>False</code></td>
+<td>是否通过、是否合格</td>
+</tr>
+</tbody>
+</table>
+<p>用 <code>type()</code> 可以查看任意值的类型：</p>
+<pre><code class="language-python">print(type(20))
+print(type(1.75))
+print(type(&quot;张三&quot;))
+print(type(True))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>&lt;class 'int'&gt;
+&lt;class 'float'&gt;
+&lt;class 'str'&gt;
+&lt;class 'bool'&gt;
+</code></pre>
+<p><strong>类型转换</strong>。这是初学者最容易忽略、也最容易出问题的一环：</p>
+<pre><code class="language-python">a = &quot;20&quot;          # 这是字符串，不是数字
+print(type(a))
+
+b = int(a)        # 转成整数
+print(b + 5)      # 可以参与运算了
+</code></pre>
+<p>预期输出：</p>
+<pre><code>&lt;class 'str'&gt;
+25
+</code></pre>
+<p>反过来，数字也能转成字符串：</p>
+<pre><code class="language-python">score = 95
+print(&quot;我的成绩是 &quot; + str(score) + &quot; 分&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>我的成绩是 95 分
+</code></pre>
+<p>注意：把数字字符串和数字直接相加会报错。<code>"20" + 5</code> 会抛出 <code>TypeError</code>，必须先转换类型。后续读取 csv 文件时，所有读进来的内容默认都是字符串，因此"看到数字先想想它是不是字符串"是一个必须养成的习惯。</p>
+<h3 id="section-5">1.3 字符串操作</h3>
+<p>字符串是数据分析中出现频率最高的类型，因为原始数据里的分类字段、日期字段、文本字段都是字符串。</p>
+<p><strong>索引与切片</strong>。Python 的索引从 0 开始，负数表示从末尾倒数：</p>
+<pre><code class="language-python">s = &quot;2024-01-15&quot;
+
+print(s[0])       # 第 1 个字符
+print(s[-1])      # 最后 1 个字符
+print(s[0:4])     # 第 0 到第 3 个字符
+print(s[5:7])     # 第 5 到第 6 个字符
+</code></pre>
+<p>预期输出：</p>
+<pre><code>2
+5
+2024
+01
+</code></pre>
+<p>切片规则为 <code>s[起:止]</code>，取值包含"起"、不包含"止"。这是 Python 中非常重要的一个约定。</p>
+<p><strong>常用字符串方法</strong>：</p>
+<pre><code class="language-python">text = &quot;  张三, 20, 男  &quot;
+
+print(text.strip())              # 去掉两端空白
+print(text.strip().split(&quot;,&quot;))   # 按逗号拆分
+print(&quot;ABC&quot;.lower())             # 转小写
+print(&quot;abc&quot;.upper())             # 转大写
+print(&quot;张三&quot;.replace(&quot;张&quot;, &quot;李&quot;)) # 替换
+print(len(&quot;Python&quot;))             # 长度
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三, 20, 男
+['张三', ' 20', ' 男']
+abc
+ABC
+李四
+6
+</code></pre>
+<p><strong>f-string 格式化</strong>。这是当前推荐的字符串拼接方式，写法简洁、可读性好：</p>
+<pre><code class="language-python">name = &quot;张三&quot;
+score = 92.5
+
+print(f&quot;{name} 的成绩是 {score} 分&quot;)
+print(f&quot;平均分保留两位小数：{score:.2f}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三 的成绩是 92.5 分
+平均分保留两位小数：92.50
+</code></pre>
+<p>注意：<code>split()</code> 的结果是一个列表（第 2 课内容），且拆分后每段可能带空格，所以常写成 <code>[x.strip() for x in text.split(",")]</code> 的形式。</p>
+<h3 id="section-6">1.4 运算符</h3>
+<p><strong>算术运算符</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>含义</th>
+<th>示例</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+</code></td>
+<td>加</td>
+<td><code>7 + 2</code></td>
+<td><code>9</code></td>
+</tr>
+<tr>
+<td><code>-</code></td>
+<td>减</td>
+<td><code>7 - 2</code></td>
+<td><code>5</code></td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>乘</td>
+<td><code>7 * 2</code></td>
+<td><code>14</code></td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>除</td>
+<td><code>7 / 2</code></td>
+<td><code>3.5</code></td>
+</tr>
+<tr>
+<td><code>//</code></td>
+<td>整除（向下取整）</td>
+<td><code>7 // 2</code></td>
+<td><code>3</code></td>
+</tr>
+<tr>
+<td><code>%</code></td>
+<td>取余</td>
+<td><code>7 % 2</code></td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><code>**</code></td>
+<td>幂</td>
+<td><code>2 ** 3</code></td>
+<td><code>8</code></td>
+</tr>
+</tbody>
+</table>
+<p>其中 <code>//</code> 和 <code>%</code> 需要特别理解，它们在数据分析中常用于分组和取周期：</p>
+<pre><code class="language-python">total = 100
+groups = 7
+
+print(f&quot;每组 {total // groups} 个，还剩 {total % groups} 个&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>每组 14 个，还剩 2 个
+</code></pre>
+<p><strong>比较运算符与逻辑运算符</strong>：</p>
+<pre><code class="language-python">score = 85
+
+print(score &gt;= 60)                        # 是否及格
+print(score &gt;= 60 and score &lt; 90)         # 是否在 60 到 90 之间
+print(score &lt; 60 or score &gt; 100)          # 是否异常
+print(not (score &gt;= 60))                  # 是否不及格
+</code></pre>
+<p>预期输出：</p>
+<pre><code>True
+True
+False
+False
+</code></pre>
+<p>注意：比较运算符的结果是布尔值 <code>True</code> / <code>False</code>，这正是第 2 课条件判断的基础。另外 <code>=</code> 是赋值，<code>==</code> 才是判断相等，两者不能混用。</p>
+<h3 id="section-7">1.5 输入输出与注释</h3>
+<p><strong>输入</strong>。<code>input()</code> 会把用户输入的内容一律当作字符串返回：</p>
+<pre><code class="language-python">name = input(&quot;请输入姓名：&quot;)
+score = input(&quot;请输入成绩：&quot;)
+
+print(type(score))
+</code></pre>
+<p>若输入姓名为"张三"、成绩为"88"，预期输出：</p>
+<pre><code>请输入姓名：张三
+请输入成绩：88
+&lt;class 'str'&gt;
+</code></pre>
+<p><strong><code>input()</code> 的返回值永远是字符串</strong>，这就是为什么读取数字输入时必须手动转换：</p>
+<pre><code class="language-python">score = float(input(&quot;请输入成绩：&quot;))
+print(f&quot;成绩加了 5 分后是 {score + 5}&quot;)
+</code></pre>
+<p><strong>输出格式化的常用写法</strong>：</p>
+<pre><code class="language-python">print(&quot;姓名&quot;, &quot;成绩&quot;, sep=&quot; | &quot;)
+print(&quot;第一行\n第二行&quot;)
+print(&quot;结果&quot;, end=&quot;&quot;)
+print(&quot;在同一行&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>姓名 | 成绩
+第一行
+第二行
+结果在同一行
+</code></pre>
+<p><strong>注释</strong>。注释不参与执行，用于解释代码意图：</p>
+<pre><code class="language-python"># 这是单行注释
+
+&quot;&quot;&quot;
+这是多行注释
+常用于说明函数用途
+&quot;&quot;&quot;
+
+total = 0  # 也可以写在代码行末尾
+</code></pre>
+<p><strong>本课小结</strong>：变量是数据的标签，四种基本类型覆盖了绝大多数场景，<code>type()</code> 是排查类型问题的第一工具，字符串方法用于清洗文本，运算符用于计算与判断。请完成练习册中第 1 课的题目后再进入第 2 课。</p>
+<h2 id="section-8">第 2 课 流程控制与数据结构</h2>
+<p>本课目标：让程序具备判断与重复的能力，并能用列表、字典等结构组织一批数据。这是四次课中的第一个分水岭。</p>
+<h3 id="section-9">2.1 条件判断</h3>
+<p><code>if</code> 语句根据条件的真假决定执行哪一段代码，Python 用<strong>缩进</strong>表示代码块的归属：</p>
+<pre><code class="language-python">score = 78
+
+if score &gt;= 90:
+    print(&quot;优秀&quot;)
+elif score &gt;= 80:
+    print(&quot;良好&quot;)
+elif score &gt;= 60:
+    print(&quot;及格&quot;)
+else:
+    print(&quot;不及格&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>及格
+</code></pre>
+<p>判断顺序是从上到下依次检查，一旦某个条件成立，后续分支就不再检查。因此条件的排列顺序很关键，若把 <code>score &gt;= 60</code> 放在最前面，所有 60 分以上的人都会被判为"及格"。</p>
+<p><strong>嵌套判断</strong>用于处理多层条件：</p>
+<pre><code class="language-python">score = 85
+attendance = 0.9
+
+if score &gt;= 60:
+    if attendance &gt;= 0.8:
+        print(&quot;通过考核&quot;)
+    else:
+        print(&quot;成绩及格但出勤不足&quot;)
+else:
+    print(&quot;未通过&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>通过考核
+</code></pre>
+<p>注意：缩进必须统一（建议统一用 4 个空格）。混用空格与 Tab 会报 <code>IndentationError</code>。冒号 <code>:</code> 不能省略。</p>
+<h3 id="section-10">2.2 for 循环</h3>
+<p><code>for</code> 循环用于"对一批数据中的每一个做同样的处理"：</p>
+<pre><code class="language-python">scores = [88, 92, 75, 60, 95]
+
+total = 0
+for s in scores:
+    total = total + s
+
+print(f&quot;总分 {total}，人数 {len(scores)}，均分 {total / len(scores):.2f}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>总分 410，人数 5，均分 82.00
+</code></pre>
+<p>这里的 <code>total = total + s</code> 是一个<strong>累加器</strong>模式，务必练熟，它是最常用的循环模式。</p>
+<p>配合 <code>range()</code> 可以生成指定范围的整数序列：</p>
+<pre><code class="language-python">for i in range(5):
+    print(i, end=&quot; &quot;)
+
+print()
+
+for i in range(1, 6):
+    print(i, end=&quot; &quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>0 1 2 3 4 
+1 2 3 4 5
+</code></pre>
+<p><code>range(n)</code> 生成 0 到 n-1；<code>range(a, b)</code> 生成 a 到 b-1。同样遵循"含起不含止"的规则。</p>
+<p><strong><code>break</code> 与 <code>continue</code></strong> 用于改变循环的正常流程：</p>
+<pre><code class="language-python">for s in [88, 92, 40, 75]:
+    if s &lt; 60:
+        print(f&quot;发现不及格成绩 {s}，停止检查&quot;)
+        break
+
+for s in [88, 92, 40, 75]:
+    if s &lt; 60:
+        continue
+    print(f&quot;及格成绩：{s}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>发现不及格成绩 40，停止检查
+及格成绩：88
+及格成绩：92
+及格成绩：75
+</code></pre>
+<h3 id="section-11">2.3 while 循环</h3>
+<p><code>while</code> 循环在条件为真时持续执行，适合"循环次数不确定"的场景：</p>
+<pre><code class="language-python">count = 0
+total = 0
+
+while count &lt; 5:
+    total = total + 10
+    count = count + 1
+
+print(f&quot;循环了 {count} 次，累加结果为 {total}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>循环了 5 次，累加结果为 50
+</code></pre>
+<p>注意：<code>while</code> 循环中必须存在能让条件最终变为假的语句（如 <code>count = count + 1</code>），否则会陷入死循环。若不慎进入死循环，在 Notebook 中点击"中断内核"按钮即可停止。</p>
+<h3 id="section-12">2.4 列表</h3>
+<p>列表用中括号表示，可以存放一批有序数据，是最接近"一列数据"的结构：</p>
+<pre><code class="language-python">scores = [88, 92, 75, 60, 95]
+
+print(len(scores))       # 元素个数
+print(scores[0])         # 第一个元素
+print(scores[-1])        # 最后一个元素
+print(scores[1:3])       # 切片
+print(sum(scores))       # 求和
+print(max(scores))       # 最大值
+print(min(scores))       # 最小值
+</code></pre>
+<p>预期输出：</p>
+<pre><code>5
+88
+95
+[92, 75]
+410
+95
+60
+</code></pre>
+<p><strong>增删改</strong>：</p>
+<pre><code class="language-python">scores = [88, 92, 75]
+
+scores.append(60)        # 末尾追加
+print(scores)
+
+scores.remove(92)        # 删除指定值
+print(scores)
+
+scores[0] = 90           # 修改
+print(scores)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>[88, 92, 75, 60]
+[88, 75, 60]
+[90, 75, 60]
+</code></pre>
+<p><strong>排序</strong>：</p>
+<pre><code class="language-python">scores = [88, 92, 75, 60, 95]
+
+scores.sort()                    # 升序，原地修改
+print(scores)
+
+scores.sort(reverse=True)        # 降序
+print(scores)
+
+print(sorted(scores))            # 返回新列表，不改原列表
+</code></pre>
+<p><strong>列表推导式</strong>是 Python 的常用简写方式，用一行完成"遍历 + 筛选/变换"：</p>
+<pre><code class="language-python">scores = [88, 92, 75, 60, 95]
+
+passed = [s for s in scores if s &gt;= 80]
+print(passed)
+
+doubled = [s * 2 for s in scores]
+print(doubled)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>[88, 92, 95]
+[176, 184, 150, 120, 190]
+</code></pre>
+<h3 id="section-13">2.5 元组与集合</h3>
+<p><strong>元组</strong>用小括号表示，内容不可修改，适合存放"固定不变的一组值"：</p>
+<pre><code class="language-python">point = (3, 5)
+
+print(point[0])
+print(len(point))
+</code></pre>
+<p>若尝试 <code>point[0] = 10</code> 会报 <code>TypeError</code>。元组的价值在于表达"这条数据不应该被改动"的意图。</p>
+<p><strong>集合</strong>用于去重与集合运算：</p>
+<pre><code class="language-python">cities = [&quot;北京&quot;, &quot;上海&quot;, &quot;北京&quot;, &quot;广州&quot;, &quot;上海&quot;]
+
+print(set(cities))                     # 自动去重
+
+a = {1, 2, 3}
+b = {2, 3, 4}
+print(a &amp; b)                           # 交集
+print(a | b)                           # 并集
+print(a - b)                           # 差集
+</code></pre>
+<p>预期输出：</p>
+<pre><code>{'北京', '上海', '广州'}
+{2, 3}
+{1, 2, 3, 4}
+{1}
+</code></pre>
+<p>注意：集合是无序的，因此打印顺序可能与输入顺序不同；<code>set(cities)</code> 后若要恢复成列表，需再套一层 <code>list()</code>。</p>
+<h3 id="section-14">2.6 字典</h3>
+<p>字典用键值对存储数据，是理解第 4 课 DataFrame 的关键：</p>
+<pre><code class="language-python">student = {
+    &quot;name&quot;: &quot;张三&quot;,
+    &quot;age&quot;: 20,
+    &quot;score&quot;: 92
+}
+
+print(student[&quot;name&quot;])
+print(student.get(&quot;height&quot;, &quot;未填写&quot;))    # 取不到时返回默认值
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三
+未填写
+</code></pre>
+<p><strong>遍历字典</strong>：</p>
+<pre><code class="language-python">student = {&quot;name&quot;: &quot;张三&quot;, &quot;age&quot;: 20, &quot;score&quot;: 92}
+
+for key in student.keys():
+    print(key)
+
+for key, value in student.items():
+    print(f&quot;{key} = {value}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>name
+age
+score
+name = 张三
+age = 20
+score = 92
+</code></pre>
+<p><strong>字典的典型用法：词频统计</strong>。这个模式在文本分析中极常用：</p>
+<pre><code class="language-python">words = [&quot;苹果&quot;, &quot;香蕉&quot;, &quot;苹果&quot;, &quot;橙子&quot;, &quot;苹果&quot;, &quot;香蕉&quot;]
+counter = {}
+
+for w in words:
+    if w in counter:
+        counter[w] = counter[w] + 1
+    else:
+        counter[w] = 1
+
+print(counter)
+
+sorted_items = sorted(counter.items(), key=lambda x: x[1], reverse=True)
+print(sorted_items)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>{'苹果': 3, '香蕉': 2, '橙子': 1}
+[('苹果', 3), ('香蕉', 2), ('橙子', 1)]
+</code></pre>
+<p>这里用到了 <code>lambda</code> 与 <code>sorted(key=...)</code>，第 3 课会专门讲解。</p>
+<p><strong>嵌套字典</strong>用于表达"一条记录有多个字段"：</p>
+<pre><code class="language-python">students = [
+    {&quot;name&quot;: &quot;张三&quot;, &quot;score&quot;: 92},
+    {&quot;name&quot;: &quot;李四&quot;, &quot;score&quot;: 75},
+    {&quot;name&quot;: &quot;王五&quot;, &quot;score&quot;: 88},
+]
+
+for s in students:
+    print(f&quot;{s['name']} 的成绩是 {s['score']}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三 的成绩是 92
+李四 的成绩是 75
+王五 的成绩是 88
+</code></pre>
+<p><strong>本课小结</strong>：本课的核心是把数据"装起来"并能批量处理。请重点理解——列表是"一列数据"，字典是"一条记录的字段映射"，两者组合就能表达一张表格。第 4 课的 DataFrame 正是这个思路的工程化实现。</p>
+<h2 id="section-15">第 3 课 函数、模块与文件</h2>
+<p>本课目标：把重复的逻辑封装成函数，学会读取外部数据文件，并让程序在出错时不崩溃。</p>
+<h3 id="section-16">3.1 函数的定义与调用</h3>
+<p>函数把一段逻辑打包并命名，便于重复使用：</p>
+<pre><code class="language-python">def average(scores):
+    total = sum(scores)
+    return total / len(scores)
+
+print(average([88, 92, 75]))
+print(average([60, 70, 80, 90]))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>85.0
+75.0
+</code></pre>
+<p><strong>要点</strong>：<code>def</code> 定义函数；<code>return</code> 把结果交还给调用方。若函数没有 <code>return</code>，则返回 <code>None</code>。</p>
+<p><strong>参数</strong>的几种形式：</p>
+<pre><code class="language-python">def describe(name, score, subject=&quot;数学&quot;):
+    return f&quot;{name} 的{subject}成绩是 {score}&quot;
+
+print(describe(&quot;张三&quot;, 92))
+print(describe(&quot;李四&quot;, 88, &quot;语文&quot;))
+print(describe(score=75, name=&quot;王五&quot;))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三 的数学成绩是 92
+李四 的语文成绩是 88
+王五 的数学成绩是 75
+</code></pre>
+<p><code>subject="数学"</code> 是默认参数，调用时不传就用默认值。带参数名的调用方式（关键字参数）可读性更好，且顺序无关。</p>
+<p><strong>返回多个值</strong>：</p>
+<pre><code class="language-python">def summarize(scores):
+    return min(scores), max(scores), sum(scores) / len(scores)
+
+low, high, avg = summarize([88, 92, 75])
+print(f&quot;最低 {low}，最高 {high}，平均 {avg:.2f}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>最低 75，最高 92，平均 85.00
+</code></pre>
+<h3 id="section-17">3.2 作用域</h3>
+<p>函数内部定义的变量是局部变量，函数外部无法访问：</p>
+<pre><code class="language-python">def calc():
+    result = 100
+    return result
+
+print(calc())
+print(result)     # 会报错
+</code></pre>
+<p>运行后会抛出 <code>NameError: name 'result' is not defined</code>。这是好事——它避免了不同函数之间的变量互相干扰。</p>
+<p>若确实需要函数内修改外部变量，需用 <code>global</code> 声明，但<strong>在数据分析中应尽量避免</strong>，更好的做法是把结果通过 <code>return</code> 返回。</p>
+<h3 id="section-18">3.3 lambda 与常用函数式写法</h3>
+<p><code>lambda</code> 用于定义简短的匿名函数，它的价值在于"作为参数传给别的函数"：</p>
+<pre><code class="language-python">square = lambda x: x * x
+print(square(5))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>25
+</code></pre>
+<p>实际使用中，<code>lambda</code> 几乎总是和 <code>sorted</code>、<code>map</code>、<code>filter</code> 一起出现：</p>
+<pre><code class="language-python">students = [
+    {&quot;name&quot;: &quot;张三&quot;, &quot;score&quot;: 92},
+    {&quot;name&quot;: &quot;李四&quot;, &quot;score&quot;: 75},
+    {&quot;name&quot;: &quot;王五&quot;, &quot;score&quot;: 88},
+]
+
+by_score = sorted(students, key=lambda s: s[&quot;score&quot;], reverse=True)
+for s in by_score:
+    print(s[&quot;name&quot;], s[&quot;score&quot;])
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三 92
+王五 88
+李四 75
+</code></pre>
+<p>其他常用写法：</p>
+<pre><code class="language-python">nums = [1, 2, 3, 4, 5]
+
+print(list(map(lambda x: x * 10, nums)))        # 每个元素乘 10
+print(list(filter(lambda x: x % 2 == 0, nums))) # 只保留偶数
+</code></pre>
+<p>预期输出：</p>
+<pre><code>[10, 20, 30, 40, 50]
+[2, 4]
+</code></pre>
+<p>注意：<code>lambda</code> 只能写一个表达式，不能写多行逻辑。如果逻辑复杂，请用 <code>def</code> 定义具名函数。</p>
+<h3 id="section-19">3.4 模块与包</h3>
+<p>模块就是一个 <code>.py</code> 文件，包是一组模块的集合。使用前需要 <code>import</code>：</p>
+<pre><code class="language-python">import math
+print(math.sqrt(16))
+
+from math import sqrt, pi
+print(sqrt(25))
+print(round(pi, 4))
+
+import pandas as pd          # 第三方库，起别名是通行做法
+</code></pre>
+<p>预期输出：</p>
+<pre><code>4.0
+5.0
+3.1416
+</code></pre>
+<p><strong>安装第三方库</strong>：在命令行中执行</p>
+<pre><code>pip install pandas
+</code></pre>
+<p>在 Notebook 中也可以直接执行（前面加感叹号）：</p>
+<pre><code class="language-python">!pip install pandas
+</code></pre>
+<p>注意：<code>import pandas as pd</code> 这一写法是数据分析领域的通用约定，请照此习惯书写，便于与教材和他人代码保持一致。</p>
+<h3 id="section-20">3.5 文件读写</h3>
+<p>读取文件的标准写法是 <code>with open(...)</code>，它能自动关闭文件，避免资源泄漏：</p>
+<pre><code class="language-python">with open(&quot;scores.txt&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    content = f.read()
+
+print(content)
+</code></pre>
+<p>若 <code>scores.txt</code> 内容为三行成绩，预期输出：</p>
+<pre><code>88
+92
+75
+</code></pre>
+<p><strong>按行读取</strong>更适合处理数据文件：</p>
+<pre><code class="language-python">with open(&quot;scores.txt&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    lines = f.readlines()
+
+print(len(lines))                       # 行数
+for line in lines[:3]:
+    print(line.strip())
+</code></pre>
+<p><strong>读取 csv 文件</strong>需要按逗号拆分每一行：</p>
+<pre><code class="language-python">with open(&quot;students.csv&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    lines = f.readlines()
+
+header = lines[0].strip().split(&quot;,&quot;)
+print(&quot;表头：&quot;, header)
+
+for line in lines[1:4]:
+    row = line.strip().split(&quot;,&quot;)
+    print(row)
+</code></pre>
+<p>若 <code>students.csv</code> 内容为：</p>
+<pre><code>name,score,subject
+张三,92,数学
+李四,75,语文
+王五,88,数学
+</code></pre>
+<p>预期输出：</p>
+<pre><code>表头： ['name', 'score', 'subject']
+['张三', '92', '数学']
+['李四', '75', '语文']
+['王五', '88', '数学']
+</code></pre>
+<p>注意：读进来的 <code>'92'</code> 是字符串，参与计算前必须用 <code>int()</code> 或 <code>float()</code> 转换。</p>
+<p><strong>写入文件</strong>：</p>
+<pre><code class="language-python">with open(&quot;result.txt&quot;, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+    f.write(&quot;平均分：85.00\n&quot;)
+    f.write(&quot;最高分：92\n&quot;)
+</code></pre>
+<p>模式说明：<code>"r"</code> 读取，<code>"w"</code> 覆盖写入，<code>"a"</code> 追加写入。</p>
+<h3 id="section-21">3.6 异常处理</h3>
+<p>程序在运行中遇到错误会中断。<code>try</code> / <code>except</code> 让程序有机会优雅处理：</p>
+<pre><code class="language-python">try:
+    score = int(&quot;abc&quot;)
+except ValueError as e:
+    print(f&quot;转换失败：{e}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>转换失败：invalid literal for int() with base 10: 'abc'
+</code></pre>
+<p><strong>文件不存在</strong>是数据分析中最常见的异常：</p>
+<pre><code class="language-python">try:
+    with open(&quot;not_exist.csv&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+        content = f.read()
+except FileNotFoundError:
+    print(&quot;文件不存在，请检查路径是否正确&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>文件不存在，请检查路径是否正确
+</code></pre>
+<p><strong>常见异常类型速查</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>触发原因</th>
+<th>排查方向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NameError</code></td>
+<td>使用了未定义的变量</td>
+<td>检查变量名拼写、是否漏运行单元格</td>
+</tr>
+<tr>
+<td><code>TypeError</code></td>
+<td>类型不匹配</td>
+<td>检查是否需要类型转换</td>
+</tr>
+<tr>
+<td><code>ValueError</code></td>
+<td>值无法转换</td>
+<td>检查数据内容是否合法</td>
+</tr>
+<tr>
+<td><code>KeyError</code></td>
+<td>字典中不存在该键</td>
+<td>检查键名，或改用 <code>get()</code></td>
+</tr>
+<tr>
+<td><code>IndexError</code></td>
+<td>索引超出范围</td>
+<td>检查列表长度与索引值</td>
+</tr>
+<tr>
+<td><code>FileNotFoundError</code></td>
+<td>文件路径错误</td>
+<td>检查路径、文件名与扩展名</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本课小结</strong>：函数让逻辑可复用，模块让能力可扩展，文件让数据进得来，异常处理让程序不脆弱。这四件事合在一起，才构成一个能用的分析脚本。</p>
+<h2 id="section-22">第 4 课 统计分析实战</h2>
+<p>本课目标：把前三课的能力整合成完整的分析流程，能独立完成一份数据描述与分组对比分析。</p>
+<h3 id="section-23">4.1 NumPy 数组与向量化</h3>
+<p>NumPy 的核心价值是<strong>向量化运算</strong>——用一行代码对整批数据做运算，而不必写循环：</p>
+<pre><code class="language-python">import numpy as np
+
+scores = np.array([88, 92, 75, 60, 95])
+
+print(scores.shape)          # 形状
+print(scores * 1.1)          # 每个元素同时乘 1.1
+print(scores.mean())         # 均值
+print(scores.std())          # 标准差
+print(np.median(scores))     # 中位数
+</code></pre>
+<p>预期输出：</p>
+<pre><code>(5,)
+[ 96.8 101.2  82.5  66.  104.5]
+82.0
+13.114877048604
+88.0
+</code></pre>
+<p><strong>为什么向量化重要</strong>：当数据量到了十万行，用 <code>for</code> 循环要跑很久，而 NumPy 的向量化运算在底层由 C 实现，速度快几十倍。这是后续处理真实数据的前提。</p>
+<p><strong>创建数组的常用方式</strong>：</p>
+<pre><code class="language-python">print(np.zeros(3))              # 全 0
+print(np.ones(3))               # 全 1
+print(np.arange(1, 6))          # 序列
+print(np.random.rand(3))        # 随机数
+</code></pre>
+<p><strong>二维数组</strong>可以表达表格结构：</p>
+<pre><code class="language-python">matrix = np.array([[1, 2, 3], [4, 5, 6]])
+print(matrix.shape)             # (2, 3)：2 行 3 列
+print(matrix.sum(axis=0))       # 按列求和
+print(matrix.sum(axis=1))       # 按行求和
+</code></pre>
+<p>预期输出：</p>
+<pre><code>(2, 3)
+[5 7 9]
+[ 6 15]
+</code></pre>
+<p><code>axis=0</code> 表示沿着行方向压缩（即按列汇总），<code>axis=1</code> 表示沿着列方向压缩（即按行汇总）。这是数据分析中最容易混淆的一个参数，建议反复练习。</p>
+<h3 id="section-24">4.2 pandas 数据框入门</h3>
+<p><code>Series</code> 是一列带索引的数据，<code>DataFrame</code> 是一张表：</p>
+<pre><code class="language-python">import pandas as pd
+
+s = pd.Series([88, 92, 75], index=[&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;])
+print(s)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三    88
+李四    92
+王五    75
+dtype: int64
+</code></pre>
+<p><strong>读入数据</strong>是分析的第一步：</p>
+<pre><code class="language-python">df = pd.read_csv(&quot;students.csv&quot;)
+</code></pre>
+<p><strong>了解数据全貌的三个必备函数</strong>：</p>
+<pre><code class="language-python">df.head()          # 前 5 行
+df.info()          # 行数、列名、类型、缺失情况
+df.describe()      # 数值列的描述统计
+</code></pre>
+<p><code>df.info()</code> 的输出会显示每一列的非空数量与数据类型，是判断"这一列是否需要清洗"的第一手依据。<code>df.describe()</code> 会给出 count、mean、std、min、25%、50%、75%、max 八个指标，其中 50% 就是中位数。</p>
+<p><strong>常用的行列选择</strong>：</p>
+<pre><code class="language-python">df[&quot;score&quot;]                  # 选一列，返回 Series
+df[[&quot;name&quot;, &quot;score&quot;]]        # 选多列，返回 DataFrame
+df.loc[0]                    # 按索引取行
+df[df[&quot;score&quot;] &gt;= 80]        # 条件筛选
+</code></pre>
+<p>注意：<code>df["score"]</code> 与 <code>df[["score"]]</code> 的区别在于前者是 Series、后者是 DataFrame，这会直接影响后续能否继续用某些方法，是常见错误来源。</p>
+<h3 id="section-25">4.3 数据清洗</h3>
+<p><strong>缺失值</strong>处理：</p>
+<pre><code class="language-python">df.isnull().sum()            # 每列缺失值数量
+
+df[&quot;score&quot;] = df[&quot;score&quot;].fillna(df[&quot;score&quot;].mean())   # 用均值填充
+df = df.dropna()                                        # 丢弃含缺失值的行
+</code></pre>
+<p><strong>重复值</strong>处理：</p>
+<pre><code class="language-python">df.duplicated().sum()        # 重复行数量
+df = df.drop_duplicates()    # 去重
+</code></pre>
+<p><strong>类型转换</strong>：</p>
+<pre><code class="language-python">df[&quot;score&quot;] = df[&quot;score&quot;].astype(float)
+df[&quot;date&quot;] = pd.to_datetime(df[&quot;date&quot;])      # 转成日期类型
+</code></pre>
+<p><strong>重命名列</strong>：</p>
+<pre><code class="language-python">df = df.rename(columns={&quot;name&quot;: &quot;姓名&quot;, &quot;score&quot;: &quot;成绩&quot;})
+</code></pre>
+<p>注意：清洗操作要写清楚依据。用均值填充缺失值会人为降低数据的方差，因此在结课报告里必须说明"哪些列用了什么方式填充、为什么"。这不是形式要求，而是分析结论可信度的基础。</p>
+<h3 id="section-26">4.4 分组聚合</h3>
+<p><code>groupby</code> 是 pandas 中使用频率最高的操作，对应"按某个维度分类后比较"这一分析动作：</p>
+<pre><code class="language-python">result = df.groupby(&quot;subject&quot;)[&quot;score&quot;].mean()
+print(result)
+</code></pre>
+<p>若按科目分组求成绩均值，预期输出：</p>
+<pre><code>subject
+数学    90.0
+语文    75.0
+Name: score, dtype: float64
+</code></pre>
+<p><strong>一次求多个统计量</strong>：</p>
+<pre><code class="language-python">result = df.groupby(&quot;subject&quot;)[&quot;score&quot;].agg([&quot;count&quot;, &quot;mean&quot;, &quot;median&quot;, &quot;std&quot;])
+print(result)
+</code></pre>
+<p><strong>按多个字段分组</strong>：</p>
+<pre><code class="language-python">result = df.groupby([&quot;class&quot;, &quot;subject&quot;])[&quot;score&quot;].mean()
+</code></pre>
+<p><strong>频次统计与排序</strong>：</p>
+<pre><code class="language-python">df[&quot;subject&quot;].value_counts()                                  # 各分类出现次数
+df.sort_values(&quot;score&quot;, ascending=False).head(5)              # 成绩前 5 名
+df.sort_values([&quot;subject&quot;, &quot;score&quot;])                          # 多字段排序
+</code></pre>
+<p><strong>筛选后再聚合</strong>是最常见的工作流：</p>
+<pre><code class="language-python">high = df[df[&quot;score&quot;] &gt;= 80]
+result = high.groupby(&quot;subject&quot;)[&quot;score&quot;].count()
+print(result)
+</code></pre>
+<p><strong>本课的核心动作</strong>可以概括为一句话：<strong>按某字段分组、对某字段求统计量、按结果排序</strong>。请把这条链路练到不用查资料就能写出来。</p>
+<h3 id="section-27">4.5 实战小项目</h3>
+<p><strong>任务</strong>：给定一份学生成绩数据集，完成一次完整分析。</p>
+<p><strong>步骤一：读取与了解数据</strong></p>
+<pre><code class="language-python">import pandas as pd
+
+df = pd.read_csv(&quot;students.csv&quot;)
+print(df.shape)
+print(df.info())
+print(df.head())
+</code></pre>
+<p><strong>步骤二：数据清洗</strong></p>
+<pre><code class="language-python">print(df.isnull().sum())
+
+df[&quot;score&quot;] = df[&quot;score&quot;].fillna(df[&quot;score&quot;].median())
+df = df.drop_duplicates()
+df[&quot;score&quot;] = df[&quot;score&quot;].astype(float)
+</code></pre>
+<p><strong>步骤三：描述统计</strong></p>
+<pre><code class="language-python">print(df[&quot;score&quot;].describe())
+print(f&quot;平均分 {df['score'].mean():.2f}&quot;)
+print(f&quot;中位数 {df['score'].median():.2f}&quot;)
+print(f&quot;标准差 {df['score'].std():.2f}&quot;)
+</code></pre>
+<p><strong>步骤四：分组对比</strong></p>
+<pre><code class="language-python">by_subject = df.groupby(&quot;subject&quot;)[&quot;score&quot;].agg([&quot;count&quot;, &quot;mean&quot;, &quot;std&quot;])
+print(by_subject.sort_values(&quot;mean&quot;, ascending=False))
+</code></pre>
+<p><strong>步骤五：简单可视化</strong></p>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+
+by_subject[&quot;mean&quot;].plot(kind=&quot;bar&quot;)
+plt.title(&quot;各科目平均分对比&quot;)
+plt.ylabel(&quot;平均分&quot;)
+plt.show()
+</code></pre>
+<p><strong>步骤六：输出结论</strong></p>
+<p>分析报告须包含三条由数据支撑的结论，例如：</p>
+<ol>
+<li>全体学生平均分为 82.4 分，标准差 12.1，说明成绩分布较为分散，个体差异明显；</li>
+<li>按科目分组后，数学平均分（90.0）显著高于语文（75.0），差值达 15 分；</li>
+<li>语文成绩标准差大于数学，说明语文成绩的两极分化程度更高。</li>
+</ol>
+<p>每一条结论都必须对应一个具体的统计结果，不能出现"整体来看成绩还不错"这类无法追溯的表述。</p>
+<p><strong>本课小结</strong>：至此，你已经掌握了从原始数据到分析结论的完整链路。剩余的能力提升来自实践——换一份真实数据，重复走一遍上面的六个步骤，直到不需要参考讲义也能独立完成。</p>
+<p class="doc-footer">Python 基础语法讲义（第 1–4 课）</p>
+</section>
+</body>
+</html>
