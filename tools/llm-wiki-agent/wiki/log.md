@@ -53,6 +53,17 @@ Source: `raw/learning-materials/agent-memory-provenance.html`
 Created: `wiki/sources/agent-memory-provenance.md`, `wiki/concepts/LongTermMemory.md`, `wiki/concepts/Provenance.md`, `wiki/concepts/CitationLock.md`, `wiki/concepts/Abstention.md`, `wiki/entities/MemGPT.md`, `wiki/entities/AgentZeroMemory.md`, `wiki/entities/LongMemEval.md`, `wiki/entities/Zep.md`
 Updated: `wiki/index.md`, `wiki/overview.md`
 
+## [2026-09-16] ingest | MCP 2026-07-28 Specification(MCP 无状态化修订)
+
+Source: `raw/specs/mcp-2026-07-28.md`
+Created: `wiki/sources/mcp-2026-07-28.md`
+Updated: `wiki/concepts/MCP.md` (rewritten: added primitives + protocol mechanics + statelessness; retained MCP-vs-Skill boundary), `wiki/index.md`, `wiki/overview.md`
+Note: supersedes the pre-2026-07-28 (stateful, session-based) description previously implicit in `MCP.md`. Compiled from official spec blog + official architecture docs + AWS + GitHub changelog + AAIF roundup, all retrieved 2026-09-16.
+
 ## [2026-09-16] graph | Knowledge graph rebuilt
 
 30 nodes, 115 edges (115 extracted, 0 inferred).
+
+## [2026-09-16] graph | Knowledge graph rebuilt
+
+31 nodes, 125 edges (125 extracted, 0 inferred).

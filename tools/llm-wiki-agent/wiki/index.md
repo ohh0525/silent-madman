@@ -11,6 +11,7 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Skill(技能)](sources/skill.md) — concept-learning HTML on Skill + progressive disclosure (silent-madman, 2026-09-05)
 - [上下文工程(Context Engineering)](sources/context-engineering.md) — concept-learning HTML on context engineering + context rot (silent-madman, 2026-09-16)
 - [带溯源的智能体长期记忆(Provenance-Aware Memory)](sources/agent-memory-provenance.md) — concept-learning HTML on provenance-aware long-term memory (silent-madman, 2026-09-16)
+- [MCP 2026-07-28 Specification(MCP 无状态化修订)](sources/mcp-2026-07-28.md) — spec digest: MCP becomes stateless (official blog + docs + AWS + GitHub, 2026-09-16)
 
 ## Entities
 - [Anthropic](entities/Anthropic.md) — creator of Claude; primary source for Agent / Skill / MCP design
@@ -30,7 +31,7 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Progressive Disclosure](concepts/ProgressiveDisclosure.md) — 3-layer load-on-demand pattern
 - [Token](concepts/Token.md) — sub-word unit for context accounting
 - [ReAct](concepts/ReAct.md) — Reason+Act prompting pattern used by Agents
-- [MCP](concepts/MCP.md) — Model Context Protocol for connecting tools
+- [MCP](concepts/MCP.md) — Model Context Protocol; stateless as of the 2026-07-28 spec
 - [Transformer](concepts/Transformer.md) — n²-cost architecture underlying LLMs
 - [Context Engineering](concepts/ContextEngineering.md) — discipline of curating the minimal high-signal token set
 - [Context Rot](concepts/ContextRot.md) — accuracy decline as context tokens grow
