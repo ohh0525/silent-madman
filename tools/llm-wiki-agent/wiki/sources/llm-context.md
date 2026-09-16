@@ -1,5 +1,5 @@
 ---
-title: "LLM Context Window(大模型上下文窗口)"
+title: "LLM Context Window(上下文窗口)"
 type: source
 tags: [concept-learning, llm, context-window, silent-madman]
 date: 2026-09-05
