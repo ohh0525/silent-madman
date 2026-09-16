@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="docx-page-size" content="A4">
+<title>Python 基础语法练习题与参考答案（第 1–4 课）</title>
+<style>
+  :root {
+    --layout-contentWidth: 165mm;
+    --typography-fontSize-h1: 18pt;
+    --typography-fontSize-h2: 15pt;
+    --typography-fontSize-h3: 13pt;
+    --typography-fontSize-body: 11pt;
+    --typography-fontSize-small: 9pt;
+    --typography-fontSize-title: 24pt;
+    --typography-fontFamily-heading: PingFang SC, 苹方-简, 微软雅黑, sans-serif;
+    --typography-fontFamily-body: PingFang SC, 苹方-简, 微软雅黑, sans-serif;
+    --typography-fontFamily-mono: JetBrains Mono, Fira Code, Consolas, monospace;
+    --typography-lineHeight-body: 1.7;
+    --typography-lineHeight-heading: 1.3;
+    --color-primary: #2563EB;
+    --color-text: #111827;
+    --color-muted: #6B7280;
+    --color-border: #E5E7EB;
+    --color-bg: #FFFFFF;
+    --color-highlight: #FEF3C7;
+    --color-codeBg: #F9FAFB;
+
+    --page-content-width: var(--layout-contentWidth, 15.6cm);
+    --fs-title: var(--typography-fontSize-title, 24pt);
+    --fs-h1: var(--typography-fontSize-h1, 18pt);
+    --fs-h2: var(--typography-fontSize-h2, 15pt);
+    --fs-h3: var(--typography-fontSize-h3, 13pt);
+    --fs-body: var(--typography-fontSize-body, 11pt);
+    --fs-small: var(--typography-fontSize-small, 9pt);
+    --ff-heading: var(--typography-fontFamily-heading, "PingFang SC", sans-serif);
+    --ff-body: var(--typography-fontFamily-body, "PingFang SC", sans-serif);
+    --ff-mono: var(--typography-fontFamily-mono, monospace);
+    --ff-mono-alt: var(--typography-fontFamily-code, monospace);
+    --lh-body: var(--typography-lineHeight-body, 1.6);
+    --lh-heading: var(--typography-lineHeight-heading, 1.3);
+    --fw-bold: var(--typography-fontWeight-heading, 600);
+    --fw-normal: var(--typography-fontWeight-body, 400);
+    --spacing-paragraph: var(--spacing-paragraphValue, 0.6em);
+    --spacing-section: var(--spacing-sectionGap, 2em);
+    --spacing-block: var(--spacing-blockValue, 1em);
+    --margin-page: var(--layout-marginTop, 2.5cm);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--ff-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+    max-width: var(--page-content-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: var(--margin-page);
+    padding-bottom: var(--margin-page);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--ff-heading);
+    line-height: var(--lh-heading);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin-top: var(--spacing-section);
+    margin-bottom: var(--spacing-paragraph);
+  }
+  h1 { font-size: var(--fs-h1); }
+  h2 { font-size: var(--fs-h2); }
+  h3 { font-size: var(--fs-h3); }
+  h4 { font-size: var(--fs-body); }
+
+  p { margin-bottom: var(--spacing-paragraph); }
+
+  ul, ol { padding-left: var(--spacing-section); margin-bottom: var(--spacing-paragraph); }
+  li { margin-bottom: var(--spacing-paragraph); line-height: var(--lh-body); }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: var(--spacing-block);
+    font-size: var(--fs-body);
+  }
+  th, td {
+    padding: var(--spacing-paragraph);
+    border: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+    line-height: var(--lh-body);
+  }
+  th {
+    font-family: var(--ff-heading);
+    font-weight: var(--fw-bold);
+    background: var(--color-codeBg);
+  }
+
+  pre {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-small);
+    line-height: var(--lh-heading);
+    background: var(--color-codeBg);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-block);
+    margin-bottom: var(--spacing-block);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  pre code { font-family: var(--ff-mono); background: transparent; padding: 0; border: none; }
+
+  code {
+    font-family: var(--ff-mono-alt);
+    font-size: var(--fs-small);
+    background: var(--color-codeBg);
+  }
+
+  blockquote {
+    border-left: 3px solid var(--color-primary);
+    background: var(--color-codeBg);
+    padding: var(--spacing-block);
+    margin-bottom: var(--spacing-block);
+    color: var(--color-text);
+    line-height: var(--lh-body);
+  }
+  blockquote p { margin-bottom: 0; }
+
+  strong { font-weight: var(--fw-bold); color: var(--color-text); }
+  em { color: var(--color-muted); }
+
+  .doc-toc {
+    margin-bottom: var(--spacing-section);
+    padding: var(--spacing-block);
+    background: var(--color-codeBg);
+    border: 1px solid var(--color-border);
+  }
+  .toc-title {
+    font-family: var(--ff-heading);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    margin-bottom: var(--spacing-paragraph);
+  }
+  .toc-list, .toc-list ol, .toc-list ul {
+    list-style: none;
+    list-style-type: none;
+    padding-left: var(--spacing-block);
+  }
+  .toc-list li { margin-bottom: var(--spacing-paragraph); line-height: var(--lh-heading); }
+  .toc-list a { color: var(--color-text); text-decoration: none; }
+
+  section[role="cover"] { text-align: center; }
+  .cover-eyebrow {
+    text-align: center;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-small);
+    color: var(--color-muted);
+    margin-bottom: var(--spacing-section);
+  }
+  .cover-title {
+    text-align: center;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-title);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    line-height: var(--lh-heading);
+    margin-bottom: var(--spacing-block);
+  }
+  .cover-subtitle {
+    text-align: center;
+    font-size: var(--fs-h3);
+    color: var(--color-muted);
+    margin-bottom: var(--spacing-section);
+  }
+  .cover-info {
+    margin-top: var(--spacing-section);
+    text-align: left;
+    font-size: var(--fs-body);
+  }
+  .cover-info td { border: none; padding: var(--spacing-paragraph); }
+  .cover-info td:first-child {
+    font-family: var(--ff-heading);
+    font-weight: var(--fw-bold);
+    width: 30%;
+    color: var(--color-muted);
+  }
+
+  .doc-footer {
+    margin-top: var(--spacing-section);
+    color: var(--color-muted);
+    font-size: var(--fs-small);
+  }
+
+  @page {
+    @bottom-center { content: counter(page); }
+  }
+  @page cover {
+    @bottom-center { content: none; }
+  }
+  section[role="cover"] { page: cover; }
+</style>
+</head>
+<body>
+<section role="cover">
+  <p class="cover-eyebrow">配套练习册</p>
+  <h1 class="cover-title">Python 基础语法练习题与参考答案（第 1–4 课）</h1>
+  <p class="cover-subtitle">概念自测 · 上机编程题 · 综合应用题 · 含解析</p>
+  <table class="cover-info"><tbody><tr><td>课程名称</td><td>Python 基础语法</td></tr><tr><td>适用课次</td><td>第 1–4 课</td></tr><tr><td>题量</td><td>每课概念题 5 道、编程题 5～6 道、综合题 1 道</td></tr><tr><td>预计用时</td><td>每课 60～90 分钟</td></tr><tr><td>参考答案</td><td>附于文末，含解析</td></tr></tbody></table>
+</section>
+<section role="body" data-page-restart="1">
+<nav class="doc-toc" aria-label="文档目录"><p class="toc-title">目录</p><ol class="toc-list"><li class="toc-l1"><a href="#section-1">使用说明</a></li><li class="toc-l1"><a href="#section-2">第 1 课 练习：环境搭建与基础语法</a></li><li class="toc-l2"><a href="#section-3">一、概念自测</a></li><li class="toc-l2"><a href="#section-4">二、上机编程题</a></li><li class="toc-l2"><a href="#section-5">三、综合应用题</a></li><li class="toc-l1"><a href="#section-6">第 2 课 练习：流程控制与数据结构</a></li><li class="toc-l2"><a href="#section-7">一、概念自测</a></li><li class="toc-l2"><a href="#section-8">二、上机编程题</a></li><li class="toc-l2"><a href="#section-9">三、综合应用题</a></li><li class="toc-l1"><a href="#section-10">第 3 课 练习：函数、模块与文件</a></li><li class="toc-l2"><a href="#section-11">一、概念自测</a></li><li class="toc-l2"><a href="#section-12">二、上机编程题</a></li><li class="toc-l2"><a href="#section-13">三、综合应用题</a></li><li class="toc-l1"><a href="#section-14">第 4 课 练习：统计分析实战</a></li><li class="toc-l2"><a href="#section-15">一、概念自测</a></li><li class="toc-l2"><a href="#section-16">二、上机编程题</a></li><li class="toc-l2"><a href="#section-17">三、综合应用题</a></li><li class="toc-l1"><a href="#section-18">参考答案与解析</a></li><li class="toc-l2"><a href="#section-19">第 1 课 参考答案</a></li><li class="toc-l2"><a href="#section-20">第 2 课 参考答案</a></li><li class="toc-l2"><a href="#section-21">第 3 课 参考答案</a></li><li class="toc-l2"><a href="#section-22">第 4 课 参考答案</a></li></ol></nav>
+<h2 id="section-1">使用说明</h2>
+<p>本练习册配套《Python 基础语法讲义（第 1–4 课）》使用，每课包含三部分：概念自测（检验理解）、上机编程题（检验动手能力）、综合应用题（检验整合能力）。</p>
+<p>使用建议：</p>
+<ol>
+<li><strong>先做后看</strong>。答案集中在文档后半部分，请务必先独立完成，再对照答案。直接看答案的学习效果接近于零。</li>
+<li><strong>答案不是唯一解</strong>。参考答案给出的是一种规范写法，如果你的代码能跑出相同结果，逻辑也清晰，那就是好代码。</li>
+<li><strong>务必实际运行</strong>。编程题必须敲进 Notebook 运行一遍，看到输出才算完成。看懂了和写出来是两件不同的事。</li>
+<li><strong>记录报错</strong>。做题过程中遇到报错，把报错信息抄下来，对照讲义第 3 课的异常类型速查表判断原因，这个习惯比做对题本身更有价值。</li>
+</ol>
+<p>题量说明：每课概念题 5 题、编程题 5～6 题、综合题 1 题，预计用时 60～90 分钟。</p>
+<h2 id="section-2">第 1 课 练习：环境搭建与基础语法</h2>
+<p>本课练习围绕变量、数据类型、字符串与运算符展开。建议先完成概念自测，再动手编程。</p>
+<h3 id="section-3">一、概念自测</h3>
+<p><strong>1-1 判断下列各值的类型，并说明判断依据。</strong></p>
+<ol>
+<li><code>100</code></li>
+<li><code>3.14</code></li>
+<li><code>"100"</code></li>
+<li><code>True</code></li>
+<li><code>"2024-01-15"</code></li>
+</ol>
+<p><strong>1-2 下列表达式的结果分别是什么？</strong></p>
+<ol>
+<li><code>7 // 2</code></li>
+<li><code>7 % 2</code></li>
+<li><code>2 ** 4</code></li>
+<li><code>"20" + "30"</code></li>
+<li><code>20 + 30</code></li>
+</ol>
+<p><strong>1-3 指出下列字符串切片的结果。</strong></p>
+<p>设 <code>s = "Python数据分析"</code>。</p>
+<ol>
+<li><code>s[0]</code></li>
+<li><code>s[-1]</code></li>
+<li><code>s[0:6]</code></li>
+<li><code>s[6:]</code></li>
+</ol>
+<p><strong>1-4 判断题（正确填"对"，错误填"错"并说明原因）。</strong></p>
+<ol>
+<li>变量在赋值时必须先声明类型。</li>
+<li><code>input()</code> 函数返回的值可以直接参与数学运算。</li>
+<li><code>"20" + 5</code> 的结果是 <code>"205"</code>。</li>
+<li>字符串切片 <code>s[a:b]</code> 的结果包含下标 <code>b</code> 对应的字符。</li>
+<li><code>type()</code> 函数可以用来查看一个变量的数据类型。</li>
+</ol>
+<p><strong>1-5 简答：为什么说"读取数据文件时，所有内容默认都是字符串"？这对后续计算有什么影响？</strong></p>
+<h3 id="section-4">二、上机编程题</h3>
+<p><strong>1-6</strong> 定义四个变量分别存储你的姓名、年龄、身高（米）、是否在读，并在一行内打印出来。</p>
+<p><strong>1-7</strong> 已知某商品单价 39.9 元，购买 7 件，编写代码计算总价。若满 200 元打 9 折，输出实际应付金额（保留两位小数）。</p>
+<p><strong>1-8</strong> 设 <code>text = "  张三, 20, 男  "</code>，编写代码输出：去掉两端空白后的内容、按逗号拆分后的列表、以及拆分后各个字段本身（不含空格）。</p>
+<p><strong>1-9</strong> 把一个整数变量 <code>seconds = 5000</code> 转换为"几小时几分钟几秒"的形式并输出，格式为 <code>5000 秒 = 1 小时 23 分 20 秒</code>。</p>
+<p><strong>1-10</strong> 使用 <code>input()</code> 依次输入三科成绩（语文、数学、英语），输出总分、平均分（保留两位小数）以及最高分科目名称。</p>
+<p><strong>1-11</strong> 已知两个字符串 <code>date_str = "2024-03-15"</code>，编写代码分别取出年、月、日，并以 <code>2024年3月15日</code> 的格式输出。</p>
+<h3 id="section-5">三、综合应用题</h3>
+<p><strong>1-12</strong> 模拟一个简易的"商品结账"程序：程序依次询问商品名称、单价、数量，输出这一行的金额；接着再处理第二件商品；最后输出总金额与商品件数。</p>
+<p>要求：金额保留两位小数；使用 f-string 格式化输出；输出格式清晰可读。</p>
+<h2 id="section-6">第 2 课 练习：流程控制与数据结构</h2>
+<p>本课练习围绕条件判断、循环与四种内置数据结构展开，重点检验能否用列表与字典组织一批数据。</p>
+<h3 id="section-7">一、概念自测</h3>
+<p><strong>2-1 下列代码的输出分别是什么？</strong></p>
+<pre><code class="language-python">score = 85
+
+if score &gt;= 90:
+    print(&quot;A&quot;)
+elif score &gt;= 80:
+    print(&quot;B&quot;)
+elif score &gt;= 70:
+    print(&quot;C&quot;)
+else:
+    print(&quot;D&quot;)
+</code></pre>
+<p>若把第一个条件改为 <code>score &gt;= 70</code>，其他不变，输出会变成什么？为什么？</p>
+<p><strong>2-2 下列代码的输出是什么？</strong></p>
+<pre><code class="language-python">total = 0
+for i in range(1, 5):
+    total = total + i
+print(total)
+</code></pre>
+<p><strong>2-3 下列循环分别执行几次？</strong></p>
+<ol>
+<li><code>for i in range(5)</code></li>
+<li><code>for i in range(2, 8)</code></li>
+<li><code>for i in range(0, 10, 2)</code></li>
+<li><code>while count &lt; 0</code>（<code>count</code> 初值为 0）</li>
+</ol>
+<p><strong>2-4 判断题（正确填"对"，错误填"错"并说明原因）。</strong></p>
+<ol>
+<li>列表中的元素必须全部是同一类型。</li>
+<li>元组中的元素不能被修改。</li>
+<li>字典的键可以是列表。</li>
+<li>集合中的元素会自动去重。</li>
+<li><code>break</code> 会结束整个循环，<code>continue</code> 只跳过本次循环。</li>
+</ol>
+<p><strong>2-5 简答：为什么说"列表相当于一列数据，字典相当于一条记录的字段映射"？请结合第 4 课的 DataFrame 谈谈理解。</strong></p>
+<h3 id="section-8">二、上机编程题</h3>
+<p><strong>2-6</strong> 给定成绩列表 <code>scores = [88, 92, 75, 60, 95, 45, 78]</code>，用循环计算总分与平均分，并输出不及格（低于 60 分）的成绩列表。</p>
+<p><strong>2-7</strong> 用 <code>while</code> 循环计算 1 到 100 之间所有偶数的和。</p>
+<p><strong>2-8</strong> 给定一个整数列表 <code>nums = [3, 8, 15, 22, 7, 40, 11]</code>，输出其中的最大值、最小值、以及所有偶数的个数。</p>
+<p><strong>2-9</strong> 给定 <code>students = [{"name": "张三", "score": 92}, {"name": "李四", "score": 75}, {"name": "王五", "score": 88}, {"name": "赵六", "score": 60}]</code>，输出每位学生的姓名与成绩，并统计及格（≥60）人数。</p>
+<p><strong>2-10</strong> 把列表 <code>[1, 2, 2, 3, 3, 3, 4]</code> 用集合去重，输出去重后的结果与去重前后的元素个数。</p>
+<p><strong>2-11</strong> 给定两组成绩列表 <code>math = [88, 92, 75]</code>、<code>chinese = [60, 85, 90]</code>，用字典组织成 <code>{"数学": [...], "语文": [...]}</code> 的形式，然后按科目输出平均分。</p>
+<h3 id="section-9">三、综合应用题</h3>
+<p><strong>2-12</strong> 编写一个词频统计程序：给定一段中文文本（可用字符串直接定义），统计每个词出现的次数，并按出现次数从高到低输出前 3 名。</p>
+<p>提示：可用空格分隔词语，用字典累计次数，用 <code>sorted(..., key=lambda x: x[1], reverse=True)</code> 排序。</p>
+<h2 id="section-10">第 3 课 练习：函数、模块与文件</h2>
+<p>本课练习围绕函数封装、模块导入、文件读写与异常处理展开，综合题要求把全部知识点串起来。</p>
+<h3 id="section-11">一、概念自测</h3>
+<p><strong>3-1 下列代码的输出是什么？说明理由。</strong></p>
+<pre><code class="language-python">def add(a, b=10):
+    return a + b
+
+print(add(5))
+print(add(5, 20))
+print(add(b=3, a=7))
+</code></pre>
+<p><strong>3-2 下列代码有什么问题？</strong></p>
+<pre><code class="language-python">def calc():
+    result = 100
+
+calc()
+print(result)
+</code></pre>
+<p><strong>3-3 写出下列 lambda 表达式的等价 <code>def</code> 函数形式。</strong></p>
+<ol>
+<li><code>lambda x: x * 2</code></li>
+<li><code>lambda x, y: x + y</code></li>
+<li><code>lambda s: len(s) &gt; 3</code></li>
+</ol>
+<p><strong>3-4 补全：读取文件时应使用 <code>with open(...)</code> 的原因是什么？三种打开模式 <code>"r"</code>、<code>"w"</code>、<code>"a"</code> 分别代表什么？</strong></p>
+<p><strong>3-5 匹配题：把下列异常与触发原因配对。</strong></p>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NameError</code></td>
+<td>文件路径错误</td>
+</tr>
+<tr>
+<td><code>TypeError</code></td>
+<td>字典中不存在该键</td>
+</tr>
+<tr>
+<td><code>ValueError</code></td>
+<td>使用了未定义的变量</td>
+</tr>
+<tr>
+<td><code>KeyError</code></td>
+<td>类型不匹配</td>
+</tr>
+<tr>
+<td><code>FileNotFoundError</code></td>
+<td>值无法完成类型转换</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-12">二、上机编程题</h3>
+<p><strong>3-6</strong> 编写函数 <code>average(scores)</code>，接收一个数字列表，返回平均值；若列表为空，返回 <code>None</code>。</p>
+<p><strong>3-7</strong> 编写函数 <code>median(scores)</code>，接收一个数字列表，返回中位数（注意区分奇数个与偶数个元素两种情况）。</p>
+<p><strong>3-8</strong> 编写函数 <code>variance(scores)</code>，计算方差（每个数与均值之差的平方的平均数），并要求在函数内部调用你写的 <code>average()</code>。</p>
+<p><strong>3-9</strong> 给定 <code>students</code> 列表（含姓名与成绩），用 <code>lambda</code> 与 <code>sorted()</code> 实现：按成绩从高到低排序，输出前三名。</p>
+<p><strong>3-10</strong> 读取一个文本文件，统计总行数、非空行数、以及所有行的总字符数。</p>
+<p><strong>3-11</strong> 编写一个函数 <code>safe_int(value, default=0)</code>，尝试把 <code>value</code> 转换为整数，转换失败时返回默认值，不允许程序中断。</p>
+<h3 id="section-13">三、综合应用题</h3>
+<p><strong>3-12</strong> 编写一个完整的成绩处理脚本，要求：</p>
+<ol>
+<li>读取 <code>scores.csv</code> 文件（格式为 <code>name,score</code>，含表头）；</li>
+<li>跳过表头，逐行解析，把成绩转为浮点数；</li>
+<li>用你编写的函数计算平均分、中位数；</li>
+<li>统计及格人数与及格率；</li>
+<li>把统计结果写入 <code>report.txt</code>；</li>
+<li>用 <code>try</code> / <code>except</code> 处理文件不存在的情况。</li>
+</ol>
+<h2 id="section-14">第 4 课 练习：统计分析实战</h2>
+<p>本课练习围绕 NumPy 与 pandas 的核心操作展开，最后一题为结课实战任务。</p>
+<h3 id="section-15">一、概念自测</h3>
+<p><strong>4-1 说明 <code>df.head()</code>、<code>df.info()</code>、<code>df.describe()</code> 三个函数各自回答什么问题。</strong></p>
+<p><strong>4-2 下列代码中 <code>axis=0</code> 与 <code>axis=1</code> 的结果分别是什么？</strong></p>
+<pre><code class="language-python">import numpy as np
+m = np.array([[1, 2, 3], [4, 5, 6]])
+print(m.sum(axis=0))
+print(m.sum(axis=1))
+</code></pre>
+<p><strong>4-3 判断题（正确填"对"，错误填"错"并说明原因）。</strong></p>
+<ol>
+<li><code>df["score"]</code> 返回的是 DataFrame。</li>
+<li>用均值填充缺失值会降低数据的方差。</li>
+<li><code>groupby</code> 必须配合聚合函数使用才有意义。</li>
+<li><code>value_counts()</code> 用于返回每一列的数据类型。</li>
+<li><code>drop_duplicates()</code> 会直接修改原 DataFrame 并返回 None。</li>
+</ol>
+<p><strong>4-4 简答：为什么 NumPy 的向量化运算比 <code>for</code> 循环快？这对处理大数据量有什么意义？</strong></p>
+<p><strong>4-5 简答：为什么"用均值填充缺失值"这一操作必须在结课报告中说明？</strong></p>
+<h3 id="section-16">二、上机编程题</h3>
+<p><strong>4-6</strong> 用 NumPy 创建数组 <code>[88, 92, 75, 60, 95]</code>，输出均值、中位数、标准差、最大值与最小值。</p>
+<p><strong>4-7</strong> 用 pandas 创建如下 DataFrame 并输出其形状、列名与各列类型：</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>subject</th>
+<th>score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>张三</td>
+<td>数学</td>
+<td>92</td>
+</tr>
+<tr>
+<td>李四</td>
+<td>语文</td>
+<td>75</td>
+</tr>
+<tr>
+<td>王五</td>
+<td>数学</td>
+<td>88</td>
+</tr>
+<tr>
+<td>赵六</td>
+<td>语文</td>
+<td>60</td>
+</tr>
+</tbody>
+</table>
+<p><strong>4-8</strong> 基于 4-7 的数据框，完成以下操作并输出结果：</p>
+<ol>
+<li>筛选出成绩大于等于 80 的行；</li>
+<li>按科目分组计算平均分；</li>
+<li>按成绩降序排列；</li>
+<li>统计各科目出现的次数。</li>
+</ol>
+<p><strong>4-9</strong> 给定一个含缺失值的数据框（<code>score</code> 列有两个 <code>NaN</code>），分别用"删除缺失行"和"均值填充"两种方式处理，并比较处理前后的行数与 <code>score</code> 列的均值差异。</p>
+<p><strong>4-10</strong> 对 4-7 的 DataFrame，用 <code>groupby</code> 一次输出每个科目的 <code>count</code>、<code>mean</code>、<code>median</code>、<code>std</code> 四个统计量。</p>
+<p><strong>4-11</strong> 给数据框增加一列 <code>pass</code>，成绩 ≥ 60 记为 <code>"及格"</code>，否则记为 <code>"不及格"</code>，并统计两类的数量。</p>
+<h3 id="section-17">三、综合应用题</h3>
+<p><strong>4-12 结课实战</strong>：选择一份公开数据集（或使用课程提供的示例数据），独立完成一次完整分析。</p>
+<p>要求交付一份分析报告，包含：</p>
+<ol>
+<li><strong>数据说明</strong>：数据来源、字段含义、行列数量；</li>
+<li><strong>清洗记录</strong>：缺失值处理方式及依据、重复值处理、类型转换；</li>
+<li><strong>描述统计</strong>：至少 3 个关键字段的均值、中位数、标准差；</li>
+<li><strong>分组对比</strong>：至少按一个维度分组，比较组间差异，并指出差异最大的组；</li>
+<li><strong>结论与局限</strong>：3 条由数据支撑的结论，以及本次分析的 2 条局限性。</li>
+</ol>
+<p>评分要点：流程是否完整、每一条结论是否能对应到具体的统计结果、代码是否可运行。</p>
+<h2 id="section-18">参考答案与解析</h2>
+<p>以下答案按课次排列。编程题给出可直接运行的代码与解析，综合题给出评分要点，供自检使用。</p>
+<h3 id="section-19">第 1 课 参考答案</h3>
+<p><strong>1-1</strong></p>
+<table>
+<thead>
+<tr>
+<th>题号</th>
+<th>类型</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>int</code></td>
+<td>不带小数点的整数</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>float</code></td>
+<td>带小数点</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>str</code></td>
+<td>被引号包裹</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>bool</code></td>
+<td><code>True</code> / <code>False</code> 是布尔值，注意首字母大写</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>str</code></td>
+<td>虽然内容像日期，但被引号包裹即为字符串</td>
+</tr>
+</tbody>
+</table>
+<p>解析：判断类型只看"写法"，不看"内容含义"。日期在 Python 中没有原生类型，需用 <code>str</code> 存储或转成 <code>datetime</code>。</p>
+<p><strong>1-2</strong></p>
+<ol>
+<li><code>3</code>（整除，向下取整）</li>
+<li><code>1</code>（7 除以 2 余 1）</li>
+<li><code>16</code></li>
+<li><code>"2030"</code>（字符串拼接）</li>
+<li><code>50</code>（数值相加）</li>
+</ol>
+<p>解析：第 4、5 题是本题的核心考点。同样是 <code>+</code>，字符串是拼接、数字是求和，取决于操作数的类型。</p>
+<p><strong>1-3</strong></p>
+<ol>
+<li><code>"P"</code></li>
+<li><code>"据"</code></li>
+<li><code>"Python"</code></li>
+<li><code>"数据分析"</code></li>
+</ol>
+<p><strong>1-4</strong></p>
+<ol>
+<li>错。Python 是动态类型语言，赋值即确定类型，无需事先声明。</li>
+<li>错。<code>input()</code> 返回字符串，必须先用 <code>int()</code> 或 <code>float()</code> 转换才能运算。</li>
+<li>错。字符串与数字相加会抛出 <code>TypeError</code>，必须先写成 <code>"20" + str(5)</code>。</li>
+<li>错。切片遵循"含起不含止"，不包含下标 <code>b</code>。</li>
+<li>对。</li>
+</ol>
+<p><strong>1-5</strong></p>
+<p>答：数据文件的本质是文本，<code>open()</code> 读取时按字符流读入，无法自动判断某一列的含义是数字还是文字，因此全部返回字符串。影响：所有读进来的数字字段在参与计算前都必须显式转换类型（<code>int()</code> 或 <code>float()</code>），否则会出现 <code>TypeError</code> 或"字符串拼接"这类非预期的结果。</p>
+<p><strong>1-6</strong></p>
+<pre><code class="language-python">name = &quot;张三&quot;
+age = 20
+height = 1.75
+is_student = True
+
+print(name, age, height, is_student)
+</code></pre>
+<p><strong>1-7</strong></p>
+<pre><code class="language-python">price = 39.9
+count = 7
+
+total = price * count
+if total &gt;= 200:
+    total = total * 0.9
+
+print(f&quot;商品总价 {price * count:.2f} 元，实付 {total:.2f} 元&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>商品总价 279.30 元，实付 251.37 元
+</code></pre>
+<p>解析：本题提前用到了第 2 课的 <code>if</code>，属于正常现象——编程题往往需要综合运用。若尚未学到条件判断，可先只输出原价。</p>
+<p><strong>1-8</strong></p>
+<pre><code class="language-python">text = &quot;  张三, 20, 男  &quot;
+
+print(text.strip())
+print(text.strip().split(&quot;,&quot;))
+print([x.strip() for x in text.strip().split(&quot;,&quot;)])
+</code></pre>
+<p>预期输出：</p>
+<pre><code>张三, 20, 男
+['张三', ' 20', ' 男']
+['张三', '20', '男']
+</code></pre>
+<p>注意：<code>split(",")</code> 后各段仍带空格，因此需要再做一次 <code>strip()</code>。列表推导式将在第 2 课讲解。</p>
+<p><strong>1-9</strong></p>
+<pre><code class="language-python">seconds = 5000
+
+h = seconds // 3600
+m = (seconds % 3600) // 60
+s = seconds % 60
+
+print(f&quot;{seconds} 秒 = {h} 小时 {m} 分 {s} 秒&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>5000 秒 = 1 小时 23 分 20 秒
+</code></pre>
+<p>解析：这是 <code>//</code> 与 <code>%</code> 的典型应用。先用整除算出小时数，再用取余去掉小时部分，继续整除得到分钟，最后取余得到秒数。</p>
+<p><strong>1-10</strong></p>
+<pre><code class="language-python">chinese = float(input(&quot;语文成绩：&quot;))
+math = float(input(&quot;数学成绩：&quot;))
+english = float(input(&quot;英语成绩：&quot;))
+
+total = chinese + math + english
+avg = total / 3
+
+scores = {&quot;语文&quot;: chinese, &quot;数学&quot;: math, &quot;英语&quot;: english}
+best = max(scores, key=scores.get)
+
+print(f&quot;总分 {total:.2f}，平均分 {avg:.2f}，最高分科目：{best}&quot;)
+</code></pre>
+<p><strong>1-11</strong></p>
+<pre><code class="language-python">date_str = &quot;2024-03-15&quot;
+
+year = date_str[0:4]
+month = date_str[5:7]
+day = date_str[8:10]
+
+print(f&quot;{year}年{int(month)}月{int(day)}日&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>2024年3月15日
+</code></pre>
+<p>解析：<code>int(month)</code> 的作用是去掉前导零，把 <code>"03"</code> 变成 <code>3</code>。</p>
+<p><strong>1-12</strong></p>
+<pre><code class="language-python">name1 = input(&quot;第一件商品名称：&quot;)
+price1 = float(input(&quot;第一件商品单价：&quot;))
+qty1 = int(input(&quot;第一件商品数量：&quot;))
+amount1 = price1 * qty1
+print(f&quot;{name1}：{price1:.2f} × {qty1} = {amount1:.2f} 元&quot;)
+
+name2 = input(&quot;第二件商品名称：&quot;)
+price2 = float(input(&quot;第二件商品单价：&quot;))
+qty2 = int(input(&quot;第二件商品数量：&quot;))
+amount2 = price2 * qty2
+print(f&quot;{name2}：{price2:.2f} × {qty2} = {amount2:.2f} 元&quot;)
+
+total = amount1 + amount2
+print(f&quot;共 2 件商品，合计 {total:.2f} 元&quot;)
+</code></pre>
+<p>解析：本题的代码有明显的重复结构——这正是第 3 课"函数"要解决的问题。可以把"输入并计算一行金额"封装成一个函数。</p>
+<h3 id="section-20">第 2 课 参考答案</h3>
+<p><strong>2-1</strong></p>
+<p>原代码输出 <code>B</code>（85 ≥ 80 且不满足 ≥ 90）。</p>
+<p>如果把第一个条件改为 <code>score &gt;= 70</code>，输出会变成 <code>A</code>。原因是条件判断自上而下依次检查，85 ≥ 70 已经成立，后续的 <code>elif</code> 分支不再执行。这说明<strong>条件的排列顺序决定了结果</strong>，写多分支判断时务必先写更严格的条件。</p>
+<p><strong>2-2</strong> 输出 <code>10</code>（1+2+3+4）。</p>
+<p><strong>2-3</strong></p>
+<ol>
+<li>5 次（0, 1, 2, 3, 4）</li>
+<li>6 次（2 到 7）</li>
+<li>5 次（0, 2, 4, 6, 8）</li>
+<li>0 次，条件一开始就不成立</li>
+</ol>
+<p><strong>2-4</strong></p>
+<ol>
+<li>错。列表可以混合存放不同类型，如 <code>[1, "a", True]</code>，只是实际使用中通常放同类型数据。</li>
+<li>对。</li>
+<li>错。列表是可变类型，不可哈希，不能作为字典的键。元组可以。</li>
+<li>对。</li>
+<li>对。</li>
+</ol>
+<p><strong>2-5</strong></p>
+<p>答：列表用位置（下标）定位数据，形如 <code>[88, 92, 75]</code>，天然对应表格中的"一列"。字典用键名定位数据，形如 <code>{"name": "张三", "score": 92}</code>，天然对应表格中的"一行记录"——每个字段名映射到一个值。</p>
+<p>第 4 课的 DataFrame 正是这两者的结合：它有列名（像字典的键）也有行索引（像列表的下标），因此既能按列取值（<code>df["score"]</code>，相当于取一个列表），也能按行取记录。理解了列表与字典，DataFrame 就只是把两者拼在一起。</p>
+<p><strong>2-6</strong></p>
+<pre><code class="language-python">scores = [88, 92, 75, 60, 95, 45, 78]
+
+total = 0
+failed = []
+for s in scores:
+    total = total + s
+    if s &lt; 60:
+        failed.append(s)
+
+print(f&quot;总分 {total}，平均分 {total / len(scores):.2f}&quot;)
+print(f&quot;不及格成绩：{failed}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>总分 533，平均分 76.14
+不及格成绩：[45]
+</code></pre>
+<p>解析：可以在同一个循环里同时完成累加与筛选，不必写两个循环。</p>
+<p><strong>2-7</strong></p>
+<pre><code class="language-python">i = 1
+total = 0
+
+while i &lt;= 100:
+    if i % 2 == 0:
+        total = total + i
+    i = i + 1
+
+print(total)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>2550
+</code></pre>
+<p><strong>2-8</strong></p>
+<pre><code class="language-python">nums = [3, 8, 15, 22, 7, 40, 11]
+
+even_count = 0
+for n in nums:
+    if n % 2 == 0:
+        even_count = even_count + 1
+
+print(f&quot;最大值 {max(nums)}，最小值 {min(nums)}，偶数个数 {even_count}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>最大值 40，最小值 3，偶数个数 3
+</code></pre>
+<p><strong>2-9</strong></p>
+<pre><code class="language-python">students = [
+    {&quot;name&quot;: &quot;张三&quot;, &quot;score&quot;: 92},
+    {&quot;name&quot;: &quot;李四&quot;, &quot;score&quot;: 75},
+    {&quot;name&quot;: &quot;王五&quot;, &quot;score&quot;: 88},
+    {&quot;name&quot;: &quot;赵六&quot;, &quot;score&quot;: 60},
+]
+
+passed = 0
+for s in students:
+    print(f&quot;{s['name']}：{s['score']} 分&quot;)
+    if s[&quot;score&quot;] &gt;= 60:
+        passed = passed + 1
+
+print(f&quot;及格人数 {passed} / {len(students)}&quot;)
+</code></pre>
+<p><strong>2-10</strong></p>
+<pre><code class="language-python">nums = [1, 2, 2, 3, 3, 3, 4]
+
+unique = set(nums)
+
+print(f&quot;去重前 {len(nums)} 个元素，去重后 {len(unique)} 个元素&quot;)
+print(sorted(unique))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>去重前 7 个元素，去重后 4 个元素
+[1, 2, 3, 4]
+</code></pre>
+<p><strong>2-11</strong></p>
+<pre><code class="language-python">math = [88, 92, 75]
+chinese = [60, 85, 90]
+
+data = {&quot;数学&quot;: math, &quot;语文&quot;: chinese}
+
+for subject, scores in data.items():
+    avg = sum(scores) / len(scores)
+    print(f&quot;{subject}平均分：{avg:.2f}&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>数学平均分：85.00
+语文平均分：78.33
+</code></pre>
+<p><strong>2-12</strong></p>
+<pre><code class="language-python">text = &quot;苹果 香蕉 苹果 橙子 苹果 香蕉 葡萄&quot;
+
+words = text.split(&quot; &quot;)
+
+counter = {}
+for w in words:
+    if w in counter:
+        counter[w] = counter[w] + 1
+    else:
+        counter[w] = 1
+
+top3 = sorted(counter.items(), key=lambda x: x[1], reverse=True)[:3]
+
+for word, count in top3:
+    print(f&quot;{word}：{count} 次&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>苹果：3 次
+香蕉：2 次
+橙子：1 次
+</code></pre>
+<p>解析：<code>counter.items()</code> 把字典转成 <code>(键, 值)</code> 元组列表，<code>key=lambda x: x[1]</code> 表示按元组的第 2 个元素（即次数）排序，<code>reverse=True</code> 表示降序，<code>[:3]</code> 取前三。</p>
+<h3 id="section-21">第 3 课 参考答案</h3>
+<p><strong>3-1</strong></p>
+<p>输出依次为 <code>15</code>、<code>25</code>、<code>10</code>。</p>
+<ul>
+<li><code>add(5)</code>：<code>b</code> 未传，使用默认值 10，结果为 5 + 10 = 15；</li>
+<li><code>add(5, 20)</code>：<code>b</code> 传 20，结果为 25；</li>
+<li><code>add(b=3, a=7)</code>：使用关键字参数，顺序无关，结果为 7 + 3 = 10。</li>
+</ul>
+<p><strong>3-2</strong></p>
+<p>问题在于 <code>result</code> 是函数内部的局部变量，函数执行完毕后即被销毁，外部无法访问。运行 <code>print(result)</code> 会抛出 <code>NameError</code>。</p>
+<p>正确做法是通过 <code>return</code> 把结果交出来：</p>
+<pre><code class="language-python">def calc():
+    result = 100
+    return result
+
+result = calc()
+print(result)
+</code></pre>
+<p><strong>3-3</strong></p>
+<ol>
+<li><code>def f(x): return x * 2</code></li>
+<li><code>def f(x, y): return x + y</code></li>
+<li><code>def f(s): return len(s) &gt; 3</code></li>
+</ol>
+<p><strong>3-4</strong></p>
+<p>使用 <code>with</code> 的原因：它会在代码块结束时自动关闭文件，即使中途发生异常也能正确关闭，避免文件句柄泄漏和数据写入不完整。</p>
+<p>三种模式：<code>"r"</code> 只读（文件必须存在）；<code>"w"</code> 覆盖写入（文件不存在则创建，存在则清空）；<code>"a"</code> 追加写入（在文件末尾追加内容）。</p>
+<p><strong>3-5</strong></p>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NameError</code></td>
+<td>使用了未定义的变量</td>
+</tr>
+<tr>
+<td><code>TypeError</code></td>
+<td>类型不匹配</td>
+</tr>
+<tr>
+<td><code>ValueError</code></td>
+<td>值无法完成类型转换</td>
+</tr>
+<tr>
+<td><code>KeyError</code></td>
+<td>字典中不存在该键</td>
+</tr>
+<tr>
+<td><code>FileNotFoundError</code></td>
+<td>文件路径错误</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3-6</strong></p>
+<pre><code class="language-python">def average(scores):
+    if len(scores) == 0:
+        return None
+    return sum(scores) / len(scores)
+
+print(average([88, 92, 75]))
+print(average([]))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>85.0
+None
+</code></pre>
+<p>解析：空列表的边界处理是必做的。若不判断，<code>len(scores)</code> 为 0 会导致 <code>ZeroDivisionError</code>。</p>
+<p><strong>3-7</strong></p>
+<pre><code class="language-python">def median(scores):
+    if len(scores) == 0:
+        return None
+
+    data = sorted(scores)
+    n = len(data)
+    mid = n // 2
+
+    if n % 2 == 1:
+        return data[mid]
+    else:
+        return (data[mid - 1] + data[mid]) / 2
+
+print(median([88, 92, 75]))
+print(median([60, 70, 80, 90]))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>88
+75.0
+</code></pre>
+<p>解析：中位数必须先排序。奇数个元素取正中间；偶数个元素取中间两个的平均值。</p>
+<p><strong>3-8</strong></p>
+<pre><code class="language-python">def average(scores):
+    if len(scores) == 0:
+        return None
+    return sum(scores) / len(scores)
+
+def variance(scores):
+    avg = average(scores)
+    total = 0
+    for s in scores:
+        total = total + (s - avg) ** 2
+    return total / len(scores)
+
+print(variance([88, 92, 75, 60, 95]))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>165.04
+</code></pre>
+<p>解析：函数之间可以互相调用，这正是封装的价值——方差的定义依赖均值，直接复用 <code>average()</code> 即可，无需重复实现。</p>
+<p><strong>3-9</strong></p>
+<pre><code class="language-python">students = [
+    {&quot;name&quot;: &quot;张三&quot;, &quot;score&quot;: 92},
+    {&quot;name&quot;: &quot;李四&quot;, &quot;score&quot;: 75},
+    {&quot;name&quot;: &quot;王五&quot;, &quot;score&quot;: 88},
+    {&quot;name&quot;: &quot;赵六&quot;, &quot;score&quot;: 96},
+]
+
+top3 = sorted(students, key=lambda s: s[&quot;score&quot;], reverse=True)[:3]
+
+for i, s in enumerate(top3, start=1):
+    print(f&quot;第 {i} 名：{s['name']}（{s['score']} 分）&quot;)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>第 1 名：赵六（96 分）
+第 2 名：张三（92 分）
+第 3 名：王五（88 分）
+</code></pre>
+<p><strong>3-10</strong></p>
+<pre><code class="language-python">try:
+    with open(&quot;data.txt&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+        lines = f.readlines()
+except FileNotFoundError:
+    print(&quot;文件不存在&quot;)
+else:
+    total_lines = len(lines)
+    non_empty = len([line for line in lines if line.strip() != &quot;&quot;])
+    total_chars = sum(len(line) for line in lines)
+
+    print(f&quot;总行数 {total_lines}，非空行数 {non_empty}，总字符数 {total_chars}&quot;)
+</code></pre>
+<p><strong>3-11</strong></p>
+<pre><code class="language-python">def safe_int(value, default=0):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return default
+
+print(safe_int(&quot;123&quot;))
+print(safe_int(&quot;abc&quot;))
+print(safe_int(None, -1))
+</code></pre>
+<p>预期输出：</p>
+<pre><code>123
+0
+-1
+</code></pre>
+<p>解析：同时捕获 <code>ValueError</code> 与 <code>TypeError</code> 更稳妥——前者对应"内容不是合法整数"，后者对应"传入了无法转换的类型（如 <code>None</code>）"。</p>
+<p><strong>3-12</strong></p>
+<pre><code class="language-python">def average(scores):
+    if not scores:
+        return None
+    return sum(scores) / len(scores)
+
+def median(scores):
+    if not scores:
+        return None
+    data = sorted(scores)
+    n = len(data)
+    mid = n // 2
+    return data[mid] if n % 2 == 1 else (data[mid - 1] + data[mid]) / 2
+
+def load_scores(path):
+    names, scores = [], []
+    with open(path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+        lines = f.readlines()
+
+    for line in lines[1:]:
+        line = line.strip()
+        if line == &quot;&quot;:
+            continue
+        parts = line.split(&quot;,&quot;)
+        names.append(parts[0])
+        scores.append(float(parts[1]))
+
+    return names, scores
+
+try:
+    names, scores = load_scores(&quot;scores.csv&quot;)
+except FileNotFoundError:
+    print(&quot;找不到 scores.csv，请确认文件与脚本在同一目录&quot;)
+else:
+    avg = average(scores)
+    med = median(scores)
+    passed = len([s for s in scores if s &gt;= 60])
+    rate = passed / len(scores) * 100
+
+    report = (
+        f&quot;共 {len(scores)} 名学生\n&quot;
+        f&quot;平均分：{avg:.2f}\n&quot;
+        f&quot;中位数：{med:.2f}\n&quot;
+        f&quot;及格人数：{passed}，及格率：{rate:.1f}%\n&quot;
+    )
+
+    print(report)
+    with open(&quot;report.txt&quot;, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+        f.write(report)
+</code></pre>
+<p>解析：本题把第 3 课的全部知识点串起来了——函数封装统计逻辑、文件读取、类型转换、异常处理、结果写回。注意 <code>lines[1:]</code> 跳过表头，以及读取时跳过空行。</p>
+<h3 id="section-22">第 4 课 参考答案</h3>
+<p><strong>4-1</strong></p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>回答的问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>df.head()</code></td>
+<td>数据长什么样？前几行的具体取值是什么？</td>
+</tr>
+<tr>
+<td><code>df.info()</code></td>
+<td>有多少行？每列叫什么？什么类型？有没有缺失值？</td>
+</tr>
+<tr>
+<td><code>df.describe()</code></td>
+<td>数值列的分布如何？均值、标准差、四分位数分别是多少？</td>
+</tr>
+</tbody>
+</table>
+<p>解析：这三个函数构成"了解数据"的标准动作，应在任何分析的开始阶段执行。</p>
+<p><strong>4-2</strong></p>
+<p><code>axis=0</code> 输出 <code>[5 7 9]</code>（按列求和）；<code>axis=1</code> 输出 <code>[6 15]</code>（按行求和）。</p>
+<p>记忆技巧：<code>axis=0</code> 表示"把第 0 个维度（行）压掉"，剩下的就是列方向的结果。</p>
+<p><strong>4-3</strong></p>
+<ol>
+<li>错。<code>df["score"]</code> 返回的是 Series；要返回 DataFrame 需写成 <code>df[["score"]]</code>。</li>
+<li>对。所有缺失值都被替换成同一个均值，数据的离散程度会被人为压低，标准差因此偏小。</li>
+<li>对。<code>groupby</code> 本身只完成分组，必须接聚合函数（如 <code>mean()</code>、<code>sum()</code>、<code>agg()</code>）才能得到结果。</li>
+<li>错。<code>value_counts()</code> 统计的是各取值出现的次数；查看类型应使用 <code>df.dtypes</code> 或 <code>df.info()</code>。</li>
+<li>错。pandas 中绝大多数方法返回新对象而不修改原数据，需用 <code>df = df.drop_duplicates()</code> 接收返回值。</li>
+</ol>
+<p><strong>4-4</strong></p>
+<p>答：<code>for</code> 循环是 Python 层面的逐元素解释执行，每次迭代都有解释器开销；NumPy 的向量化运算把整批数据交给底层的 C 代码批量处理，并利用连续内存与 CPU 的 SIMD 指令并行计算，因此快几十倍甚至上百倍。</p>
+<p>意义：处理十万行以上的真实数据时，循环写法可能需要数十秒甚至数分钟，而向量化通常只需毫秒级。这是 pandas 与 NumPy 能处理实际业务数据的前提。</p>
+<p><strong>4-5</strong></p>
+<p>答：因为用均值填充会改变数据的统计特征——降低方差、压缩极值、可能削弱组间差异。如果不说明，读者会误以为报告中的标准差、分布特征反映的是原始数据的真实情况。</p>
+<p>说明填充方式，是让分析结论可被检验、可被质疑的必要条件，属于分析规范而非形式要求。</p>
+<p><strong>4-6</strong></p>
+<pre><code class="language-python">import numpy as np
+
+a = np.array([88, 92, 75, 60, 95])
+
+print(f&quot;均值 {a.mean():.2f}&quot;)
+print(f&quot;中位数 {np.median(a):.2f}&quot;)
+print(f&quot;标准差 {a.std():.2f}&quot;)
+print(f&quot;最大值 {a.max()}，最小值 {a.min()}&quot;)
+</code></pre>
+<p><strong>4-7</strong></p>
+<pre><code class="language-python">import pandas as pd
+
+df = pd.DataFrame({
+    &quot;name&quot;: [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;, &quot;赵六&quot;],
+    &quot;subject&quot;: [&quot;数学&quot;, &quot;语文&quot;, &quot;数学&quot;, &quot;语文&quot;],
+    &quot;score&quot;: [92, 75, 88, 60],
+})
+
+print(df.shape)
+print(df.columns.tolist())
+print(df.dtypes)
+</code></pre>
+<p>预期输出：</p>
+<pre><code>(4, 3)
+['name', 'subject', 'score']
+name       object
+subject    object
+score       int64
+dtype: object
+</code></pre>
+<p><strong>4-8</strong></p>
+<pre><code class="language-python">print(df[df[&quot;score&quot;] &gt;= 80])
+print(df.groupby(&quot;subject&quot;)[&quot;score&quot;].mean())
+print(df.sort_values(&quot;score&quot;, ascending=False))
+print(df[&quot;subject&quot;].value_counts())
+</code></pre>
+<p>预期输出（部分）：</p>
+<pre><code>   name subject  score
+0  张三      数学     92
+2  王五      数学     88
+
+subject
+数学    90.0
+语文    67.5
+Name: score, dtype: float64
+
+subject
+数学    2
+语文    2
+Name: subject, dtype: int64
+</code></pre>
+<p><strong>4-9</strong></p>
+<pre><code class="language-python">import numpy as np
+import pandas as pd
+
+df = pd.DataFrame({
+    &quot;name&quot;: [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;, &quot;赵六&quot;],
+    &quot;score&quot;: [92, np.nan, 88, np.nan],
+})
+
+print(f&quot;原始行数 {len(df)}，均值 {df['score'].mean():.2f}&quot;)
+
+dropped = df.dropna(subset=[&quot;score&quot;])
+print(f&quot;删除缺失行后 {len(dropped)} 行，均值 {dropped['score'].mean():.2f}&quot;)
+
+filled = df.copy()
+filled[&quot;score&quot;] = filled[&quot;score&quot;].fillna(filled[&quot;score&quot;].mean())
+print(f&quot;均值填充后 {len(filled)} 行，均值 {filled['score'].mean():.2f}，标准差 {filled['score'].std():.2f}&quot;)
+</code></pre>
+<p>解析：注意 <code>df["score"].mean()</code> 会自动跳过 <code>NaN</code>，因此填充用的均值是 90.00。填充后行数不变，但标准差明显小于删除缺失行后的结果——这正是"填充会压缩离散程度"的直接证据。<code>df.copy()</code> 用于避免直接修改原数据。</p>
+<p><strong>4-10</strong></p>
+<pre><code class="language-python">result = df.groupby(&quot;subject&quot;)[&quot;score&quot;].agg([&quot;count&quot;, &quot;mean&quot;, &quot;median&quot;, &quot;std&quot;])
+print(result)
+</code></pre>
+<p><strong>4-11</strong></p>
+<pre><code class="language-python">df[&quot;pass&quot;] = df[&quot;score&quot;].apply(lambda s: &quot;及格&quot; if s &gt;= 60 else &quot;不及格&quot;)
+
+print(df)
+print(df[&quot;pass&quot;].value_counts())
+</code></pre>
+<p>解析：<code>apply</code> 配合 <code>lambda</code> 是逐行变换的常用写法，也再次用到了第 3 课的 lambda 知识。</p>
+<p><strong>4-12</strong></p>
+<p>本题为开放性任务，无唯一答案。评分时请对照以下要点自检：</p>
+<ol>
+<li><strong>数据说明</strong>是否写清了来源、字段含义、行列数量；</li>
+<li><strong>清洗记录</strong>是否说明了缺失值处理方式<strong>及依据</strong>（不是只写"填了均值"，而要写"为什么选择填均值"）；</li>
+<li><strong>描述统计</strong>是否覆盖至少 3 个字段，且正确使用均值、中位数、标准差（尤其注意：当分布有明显偏态时，中位数比均值更能代表典型水平）；</li>
+<li><strong>分组对比</strong>是否指出了差异最大的组，并给出量化差值；</li>
+<li><strong>结论</strong>是否每一条都能对应到一个具体的统计结果，是否存在无法追溯的主观表述；</li>
+<li><strong>局限</strong>是否真实——常见的有效局限包括样本量偏小、缺失值填充带来的偏差、相关关系不等于因果关系。</li>
+</ol>
+<p>一个合格的结课报告，其价值不在于用了多少高级函数，而在于<strong>每一条结论都能回到数据本身</strong>。</p>
+<p class="doc-footer">Python 基础语法练习题与参考答案（第 1–4 课）</p>
+</section>
+</body>
+</html>
