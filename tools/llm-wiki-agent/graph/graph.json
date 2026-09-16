@@ -1,0 +1,694 @@
+{
+  "nodes": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "type": "synthesis",
+      "color": "#9C27B0",
+      "path": "wiki\\overview.md",
+      "markdown": "---\ntitle: \"Overview\"\ntype: synthesis\ntags: []\nsources: [agent, llm-context, skill]\nlast_updated: 2026-09-09\n---\n\n# Overview\n\n*This page is maintained by the LLM. It is updated on every ingest to reflect the current synthesis across all sources.*\n\n## Current Synthesis (2026-09-09)\n\nThree silent-madman concept-learning documents have been ingested, forming a tightly interconnected cluster around \"how LLMs reason with bounded resources\":\n\n- **[[Agent]]** is the autonomous execution layer — a system that picks tools and loops around a goal.\n- **[[LLMContext]]** is the hard constraint Agent operates under — a token-budgeted \"desktop\" bounded by Transformer's n² cost.\n- **[[Skill]]** is the unit that lets a general model act like a domain expert without bloating context — via **[[ProgressiveDisclosure]]**, which exposes only YAML metadata initially and loads deeper resources on demand.\n\nThe three form a closed feedback loop:\n\n```\n            ┌──────────────────────────────────────┐\n            │  Agent picks tools + loops          │\n            └────────────────┬─────────────────────┘\n                             │ bounded by\n            ┌────────────────▼─────────────────────┐\n            │  LLM Context Window (token budget)   │\n            └────────────────┬─────────────────────┘\n                             │ preserved by\n            ┌────────────────▼─────────────────────┐\n            │  Skill + Progressive Disclosure      │\n            └────────────────┬─────────────────────┘\n                             │ activated by\n            └──────────────────────────────────────┘\n                            (back to Agent)\n```\n\n## Cross-Cutting Themes\n- **Bounded context is the central engineering constraint** — every concept traces back to a token / window / cost limit.\n- **\"On-demand loading\" is the dominant solution shape** — Skills (progressive disclosure), RAG (vector retrieval), file_search (OpenAI), memory tool (Anthropic) all share this pattern.\n- **[[Anthropic]] is the primary vendor contributing this design vocabulary**; [[OpenAI]] provides complementary framing.\n- **Memory ≠ context window ≠ training knowledge** — the three are easy to confuse but operate on different axes.\n\n## Open Questions (suggested next sources)\n- A concrete RAG system case study (vector DB choice, chunking strategy, retrieval quality)\n- MemGPT or Anthropic memory tool reference (for OS-style tiered memory)\n- LangChain's memory module deep-dive (for practical patterns across 6 memory types)\n- How Agent memory system (vector / summary / KV trade-offs) interacts with Skill loading\n\n## Next Ingest Suggestions\n- `raw/papers/rag-survey.md` — RAG foundations\n- `raw/tools/memgpt-paper.md` — OS-style tiered memory\n- `raw/tools/langchain-memory.md` — practical memory patterns",
+      "preview": "# Overview *This page is maintained by the LLM. It is updated on every ingest to reflect the current synthesis across all sources.* ## Current Synthesis (2026-09-09)",
+      "group": -1,
+      "value": 7
+    },
+    {
+      "id": "concepts/Agent",
+      "label": "Agent",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\Agent.md",
+      "markdown": "---\ntitle: \"Agent\"\ntype: concept\ntags: [ai-agent, llm, autonomous-system]\nsources: [agent, skill]\nlast_updated: 2026-09-09\n---\n\n# Agent\n\nA software system driven by a large language model that autonomously decides which tools to call around a target, observes results, and loops until the task completes or control is yielded.\n\n## Definition\nPer [[agent]] source: Agent 是组织好的 LLM + 工具 + 记忆 + 循环。\n\n## Core Mechanism (from [[agent]])\n1. **Receive goal + context** — translate fuzzy intent into executable target\n2. **Reason next action** — ReAct / Chain-of-Thought pick tool + params\n3. **Execute tool + collect observation** — external executor does the work\n4. **Update state + judge stop** — merge observation, decide done or loop back\n\nA canonical pseudo-code:\n\n```\nwhile not done:\n    thought    = model.reason(goal, history)\n    if thought.is_final_answer: return thought.answer\n    tool_call  = model.choose_tool()\n    observation = execute(tool_call)\n    history.append((thought, tool_call, observation))\n```\n\n## Boundary\n- **Not a chatbot** — must dynamically control flow, not just answer questions\n- **Not a fixed automation script** — steps are auto-determined, not pre-encoded\n- **Not AGI** — bounded by permissions, token budget, stopping condition\n\n## Practical Use\n| Use Agent | Use Script |\n|---|---|\n| Steps cannot be enumerated in advance | Steps are fixed, repeated |\n| Need to adapt based on results | Millisecond-SLA hot paths |\n| Single failures acceptable via retry | Any failure is irreversible |\n\n## See Also\n- [[Skill]] — the packaging unit that turns general models into domain experts\n- [[LLMContext]] — Agent operations constrained by context window\n- [[ProgressiveDisclosure]] — load-on-demand that lets Agents use Skills within bounded context\n- [[ReAct]] — reasoning pattern used in Agent's step 2\n- [[Anthropic]] / [[OpenAI]] — primary vendors shaping Agent design vocabulary",
+      "preview": "# Agent A software system driven by a large language model that autonomously decides which tools to call around a target, observes results, and loops until the task completes or control is yielded. ## Definition",
+      "group": -1,
+      "value": 8
+    },
+    {
+      "id": "concepts/ContextWindow",
+      "label": "Context Window",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\ContextWindow.md",
+      "markdown": "---\ntitle: \"Context Window\"\ntype: concept\ntags: [llm, transformer, token, redirect]\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n# Context Window\n\nSame concept as [[LLMContext]]; see that page for the full description.\n\nThis page exists as a redirect / canonical name for searches using the English term \"context window\".",
+      "preview": "# Context Window Same concept as [[LLMContext]]; see that page for the full description. This page exists as a redirect / canonical name for searches using the English term \"context window\".",
+      "group": -1,
+      "value": 3
+    },
+    {
+      "id": "concepts/LLMContext",
+      "label": "LLM Context",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\LLMContext.md",
+      "markdown": "---\ntitle: \"LLM Context\"\ntype: concept\ntags: [llm, context-window, transformer]\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n# LLM Context\n\nThe maximum number of tokens the model can simultaneously read and reference in a single inference pass.\n\n## Definition\nPer [[llm-context]] source: Sizing unit is **token** (BPE sub-word), not character.\n- English: ~1 token / word\n- Chinese: ~1.5–2 tokens / character\n\nThe window includes: system prompt + history + retrieved docs + reserved output, and must satisfy `total ≤ N tokens`.\n\n## Core Mechanism\n1. **BPE tokenization** — uniform processing across languages and out-of-vocab words\n2. **Positional encoding + self-attention** — O(n²) cost scaling (1000 → 1M relations, 10000 → 100M)\n3. **Truncation policy** — most APIs silently truncate oldest content rather than raising\n4. **Attention bias** — strong at start (system) + end (current); middle weakened (\"Lost in the Middle\")\n\n## Boundary\n- **Not = training knowledge** — parameters (long-term) ≠ context (this session)\n- **Not = bigger is better** — cost and latency scale with size; needs business-case ROI\n- **Not = character count** — use the target model's tokenizer\n\n## Practical Use\n| Use Large Window | Use RAG / Summary |\n|---|---|\n| Full-document cross-section QA | Sparse info, only fragments needed |\n| Long-chain Agent (multi-step state) | High-frequency, low-latency, low-cost |\n| Truncation-sensitive review | Acceptable chunk + merge for summarization |\n\n## See Also\n- [[ContextWindow]] — English-name redirect\n- [[Token]] — fundamental unit\n- [[Agent]] — bounded by context budget\n- [[Skill]] — progressive disclosure extends effective \"memory\"\n- [[Transformer]] — architecture whose n² cost sets the bound",
+      "preview": "# LLM Context The maximum number of tokens the model can simultaneously read and reference in a single inference pass. ## Definition",
+      "group": -1,
+      "value": 11
+    },
+    {
+      "id": "concepts/MCP",
+      "label": "MCP",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\MCP.md",
+      "markdown": "---\ntitle: \"MCP\"\ntype: concept\ntags: [anthropic, protocol, tools, mcp]\nsources: [skill]\nlast_updated: 2026-09-09\n---\n\n# MCP (Model Context Protocol)\n\nA standard protocol for connecting LLMs to external data sources and tools, originated by [[Anthropic]].\n\n## Boundary with Skill (per [[skill]])\n- **MCP** = \"connect the tool\" (standardizes the interface)\n- **Skill** = \"teach the model how to use the tool\" (organizes the workflow)\n- Often used together — MCP server + Skill that documents when to call which tool\n\n## Why It Matters\n- Solves the \"N×M integrations\" problem (every LLM × every tool)\n- A single MCP server can serve multiple LLM clients\n- Composable with progressive disclosure — the Skill can document an MCP tool without inlining its interface\n\n## See Also\n- [[Skill]] — complementary concept\n- [[Anthropic]] — MCP origin\n- [[Agent]] — typical consumer that combines Skill + MCP",
+      "preview": "# MCP (Model Context Protocol) A standard protocol for connecting LLMs to external data sources and tools, originated by [[Anthropic]]. ## Boundary with Skill (per [[skill]])",
+      "group": -1,
+      "value": 5
+    },
+    {
+      "id": "concepts/ProgressiveDisclosure",
+      "label": "Progressive Disclosure",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\ProgressiveDisclosure.md",
+      "markdown": "---\ntitle: \"Progressive Disclosure\"\ntype: concept\ntags: [anthropic, context-engineering, design-pattern]\nsources: [skill]\nlast_updated: 2026-09-09\n---\n\n# Progressive Disclosure\n\nA load-on-demand design pattern that fits arbitrarily many resources into a bounded context window by exposing only metadata initially.\n\n## Mechanism (per [[skill]])\n1. **Layer 1** — YAML metadata (name + description) always in system prompt\n2. **Layer 2** — SKILL.md body loaded when task relevant\n3. **Layer 3** — scripts/assets loaded on demand\n\n## Why It Matters\n- Lets a single Skill carry arbitrary resources without bloating context\n- User doesn't need to \"pick\" — model selects based on description matching\n- Reasoning chain shows the activation, making it observable / debuggable\n\n## See Also\n- [[Skill]] — primary use case\n- [[LLMContext]] — solves the bounded-context problem\n- [[Agent]] — typical consumer of progressive disclosure",
+      "preview": "# Progressive Disclosure A load-on-demand design pattern that fits arbitrarily many resources into a bounded context window by exposing only metadata initially. ## Mechanism (per [[skill]])",
+      "group": -1,
+      "value": 7
+    },
+    {
+      "id": "concepts/ReAct",
+      "label": "ReAct",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\ReAct.md",
+      "markdown": "---\ntitle: \"ReAct\"\ntype: concept\ntags: [agent, prompting, reasoning]\nsources: [agent]\nlast_updated: 2026-09-09\n---\n\n# ReAct\n\nA prompting pattern that interleaves Reasoning and Action steps in an Agent loop: **Thought → Action → Observation → Thought → …**.\n\n## Role in Agent\nPer [[agent]] core mechanism step 2, ReAct (along with Chain-of-Thought) is the canonical reasoning pattern for Agent's \"decide next action\" step.\n\n## Strengths\n- Forces explicit reasoning before each tool call → reduces hallucination\n- Traceable — every Thought is inspectable in the log\n- Composable with any tool set\n\n## See Also\n- [[Agent]] — primary use case\n- [[Skill]] — Skill metadata + ReAct reasoning together drive tool selection",
+      "preview": "# ReAct A prompting pattern that interleaves Reasoning and Action steps in an Agent loop: **Thought → Action → Observation → Thought → …**. ## Role in Agent",
+      "group": -1,
+      "value": 4
+    },
+    {
+      "id": "concepts/Skill",
+      "label": "Skill",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\Skill.md",
+      "markdown": "---\ntitle: \"Skill\"\ntype: concept\ntags: [anthropic, skill, progressive-disclosure, design-pattern]\nsources: [skill]\nlast_updated: 2026-09-09\n---\n\n# Skill\n\nAn organized folder of instructions, scripts, and resources that Claude loads on demand when a task is relevant — turning a general model into a domain expert.\n\n## Definition\nPer [[skill]] source: Same Skill folder usable across Claude app / Claude Code / API / Agent SDK. Released as an open standard after 2025-12.\n\n## Core Mechanism\n- **Progressive disclosure (3 layers)**:\n  - Layer 1 — YAML metadata (name + description) always in system prompt\n  - Layer 2 — SKILL.md body loaded when task relevant\n  - Layer 3 — scripts and referenced assets loaded on demand\n- **Auto relevance check** — Claude scans metadata descriptions each turn; user doesn't \"pick\"\n- **Code as first-class** — scripts allow deterministic operations (sort, render PDF, generate chart)\n- **Cross-product portability** — same Skill works in multiple products\n\n## Boundary\n- **Not = prompt template** — template is per-conversation; Skill is cross-conversation, version-controlled, multi-product-shared\n- **Not = fine-tuning** — Skill changes context, not model parameters\n- **Not = MCP** — MCP = \"connect the tool\" (interface standard); Skill = \"teach the model how to use the tool\"\n\n## Practical Use\n| Use Skill | Use Prompt / Project |\n|---|---|\n| Cross-team / multi-product domain workflow | One-off, temporary input requirement |\n| Complex tasks needing executable scripts | Static reference knowledge (glossaries) |\n| Dynamic relevance activation | Always-on rules for every session |\n\n## See Also\n- [[Agent]] — Skill is the unit that empowers Agents\n- [[ProgressiveDisclosure]] — load-on-demand mechanism\n- [[LLMContext]] — Skills operate within bounded context\n- [[MCP]] — complementary tool-connection standard\n- [[Anthropic]] — Skill is an Anthropic product feature",
+      "preview": "# Skill An organized folder of instructions, scripts, and resources that Claude loads on demand when a task is relevant — turning a general model into a domain expert. ## Definition",
+      "group": -1,
+      "value": 7
+    },
+    {
+      "id": "concepts/Token",
+      "label": "Token",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\Token.md",
+      "markdown": "---\ntitle: \"Token\"\ntype: concept\ntags: [llm, tokenization, bpe]\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n# Token\n\nThe fundamental unit by which LLMs count, price, and truncate text — produced by BPE (Byte Pair Encoding) sub-word tokenization.\n\n## Key Facts (per [[llm-context]])\n- English: ~1 token / word on average\n- Chinese: ~1.5–2 tokens / character (smaller unit = more tokens)\n- Same text can yield different token counts across tokenizers — always measure with the target model's tokenizer\n\n## Why It Matters\n- Context window capacity is measured in tokens, not characters\n- Pricing is per-token (input + output)\n- Cross-lingual handling relies on consistent tokenization\n- \"Out of vocabulary\" words are handled by BPE — no `<UNK>` failures\n\n## See Also\n- [[LLMContext]] — context window = token budget\n- [[Transformer]] — operates on token sequences\n- [[Skill]] — progressive disclosure optimizes per-token spend",
+      "preview": "# Token The fundamental unit by which LLMs count, price, and truncate text — produced by BPE (Byte Pair Encoding) sub-word tokenization. ## Key Facts (per [[llm-context]])",
+      "group": -1,
+      "value": 5
+    },
+    {
+      "id": "concepts/Transformer",
+      "label": "Transformer",
+      "type": "concept",
+      "color": "#FF9800",
+      "path": "wiki\\concepts\\Transformer.md",
+      "markdown": "---\ntitle: \"Transformer\"\ntype: concept\ntags: [llm, architecture, attention]\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n# Transformer\n\nThe neural architecture underlying modern LLMs, featuring self-attention that lets each token relate to every other token in the context.\n\n## Key Cost Implication (per [[llm-context]])\n- Self-attention is O(n²) in sequence length\n- This is the **physical reason** context windows must be bounded\n- Beyond training length, inference quality can degrade even within the named window\n\n## Components\n- Token embedding + positional encoding\n- Multi-head self-attention\n- Feed-forward layers\n- Residual connections + layer normalization\n\n## See Also\n- [[LLMContext]] — bounded by Transformer's n² cost\n- [[Token]] — input unit\n- [[Skill]] — progressive disclosure works *around* the n² cost",
+      "preview": "# Transformer The neural architecture underlying modern LLMs, featuring self-attention that lets each token relate to every other token in the context. ## Key Cost Implication (per [[llm-context]])",
+      "group": -1,
+      "value": 5
+    },
+    {
+      "id": "entities/Anthropic",
+      "label": "Anthropic",
+      "type": "entity",
+      "color": "#2196F3",
+      "path": "wiki\\entities\\Anthropic.md",
+      "markdown": "---\ntitle: \"Anthropic\"\ntype: entity\ntags: [company, ai-vendor, claude]\nsources: [agent, llm-context, skill]\nlast_updated: 2026-09-09\n---\n\n# Anthropic\n\nAI safety company and creator of Claude. Primary source for Agent Skills, progressive disclosure, context management design, and MCP.\n\n## Key Contributions Referenced in This Wiki\n- **Agent definition** (per [[agent]] sources) — autonomous loop driven by reasoning model\n- **Skills + progressive disclosure** (per [[skill]] sources) — 3-layer load-on-demand\n- **Context editing + memory tool** — for long-running agents (referenced in concept-relationship)\n- **MCP** (per [[MCP]]) — Model Context Protocol for tool integration\n\n## Products (as referenced)\n- Claude app / Claude Code / API / Agent SDK — all share the same Skill format\n\n## See Also\n- [[Agent]] — Anthropic's framing\n- [[Skill]] — Anthropic product feature\n- [[MCP]] — Anthropic protocol\n- [[OpenAI]] — complementary AI vendor",
+      "preview": "# Anthropic AI safety company and creator of Claude. Primary source for Agent Skills, progressive disclosure, context management design, and MCP. ## Key Contributions Referenced in This Wiki",
+      "group": -1,
+      "value": 9
+    },
+    {
+      "id": "entities/BaiduBaike",
+      "label": "Baidu Baike",
+      "type": "entity",
+      "color": "#2196F3",
+      "path": "wiki\\entities\\BaiduBaike.md",
+      "markdown": "---\ntitle: \"Baidu Baike\"\ntype: entity\ntags: [third-party, encyclopedia, chinese, baidu-baike]\nsources: [llm-context, skill]\nlast_updated: 2026-09-09\n---\n\n# Baidu Baike(百度百科)\n\nChinese encyclopedia referenced for context window basics in [[llm-context]] and [[skill]] sources. Provides a Chinese-language definition of context window vs context length and tracks mainstream-model spec evolution.",
+      "preview": "# Baidu Baike(百度百科) Chinese encyclopedia referenced for context window basics in [[llm-context]] and [[skill]] sources. Provides a Chinese-language definition of context window vs context length and tracks mainstream-mod",
+      "group": -1,
+      "value": 3
+    },
+    {
+      "id": "entities/OpenAI",
+      "label": "OpenAI",
+      "type": "entity",
+      "color": "#2196F3",
+      "path": "wiki\\entities\\OpenAI.md",
+      "markdown": "---\ntitle: \"OpenAI\"\ntype: entity\ntags: [company, ai-vendor, gpt]\nsources: [agent, skill]\nlast_updated: 2026-09-09\n---\n\n# OpenAI\n\nAI vendor and creator of GPT / ChatGPT. Complementary view to Anthropic on Agent Skills.\n\n## Key Contributions Referenced in This Wiki\n- **Agent Skills** — OpenAI's framing emphasizes dynamic control of execution flow (per [[agent]] sources)\n- **Custom Instructions** — surface-level similar to Skill metadata, different mechanics (per [[skill]] sources)\n\n## See Also\n- [[Anthropic]] — sibling AI vendor with complementary design vocabulary\n- [[Agent]] — OpenAI's framing\n- [[Skill]] — ChatGPT Custom Instructions is the closest consumer-facing analog",
+      "preview": "# OpenAI AI vendor and creator of GPT / ChatGPT. Complementary view to Anthropic on Agent Skills. ## Key Contributions Referenced in This Wiki",
+      "group": -1,
+      "value": 6
+    },
+    {
+      "id": "entities/SourceScore",
+      "label": "SourceScore",
+      "type": "entity",
+      "color": "#2196F3",
+      "path": "wiki\\entities\\SourceScore.md",
+      "markdown": "---\ntitle: \"SourceScore\"\ntype: entity\ntags: [third-party, agent-review, sourcescore]\nsources: [agent]\nlast_updated: 2026-09-09\n---\n\n# SourceScore\n\nThird-party rating site that summarizes AI agents and the loop they run. Referenced in [[agent]] sources for engineering summary of Agent loop and failure modes.",
+      "preview": "# SourceScore Third-party rating site that summarizes AI agents and the loop they run. Referenced in [[agent]] sources for engineering summary of Agent loop and failure modes.",
+      "group": -1,
+      "value": 2
+    },
+    {
+      "id": "sources/agent",
+      "label": "AI Agent(智能体)",
+      "type": "source",
+      "color": "#4CAF50",
+      "path": "wiki\\sources\\agent.md",
+      "markdown": "---\ntitle: \"AI Agent(智能体)\"\ntype: source\ntags: [concept-learning, ai-agent, llm, silent-madman]\ndate: 2026-09-05\nsource_file: raw/learning-materials/agent.html\nsources: [agent]\nlast_updated: 2026-09-09\n---\n\n## Summary\nA concept-learning HTML document (7-section format: 一句话定义 / 个人解释 / 核心机制 / 应用场景 / 边界辨析 / 来源链接 / 一句话回顾) generated by the silent-madman concept-explainer skill on 2026-09-05. Defines AI Agent as a software system driven by an LLM that autonomously decides which tools to call around a target, observes results, and loops until the task completes or control is yielded.\n\n## Key Claims\n- Agent is not a new algorithm but an *organization* of (reasoning model + tool calls + memory + loop).\n- The core mechanism is a four-step loop: receive goal + context → reason next action → execute tool + collect observation → update state + judge whether to stop.\n- Common misconception: \"attaching a tool makes an Agent\" — Anthropic and OpenAI both require the model to *dynamically* control the execution flow.\n- Practical scoping: use Agents only when steps cannot be enumerated in advance; use scripts otherwise.\n\n## Key Quotes\n> \"Agent 不是某种新算法,而是把『会推理的模型 + 可以调用的工具 + 一个会停下来的循环』组织在一起,让系统能围绕目标自己挑路径。\"\n\n## Connections\n- [[Anthropic]] — primary source for Agent definition and Agent Skills design\n- [[OpenAI]] — complementary view on Agent Skills\n- [[Agent]] — concept page this source primarily informs\n- [[LLMContext]] — Agent operations constrained by context window budget\n- [[Skill]] — Skill is the packaging unit that empowers Agents\n- [[ReAct]] — reasoning pattern used in step 2 of the Agent loop\n\n## Contradictions\n- None detected at ingest time.",
+      "preview": "## Summary A concept-learning HTML document (7-section format: 一句话定义 / 个人解释 / 核心机制 / 应用场景 / 边界辨析 / 来源链接 / 一句话回顾) generated by the silent-madman concept-explainer skill on 2026-09-05. Defines AI Agent as a software system",
+      "group": -1,
+      "value": 13
+    },
+    {
+      "id": "sources/llm-context",
+      "label": "LLM Context Window(大模型上下文窗口)",
+      "type": "source",
+      "color": "#4CAF50",
+      "path": "wiki\\sources\\llm-context.md",
+      "markdown": "---\ntitle: \"LLM Context Window(大模型上下文窗口)\"\ntype: source\ntags: [concept-learning, llm, context-window, silent-madman]\ndate: 2026-09-05\nsource_file: raw/learning-materials/llm-context.html\nsources: [llm-context]\nlast_updated: 2026-09-09\n---\n\n## Summary\nA concept-learning HTML document generated by silent-madman's concept-explainer skill on 2026-09-05. Defines the LLM context window as the maximum number of tokens the model can simultaneously read and reference in a single inference pass. The mechanism covers BPE tokenization, positional encoding + self-attention, total length judgment + truncation, and attention-weight shifting (Lost in the Middle).\n\n## Key Claims\n- Context window is the model's \"short-term memory desktop\" — sized in tokens, not characters (Chinese characters average 1.5–2 tokens each).\n- Self-attention cost grows as n²; 1000 tokens → 1M pair-wise relations, 10000 tokens → 100M.\n- Most commercial APIs *silently truncate* on overflow rather than raising an error — explaining the common \"AI amnesia\" experience.\n- \"Lost in the Middle\": even within window, the model attends strongest to system prompt + current question; middle content gets weaker attention.\n\n## Key Quotes\n> \"上下文窗口是模型的『短期记忆』办公桌——尺寸按 token 计算,受注意力平方成本硬约束,决定了模型这一轮能看见什么、记不得什么。\"\n\n## Connections\n- [[Anthropic]] — context-engineering + Skills 三级披露 designed around context window constraints\n- [[LLMContext]] — concept page this source primarily informs\n- [[ContextWindow]] — alternative naming for the same concept\n- [[Token]] — fundamental unit of context accounting\n- [[Agent]] — Agent operations are bounded by context budget\n- [[Transformer]] — underlying architecture whose n² cost sets the window bound\n\n## Contradictions\n- None detected at ingest time.",
+      "preview": "## Summary A concept-learning HTML document generated by silent-madman's concept-explainer skill on 2026-09-05. Defines the LLM context window as the maximum number of tokens the model can simultaneously read and referen",
+      "group": -1,
+      "value": 8
+    },
+    {
+      "id": "sources/skill",
+      "label": "Skill(技能)",
+      "type": "source",
+      "color": "#4CAF50",
+      "path": "wiki\\sources\\skill.md",
+      "markdown": "---\ntitle: \"Skill(技能)\"\ntype: source\ntags: [concept-learning, anthropic, skill, progressive-disclosure, silent-madman]\ndate: 2026-09-05\nsource_file: raw/learning-materials/skill.html\nsources: [skill]\nlast_updated: 2026-09-09\n---\n\n## Summary\nA concept-learning HTML document generated by silent-madman's concept-explainer skill on 2026-09-05. Defines Skill as an organized folder of instructions, scripts, and resources that Claude loads on demand when a task is relevant — turning a general model into a domain expert. The core mechanism is *progressive disclosure* (YAML metadata → SKILL.md body → referenced scripts/assets), which fits unlimited expertise into a bounded context window.\n\n## Key Claims\n- Skill is not a prompt template — it is a cross-conversation, version-controlled, multi-product-shared directory.\n- Three-layer progressive disclosure: (1) YAML metadata always in system prompt, (2) SKILL.md body loaded when relevant, (3) scripts/assets loaded on demand.\n- Same Skill folder works across Claude app, Claude Code, API, Agent SDK; released as an open standard after 2025-12.\n- Skill is *not* MCP: Skill teaches the model how to use tools; MCP standardizes the tool connection itself.\n\n## Key Quotes\n> \"Skill 不是『让模型变聪明』,而是『把组织经验打包成可按需加载的目录』,用渐进式披露在有限的上下文里装下无限的专业知识。\"\n\n## Connections\n- [[Anthropic]] — Skill is an Anthropic product feature\n- [[Skill]] — concept page this source primarily informs\n- [[ProgressiveDisclosure]] — the load-on-demand mechanism that makes Skills work\n- [[LLMContext]] — Skills operate within bounded context via progressive disclosure\n- [[Agent]] — Skill is the unit that empowers Agents\n- [[MCP]] — complementary tool-connection standard\n\n## Contradictions\n- None detected at ingest time.",
+      "preview": "## Summary A concept-learning HTML document generated by silent-madman's concept-explainer skill on 2026-09-05. Defines Skill as an organized folder of instructions, scripts, and resources that Claude loads on demand whe",
+      "group": -1,
+      "value": 14
+    }
+  ],
+  "edges": [
+    {
+      "id": "overview->sources/agent:EXTRACTED",
+      "from": "overview",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->entities/Anthropic:EXTRACTED",
+      "from": "overview",
+      "to": "entities/Anthropic",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/ProgressiveDisclosure:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/ProgressiveDisclosure",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->concepts/LLMContext:EXTRACTED",
+      "from": "overview",
+      "to": "concepts/LLMContext",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->entities/OpenAI:EXTRACTED",
+      "from": "overview",
+      "to": "entities/OpenAI",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "overview->sources/skill:EXTRACTED",
+      "from": "overview",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Agent->entities/Anthropic:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "entities/Anthropic",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Agent->concepts/ProgressiveDisclosure:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "concepts/ProgressiveDisclosure",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Agent->sources/agent:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Agent->concepts/ReAct:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "concepts/ReAct",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Agent->concepts/LLMContext:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "concepts/LLMContext",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Agent->entities/OpenAI:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "entities/OpenAI",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Agent->sources/skill:EXTRACTED",
+      "from": "concepts/Agent",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/ContextWindow->concepts/LLMContext:EXTRACTED",
+      "from": "concepts/ContextWindow",
+      "to": "concepts/LLMContext",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/LLMContext->concepts/Transformer:EXTRACTED",
+      "from": "concepts/LLMContext",
+      "to": "concepts/Transformer",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/LLMContext->sources/agent:EXTRACTED",
+      "from": "concepts/LLMContext",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/LLMContext->concepts/Token:EXTRACTED",
+      "from": "concepts/LLMContext",
+      "to": "concepts/Token",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/LLMContext->sources/llm-context:EXTRACTED",
+      "from": "concepts/LLMContext",
+      "to": "sources/llm-context",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/LLMContext->sources/skill:EXTRACTED",
+      "from": "concepts/LLMContext",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/MCP->sources/skill:EXTRACTED",
+      "from": "concepts/MCP",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/MCP->sources/agent:EXTRACTED",
+      "from": "concepts/MCP",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/MCP->entities/Anthropic:EXTRACTED",
+      "from": "concepts/MCP",
+      "to": "entities/Anthropic",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/ProgressiveDisclosure->sources/skill:EXTRACTED",
+      "from": "concepts/ProgressiveDisclosure",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/ProgressiveDisclosure->sources/agent:EXTRACTED",
+      "from": "concepts/ProgressiveDisclosure",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/ProgressiveDisclosure->concepts/LLMContext:EXTRACTED",
+      "from": "concepts/ProgressiveDisclosure",
+      "to": "concepts/LLMContext",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/ReAct->sources/agent:EXTRACTED",
+      "from": "concepts/ReAct",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/ReAct->sources/skill:EXTRACTED",
+      "from": "concepts/ReAct",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Skill->sources/agent:EXTRACTED",
+      "from": "concepts/Skill",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Skill->entities/Anthropic:EXTRACTED",
+      "from": "concepts/Skill",
+      "to": "entities/Anthropic",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Skill->concepts/MCP:EXTRACTED",
+      "from": "concepts/Skill",
+      "to": "concepts/MCP",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Skill->concepts/ProgressiveDisclosure:EXTRACTED",
+      "from": "concepts/Skill",
+      "to": "concepts/ProgressiveDisclosure",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Skill->sources/skill:EXTRACTED",
+      "from": "concepts/Skill",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Skill->concepts/LLMContext:EXTRACTED",
+      "from": "concepts/Skill",
+      "to": "concepts/LLMContext",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Token->concepts/Transformer:EXTRACTED",
+      "from": "concepts/Token",
+      "to": "concepts/Transformer",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Token->sources/skill:EXTRACTED",
+      "from": "concepts/Token",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Token->sources/llm-context:EXTRACTED",
+      "from": "concepts/Token",
+      "to": "sources/llm-context",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Transformer->sources/skill:EXTRACTED",
+      "from": "concepts/Transformer",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "concepts/Transformer->sources/llm-context:EXTRACTED",
+      "from": "concepts/Transformer",
+      "to": "sources/llm-context",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/Anthropic->sources/agent:EXTRACTED",
+      "from": "entities/Anthropic",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/Anthropic->sources/skill:EXTRACTED",
+      "from": "entities/Anthropic",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/Anthropic->entities/OpenAI:EXTRACTED",
+      "from": "entities/Anthropic",
+      "to": "entities/OpenAI",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/BaiduBaike->sources/skill:EXTRACTED",
+      "from": "entities/BaiduBaike",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/BaiduBaike->sources/llm-context:EXTRACTED",
+      "from": "entities/BaiduBaike",
+      "to": "sources/llm-context",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/OpenAI->sources/agent:EXTRACTED",
+      "from": "entities/OpenAI",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/OpenAI->sources/skill:EXTRACTED",
+      "from": "entities/OpenAI",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "entities/SourceScore->sources/agent:EXTRACTED",
+      "from": "entities/SourceScore",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "sources/agent->sources/skill:EXTRACTED",
+      "from": "sources/agent",
+      "to": "sources/skill",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "sources/llm-context->sources/agent:EXTRACTED",
+      "from": "sources/llm-context",
+      "to": "sources/agent",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "sources/llm-context->entities/Anthropic:EXTRACTED",
+      "from": "sources/llm-context",
+      "to": "entities/Anthropic",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    },
+    {
+      "id": "sources/llm-context->concepts/ContextWindow:EXTRACTED",
+      "from": "sources/llm-context",
+      "to": "concepts/ContextWindow",
+      "type": "EXTRACTED",
+      "color": "#555555",
+      "confidence": 1.0,
+      "title": "",
+      "label": ""
+    }
+  ],
+  "built": "2026-09-16"
+}

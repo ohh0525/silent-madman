@@ -25,3 +25,17 @@ Source: `raw/learning-materials/skill.html`
 Created: `wiki/sources/skill.md`, `wiki/concepts/Skill.md`, `wiki/concepts/ProgressiveDisclosure.md`, `wiki/concepts/MCP.md`
 Entities touched: `wiki/entities/Anthropic.md`, `wiki/entities/OpenAI.md`
 Updated: `wiki/index.md`, `wiki/overview.md`
+
+## [2026-09-16] graph | Knowledge graph rebuilt
+
+17 nodes, 50 edges (50 extracted, 0 inferred).
+
+## [2026-09-16] lint | Wiki health check
+
+Tool: `python tools/health.py` (deterministic structural checks, no LLM calls)
+Scanned: 17 wiki pages
+Found: 1 issue — `wiki/sources/llm-context.md` had no matching `ingest` entry in `log.md`
+Cause: frontmatter `title` was `LLM Context Window(大模型上下文窗口)`，while `log.md` and `index.md` both used `LLM Context Window(上下文窗口)`; `health.py` matches log titles against page titles exactly
+Fixed: `wiki/sources/llm-context.md` title aligned to `LLM Context Window(上下文窗口)` (single-file edit; `log.md` left append-only)
+Re-run result: Empty/Stub 0 ✅ · Index Sync 0 ✅ · Log Coverage 0 ✅
+Note: `raw/` was not modified.
