@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：上下文工程（Context Engineering）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #0e7a6d;
+    --accent-soft: #e2f4f1;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+  h3 {
+    font-size: 15px;
+    margin: 18px 0 8px;
+    color: var(--ink);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 上下文工程</span>
+  <h1>上下文工程（Context Engineering）</h1>
+  <p class="subtitle">把「每一步该让模型看见什么」当作一门工程 · 生成时间 2026-09-16</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">上下文工程是在模型推理的每一步，决定往有限的上下文窗口里放入哪些 token 的一整套取舍方法——目标是找到能产出目标结果的「最小高信号 token 集合」。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>想象你要开一场决定预算的项目评审会。<strong>提示词工程（prompt engineering）</strong>关心的是你开口那句开场白怎么说；而<strong>上下文工程</strong>关心的是——整张会议桌上到底摆了哪些材料。</p>
+  <p>直觉上你会想：「信息越多越保险」，于是把去年财报、上周测试报告、客户投诉、竞品截图统统堆上桌。但真实情况恰好相反：桌上纸越多，评审人越找不到最关键的那一页。Anthropic 把这个现象命名为 <strong>context rot（上下文腐坏）</strong>——随着上下文里 token 数量上升，模型从中准确取回信息的能力<em>持续下降</em>。注意它不是一个断崖，而是一段缓慢的斜坡：模型并没有「崩溃」，只是越来越容易在长文里看走眼。</p>
+  <p>所以上下文工程的核心动作是<strong>取舍</strong>，不是<strong>堆砌</strong>。它把"上下文"从一件「传进去就不管了」的输入，变成一个需要反复修剪的预算：每一轮推理之前都要重新问一遍「这一步真正需要看见的是什么」。Anthropic 自己就是这么干的——为了让新一代模型跑得更好，他们把 Claude Code 的系统提示<strong>删掉了 80% 以上</strong>，在编码评测上没有可测量的损失。不是加了新东西让它变强，而是<b>拿掉了旧东西</b>。</p>
+  <p>举个具体场景：你让一个编码助手修一个支付回调重复扣款的 bug。它先去读了全量日志（几万 token），又跑了三次测试（每次结果都留在上下文里），还读了一堆边缘情况的代码。到第四轮时，真正重要的「第一次失败断言在哪」已经被压到注意力边缘了。做过上下文工程的版本会怎么做？它只保留一份日志的<em>存放地址</em>而不放原文，测试结果只留「通过/失败 + 证据路径」，旧的读文件记录在接近上限时被自动清掉。同样的模型、同样的任务，结果是它能一路修到底——Anthropic 的内部评测里，光这项「自动清理过时工具结果」就让完成率提升了 29%，叠加记忆工具后达到 39%。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>约束来自架构：注意力是有限预算</strong>。Transformer 让每个 token 都能与其它所有 token 建立关联，n 个 token 就是 n² 组关系；上下文越长，模型能抓住这些关系的「注意力」被摊得越薄。<br />为什么重要：这从根上解释了「把窗口开到 1M 就能装下一切」为什么是伪解法——窗口是容量上限，不是有效容量，装得下 ≠ 用得上。</li>
+    <li><strong>按信息的「保鲜期」分层，而不是一次全给</strong>。把材料分成三类：稳定边界（API 兼容性、审批要求）在任务开始时给一次；当前状态（分支、diff、服务健康、最新测试结果）在关键步骤<em>之前重读</em>；原始大件（完整日志、调用链、设计文档）只留摘要与地址，需要时再取。<br />为什么重要：它把「预加载」换成「即时检索（just-in-time retrieval）」，token 才会花在当下真正用得到的地方。</li>
+    <li><strong>长任务靠三根支柱保住状态</strong>。任务跨到几十分钟甚至几小时，上下文一定装不下，于是：<em>压缩（compaction）</em>把历史总结后重新开始，只保留架构决策、未解决问题和最近访问的几个文件；<em>结构化笔记</em>让 agent 把进度写到上下文之外的文件里（Claude Code 的 todo 列表就是这一种）；<em>子智能体（sub-agent）</em>让专门 agent 在干净的窗口里深挖，只把 1,000–2,000 token 的高密度结论交回主 agent。<br />为什么重要：这三条都在解决同一件事——「状态没必要都留在对话里」，留在对话里就会变成噪音。</li>
+    <li><strong>每轮做一次裁剪与再注入</strong>。工具返回默认给摘要＋证据地址，而不是原样倾倒；接近上限时清掉已处理完的原始工具结果；把稳定的东西前置、易变的靠近使用点。<br />为什么重要：这一步是「渐进披露」在上下文层面的落地——按需展开，而不是一次摊开。</li>
+  </ol>
+  <div class="mermaid-placeholder">每轮推理前的上下文组装（伪代码）
+
+context = []
+context += stable_boundaries()          # API 约束、审批规则 —— 只给一次
+context += system_prompt_minimal()      # 保持最小，只在发现失败模式后追加
+context += tool_definitions(minimal)    # 可用工具的最小必要集合
+context += identifiers_only(            # 大件只留地址，不留原文
+    file_paths, urls, stored_queries
+)
+if near_token_limit():
+    context = compact(context)          # 保留决策/未决问题/最近文件
+    context += structured_notes()       # 从上下文之外读回进度
+context += reread_authoritative_state() # 关键步骤前重读当前真实状态
+
+result = model.sample(context)          # 目标不是"最短"，而是"最高信号"
+</div>
+  <p>定量的对照很能说明问题：Anthropic 给工具定义加上「搜索后才加载完整定义」的机制后，工具定义占用从 <strong>77K token 降到 8.7K（−85%）</strong>，而 Opus 4.5 的准确率反而<strong>从 79.5% 升到 88.1%</strong>；在 MCP 的代码执行模式下，一段 150,000 token 的工具定义被压缩到 2,000 token（−98.7%）。<em>上下文变少，模型更准</em>——这就是上下文工程最反直觉、也最核心的一条经验。</p>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 编码助手（Claude Code 类）</h3>
+    <p><span class="label">背景：</span>仓库规模大到无法整体塞进上下文，而任务（改造登录页、修支付回调）需要反复读文件、跑测试。</p>
+    <p><span class="label">如何应用：</span>启动时只加载 CLAUDE.md 这类稳定说明，其余靠 glob/grep 即时检索；测试与日志只回传「结论＋证据路径」；接进上限时自动清理旧的读文件与测试结果，并把架构决策、未解 bug 压成摘要继续。</p>
+    <p><span class="label">结果：</span>在内部评测的 100 轮网页检索任务中，自动清理让 agent 能跑完原本会因上下文耗尽而失败的长流程，同时 token 消耗降低 84%。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 多智能体研究系统（Anthropic Research 类）</h3>
+    <p><span class="label">背景：</span>一个市场/技术调研需要并行拆解十几个子问题，单 agent 的上下文会被探索过程淹掉。</p>
+    <p><span class="label">如何应用：</span>主 agent 先存战略到外部记忆（因为超过 200K 会被截断），再派多个子 agent 各占一个干净窗口并行深挖；每个子 agent 可能烧掉几万 token，但只回传 1,000–2,000 token 的浓缩结论；最后由引用 agent 逐条标注来源。</p>
+    <p><span class="label">结果：</span>Opus 4 作主 agent、Sonnet 4 作子 agent 的组合，在研究评测上比单 agent Opus 4 高 90.2%；代价是 token 用量约为普通对话的 15 倍，只在高价值任务上划算。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 工具结果的「代码执行」模式（MCP）</h3>
+    <p><span class="label">背景：</span>接了几个 MCP 服务器之后，光是工具定义和中间数据返回就把上下文吃掉一大半。</p>
+    <p><span class="label">如何应用：</span>不再把每个工具的完整结果灌回上下文，而是让 agent 在沙箱里用代码去调用和处理这些结果，只把最终的少量结论带回对话。</p>
+    <p><span class="label">结果：</span>某实现里工具定义负载从 150,000 token 降到 2,000 token（−98.7%），省下的预算全部让给了真正需要模型判断的部分。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是「更高级的提示词工程」</strong>：提示词工程处理的是「怎么把一句指令写好」，是一次性的、离散的；上下文工程处理的是「整轮推理里所有进模型的 token 怎么配比」，是迭代的、每一步都要重做的。Anthropic 的原话是「context engineering 是 prompt engineering 的自然演进」，而不是它的同义词。</li>
+    <li><strong>不是「窗口越大越好」</strong>：窗口是容量上限，context rot 说明有效容量另有一条更低的曲线。把窗口当目标去堆内容，只会让取回精度下滑。</li>
+    <li><strong>不是「少给信息」</strong>：目标是<em>高信号</em>，不是<em>短</em>。某些任务确实需要长背景或多组示例，盲目压缩反而会拉低准确率。判断标准应该是任务成功率与错误类型，而不是 token 数字本身。</li>
+    <li><strong>不是 RAG 的别名</strong>：检索增强只是上下文工程里「即时检索」这一条手段；工程还包括分层、压缩、笔记、子智能体隔离等，RAG 只覆盖其中一角。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「把规则写死、把边界情况列全最保险」——恰恰相反。过约束（over-specification）会让提示变脆、难维护，而且一旦工具或任务变化就得重写。Anthropic 建议的是「顶级模型上先跑最小版本，等真实失败模式出现再补」，而不是预防性地写满 if-else。</li>
+    <li>「系统提示是能力的来源，当然越全越好」——Claude Code 针对新一代模型删掉 80% 以上系统提示，编码评测无可测损失。旧一代模型需要的重复叮嘱，对新一代反而是干扰。</li>
+    <li>「压缩一定会丢信息，所以能不压就不压」——过度压缩确实会丢掉微妙信息，但完全不动手更糟：上下文一旦接近极限，agent 会直接失败。正确做法是先追求<em>召回</em>（别漏），再迭代提升<em>精度</em>（去冗余）。</li>
+  </ul>
+  <h3>5.3 适用与不适用</h3>
+  <table>
+    <thead><tr><th>值得做上下文工程</th><th>不必大动干戈</th></tr></thead>
+    <tbody>
+      <tr><td>多轮、长时程的 agent 任务（编码、研究、数据分析）</td><td>单轮问答、一次性分类或摘要</td></tr>
+      <tr><td>工具数量多、结果体积大（MCP、日志、全量数据）</td><td>工具只有一两个、返回结果很小</td></tr>
+      <tr><td>上下文反复接近上限、需要跨会话延续</td><td>对话短到根本碰不到窗口限制</td></tr>
+      <tr><td>已观测到具体失败模式，知道该修剪哪一块</td><td>纯凭猜测「先优化一下上下文」</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents · Anthropic Engineering</a> — 上下文工程的定义、context rot 现象、注意力预算与 n² 约束、系统提示的「Goldilocks zone」、即时检索、压缩/笔记/子智能体三类长任务技术与 1,000–2,000 token 子 agent 回传量。</li>
+    <li><a href="https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/">The new rules of context engineering for Claude 5 generation models · Claude 官方博客（2026-07-24）</a> — Claude Code 系统提示删除 80% 以上且编码评测无可测损失；「给规则 → 让模型判断」「给例子 → 设计接口」等新旧对照。</li>
+    <li><a href="https://anthropic.com/news/context-management">Managing context on the Claude Developer Platform · Anthropic（2025-09-30）</a> — context editing 与 memory tool 的官方说明；合并记忆工具后性能 +39%、单独 context editing +29%、100 轮网页检索 token 消耗 −84%。</li>
+    <li><a href="https://www.brettsanders.com/blog/lessons-from-51-anthropic-and-openai-engineering-posts">Lessons From 51 Anthropic and OpenAI Engineering Posts · Brett Sanders（2026-08）</a> — 工具定义 77K → 8.7K token（−85%）、Opus 4.5 准确率 79.5% → 88.1%、MCP 代码执行模式 150K → 2K token（−98.7%）等量化数字。</li>
+    <li><a href="https://agentic-ai.readthedocs.io/en/latest/ContextEngineering/anthropic/">Anthropic Context Engineering · Agentic AI 文档</a> — 对 Anthropic 两篇工程文章的整理，含多智能体研究系统架构（主 agent + 并行子 agent + 引用 agent）、+90.2% 与约 15 倍 token 用量。</li>
+  </ol>
+  <p style="font-size:13px;color:#57606a;margin-top:12px;">来源说明：第 1–3 条为一手来源（Anthropic 官方工程博客与产品公告），第 4–5 条为二手整理，数字均直接引自上述页面。所有 URL 均于 2026-09-16 经检索真实返回。</p>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">上下文工程不是往窗口里塞更多，而是每一步都重新决定「什么值得被看见」——因为对模型来说，更少的高信号 token 往往比更多的低信号 token 更强。</p>
+</section>
+
+<footer>由 concept-explainer Skill 自动生成 · 2026-09-16 · 待人工核查后入库</footer>
+
+</div>
+</body>
+</html>

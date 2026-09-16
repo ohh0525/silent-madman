@@ -1,7 +1,7 @@
 # Agent / 上下文窗口 / Skill 的关系图谱
 
-> 一份用 Mermaid 流程图 + 文字解析，把「Agent」「上下文窗口」「Skill」三者联系起来的工作笔记。
-> 配套学习资料：[agent.html](./learning-materials/agent.html)、[llm-context.html](./learning-materials/llm-context.html)、[skill.html](./learning-materials/skill.html)
+> 一份用 Mermaid 流程图 + 文字解析，把「Agent」「上下文窗口」「Skill」三者联系起来的工作笔记；文末「扩展」一节再接入「上下文工程」与「带溯源的长期记忆」两个概念。
+> 配套学习资料：[agent.html](./learning-materials/agent.html)、[llm-context.html](./learning-materials/llm-context.html)、[skill.html](./learning-materials/skill.html)、[context-engineering.html](./learning-materials/context-engineering.html)、[agent-memory-provenance.html](./learning-materials/agent-memory-provenance.html)
 
 ---
 
@@ -230,3 +230,60 @@ flowchart TB
 它是上面那张「Mermaid 流程图」的最简落地——**没有 Skill 加载层、没有工具调用循环**，只是一个观察→分类→打标签的一次性 agent。这就是「概念」与「实例」的对应关系：
 
 > 概念图谱回答「*为什么需要这三者*」，gh-aw 回答「*这三者在 GitHub Actions 里怎么落地*」。
+
+---
+
+## 扩展：两个新概念如何接进这张网
+
+随着学习深入，又落了两份资料——[context-engineering.html](./learning-materials/context-engineering.html)（上下文工程）与 [agent-memory-provenance.html](./learning-materials/agent-memory-provenance.html)（带溯源的智能体长期记忆）。它们不是三个平行概念之外的"第四、第五个并列项"，而是**分别站在「方法论层」和「时间维度」上，把原来的三者组织起来**：
+
+```mermaid
+flowchart TB
+    subgraph New[新增 · 方法论与时间维度]
+        CE["上下文工程<br/>每一步往窗口里放什么<br/>（取舍与裁剪的方法论）"]
+        PM["带溯源的长期记忆<br/>跨会话外存 + 引用锁定<br/>（时间维度上的记忆）"]
+    end
+
+    subgraph Old[原有 · 三者]
+        CW["上下文窗口<br/>物理资源：有限的桌子"]
+        SK["Skill<br/>知识介质：渐进披露目录"]
+        AG["Agent<br/>组织形态：观察→推理→行动"]
+    end
+
+    CE -->|"管理 / 裁剪 / 再注入"| CW
+    CE -->|"渐进披露只是它的一个实例"| SK
+    CE -->|"即时检索 / 压缩 / 笔记"| PM
+    AG -->|"读写（决定何时记、记什么）"| PM
+    PM -->|"提供可信的长期事实"| CW
+    SK -->|"按需加载进"| CW
+
+    classDef newe fill:#fbe9f0,stroke:#b3426b,color:#1f2328
+    classDef ctx fill:#e7f1fa,stroke:#1a6fb4,color:#1f2328
+    classDef agent fill:#fff4e0,stroke:#b35900,color:#1f2328
+    classDef skill fill:#efeaf6,stroke:#5b3a8a,color:#1f2328
+    class CE,PM newe
+    class CW ctx
+    class AG agent
+    class SK skill
+```
+
+**三条新增连线，解释了为什么这两个概念是"接缝"而非"并列"：**
+
+| 关系 | 含义 |
+|---|---|
+| **上下文工程 → 上下文窗口** | 原来的图谱说"窗口是有限的桌子"，但没说"谁来决定桌上摆什么"。上下文工程补上的正是这层方法论：它是**对窗口的主动管理**，而不是被动接受窗口上限。 |
+| **上下文工程 → Skill** | 之前讲的"渐进披露"（一级元数据常驻、正文按需加载）**本身就是上下文工程的一个实例**。Skill 不是孤立的机制，它是"高信号 token 最小集"这条原则在知识加载上的落地。 |
+| **Agent ↔ 长期记忆 ← 上下文工程** | 窗口装不下跨会话的状态，于是需要窗口之外的持久存储；**带溯源的长期记忆就是那个外存**，而它"何时写入、写入什么、如何检索再注入"由上下文工程支配，读写动作由 Agent 发起。 |
+
+**与原有"一句话总结"的关系：**
+
+> 原来：**上下文是桌面，Skill 是文件夹，Agent 是坐在桌前、按文件夹做事的人。**
+>
+> 现在补两句：**上下文工程是这个人"决定桌上摆哪几份材料"的手艺；带溯源的长期记忆则是他身后那排"每份材料都贴着来源与日期标签"的档案柜——取用前必须核对标签，标签对不上就宁可说"我查不到"。**
+
+**边界要点（避免把这五个概念混成一层）：**
+
+- **上下文窗口 vs 上下文工程** = 资源 vs 方法。前者是物理上限，后者是主动取舍。
+- **Skill vs 上下文工程** = 实例 vs 原则。Skill 是"渐进披露"的具体载体，不是原则本身。
+- **RAG vs 带溯源的长期记忆** = 检索手段 vs 完整记忆系统。前者检索到就用完即弃，后者持久化、会更新、且规定"未打开的证据不得引用"。
+- **Agent vs 长期记忆** = 谁去读写 vs 存在哪。Agent 是动作发起方，记忆是状态承载方。

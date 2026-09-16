@@ -24,3 +24,4 @@ A load-on-demand design pattern that fits arbitrarily many resources into a boun
 - [[Skill]] — primary use case
 - [[LLMContext]] — solves the bounded-context problem
 - [[Agent]] — typical consumer of progressive disclosure
+- [[ContextEngineering]] — progressive disclosure is an instance of this broader curation principle
