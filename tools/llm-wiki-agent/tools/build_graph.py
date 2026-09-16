@@ -583,10 +583,25 @@ COMMUNITY_COLORS = [
 ]
 
 
+def _vis_script_tag() -> str:
+    """Return the vis-network script tag, pointing at the vendored local copy.
+
+    Upstream loaded vis-network from unpkg on every page open, so graph.html
+    went blank whenever the CDN was unreachable. graph/vis-network.min.js is now
+    kept next to graph.html and referenced by relative path, so the pair renders
+    offline and straight from file://. Keep the two files together.
+    """
+    local = GRAPH_DIR / "vis-network.min.js"
+    if local.exists():
+        return '<script src="vis-network.min.js"></script>'
+    return '<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>'
+
+
 def render_html(nodes: list[dict], edges: list[dict]) -> str:
     """Generate self-contained vis.js HTML with interactive filtering."""
     nodes_json = json.dumps(nodes, indent=2, ensure_ascii=False)
     edges_json = json.dumps(edges, indent=2, ensure_ascii=False)
+    vis_script = _vis_script_tag()
 
     legend_items = "".join(
         f'<span style="background:{color};padding:3px 8px;margin:2px;border-radius:3px;font-size:12px">{t}</span>'
@@ -602,7 +617,7 @@ def render_html(nodes: list[dict], edges: list[dict]) -> str:
 <head>
 <meta charset="UTF-8">
 <title>LLM Wiki — Knowledge Graph</title>
-<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+{vis_script}
 <style>
   body {{ margin: 0; background: #1a1a2e; font-family: 'Inter', sans-serif; color: #eee; }}
   #graph {{ width: 100vw; height: 100vh; }}

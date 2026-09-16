@@ -75,3 +75,11 @@ Note: supersedes the pre-2026-07-28 (stateful, session-based) description previo
 ## [2026-09-16] report | Graph health report generated
 
 31 nodes analyzed.
+
+## [2026-09-16] graph | Knowledge graph rebuilt
+
+31 nodes, 125 edges (125 extracted, 0 inferred).
+
+## [2026-09-16] graph | Knowledge graph rebuilt
+
+31 nodes, 125 edges (125 extracted, 0 inferred).

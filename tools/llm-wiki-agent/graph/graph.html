@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>LLM Wiki — Knowledge Graph</title>
-<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="vis-network.min.js"></script>
 <style>
   body { margin: 0; background: #1a1a2e; font-family: 'Inter', sans-serif; color: #eee; }
   #graph { width: 100vw; height: 100vh; }
@@ -485,39 +485,9 @@ const originalNodes = [
 ];
 const originalEdges = [
   {
-    "id": "overview->concepts/ContextEngineering:EXTRACTED",
+    "id": "overview->concepts/ProgressiveDisclosure:EXTRACTED",
     "from": "overview",
-    "to": "concepts/ContextEngineering",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->sources/skill:EXTRACTED",
-    "from": "overview",
-    "to": "sources/skill",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->concepts/LongTermMemory:EXTRACTED",
-    "from": "overview",
-    "to": "concepts/LongTermMemory",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->entities/LongMemEval:EXTRACTED",
-    "from": "overview",
-    "to": "entities/LongMemEval",
+    "to": "concepts/ProgressiveDisclosure",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -535,9 +505,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "overview->entities/MemGPT:EXTRACTED",
+    "id": "overview->concepts/ContextEngineering:EXTRACTED",
     "from": "overview",
-    "to": "entities/MemGPT",
+    "to": "concepts/ContextEngineering",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -555,9 +525,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "overview->sources/agent:EXTRACTED",
+    "id": "overview->entities/OpenAI:EXTRACTED",
     "from": "overview",
-    "to": "sources/agent",
+    "to": "entities/OpenAI",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -575,99 +545,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "overview->entities/Anthropic:EXTRACTED",
-    "from": "overview",
-    "to": "entities/Anthropic",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->entities/Zep:EXTRACTED",
-    "from": "overview",
-    "to": "entities/Zep",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->concepts/ProgressiveDisclosure:EXTRACTED",
-    "from": "overview",
-    "to": "concepts/ProgressiveDisclosure",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->entities/AgentZeroMemory:EXTRACTED",
-    "from": "overview",
-    "to": "entities/AgentZeroMemory",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "overview->concepts/Compaction:EXTRACTED",
     "from": "overview",
     "to": "concepts/Compaction",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->concepts/ContextRot:EXTRACTED",
-    "from": "overview",
-    "to": "concepts/ContextRot",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->concepts/MCP:EXTRACTED",
-    "from": "overview",
-    "to": "concepts/MCP",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->concepts/Abstention:EXTRACTED",
-    "from": "overview",
-    "to": "concepts/Abstention",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->concepts/CitationLock:EXTRACTED",
-    "from": "overview",
-    "to": "concepts/CitationLock",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "overview->entities/OpenAI:EXTRACTED",
-    "from": "overview",
-    "to": "entities/OpenAI",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -685,9 +565,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Abstention->sources/agent-memory-provenance:EXTRACTED",
-    "from": "concepts/Abstention",
-    "to": "sources/agent-memory-provenance",
+    "id": "overview->entities/AgentZeroMemory:EXTRACTED",
+    "from": "overview",
+    "to": "entities/AgentZeroMemory",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -695,9 +575,109 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Abstention->concepts/LongTermMemory:EXTRACTED",
-    "from": "concepts/Abstention",
+    "id": "overview->entities/MemGPT:EXTRACTED",
+    "from": "overview",
+    "to": "entities/MemGPT",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->sources/agent:EXTRACTED",
+    "from": "overview",
+    "to": "sources/agent",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->concepts/ContextRot:EXTRACTED",
+    "from": "overview",
+    "to": "concepts/ContextRot",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->concepts/CitationLock:EXTRACTED",
+    "from": "overview",
+    "to": "concepts/CitationLock",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->concepts/Abstention:EXTRACTED",
+    "from": "overview",
+    "to": "concepts/Abstention",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->concepts/LongTermMemory:EXTRACTED",
+    "from": "overview",
     "to": "concepts/LongTermMemory",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->entities/Zep:EXTRACTED",
+    "from": "overview",
+    "to": "entities/Zep",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->entities/Anthropic:EXTRACTED",
+    "from": "overview",
+    "to": "entities/Anthropic",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->concepts/MCP:EXTRACTED",
+    "from": "overview",
+    "to": "concepts/MCP",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->sources/skill:EXTRACTED",
+    "from": "overview",
+    "to": "sources/skill",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "overview->entities/LongMemEval:EXTRACTED",
+    "from": "overview",
+    "to": "entities/LongMemEval",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -715,16 +695,6 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Abstention->entities/LongMemEval:EXTRACTED",
-    "from": "concepts/Abstention",
-    "to": "entities/LongMemEval",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "concepts/Abstention->concepts/Provenance:EXTRACTED",
     "from": "concepts/Abstention",
     "to": "concepts/Provenance",
@@ -735,9 +705,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Agent->sources/skill:EXTRACTED",
-    "from": "concepts/Agent",
-    "to": "sources/skill",
+    "id": "concepts/Abstention->entities/LongMemEval:EXTRACTED",
+    "from": "concepts/Abstention",
+    "to": "entities/LongMemEval",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -745,9 +715,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Agent->sources/agent:EXTRACTED",
-    "from": "concepts/Agent",
-    "to": "sources/agent",
+    "id": "concepts/Abstention->concepts/LongTermMemory:EXTRACTED",
+    "from": "concepts/Abstention",
+    "to": "concepts/LongTermMemory",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -755,29 +725,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Agent->entities/Anthropic:EXTRACTED",
-    "from": "concepts/Agent",
-    "to": "entities/Anthropic",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/Agent->entities/OpenAI:EXTRACTED",
-    "from": "concepts/Agent",
-    "to": "entities/OpenAI",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/Agent->concepts/LLMContext:EXTRACTED",
-    "from": "concepts/Agent",
-    "to": "concepts/LLMContext",
+    "id": "concepts/Abstention->sources/agent-memory-provenance:EXTRACTED",
+    "from": "concepts/Abstention",
+    "to": "sources/agent-memory-provenance",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -805,9 +755,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/CitationLock->sources/agent-memory-provenance:EXTRACTED",
-    "from": "concepts/CitationLock",
-    "to": "sources/agent-memory-provenance",
+    "id": "concepts/Agent->entities/Anthropic:EXTRACTED",
+    "from": "concepts/Agent",
+    "to": "entities/Anthropic",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -815,9 +765,39 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/CitationLock->concepts/LongTermMemory:EXTRACTED",
-    "from": "concepts/CitationLock",
-    "to": "concepts/LongTermMemory",
+    "id": "concepts/Agent->sources/agent:EXTRACTED",
+    "from": "concepts/Agent",
+    "to": "sources/agent",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/Agent->entities/OpenAI:EXTRACTED",
+    "from": "concepts/Agent",
+    "to": "entities/OpenAI",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/Agent->sources/skill:EXTRACTED",
+    "from": "concepts/Agent",
+    "to": "sources/skill",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/Agent->concepts/LLMContext:EXTRACTED",
+    "from": "concepts/Agent",
+    "to": "concepts/LLMContext",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -845,9 +825,19 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Compaction->concepts/LLMContext:EXTRACTED",
-    "from": "concepts/Compaction",
-    "to": "concepts/LLMContext",
+    "id": "concepts/CitationLock->concepts/LongTermMemory:EXTRACTED",
+    "from": "concepts/CitationLock",
+    "to": "concepts/LongTermMemory",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/CitationLock->sources/agent-memory-provenance:EXTRACTED",
+    "from": "concepts/CitationLock",
+    "to": "sources/agent-memory-provenance",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -865,16 +855,6 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Compaction->concepts/ContextEngineering:EXTRACTED",
-    "from": "concepts/Compaction",
-    "to": "concepts/ContextEngineering",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "concepts/Compaction->sources/agent:EXTRACTED",
     "from": "concepts/Compaction",
     "to": "sources/agent",
@@ -885,39 +865,19 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/ContextEngineering->sources/skill:EXTRACTED",
-    "from": "concepts/ContextEngineering",
-    "to": "sources/skill",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/ContextEngineering->sources/context-engineering:EXTRACTED",
-    "from": "concepts/ContextEngineering",
-    "to": "sources/context-engineering",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/ContextEngineering->concepts/Transformer:EXTRACTED",
-    "from": "concepts/ContextEngineering",
-    "to": "concepts/Transformer",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/ContextEngineering->concepts/LLMContext:EXTRACTED",
-    "from": "concepts/ContextEngineering",
+    "id": "concepts/Compaction->concepts/LLMContext:EXTRACTED",
+    "from": "concepts/Compaction",
     "to": "concepts/LLMContext",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/Compaction->concepts/ContextEngineering:EXTRACTED",
+    "from": "concepts/Compaction",
+    "to": "concepts/ContextEngineering",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -945,9 +905,59 @@ const originalEdges = [
     "label": ""
   },
   {
+    "id": "concepts/ContextEngineering->sources/context-engineering:EXTRACTED",
+    "from": "concepts/ContextEngineering",
+    "to": "sources/context-engineering",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/ContextEngineering->sources/skill:EXTRACTED",
+    "from": "concepts/ContextEngineering",
+    "to": "sources/skill",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
     "id": "concepts/ContextEngineering->concepts/ContextRot:EXTRACTED",
     "from": "concepts/ContextEngineering",
     "to": "concepts/ContextRot",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/ContextEngineering->concepts/Transformer:EXTRACTED",
+    "from": "concepts/ContextEngineering",
+    "to": "concepts/Transformer",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/ContextEngineering->concepts/LLMContext:EXTRACTED",
+    "from": "concepts/ContextEngineering",
+    "to": "concepts/LLMContext",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/ContextRot->entities/LongMemEval:EXTRACTED",
+    "from": "concepts/ContextRot",
+    "to": "entities/LongMemEval",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -975,16 +985,6 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/ContextRot->entities/LongMemEval:EXTRACTED",
-    "from": "concepts/ContextRot",
-    "to": "entities/LongMemEval",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "concepts/ContextRot->concepts/LLMContext:EXTRACTED",
     "from": "concepts/ContextRot",
     "to": "concepts/LLMContext",
@@ -1005,9 +1005,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/LLMContext->concepts/Token:EXTRACTED",
+    "id": "concepts/LLMContext->sources/llm-context:EXTRACTED",
     "from": "concepts/LLMContext",
-    "to": "concepts/Token",
+    "to": "sources/llm-context",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1015,9 +1015,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/LLMContext->sources/skill:EXTRACTED",
+    "id": "concepts/LLMContext->concepts/Token:EXTRACTED",
     "from": "concepts/LLMContext",
-    "to": "sources/skill",
+    "to": "concepts/Token",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1035,9 +1035,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/LLMContext->sources/llm-context:EXTRACTED",
+    "id": "concepts/LLMContext->sources/skill:EXTRACTED",
     "from": "concepts/LLMContext",
-    "to": "sources/llm-context",
+    "to": "sources/skill",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1055,26 +1055,6 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/LongTermMemory->sources/agent-memory-provenance:EXTRACTED",
-    "from": "concepts/LongTermMemory",
-    "to": "sources/agent-memory-provenance",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/LongTermMemory->concepts/ContextEngineering:EXTRACTED",
-    "from": "concepts/LongTermMemory",
-    "to": "concepts/ContextEngineering",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "concepts/LongTermMemory->entities/Zep:EXTRACTED",
     "from": "concepts/LongTermMemory",
     "to": "entities/Zep",
@@ -1085,29 +1065,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/LongTermMemory->entities/LongMemEval:EXTRACTED",
+    "id": "concepts/LongTermMemory->concepts/ContextEngineering:EXTRACTED",
     "from": "concepts/LongTermMemory",
-    "to": "entities/LongMemEval",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/LongTermMemory->concepts/LLMContext:EXTRACTED",
-    "from": "concepts/LongTermMemory",
-    "to": "concepts/LLMContext",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/LongTermMemory->entities/MemGPT:EXTRACTED",
-    "from": "concepts/LongTermMemory",
-    "to": "entities/MemGPT",
+    "to": "concepts/ContextEngineering",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1135,9 +1095,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/MCP->sources/skill:EXTRACTED",
-    "from": "concepts/MCP",
-    "to": "sources/skill",
+    "id": "concepts/LongTermMemory->entities/LongMemEval:EXTRACTED",
+    "from": "concepts/LongTermMemory",
+    "to": "entities/LongMemEval",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1145,9 +1105,49 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/MCP->sources/agent:EXTRACTED",
+    "id": "concepts/LongTermMemory->entities/MemGPT:EXTRACTED",
+    "from": "concepts/LongTermMemory",
+    "to": "entities/MemGPT",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/LongTermMemory->concepts/LLMContext:EXTRACTED",
+    "from": "concepts/LongTermMemory",
+    "to": "concepts/LLMContext",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/LongTermMemory->sources/agent-memory-provenance:EXTRACTED",
+    "from": "concepts/LongTermMemory",
+    "to": "sources/agent-memory-provenance",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/MCP->sources/mcp-2026-07-28:EXTRACTED",
     "from": "concepts/MCP",
-    "to": "sources/agent",
+    "to": "sources/mcp-2026-07-28",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/MCP->concepts/ProgressiveDisclosure:EXTRACTED",
+    "from": "concepts/MCP",
+    "to": "concepts/ProgressiveDisclosure",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1175,29 +1175,29 @@ const originalEdges = [
     "label": ""
   },
   {
+    "id": "concepts/MCP->sources/skill:EXTRACTED",
+    "from": "concepts/MCP",
+    "to": "sources/skill",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/MCP->sources/agent:EXTRACTED",
+    "from": "concepts/MCP",
+    "to": "sources/agent",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
     "id": "concepts/MCP->entities/OpenAI:EXTRACTED",
     "from": "concepts/MCP",
     "to": "entities/OpenAI",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/MCP->sources/mcp-2026-07-28:EXTRACTED",
-    "from": "concepts/MCP",
-    "to": "sources/mcp-2026-07-28",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/MCP->concepts/ProgressiveDisclosure:EXTRACTED",
-    "from": "concepts/MCP",
-    "to": "concepts/ProgressiveDisclosure",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1245,16 +1245,6 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/ReAct->sources/skill:EXTRACTED",
-    "from": "concepts/ReAct",
-    "to": "sources/skill",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "concepts/ReAct->sources/agent:EXTRACTED",
     "from": "concepts/ReAct",
     "to": "sources/agent",
@@ -1265,39 +1255,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "concepts/Skill->sources/agent:EXTRACTED",
-    "from": "concepts/Skill",
-    "to": "sources/agent",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/Skill->sources/skill:EXTRACTED",
-    "from": "concepts/Skill",
+    "id": "concepts/ReAct->sources/skill:EXTRACTED",
+    "from": "concepts/ReAct",
     "to": "sources/skill",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/Skill->entities/Anthropic:EXTRACTED",
-    "from": "concepts/Skill",
-    "to": "entities/Anthropic",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "concepts/Skill->concepts/LLMContext:EXTRACTED",
-    "from": "concepts/Skill",
-    "to": "concepts/LLMContext",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1315,9 +1275,49 @@ const originalEdges = [
     "label": ""
   },
   {
+    "id": "concepts/Skill->entities/Anthropic:EXTRACTED",
+    "from": "concepts/Skill",
+    "to": "entities/Anthropic",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
     "id": "concepts/Skill->concepts/MCP:EXTRACTED",
     "from": "concepts/Skill",
     "to": "concepts/MCP",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/Skill->sources/skill:EXTRACTED",
+    "from": "concepts/Skill",
+    "to": "sources/skill",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/Skill->sources/agent:EXTRACTED",
+    "from": "concepts/Skill",
+    "to": "sources/agent",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "concepts/Skill->concepts/LLMContext:EXTRACTED",
+    "from": "concepts/Skill",
+    "to": "concepts/LLMContext",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1375,9 +1375,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "entities/AgentZeroMemory->entities/LongMemEval:EXTRACTED",
+    "id": "entities/AgentZeroMemory->concepts/Abstention:EXTRACTED",
     "from": "entities/AgentZeroMemory",
-    "to": "entities/LongMemEval",
+    "to": "concepts/Abstention",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1395,9 +1395,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "entities/AgentZeroMemory->concepts/CitationLock:EXTRACTED",
+    "id": "entities/AgentZeroMemory->entities/LongMemEval:EXTRACTED",
     "from": "entities/AgentZeroMemory",
-    "to": "concepts/CitationLock",
+    "to": "entities/LongMemEval",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1405,9 +1405,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "entities/AgentZeroMemory->concepts/Abstention:EXTRACTED",
+    "id": "entities/AgentZeroMemory->concepts/CitationLock:EXTRACTED",
     "from": "entities/AgentZeroMemory",
-    "to": "concepts/Abstention",
+    "to": "concepts/CitationLock",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1475,9 +1475,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "entities/MemGPT->entities/Zep:EXTRACTED",
+    "id": "entities/MemGPT->entities/AgentZeroMemory:EXTRACTED",
     "from": "entities/MemGPT",
-    "to": "entities/Zep",
+    "to": "entities/AgentZeroMemory",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1485,9 +1485,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "entities/MemGPT->entities/AgentZeroMemory:EXTRACTED",
+    "id": "entities/MemGPT->entities/Zep:EXTRACTED",
     "from": "entities/MemGPT",
-    "to": "entities/AgentZeroMemory",
+    "to": "entities/Zep",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1505,9 +1505,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "entities/OpenAI->sources/skill:EXTRACTED",
+    "id": "entities/OpenAI->sources/agent:EXTRACTED",
     "from": "entities/OpenAI",
-    "to": "sources/skill",
+    "to": "sources/agent",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1515,9 +1515,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "entities/OpenAI->sources/agent:EXTRACTED",
+    "id": "entities/OpenAI->sources/skill:EXTRACTED",
     "from": "entities/OpenAI",
-    "to": "sources/agent",
+    "to": "sources/skill",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1545,16 +1545,6 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "sources/agent-memory-provenance->concepts/ContextEngineering:EXTRACTED",
-    "from": "sources/agent-memory-provenance",
-    "to": "concepts/ContextEngineering",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "sources/agent-memory-provenance->entities/Zep:EXTRACTED",
     "from": "sources/agent-memory-provenance",
     "to": "entities/Zep",
@@ -1575,6 +1565,16 @@ const originalEdges = [
     "label": ""
   },
   {
+    "id": "sources/agent-memory-provenance->concepts/ContextEngineering:EXTRACTED",
+    "from": "sources/agent-memory-provenance",
+    "to": "concepts/ContextEngineering",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
     "id": "sources/agent-memory-provenance->entities/AgentZeroMemory:EXTRACTED",
     "from": "sources/agent-memory-provenance",
     "to": "entities/AgentZeroMemory",
@@ -1588,6 +1588,26 @@ const originalEdges = [
     "id": "sources/agent->sources/skill:EXTRACTED",
     "from": "sources/agent",
     "to": "sources/skill",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "sources/context-engineering->concepts/ProgressiveDisclosure:EXTRACTED",
+    "from": "sources/context-engineering",
+    "to": "concepts/ProgressiveDisclosure",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "sources/context-engineering->entities/Anthropic:EXTRACTED",
+    "from": "sources/context-engineering",
+    "to": "entities/Anthropic",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1625,29 +1645,9 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "sources/context-engineering->entities/Anthropic:EXTRACTED",
-    "from": "sources/context-engineering",
-    "to": "entities/Anthropic",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "sources/context-engineering->concepts/LLMContext:EXTRACTED",
     "from": "sources/context-engineering",
     "to": "concepts/LLMContext",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "sources/context-engineering->concepts/ProgressiveDisclosure:EXTRACTED",
-    "from": "sources/context-engineering",
-    "to": "concepts/ProgressiveDisclosure",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
@@ -1665,16 +1665,6 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "sources/llm-context->sources/agent:EXTRACTED",
-    "from": "sources/llm-context",
-    "to": "sources/agent",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
     "id": "sources/llm-context->entities/Anthropic:EXTRACTED",
     "from": "sources/llm-context",
     "to": "entities/Anthropic",
@@ -1685,18 +1675,8 @@ const originalEdges = [
     "label": ""
   },
   {
-    "id": "sources/mcp-2026-07-28->sources/skill:EXTRACTED",
-    "from": "sources/mcp-2026-07-28",
-    "to": "sources/skill",
-    "type": "EXTRACTED",
-    "color": "#555555",
-    "confidence": 1.0,
-    "title": "",
-    "label": ""
-  },
-  {
-    "id": "sources/mcp-2026-07-28->sources/agent:EXTRACTED",
-    "from": "sources/mcp-2026-07-28",
+    "id": "sources/llm-context->sources/agent:EXTRACTED",
+    "from": "sources/llm-context",
     "to": "sources/agent",
     "type": "EXTRACTED",
     "color": "#555555",
@@ -1718,6 +1698,26 @@ const originalEdges = [
     "id": "sources/mcp-2026-07-28->entities/Anthropic:EXTRACTED",
     "from": "sources/mcp-2026-07-28",
     "to": "entities/Anthropic",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "sources/mcp-2026-07-28->sources/skill:EXTRACTED",
+    "from": "sources/mcp-2026-07-28",
+    "to": "sources/skill",
+    "type": "EXTRACTED",
+    "color": "#555555",
+    "confidence": 1.0,
+    "title": "",
+    "label": ""
+  },
+  {
+    "id": "sources/mcp-2026-07-28->sources/agent:EXTRACTED",
+    "from": "sources/mcp-2026-07-28",
+    "to": "sources/agent",
     "type": "EXTRACTED",
     "color": "#555555",
     "confidence": 1.0,
