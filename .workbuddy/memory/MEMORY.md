@@ -13,6 +13,9 @@
 - `.gitignore` 排除 `*_draft.md` / `*.draft.md` / `*.scratch.md` → 流水线中间稿(stage1 的 `final_draft.md`)**不入库**,属正常现象,不要强行 `-f` 添加。
 - 产出目录约定:`learning-materials/<concept>.html`(单概念)、`concept-relationship.md`(图谱);教学资料放 `Python基础语法课程/`。
 - 本仓库有两份同名 Skill:项目级 `.workbuddy/skills/concept-learning-skill/`(优先)与 user 级 `~/.workbuddy/skills/concept-explainer/`,内容同步。
+- **`concept-group-guide`**(项目级,2026-09-17 新建):在单概念 7 段式之上生成**一组相关概念**的学习材料。核心是"骨架先行 + 人工检查点"——Phase 1 先产出概念组骨架(组定位/清单表/**边界声明**/先修顺序/术语表/冲突检查)交用户确认,Phase 2 逐份生成,Phase 3 出组索引页,Phase 4 重建图谱 + 登记 wiki + 自动推送。骨架落在 `concept-group/<group-slug>/`。铁律:每份材料的边界辨析必须点名组内邻居;out-of-scope 必须点名归属概念(这是防重复的唯一可靠手段)。
+- 单概念 guide 与概念组 guide 的分工:1 个概念 → `concept-learning-skill`;≥2 个**相关**概念 → `concept-group-guide`。
+- 「guide 模式」在本仓库 = 单概念 Skill 的 7 段式学习指南,**不是** WorkBuddy 的平台模式(平台只有 Craft/Plan/Ask 三档)。
 
 ## 文档流水线(tencent-docx v5.5.3)
 
