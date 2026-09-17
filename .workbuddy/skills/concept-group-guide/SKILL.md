@@ -74,9 +74,18 @@ agent_created: true
 
 1. **与 HTML 材料同源** —— 示例、术语、结构都取自该概念的 HTML，不另起一套说法。
 2. **「预期输出」必须实跑得到** —— 自己执行每个代码格，把**真实输出**贴进 markdown；禁止凭记忆写输出。
-3. **报错示例必须是真实捕获的 traceback** —— 不要手搓。真实 IPython 格式为：75 个 `-` 的分隔线 → `KeyError` 后补空格使 `Traceback` 落在第 42 列 → `Cell In[N], line N` → `----> N <源码>`。注意**表头不带冒号**（`Traceback (most recent call last)`），且行号要与代码格里那一行的真实位置对齐。
+3. **报错示例必须是真实捕获的 traceback** —— 不要手搓。真实 IPython 格式（2026-09-17 用 IPython 9.17.1 跨 `IndexError` / `KeyError` / `TypeError` 实测，`ljust` 宽度**恒为 41**、与异常名长度无关）：
+   - 分隔线 = **75 个 `-`**
+   - 表头 = `异常名.ljust(41) + " " + "Traceback (most recent call last)"` —— **不带冒号**，效果是 `Traceback` 永远落在第 42 列
+   - 其后：`Cell In[N], line M` → `----> M <源码>` → 空行 → `异常名: 说明`
+   - **`N` 取该代码格的序号、`M` 取那一行在格内的真实行号**；M **不要手数** —— 写个 `err_line_no(src, marker)` 从被注释掉的报错行反推（见参考实现的 `tb()` / `err_line_no()`，改代码后自动对齐）
+   - 临时 `pip install --target C:/tmp/ipyX ipython` 再用 `IPython.core.ultratb.VerboseTB(theme_name="nocolor").text(*sys.exc_info())` 可生成真实输出做逐字符比对；用完整理删除
 
-环境未装 `nbformat` 时，直接构造 nbformat 4.5 的 JSON（`cells` + `metadata.kernelspec` + `nbformat` + `nbformat_minor`）。可照抄 `output/_tools/make_concept_group_notebook.py`。
+环境未装 `nbformat` 时，直接构造 nbformat 4.5 的 JSON（`cells` + `metadata.kernelspec` + `nbformat` + `nbformat_minor`）。
+
+- **一个组要给多个概念配 Notebook 时，用一个生成器出多份**：每份写成 `build_xxx_notebook()` 返回 cells，主函数逐个写盘，`_counter` 每份重置。可照抄 `output/_tools/make_concept_group_notebooks_l1b.py`。
+- 单份的参考实现：`output/_tools/make_concept_group_notebook.py`。
+- **课程边界要主动收**：骨架把某件事判给后续课程时（如「CSV 文件读写」「`for` 遍历」），Notebook 里也别越界 —— 该演示的可以改用 `io.StringIO` 读内存文本、或把循环手写展开成三行，并在注释里注明「属后续课程」。
 
 ### Phase 3 — 组级产物
 
@@ -127,7 +136,7 @@ agent_created: true
 
 - `references/html-conventions.md` —— HTML 结构复用规范与主题色分配
 - `references/skeleton-template.md` —— 骨架文件模板（直接套用）
-- 配套 Notebook 生成器示例：`output/_tools/make_concept_group_notebook.py`（未装 `nbformat`，直接构造 nbformat 4.5 JSON）
+- 配套 Notebook 生成器：`output/_tools/make_concept_group_notebook.py`（单份）与 `output/_tools/make_concept_group_notebooks_l1b.py`（一个生成器出多份，含 `tb()` / `err_line_no()` 辅助函数）—— 均未装 `nbformat`，直接构造 nbformat 4.5 JSON
 
 本 Skill 不含脚本；图谱重建与推送复用仓库既有脚本。
 
