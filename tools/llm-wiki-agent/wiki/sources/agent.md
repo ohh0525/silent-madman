@@ -5,7 +5,7 @@ tags: [concept-learning, ai-agent, llm, silent-madman]
 date: 2026-09-05
 source_file: raw/learning-materials/agent.html
 sources: [agent]
-last_updated: 2026-09-09
+last_updated: 2026-09-17
 ---
 
 ## Summary
@@ -27,6 +27,7 @@ A concept-learning HTML document (7-section format: 一句话定义 / 个人解�
 - [[LLMContext]] — Agent operations constrained by context window budget
 - [[Skill]] — Skill is the packaging unit that empowers Agents
 - [[ReAct]] — reasoning pattern used in step 2 of the Agent loop
+- [[SourceScore]] — third-party site cited in the source for the Agent-loop / failure-mode summary
 
 ## Contradictions
 - None detected at ingest time.
