@@ -46,9 +46,10 @@ silent-madman/
 │   ├── learning-materials/         # 两个概念组的 HTML 学习材料 (共 8 份, 2026-09-17)
 │   │   ├── 环境搭建.html · notebook.html · 变量与基本类型.html · 报错怎么读.html   # 上半场
 │   │   └── 运算符.html · 列表.html · 字典.html · 列表套字典.html                # 下半场
-│   └── notebooks/                  # 第 1 课配套可运行 Notebook
+│   └── notebooks/                  # 配套可运行 Notebook
 │       ├── 01-第1课上半场-环境搭建与基础语法.ipynb
-│       └── 02-第1课下半场-字符串与运算符.ipynb
+│       ├── 02-第1课下半场-字符串与运算符.ipynb
+│       └── 03-概念组-列表套字典-一张表.ipynb      # 下半场概念组 #4 配套 (2026-09-17)
 ├── concept-group/                  # 概念组骨架 + 组索引页 + 关系图 (concept-group-guide Skill)
 │   ├── python-lesson1-starter/      # 上半场 · 上手四概念
 │   └── python-lesson1-second-half/  # 下半场 · 四概念
@@ -156,10 +157,11 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 |---|---|---|
 | `notebooks/01-第1课上半场-环境搭建与基础语法.ipynb` | §1.1–§1.3 | 环境安装、第一个程序、变量与基本类型、注释与命名 |
 | `notebooks/02-第1课下半场-字符串与运算符.ipynb` | §1.4–§1.5 | 字符串操作、input/print、算术与比较运算符、类型转换 |
+| `notebooks/03-概念组-列表套字典-一张表.ipynb` | 概念组 · 下半场 #4 | 列表套字典：两层取值、增行 / 改格 / 删行、键一致性、CSV 与 JSON 形状对照 |
 
 每个 notebook 的代码格都已实际执行并核对输出，可直接在 Jupyter / VS Code 中逐格运行。
 
-> 生成脚本见 `output/_tools/make_lesson_notebooks.py`（由讲义 Markdown 自动抽取生成），`output/_tools/render_stage2_error_chapter.py` 负责补充章节的 HTML 排版。
+> 生成脚本见 `output/_tools/make_lesson_notebooks.py`（由讲义 Markdown 自动抽取生成）、`output/_tools/make_concept_group_notebook.py`（概念组配套），`output/_tools/render_stage2_error_chapter.py` 负责补充章节的 HTML 排版。
 
 ### 学习材料（HTML · 概念组）
 
@@ -180,6 +182,8 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 > 生成脚本见 `output/_tools/make_concept_group.py`（上半场）与 `output/_tools/make_concept_group_l1b.py`（下半场）。
 
+「列表套字典」另有配套可运行 Notebook（`notebooks/03-概念组-列表套字典-一张表.ipynb`）：用 `csv.DictReader` 与 `json.loads` 对照真实数据的形状，并现场演示键不一致导致的 `KeyError`。
+
 ---
 
 ## 维护规范（自我约束）
@@ -194,4 +198,4 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 ---
 
-**最后更新**：2026-09-17 · 新增 `Python基础语法课程/learning-materials/`（两个概念组共 8 份 HTML 学习材料，由 `concept-group-guide` Skill 生成）与 `concept-group/`（骨架 + 索引页 + 关系图）· 由本人逐条人工核查后入库。
+**最后更新**：2026-09-17 · 新增 `Python基础语法课程/notebooks/03-概念组-列表套字典-一张表.ipynb`（下半场概念组 #4 配套可运行 Notebook）· 由本人逐条人工核查后入库。
