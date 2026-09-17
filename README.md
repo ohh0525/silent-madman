@@ -38,6 +38,14 @@ silent-madman/
 │   ├── skill.html                  # Skill 技能
 │   ├── context-engineering.html    # 上下文工程 (2026-09-16)
 │   └── agent-memory-provenance.html # 带溯源的智能体长期记忆 (2026-09-16)
+├── Python基础语法课程/              # 第 1-4 课教学资料 (Word 讲义 + 可运行 Notebook)
+│   ├── Python基础语法讲义（第1-4课）.docx
+│   ├── Python基础语法练习题与参考答案（第1-4课）.docx
+│   ├── Python基础语法课程教学方案.docx
+│   ├── Python基础语法讲义（补充·报错怎么读）.docx
+│   └── notebooks/                  # 第 1 课配套可运行 Notebook
+│       ├── 01-第1课上半场-环境搭建与基础语法.ipynb
+│       └── 02-第1课下半场-字符串与运算符.ipynb
 ├── .workbuddy/
 │   ├── memory/                     # 项目级 daily log + MEMORY.md
 │   └── skills/
@@ -123,6 +131,32 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 ---
 
+## Python 基础语法课程（教学资料）
+
+在 `Python基础语法课程/` 下，除了一整套可讲课的 Word 讲义外，另有一套**可运行 Notebook** 与**讲义补充章节**，用于第 1 课的实际动手教学。
+
+### 讲义（Word）
+
+| 文件 | 用途 |
+|---|---|
+| `Python基础语法讲义（第1-4课）.docx` | 主讲义 |
+| `Python基础语法练习题与参考答案（第1-4课）.docx` | 配套练习 |
+| `Python基础语法课程教学方案.docx` | 教学方案 |
+| `Python基础语法讲义（补充·报错怎么读）.docx` | **补充章节**：Traceback 四段结构、五步排查法、五类高频错误逐行拆解、速查表、配套练习 |
+
+### 可运行 Notebook（Jupyter）
+
+| 文件 | 对应讲义 | 内容 |
+|---|---|---|
+| `notebooks/01-第1课上半场-环境搭建与基础语法.ipynb` | §1.1–§1.3 | 环境安装、第一个程序、变量与基本类型、注释与命名 |
+| `notebooks/02-第1课下半场-字符串与运算符.ipynb` | §1.4–§1.5 | 字符串操作、input/print、算术与比较运算符、类型转换 |
+
+每个 notebook 的代码格都已实际执行并核对输出，可直接在 Jupyter / VS Code 中逐格运行。
+
+> 生成脚本见 `output/_tools/make_lesson_notebooks.py`（由讲义 Markdown 自动抽取生成），`output/_tools/render_stage2_error_chapter.py` 负责补充章节的 HTML 排版。
+
+---
+
 ## 维护规范（自我约束）
 
 每生成一份新资料，对照以下清单逐项过一遍：
@@ -135,4 +169,4 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 ---
 
-**最后更新**：2026-09-16 · 新增 `learning-materials/context-engineering.html` 与 `learning-materials/agent-memory-provenance.html`（概念雷达日报 2026-09-16 生成）· 由本人逐条人工核查后入库。
+**最后更新**：2026-09-17 · 新增 `Python基础语法课程/notebooks/`（第 1 课配套可运行 Notebook）与 `Python基础语法讲义（补充·报错怎么读）.docx`（补充讲义章节）· 由本人逐条人工核查后入库。

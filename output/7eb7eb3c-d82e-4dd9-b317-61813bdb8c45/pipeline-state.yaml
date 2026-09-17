@@ -1,0 +1,51 @@
+schema_version: 1
+request_id: 7eb7eb3c-d82e-4dd9-b317-61813bdb8c45
+created_at: 2026-09-17T10:15:31Z
+updated_at: 2026-09-17T10:23:15Z
+entry_type: full_pipeline
+stage_chain: [1, 2, 3]
+output_docx_path: "D:\\桌面\\silent-madman\\Python基础语法课程\\Python基础语法讲义（补充·报错怎么读）.docx"
+output_docx_user_specified: true
+current_stage: 3
+stages:
+  stage_0:
+    status: completed
+    completed_at: 2026-09-17T10:15:31Z
+    decision: full_pipeline
+  stage_1:
+    status: completed
+    started_at: 2026-09-17T10:15:31Z
+    completed_at: 2026-09-17T10:16:36Z
+    output_path: "stage1/final_draft.md"
+    genre: tech-blog
+    expert_used: tech-blog-expert
+    route_tag: expert_tech_blog
+    critic_decision: null
+  stage_2:
+    status: pending
+    started_at: null
+    completed_at: null
+    route: null
+    html_sub: null
+    output_path: null
+    output_format: null
+    skills_invoked: []
+    design_tokens_path: null
+    fallback: false
+    fallback_reason: null
+  stage_3:
+    status: completed
+    started_at: 2026-09-17T10:22:00Z
+    completed_at: 2026-09-17T10:23:15Z
+    executor: doc-converter
+    input_format: html
+    output_path: "D:\\桌面\\silent-madman\\Python基础语法课程\\Python基础语法讲义（补充·报错怎么读）.docx"
+    skill_used: [html-to-docx]
+    present_files_opened: true
+    fallback: false
+    fallback_reason: null
+consistency_check:
+  output_files_exist: true
+  stage_chain_complete: true
+  last_checked_at: 2026-09-17T10:23:15Z
+  errors: []

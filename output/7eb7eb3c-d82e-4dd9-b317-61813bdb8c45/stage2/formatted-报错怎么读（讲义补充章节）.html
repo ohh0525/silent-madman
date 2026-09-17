@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="docx-page-size" content="A4">
+<title>Python 基础语法讲义 · 补充章节：报错怎么读</title>
+<style>
+  :root {
+    --layout-contentWidth: 165mm;
+    --typography-fontSize-h1: 18pt;
+    --typography-fontSize-h2: 15pt;
+    --typography-fontSize-h3: 13pt;
+    --typography-fontSize-body: 11pt;
+    --typography-fontSize-small: 9pt;
+    --typography-fontSize-title: 24pt;
+    --typography-fontFamily-heading: PingFang SC, 苹方-简, 微软雅黑, sans-serif;
+    --typography-fontFamily-body: PingFang SC, 苹方-简, 微软雅黑, sans-serif;
+    --typography-fontFamily-mono: JetBrains Mono, Fira Code, Consolas, monospace;
+    --typography-lineHeight-body: 1.7;
+    --typography-lineHeight-heading: 1.3;
+    --color-primary: #2563EB;
+    --color-text: #111827;
+    --color-muted: #6B7280;
+    --color-border: #E5E7EB;
+    --color-bg: #FFFFFF;
+    --color-highlight: #FEF3C7;
+    --color-codeBg: #F9FAFB;
+
+    --page-content-width: var(--layout-contentWidth, 15.6cm);
+    --fs-title: var(--typography-fontSize-title, 24pt);
+    --fs-h1: var(--typography-fontSize-h1, 18pt);
+    --fs-h2: var(--typography-fontSize-h2, 15pt);
+    --fs-h3: var(--typography-fontSize-h3, 13pt);
+    --fs-body: var(--typography-fontSize-body, 11pt);
+    --fs-small: var(--typography-fontSize-small, 9pt);
+    --ff-heading: var(--typography-fontFamily-heading, "PingFang SC", sans-serif);
+    --ff-body: var(--typography-fontFamily-body, "PingFang SC", sans-serif);
+    --ff-mono: var(--typography-fontFamily-mono, monospace);
+    --ff-mono-alt: var(--typography-fontFamily-code, monospace);
+    --lh-body: var(--typography-lineHeight-body, 1.6);
+    --lh-heading: var(--typography-lineHeight-heading, 1.3);
+    --fw-bold: var(--typography-fontWeight-heading, 600);
+    --fw-normal: var(--typography-fontWeight-body, 400);
+    --spacing-paragraph: var(--spacing-paragraphValue, 0.6em);
+    --spacing-section: var(--spacing-sectionGap, 2em);
+    --spacing-block: var(--spacing-blockValue, 1em);
+    --margin-page: var(--layout-marginTop, 2.5cm);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--ff-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+    max-width: var(--page-content-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: var(--margin-page);
+    padding-bottom: var(--margin-page);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--ff-heading);
+    line-height: var(--lh-heading);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    margin-top: var(--spacing-section);
+    margin-bottom: var(--spacing-paragraph);
+  }
+  h1 { font-size: var(--fs-h1); }
+  h2 { font-size: var(--fs-h2); }
+  h3 { font-size: var(--fs-h3); }
+  h4 { font-size: var(--fs-body); }
+
+  p { margin-bottom: var(--spacing-paragraph); }
+
+  ul, ol { padding-left: var(--spacing-section); margin-bottom: var(--spacing-paragraph); }
+  li { margin-bottom: var(--spacing-paragraph); line-height: var(--lh-body); }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: var(--spacing-block);
+    font-size: var(--fs-body);
+  }
+  th, td {
+    padding: var(--spacing-paragraph);
+    border: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+    line-height: var(--lh-body);
+  }
+  th {
+    font-family: var(--ff-heading);
+    font-weight: var(--fw-bold);
+    background: var(--color-codeBg);
+  }
+
+  pre {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-small);
+    line-height: var(--lh-heading);
+    background: var(--color-codeBg);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-block);
+    margin-bottom: var(--spacing-block);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  pre code { font-family: var(--ff-mono); background: transparent; padding: 0; border: none; }
+
+  code {
+    font-family: var(--ff-mono-alt);
+    font-size: var(--fs-small);
+    background: var(--color-codeBg);
+  }
+
+  blockquote {
+    border-left: 3px solid var(--color-primary);
+    background: var(--color-codeBg);
+    padding: var(--spacing-block);
+    margin-bottom: var(--spacing-block);
+    color: var(--color-text);
+    line-height: var(--lh-body);
+  }
+  blockquote p { margin-bottom: 0; }
+
+  strong { font-weight: var(--fw-bold); color: var(--color-text); }
+  em { color: var(--color-muted); }
+
+  .doc-toc {
+    margin-bottom: var(--spacing-section);
+    padding: var(--spacing-block);
+    background: var(--color-codeBg);
+    border: 1px solid var(--color-border);
+  }
+  .toc-title {
+    font-family: var(--ff-heading);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    margin-bottom: var(--spacing-paragraph);
+  }
+  .toc-list, .toc-list ol, .toc-list ul {
+    list-style: none;
+    list-style-type: none;
+    padding-left: var(--spacing-block);
+  }
+  .toc-list li { margin-bottom: var(--spacing-paragraph); line-height: var(--lh-heading); }
+  .toc-list a { color: var(--color-text); text-decoration: none; }
+
+  section[role="cover"] { text-align: center; }
+  .cover-eyebrow {
+    text-align: center;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-small);
+    color: var(--color-muted);
+    margin-bottom: var(--spacing-section);
+  }
+  .cover-title {
+    text-align: center;
+    font-family: var(--ff-heading);
+    font-size: var(--fs-title);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+    line-height: var(--lh-heading);
+    margin-bottom: var(--spacing-block);
+  }
+  .cover-subtitle {
+    text-align: center;
+    font-size: var(--fs-h3);
+    color: var(--color-muted);
+    margin-bottom: var(--spacing-section);
+  }
+  .cover-info {
+    margin-top: var(--spacing-section);
+    text-align: left;
+    font-size: var(--fs-body);
+  }
+  .cover-info td { border: none; padding: var(--spacing-paragraph); }
+  .cover-info td:first-child {
+    font-family: var(--ff-heading);
+    font-weight: var(--fw-bold);
+    width: 30%;
+    color: var(--color-muted);
+  }
+
+  .doc-footer {
+    margin-top: var(--spacing-section);
+    color: var(--color-muted);
+    font-size: var(--fs-small);
+  }
+
+  @page {
+    @bottom-center { content: counter(page); }
+  }
+  @page cover {
+    @bottom-center { content: none; }
+  }
+  section[role="cover"] { page: cover; }
+</style>
+</head>
+<body>
+<section role="cover">
+  <p class="cover-eyebrow">课堂讲义 · 补充章节</p>
+  <h1 class="cover-title">Python 基础语法讲义 · 补充章节：报错怎么读</h1>
+  <p class="cover-subtitle">Traceback 逐行拆解 · 五类高频错误 · 五步排查法</p>
+  <table class="cover-info"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>所属讲义</td><td>Python 基础语法讲义（第 1–4 课）</td></tr><tr><td>对应章节</td><td>§1.1 环境搭建与第一个程序 · §1.2 变量与数据类型 · 衔接 §3.6 异常处理</td></tr><tr><td>建议课时</td><td>1 个半场（45 分钟）</td></tr><tr><td>目标产出</td><td>看到报错能在 10 秒内定位出错行</td></tr></tbody></table>
+</section>
+<section role="body" data-page-restart="1">
+<nav class="doc-toc" aria-label="文档目录"><p class="toc-title">目录</p><ol class="toc-list"><li class="toc-l1"><a href="#section-1">TL;DR</a></li><li class="toc-l1"><a href="#section-2">为什么这一章要放在第 1 课</a></li><li class="toc-l1"><a href="#section-3">一、先建立三个认知</a></li><li class="toc-l2"><a href="#section-4">1. 报错是信息，不是失败</a></li><li class="toc-l2"><a href="#section-5">2. 报错信息有固定结构</a></li><li class="toc-l2"><a href="#section-6">3. 你要读的永远是最后一行</a></li><li class="toc-l1"><a href="#section-7">二、Traceback 的四段结构</a></li><li class="toc-l2"><a href="#section-8">一个完整的例子</a></li><li class="toc-l2"><a href="#section-9">逐段拆解</a></li><li class="toc-l2"><a href="#section-10">关于"调用链"：为什么有时候中间有好几段</a></li><li class="toc-l1"><a href="#section-11">三、五步排查法</a></li><li class="toc-l1"><a href="#section-12">四、五个必须认识的错误</a></li><li class="toc-l2"><a href="#section-13">4.1 TypeError —— 类型不对</a></li><li class="toc-l2"><a href="#section-14">4.2 NameError —— 名字不存在</a></li><li class="toc-l2"><a href="#section-15">4.3 ValueError —— 值不对</a></li><li class="toc-l2"><a href="#section-16">4.4 KeyError —— 字典里没这个键</a></li><li class="toc-l2"><a href="#section-17">4.5 FileNotFoundError —— 找不到这个文件</a></li><li class="toc-l1"><a href="#section-18">五、其他常见异常速查表</a></li><li class="toc-l1"><a href="#section-19">六、报错信息常用英文句式对照</a></li><li class="toc-l1"><a href="#section-20">七、配套练习</a></li><li class="toc-l2"><a href="#section-21">练习 1：读报错（改错题）</a></li><li class="toc-l2"><a href="#section-22">练习 2：动手制造报错（推荐）</a></li><li class="toc-l2"><a href="#section-23">练习 3：常见错误记录表（贯穿全课程）</a></li><li class="toc-l1"><a href="#section-24">八、本章小结与自检清单</a></li><li class="toc-l2"><a href="#section-25">三句话记住全部</a></li><li class="toc-l2"><a href="#section-26">自检清单</a></li><li class="toc-l2"><a href="#section-27">和后续课程的关系</a></li></ol></nav>
+<blockquote><p>&nbsp;&nbsp;本篇是《Python 基础语法讲义（第 1–4 课）》的补充章节，配合 §1.1 环境搭建、§1.2 变量与数据类型使用。讲义第 3 课 §3.6 讲的是"怎么用 <code>try / except</code> 让程序不崩"，本篇讲的是<strong>在此之前</strong>的那件事——看到一串红色报错时，你到底该怎么读。</p></blockquote>
+<h2 id="section-1">TL;DR</h2>
+<p>Python 的报错信息是<strong>结构化的</strong>，不是一坨乱码。只要掌握"<strong>先看最后一行，再看箭头指向的那一行</strong>"这一条，90% 的初学者报错都能自己定位。</p>
+<h2 id="section-2">为什么这一章要放在第 1 课</h2>
+<p>教学方案里有一条教学方式叫「错误驱动教学」——每次课刻意演示 2 到 3 个典型错误。原因很直接：</p>
+<p><strong>初学者卡住的时间，大头不在"写不出代码"，而在"读不懂报错"。</strong></p>
+<p>一个真实的学习曲线是这样的：</p>
+<table><thead><tr><th>阶段</th><th>学员遇到报错时的反应</th></tr></thead><tbody><tr><td>第 1 周</td><td>盯着满屏红字发懵，逐个字符对照讲义，怀疑自己敲错了</td></tr><tr><td>第 2 周</td><td>能认出 <code>NameError</code> / <code>TypeError</code>，知道大概是什么方向的问题</td></tr><tr><td>第 4 周</td><td>直接看最后一行，跳到最后那个行号，十秒定位</td></tr></tbody></table>
+<p>这张表里从第一行走到第三行，靠的不是"写得多了自然就会"，而是<strong>有人把结构讲清楚</strong>。本章就是这张表的第一步。</p>
+<h2 id="section-3">一、先建立三个认知</h2>
+<p>在动手读第一段报错之前，先纠正三个最常见的误解。这三条认知决定了你后面能不能把报错当工具用。</p>
+<h3 id="section-4">1. 报错是信息，不是失败</h3>
+<p>Python 的设计者花了很大力气让报错信息有用。它不是"你错了"的宣判，而是"我在第几行、因为什么、没法继续了"的说明。</p>
+<h3 id="section-5">2. 报错信息有固定结构</h3>
+<p>每一段报错都由四部分组成，位置和含义都是固定的。你看多了会发现，换个错误类型，<strong>只有最后一行会变</strong>。</p>
+<h3 id="section-6">3. 你要读的永远是最后一行</h3>
+<p>这是全章最重要的一句话。初学者最常犯的错误是<strong>从第一行开始读</strong>，被 <code>Traceback (most recent call last)</code> 和一堆文件路径吓住，然后在中间那段里找线索。</p>
+<p><strong>真正的答案在最后一行。</strong></p>
+<h2 id="section-7">二、Traceback 的四段结构</h2>
+<p>下面用一段最短的报错，把四段结构一次讲完。看懂这一段，后面所有报错都是它的变形。</p>
+<h3 id="section-8">一个完整的例子</h3>
+<p>在 Notebook 里运行下面这行代码：</p>
+<pre><code class="language-python">&quot;20&quot; + 5
+</code></pre>
+<p>你会看到：</p>
+<pre><code class="language-text">---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[1], line 1
+----&gt; 1 &quot;20&quot; + 5
+
+TypeError: can only concatenate str (not &quot;int&quot;) to str
+</code></pre>
+<h3 id="section-9">逐段拆解</h3>
+<table><thead><tr><th>段落</th><th>内容</th><th>它告诉你什么</th><th>本案例</th></tr></thead><tbody><tr><td>第 1 段</td><td><code>Traceback (most recent call last):</code></td><td>固定抬头，<strong>没有信息量</strong>，可以直接跳过</td><td>—</td></tr><tr><td>第 2 段</td><td><code>Cell In[1], line 1</code></td><td><strong>出错位置</strong>：第 1 个单元格的第 1 行</td><td>第 1 行</td></tr><tr><td>第 3 段</td><td><code>----&gt; 1 "20" + 5</code></td><td><strong>出错的那一行代码原文</strong>，箭头指向行号</td><td><code>"20" + 5</code></td></tr><tr><td>第 4 段</td><td><code>TypeError: can only concatenate str (not "int") to str</code></td><td><strong>错误类型 + 原因</strong>，这才是结论</td><td>字符串只能和字符串相加</td></tr></tbody></table>
+<blockquote><p>&nbsp;&nbsp;⚠️ <strong>在 Notebook 和脚本里，第 2 段长得不一样。</strong>Notebook 显示 <code>Cell In[1], line 1</code>；如果代码存在 .py 脚本里，显示的是 <code>File "scores.py", line 1</code>。两者含义相同，都是"出错的行号"，<strong>其余部分完全一样</strong>。</p></blockquote>
+<h3 id="section-10">关于"调用链"：为什么有时候中间有好几段</h3>
+<p>如果出错的那行代码是被<strong>另一个函数</strong>调用的，中间就会多出几层：</p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;scores.py&quot;, line 12, in &lt;module&gt;
+    print(average(scores))
+  File &quot;scores.py&quot;, line 8, in average
+    return total / count
+ZeroDivisionError: division by zero
+</code></pre>
+<p>这里的读法是 <strong>从下往上</strong>：</p>
+<table><thead><tr><th>顺序</th><th>位置</th><th>含义</th></tr></thead><tbody><tr><td>最下</td><td><code>scores.py, line 8, in average</code></td><td><strong>真正炸掉的地方</strong>——<code>average</code> 函数第 8 行</td></tr><tr><td>往上</td><td><code>scores.py, line 12, in &lt;module&gt;</code></td><td>是谁调用了它——第 12 行的 <code>print(average(scores))</code></td></tr></tbody></table>
+<p><strong>结论</strong>：先看最下面那片（<code>File</code> 行 + 代码行），那才是问题的源头；上面的是"谁把它叫起来的"，用于理解上下文。</p>
+<p>第 1 课你写的代码都在单元格里，调用链通常只有一层。等到第 3 课开始写函数，这里会变成三层、四层——但那时的读法和现在完全一样。</p>
+<h2 id="section-11">三、五步排查法</h2>
+<p>拿到任何一段报错，按这五步走：</p>
+<ol><li><strong>看最后一行</strong> —— 拿到错误类型和一句话原因。这一步就能解决一半问题。</li><li><strong>找 <code>----&gt;</code> 箭头</strong> —— 它指向出错的那一行代码原文，不用自己去翻。</li><li><strong>对行号回代码</strong> —— 把那个行号对应的代码找出来，逐字看。</li><li><strong>判断错误类型属于哪一类</strong> —— 是"类型不对"？"名字不存在"？"值不对"？"找不到东西"？见下一节的分类。</li><li><strong>只改一处，然后重跑</strong> —— 一次改一个地方。改太多，你会不知道是哪一处起了作用。</li></ol>
+<blockquote><p>&nbsp;&nbsp;⚠️ <strong>最容易违反的是第 5 步。</strong> 初学者常犯的错是一口气改三个地方，结果报了一个新错误，完全不知道是自己哪个修改引入的。</p></blockquote>
+<h2 id="section-12">四、五个必须认识的错误</h2>
+<p>以下五类错误，覆盖了初学者 80% 以上的报错场景。每一类都给出<strong>真实运行产生的报错原文</strong>（不是示意）。</p>
+<h3 id="section-13">4.1 TypeError —— 类型不对</h3>
+<p><strong>什么场景会撞上</strong>：把不同类型的值做运算。第 1 课 §1.2 类型转换那一节的反例就是它。</p>
+<p><strong>触发代码</strong></p>
+<pre><code class="language-python">print(&quot;20&quot; + 5)
+</code></pre>
+<p><strong>报错原文</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;scores.py&quot;, line 1, in &lt;module&gt;
+    print(&quot;20&quot; + 5)
+TypeError: can only concatenate str (not &quot;int&quot;) to str
+</code></pre>
+<p><strong>逐行解读</strong></p>
+<table><thead><tr><th>部分</th><th>内容</th><th>含义</th></tr></thead><tbody><tr><td>最后一行</td><td><code>TypeError</code></td><td>类型错误——值本身没问题，<strong>类型配不上</strong></td></tr><tr><td>最后一行后半</td><td><code>can only concatenate str (not "int") to str</code></td><td>直译：只能把 str 拼接到 str 上（不能是 int）。也就是"字符串只能加字符串"</td></tr><tr><td>箭头行</td><td><code>print("20" + 5)</code></td><td><code>"20"</code> 是字符串，<code>5</code> 是整数，加号两边类型不同</td></tr></tbody></table>
+<p><strong>怎么修</strong></p>
+<p>第 1 课学过：先转换类型，再运算。</p>
+<pre><code class="language-python">print(int(&quot;20&quot;) + 5)     # 输出 25
+</code></pre>
+<p><strong>一句话记忆</strong>：<code>TypeError</code> = <strong>东西是好东西，只是类型不搭。</strong></p>
+<h3 id="section-14">4.2 NameError —— 名字不存在</h3>
+<p><strong>什么场景会撞上</strong>：用了没定义过的变量；或者 Notebook 里<strong>跳过了定义变量的那个单元格</strong>（推荐对照第 1 课上半场的"执行顺序"小实验）。</p>
+<p><strong>触发代码</strong></p>
+<pre><code class="language-python">print(score)
+</code></pre>
+<p>（在此之前从未给 <code>score</code> 赋过值）</p>
+<p><strong>报错原文</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;scores.py&quot;, line 1, in &lt;module&gt;
+    print(score)
+NameError: name &#x27;score&#x27; is not defined
+</code></pre>
+<p><strong>逐行解读</strong></p>
+<table><thead><tr><th>部分</th><th>内容</th><th>含义</th></tr></thead><tbody><tr><td>最后一行</td><td><code>NameError</code></td><td>名字错误——Python 在找一个叫 <code>score</code> 的东西，没找到</td></tr><tr><td>最后一行后半</td><td><code>name 'score' is not defined</code></td><td>直译：名字 <code>score</code> 没有被定义</td></tr></tbody></table>
+<p><strong>怎么修</strong>，按可能性从高到低排查：</p>
+<table><thead><tr><th>排查顺序</th><th>可能原因</th><th>检查方法</th></tr></thead><tbody><tr><td>1</td><td><strong>Notebook 里跳过了赋值单元格</strong></td><td>从第一格开始依次运行一遍</td></tr><tr><td>2</td><td>真忘了赋值</td><td>在 <code>print(score)</code> 之前加 <code>score = 88</code></td></tr><tr><td>3</td><td>拼写不一致</td><td><code>scroe</code> / <code>Score</code> / <code>scores</code> ——Python <strong>区分大小写</strong>，<code>Score</code> 和 <code>score</code> 是两个名字</td></tr><tr><td>4</td><td>引号问题</td><td>写成了 <code>print(张三)</code>，Python 会以为"张三"是个变量名。应该是 <code>print("张三")</code></td></tr></tbody></table>
+<blockquote><p>&nbsp;&nbsp;⚠️ 第 4 条是第 1 课 §1.2 提过的坑：<strong>字符串忘了加引号，报的就是 <code>NameError</code> 而不是别的</strong>。这一点很多人想不通，记住就行。</p></blockquote>
+<h3 id="section-15">4.3 ValueError —— 值不对</h3>
+<p><strong>什么场景会撞上</strong>：类型是对的，但这个值<strong>没法变成你要的东西</strong>。最典型的场景是 <code>input()</code> 之后做转换（第 1 课 §1.5）。</p>
+<p><strong>触发代码</strong></p>
+<pre><code class="language-python">score = int(&quot;八十八&quot;)
+</code></pre>
+<p><strong>报错原文</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;scores.py&quot;, line 1, in &lt;module&gt;
+    score = int(&quot;八十八&quot;)
+ValueError: invalid literal for int() with base 10: &#x27;八十八&#x27;
+</code></pre>
+<p><strong>逐行解读</strong></p>
+<table><thead><tr><th>部分</th><th>内容</th><th>含义</th></tr></thead><tbody><tr><td>最后一行</td><td><code>ValueError</code></td><td>值错误——<strong>类型没问题</strong>（都是字符串），问题出在值本身</td></tr><tr><td>最后一行后半</td><td><code>invalid literal for int() with base 10: '八十八'</code></td><td>直译：对 <code>int()</code> 来说这是个无效的字面量。<code>base 10</code> 是"十进制"，<code>'八十八'</code> 就是那个转不了的值</td></tr></tbody></table>
+<p><strong>怎么修</strong></p>
+<p>输入了非数字字符，改输入或加校验：</p>
+<pre><code class="language-python">score = int(&quot;88&quot;)        # 输出 88
+</code></pre>
+<p><strong>TypeError 和 ValueError 怎么区分？</strong> 这是本章最值得记住的一对：</p>
+<table><thead><tr><th></th><th>TypeError</th><th>ValueError</th></tr></thead><tbody><tr><td>问题出在</td><td><strong>类型</strong></td><td><strong>值</strong></td></tr><tr><td>例子</td><td><code>"20" + 5</code>（str + int）</td><td><code>int("八十八")</code>（类型是 str，对；值是"八十八"，转不了）</td></tr><tr><td>直觉记法</td><td>"<strong>东西不对</strong>"</td><td>"<strong>东西对，但内容不对</strong>"</td></tr></tbody></table>
+<h3 id="section-16">4.4 KeyError —— 字典里没这个键</h3>
+<p><strong>什么场景会撞上</strong>：从字典里取一个不存在的键。字典是第 2 课的内容，这里只介绍最小用法：字典用 <code>{键: 值}</code> 存放数据，用 <code>字典[键]</code> 取出值。</p>
+<p><strong>触发代码</strong></p>
+<pre><code class="language-python">d = {&quot;姓名&quot;: &quot;张三&quot;, &quot;年龄&quot;: 20}
+print(d[&quot;成绩&quot;])
+</code></pre>
+<p><strong>报错原文</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;scores.py&quot;, line 2, in &lt;module&gt;
+    print(d[&quot;成绩&quot;])
+KeyError: &#x27;成绩&#x27;
+</code></pre>
+<p><strong>逐行解读</strong></p>
+<table><thead><tr><th>部分</th><th>内容</th><th>含义</th></tr></thead><tbody><tr><td>最后一行</td><td><code>KeyError</code></td><td>键错误</td></tr><tr><td>最后一行后半</td><td><code>'成绩'</code></td><td><strong>你找的那个键</strong>，Python 把它原样报出来</td></tr></tbody></table>
+<p>注意：<code>KeyError</code> 只告诉你"这个键不存在"，<strong>它不会告诉你字典里有哪些键</strong>。所以要自己回头看定义。</p>
+<p><strong>怎么修</strong></p>
+<table><thead><tr><th>方法</th><th>写法</th><th>适用</th></tr></thead><tbody><tr><td>改对键名</td><td><code>print(d["年龄"])</code></td><td>确认是敲错了</td></tr><tr><td>用 <code>get()</code> 给默认值</td><td><code>print(d.get("成绩", "暂无"))</code></td><td>键可能不存在，且不想让程序崩</td></tr><tr><td>先查有哪些键</td><td><code>print(d.keys())</code></td><td>不确定字典里到底有什么</td></tr></tbody></table>
+<blockquote><p>&nbsp;&nbsp;⚠️ <code>KeyError</code> 最喜欢藏在<strong>读数据文件</strong>的场景里：csv 的表头写的是"学生姓名"，你按列取值时写的是"姓名"，两个对不上，报的就是它。第 3 课、第 4 课会反复遇到。</p></blockquote>
+<h3 id="section-17">4.5 FileNotFoundError —— 找不到这个文件</h3>
+<p><strong>什么场景会撞上</strong>：<code>open()</code> 一个不存在的文件。文件读写是第 3 课内容，这里同样只介绍最小用法。</p>
+<p><strong>触发代码</strong></p>
+<pre><code class="language-python">f = open(&quot;scores.csv&quot;, &quot;r&quot;)
+</code></pre>
+<p><strong>报错原文</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;scores.py&quot;, line 1, in &lt;module&gt;
+    f = open(&quot;scores.csv&quot;, &quot;r&quot;)
+FileNotFoundError: [Errno 2] No such file or directory: &#x27;scores.csv&#x27;
+</code></pre>
+<p><strong>逐行解读</strong></p>
+<table><thead><tr><th>部分</th><th>内容</th><th>含义</th></tr></thead><tbody><tr><td>最后一行</td><td><code>FileNotFoundError: [Errno 2] No such file or directory</code></td><td>找不到文件或目录。<code>Errno 2</code> 是操作系统的错误码，不用记</td></tr><tr><td>最后一行后半</td><td><code>'scores.csv'</code></td><td><strong>Python 实际去找的那个路径</strong>，原样报出来</td></tr></tbody></table>
+<p><strong>怎么修</strong>，按可能性从高到低：</p>
+<table><thead><tr><th>排查顺序</th><th>可能原因</th><th>检查方法</th></tr></thead><tbody><tr><td>1</td><td><strong>文件真的不在那个位置</strong></td><td>去文件夹里看一眼</td></tr><tr><td>2</td><td><strong>文件名写错了</strong>（含大小写、扩展名）</td><td><code>scores.CSV</code> ≠ <code>scores.csv</code></td></tr><tr><td>3</td><td><strong>路径不对</strong></td><td>代码在当前目录找，文件却在别处。用绝对路径，或把文件放到和代码同一个目录</td></tr><tr><td>4</td><td>路径里的反斜杠被吃掉了</td><td>Windows 路径写成 <code>"C:\data\scores.csv"</code> 时，<code>\d</code>、<code>\s</code> 会被当成转义符。改成 <code>r"C:\data\scores.csv"</code>（加 <code>r</code>）或 <code>"C:/data/scores.csv"</code></td></tr></tbody></table>
+<blockquote><p>&nbsp;&nbsp;⚠️ <strong>最重要的一点</strong>：报错里的 <code>'scores.csv'</code> 就是 Python 实际去找的路径。如果你以为文件在 <code>D:\桌面\data\scores.csv</code>，而报错里写的是 <code>'scores.csv'</code>，那说明<strong>代码根本没往那个目录找</strong>——问题出在路径，不是文件。</p></blockquote>
+<h2 id="section-18">五、其他常见异常速查表</h2>
+<table><thead><tr><th>异常名</th><th>一句话含义</th><th>典型触发代码</th><th>报错最后一行长什么样</th></tr></thead><tbody><tr><td><code>SyntaxError</code></td><td>语法就是错的，Python <strong>读不懂</strong>这行</td><td><code>if score = 60:</code></td><td><code>SyntaxError: invalid syntax</code></td></tr><tr><td><code>IndentationError</code></td><td>缩进不对</td><td><code>if</code> 下面的语句没缩进</td><td><code>IndentationError: expected an indented block</code></td></tr><tr><td><code>IndexError</code></td><td>下标超出范围</td><td><code>[88, 92, 79][5]</code></td><td><code>IndexError: list index out of range</code></td></tr><tr><td><code>ZeroDivisionError</code></td><td>除以 0</td><td><code>100 / 0</code></td><td><code>ZeroDivisionError: division by zero</code></td></tr><tr><td><code>AttributeError</code></td><td>这个对象没有这个属性/方法</td><td><code>"abc".push("d")</code></td><td><code>AttributeError: 'str' object has no attribute 'push'</code></td></tr><tr><td><code>ModuleNotFoundError</code></td><td>没装这个库，或名字写错</td><td><code>import pandas</code>（没装）</td><td><code>ModuleNotFoundError: No module named 'pandas'</code></td></tr></tbody></table>
+<p>补充两点：</p>
+<ol><li><strong><code>SyntaxError</code> 和 <code>IndentationError</code> 的性质和其他都不一样。</strong> 它们发生时，Python <strong>一行代码都没执行</strong>——因为在"读代码"阶段就被拦下了。所以这类报错的行号有时会指向<strong>出错位置的下一行</strong>（Python 读到这里才发现上一行没写完）。</li><li><code>IndexError</code> 是 <code>KeyError</code> 的"位置版"：列表用下标 <code>[]</code> 取，字典用键 <code>[]</code> 取，取不到时一个报 <code>IndexError</code>、一个报 <code>KeyError</code>。</li></ol>
+<h2 id="section-19">六、报错信息常用英文句式对照</h2>
+<p>报错的后半句是英文，但句式高度重复。认识这些短语就够了：</p>
+<table><thead><tr><th>英文短语</th><th>中文含义</th><th>常见于</th></tr></thead><tbody><tr><td><code>is not defined</code></td><td>没有被定义</td><td><code>NameError</code></td></tr><tr><td><code>can only concatenate str (not "int") to str</code></td><td>只能把字符串拼接到字符串</td><td><code>TypeError</code></td></tr><tr><td><code>unsupported operand type(s) for +: 'int' and 'str'</code></td><td><code>+</code> 不支持这两种类型</td><td><code>TypeError</code></td></tr><tr><td><code>invalid literal for int()</code></td><td>给 <code>int()</code> 的值无效</td><td><code>ValueError</code></td></tr><tr><td><code>could not convert string to float</code></td><td>字符串转不了浮点数</td><td><code>ValueError</code></td></tr><tr><td><code>not subscriptable</code></td><td>这个对象不能用 <code>[]</code> 取值</td><td><code>TypeError</code></td></tr><tr><td><code>object has no attribute 'xxx'</code></td><td>这个对象没有叫 xxx 的属性</td><td><code>AttributeError</code></td></tr><tr><td><code>out of range</code></td><td>超出范围</td><td><code>IndexError</code></td></tr><tr><td><code>No such file or directory</code></td><td>没有这个文件或目录</td><td><code>FileNotFoundError</code></td></tr><tr><td><code>No module named 'xxx'</code></td><td>没有叫 xxx 的模块</td><td><code>ModuleNotFoundError</code></td></tr><tr><td><code>unexpected indent</code></td><td>缩进多了</td><td><code>IndentationError</code></td></tr><tr><td><code>indent</code> / <code>expected an indented block</code></td><td>该缩进的地方没缩进</td><td><code>IndentationError</code></td></tr></tbody></table>
+<h2 id="section-20">七、配套练习</h2>
+<p>读报错是手上功夫，光看不动手记不住。下面三个练习由浅入深：先辨认，再动手制造，最后养成记录习惯。</p>
+<h3 id="section-21">练习 1：读报错（改错题）</h3>
+<p>下面 5 段报错，<strong>不要运行代码</strong>，直接回答两个问题：(a) 错误类型是什么？(b) 大概错在哪里？</p>
+<p><strong>第 1 段</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;demo.py&quot;, line 3, in &lt;module&gt;
+    print(price * 1.1)
+NameError: name &#x27;price&#x27; is not defined
+</code></pre>
+<p><strong>第 2 段</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;demo.py&quot;, line 4, in &lt;module&gt;
+    print(&quot;总分：&quot; + total)
+TypeError: can only concatenate str (not &quot;int&quot;) to str
+</code></pre>
+<p><strong>第 3 段</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;demo.py&quot;, line 2, in &lt;module&gt;
+    print(int(age))
+ValueError: invalid literal for int() with base 10: &#x27;二十&#x27;
+</code></pre>
+<p><strong>第 4 段</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;demo.py&quot;, line 5, in &lt;module&gt;
+    print(info[&quot;平均分&quot;])
+KeyError: &#x27;平均分&#x27;
+</code></pre>
+<p><strong>第 5 段</strong></p>
+<pre><code class="language-text">Traceback (most recent call last):
+  File &quot;demo.py&quot;, line 1, in &lt;module&gt;
+    f = open(&quot;成绩表.csv&quot;, &quot;r&quot;)
+FileNotFoundError: [Errno 2] No such file or directory: &#x27;成绩表.csv&#x27;
+</code></pre>
+<p><strong>参考答案</strong></p>
+<table><thead><tr><th>题号</th><th>错误类型</th><th>错在哪</th><th>怎么改</th></tr></thead><tbody><tr><td>1</td><td><code>NameError</code></td><td>第 3 行用了 <code>price</code>，但前面没定义过</td><td>在使用前加 <code>price = 19.9</code></td></tr><tr><td>2</td><td><code>TypeError</code></td><td>第 4 行 <code>"总分：" + total</code>，字符串和数字相加</td><td>改成 <code>"总分：" + str(total)</code> 或 <code>f"总分：{total}"</code></td></tr><tr><td>3</td><td><code>ValueError</code></td><td>第 2 行 <code>int("二十")</code>，中文数字转不了整数</td><td>输入改成阿拉伯数字，或改用映射字典转换</td></tr><tr><td>4</td><td><code>KeyError</code></td><td>第 5 行取的键 <code>"平均分"</code> 不在字典里</td><td>先 <code>print(info.keys())</code> 看有哪些键，或用 <code>info.get("平均分", "暂无")</code></td></tr><tr><td>5</td><td><code>FileNotFoundError</code></td><td>第 1 行打开的文件在 Python 当前目录下不存在</td><td>确认文件位置；路径不对就用绝对路径，注意反斜杠加 <code>r</code></td></tr></tbody></table>
+<h3 id="section-22">练习 2：动手制造报错（推荐）</h3>
+<p>读一百遍不如自己踩一次。请<strong>故意</strong>制造出下面 5 个错误，每造一个，回答"报错最后一行写了什么"：</p>
+<ol><li>让 Python 报一个 <code>TypeError</code></li><li>让 Python 报一个 <code>NameError</code></li><li>让 Python 报一个 <code>ValueError</code></li><li>让 Python 报一个 <code>IndexError</code></li><li>让 Python 报一个 <code>ZeroDivisionError</code></li></ol>
+<blockquote><p>&nbsp;&nbsp;提示：可以回看第四节的 4.1 到 4.3，改一改里面的代码就行。加分项：把每个报错的<strong>最后一行</strong>抄到笔记本上。抄的过程就是记忆的过程。</p></blockquote>
+<h3 id="section-23">练习 3：常见错误记录表（贯穿全课程）</h3>
+<p>从今天起，遇到报错就填一行。这个习惯比做对题本身更有价值。</p>
+<table><thead><tr><th>日期</th><th>报错最后一行（原文抄写）</th><th>错误类型</th><th>实际原因</th><th>怎么改的</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<h2 id="section-24">八、本章小结与自检清单</h2>
+<p>最后用三句话把全章要点压缩，再给你一张自检清单，用来确认自己真的掌握了。</p>
+<h3 id="section-25">三句话记住全部</h3>
+<ol><li><strong>先看最后一行</strong> —— 错误类型和原因都在那里。</li><li><strong>再看箭头 <code>----&gt;</code> 指的那一行</strong> —— 那就是出错的代码。</li><li><strong>只改一处，然后重跑。</strong></li></ol>
+<h3 id="section-26">自检清单</h3>
+<table><thead><tr><th>我现在应该能做到</th><th>自检方式</th></tr></thead><tbody><tr><td>说清 Traceback 的四段结构</td><td>能指出哪一段是"没有信息量的"</td></tr><tr><td>在 10 秒内定位出错行</td><td>拿上面练习 1 的任意一段，能立刻说出行号</td></tr><tr><td>区分 <code>TypeError</code> 和 <code>ValueError</code></td><td>能各举一个例子，并说出区别在"类型"还是"值"</td></tr><tr><td>认出五个高频错误类型</td><td><code>TypeError</code> / <code>NameError</code> / <code>ValueError</code> / <code>KeyError</code> / <code>FileNotFoundError</code></td></tr><tr><td>用固定流程排查</td><td>能口述五步排查法</td></tr><tr><td>处理路径类报错</td><td>知道 <code>FileNotFoundError</code> 里报出的路径就是 Python 实际找的路径</td></tr></tbody></table>
+<h3 id="section-27">和后续课程的关系</h3>
+<table><thead><tr><th>课次</th><th>本章的哪部分会立刻用上</th></tr></thead><tbody><tr><td>第 1 课</td><td>4.1 <code>TypeError</code>（类型转换）、4.2 <code>NameError</code>（执行顺序）、4.3 <code>ValueError</code>（<code>input()</code> 转换）</td></tr><tr><td>第 2 课</td><td>4.4 <code>KeyError</code>（字典）、<code>IndexError</code>（列表下标）</td></tr><tr><td>第 3 课</td><td>4.5 <code>FileNotFoundError</code>（文件读写）、并与 §3.6 <code>try / except</code> 衔接</td></tr><tr><td>第 4 课</td><td>上述全部——读 csv、处理缺失值时，报错定位能力直接决定调试速度</td></tr></tbody></table>
+<blockquote><p>&nbsp;&nbsp;记住一句话：<strong>第 3 课教你"让程序出错也不崩"，本章教你"出错时知道为什么错"。前者是写给别人用的程序才需要的，后者是你每天都要用的。</strong></p></blockquote>
+</section>
+</body>
+</html>
