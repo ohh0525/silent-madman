@@ -70,6 +70,14 @@ agent_created: true
 
 细节见 `references/html-conventions.md`。
 
+**配套可运行 Notebook（可选 —— 仅当这个概念"靠动手才立得住"时才做）**：如容器、文件、循环这类概念，HTML 只建立直觉，Notebook 才让人真的会写。输出到课程目录的 `notebooks/`，与已有 Notebook 统一编号。三条硬要求：
+
+1. **与 HTML 材料同源** —— 示例、术语、结构都取自该概念的 HTML，不另起一套说法。
+2. **「预期输出」必须实跑得到** —— 自己执行每个代码格，把**真实输出**贴进 markdown；禁止凭记忆写输出。
+3. **报错示例必须是真实捕获的 traceback** —— 不要手搓。真实 IPython 格式为：75 个 `-` 的分隔线 → `KeyError` 后补空格使 `Traceback` 落在第 42 列 → `Cell In[N], line N` → `----> N <源码>`。注意**表头不带冒号**（`Traceback (most recent call last)`），且行号要与代码格里那一行的真实位置对齐。
+
+环境未装 `nbformat` 时，直接构造 nbformat 4.5 的 JSON（`cells` + `metadata.kernelspec` + `nbformat` + `nbformat_minor`）。可照抄 `output/_tools/make_concept_group_notebook.py`。
+
 ### Phase 3 — 组级产物
 
 1. **组索引页** `concept-group/<group-slug>/index.html`
@@ -105,6 +113,7 @@ agent_created: true
 7. 每份材料的来源数达标，无编造 URL，未核实断言已标 `[unverified]`
 8. 图谱：**同领域**则重建成功且节点数 ≥ 生成前；**跨领域**则既未污染既有图谱（已独立成篇 + 在既有图谱留一行指引），也未误登记进领域不匹配的 Wiki
 9. 组内每份材料都能回答："它和我隔壁那份的边界在哪？"
+10. （若产出配套 Notebook）每个代码格都实跑无异常；「预期输出」与实跑结果逐字一致；术语与对应 HTML 材料一致；Notebook 里引用的材料与索引页路径真实可达
 
 ## 硬约束（本仓库约定）
 
@@ -118,6 +127,7 @@ agent_created: true
 
 - `references/html-conventions.md` —— HTML 结构复用规范与主题色分配
 - `references/skeleton-template.md` —— 骨架文件模板（直接套用）
+- 配套 Notebook 生成器示例：`output/_tools/make_concept_group_notebook.py`（未装 `nbformat`，直接构造 nbformat 4.5 JSON）
 
 本 Skill 不含脚本；图谱重建与推送复用仓库既有脚本。
 
