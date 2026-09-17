@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：列表套字典 = 一张表（List of Dicts）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #2f6f2f;
+    --accent-soft: #e6f3e6;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .callout {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Python 第 1 课 · 下半场四概念</span>
+  <h1>列表套字典 = 一张表（List of Dicts）</h1>
+  <p class="subtitle">列表装行、字典装字段 —— 真实数据最常见的形状 · 生成时间 2026-09-17 · 组内第 4 / 4</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">把"每行一条记录"的字典装进一个列表，就得到一张表：<strong>列表是行，字典是"列名 → 值"。</strong></p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>先看一张再普通不过的表格：一张学生成绩表，有三列（姓名、班级、分数），有两行数据。现在问一个问题 —— 在 Python 里怎么把它装起来？</p>
+  <p>你可能会想到"列表套列表"：<em>[["小明", "一班", 90], ["小红", "二班", 85]]</em>。它能跑，但有个致命缺陷：<strong>列名丢了</strong>。看到 <em>row[0]</em>，你怎么知道这是"姓名"还是"班级"？全靠脑记。表格一旦长到十几列，代码就没法看了。</p>
+  <p>换一个思路：<strong>一行数据，其实是一组"字段名 → 值"的对应</strong> —— 姓名字段是小明、班级字段是一班、分数字段是 90。这不正好就是<a href="字典.html">字典</a>吗？于是一行写成 <em>{"name": "小明", "class": "一班", "score": 90}</em>。再把多行按顺序放进一个<a href="列表.html">列表</a>里，整张表就是 <em>[{...}, {...}]</em> —— <strong>列表保管"有哪几行"，字典保管"每一行里每个字段叫什么"</strong>。</p>
+  <p>这个结构的取值方式也很顺口：<em>rows[0]</em> 是"第 1 行"（一个字典），<em>rows[0]["name"]</em> 是"第 1 行的 name 那一格"。读起来就是"第 1 行的姓名"，和你说人话的顺序完全一致 —— 这正是它比"列表套列表"强的地方。</p>
+  <p>最后一点，也是这一篇最想让你记住的：<strong>它不是某种冷门技巧，而是真实数据最常见的形状</strong>。CSV 文件读进来是这个样子，网页接口返回的 JSON 常常是这个样子，数据库查出来的结果也常被整理成这个样子。你在入门阶段学到的这个结构，后面会一直用下去。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>为什么用字典装一行</strong>：因为字典能把"字段名"和"值"绑在一起。<br />为什么重要：换成列表，<em>row[0]</em> 是第几列全靠记忆；换成字典，<em>row["name"]</em> 自带说明 —— 这是"看得懂"和"看得懂但不敢改"的分界。</li>
+    <li><strong>为什么用列表装多行</strong>：因为列表有序、可增删，天然对应"表里有很多行、行的先后有意义"。<br />为什么重要：列表负责"有哪几行、什么顺序"，字典负责"每行长什么样"，两者各管一半，互不越界。</li>
+    <li><strong>取一行与取一格</strong>：<em>rows[i]</em> 取第 i 行（得到字典）；<em>rows[i]["字段"]</em> 取第 i 行某个字段的值。<br />为什么重要：这是本结构最常用的动作；先按位置找行、再按名字找字段，两层恰好把列表和字典的强项都用上了。</li>
+    <li><strong>增一行 / 改一格 / 删一行</strong>：<em>rows.append({...})</em> 加一行、<em>rows[i]["字段"] = 新值</em> 改一格、<em>del rows[i]</em> 删一行。<br />为什么重要：增删行用列表的写法、改字段用字典的写法 —— 认清"哪一层用哪种写法"，就不会写错括号。</li>
+    <li><strong>同一张表里键要一致</strong>：每行字典应使用同一组字段名。<br />为什么重要：这是"表"成立的前提。第一行有 <em>"score"</em>、第二行写成 <em>"points"</em>，程序读第 2 行时就会因找不到 <em>"score"</em> 而出问题。</li>
+  </ol>
+  <div class="mermaid-placeholder"># 一行 = 一个字典：字段名随身带着，不用记第几列
+row1 = {"name": "小明", "class": "一班", "score": 90}
+row2 = {"name": "小红", "class": "二班", "score": 85}
+
+# 整张表 = 一个列表装多行
+students = [row1, row2]
+# 也可以直接写在一起：
+students = [
+    {"name": "小明", "class": "一班", "score": 90},
+    {"name": "小红", "class": "二班", "score": 85},
+]
+
+students[0]              # {'name': '小明', 'class': '一班', 'score': 90}  ← 取第 1 行
+students[0]["name"]      # '小明'   ← 取第 1 行的 name 格
+students[1]["score"]     # 85       ← 取第 2 行的 score 格
+
+# 增一行（用列表的写法）
+students.append({"name": "小刚", "class": "一班", "score": 78})
+
+# 改一格（用字典的写法）
+students[0]["score"] = 95     # 小明这次考了 95
+
+# 删一行
+del students[1]               # 删掉第 2 行
+# students.pop(1)             # 同上，且返回被删的那一行
+
+# 取整列需要遍历（for / 列表推导式属后续课程，这里只预览一眼写法）
+# names = [s["name"] for s in students]   # ['小明', '小刚']
+
+# 每行的键必须一致，否则按字段取值时会出问题
+# 第 1 行用 "score"、第 2 行写 "points"，读第 2 行就会 KeyError</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 一张成绩表</h3>
+    <p><span class="label">背景：</span>要存一个班的学生成绩，每人有姓名、班级、分数三项。</p>
+    <p><span class="label">如何应用：</span>每人写成一个字典，全部放进一个列表：<em>students = [{"name": ..., "class": ..., "score": ...}, ...]</em>。</p>
+    <p><span class="label">结果：</span>结构一眼看懂、字段名不会丢；要查谁的分，写 <em>students[0]["score"]</em> 就像在说"第 1 行的分数"。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 从 CSV 文件读进来的就是它</h3>
+    <p><span class="label">背景：</span>手上有一个表格文件（CSV），想读到程序里处理。</p>
+    <p><span class="label">如何应用：</span>Python 标准库的 <em>csv.DictReader</em> 会把每一行都读成一个字典：<strong>表头的那一行自动变成每行的字段名</strong>，你不需要再靠"第几列"去记。</p>
+    <p><span class="label">结果：</span>文件内容直接变成"列表套字典"，与你手写的成绩表结构完全一致 —— 这正是它被称为"真实数据最常见形状"的原因。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 网页接口返回的数据</h3>
+    <p><span class="label">背景：</span>调用一个网络接口，拿回一段 JSON 文本。</p>
+    <p><span class="label">如何应用：</span>用标准库 <em>json</em> 解析后，得到的就是 Python 的字典与列表；一段"多条记录"的返回结果，通常正好是列表套字典。</p>
+    <p><span class="label">结果：</span>你不需要另学一套语法去读接口数据 —— 本组学的两个容器，已经足够描述绝大多数返回结果。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是"列表套列表"</strong>：那种写法丢掉字段名，<em>row[0]</em> 得靠记忆理解。只要每行有"多个属性"，就该用字典装行。</li>
+    <li><strong>不是字典套字典</strong>：字典擅长"一个东西的多个属性"，不擅长表达"很多行、且有先后"。多行的职责属于<a href="列表.html">列表</a>。</li>
+    <li><strong>不是一个数据库或 DataFrame</strong>：它只是"形状像表"。真正的筛选、分组、连接、统计能力属于后续课程（pandas / SQL）——本篇只建立结构直觉。</li>
+    <li><strong>不含遍历与筛选的写法</strong>：取整列、按条件筛行都需要 <em>for</em> 或列表推导式，属后续课程；本篇只在代码块里留一行写法预览。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「<em>rows["name"]</em> 就能取到姓名」—— 不能。得先按位置取行：<em>rows[0]["name"]</em>。括号要写两层。</li>
+    <li>「每行字典的键可以随便不一样」—— 技术上能跑，但作为"一张表"必须一致，否则某一行的字段会取不到。</li>
+    <li>「它就是 Excel，可以直接做透视和公式」—— 不是。它只是数据<strong>形状</strong>像表；真正的表格计算能力在 pandas / 电子表格软件里。</li>
+    <li>「改了字典等于复制出了新数据」—— 不是。字典和列表都是可变的，<em>same = students</em> 只是同一个列表的第二个名字，改一处两边都变（原理见<a href="列表.html">列表</a>篇）。</li>
+  </ul>
+  <h3>5.3 与组内邻居的分工</h3>
+  <table>
+    <thead><tr><th>相邻概念</th><th>本概念负责</th><th>交给邻居</th></tr></thead>
+    <tbody>
+      <tr><td><a href="列表.html">列表</a></td><td>讲"列表是装行的外壳"这一半职责</td><td>索引、切片、<em>append</em> / <em>pop</em> / <em>del</em> 的完整规则与可变性陷阱</td></tr>
+      <tr><td><a href="字典.html">字典</a></td><td>讲"字典是一条记录"这一半职责</td><td><em>get()</em> 与 <em>KeyError</em>、键不可变、三个视图的完整规则</td></tr>
+      <tr><td><a href="运算符.html">运算符</a></td><td>只做"按行、按字段取值"这一件事</td><td>对取出来的值做算术、比较与条件组合</td></tr>
+    </tbody>
+  </table>
+  <h3>5.4 适用与不适用</h3>
+  <table>
+    <thead><tr><th>适合用列表套字典</th><th>应换别的方案</th></tr></thead>
+    <tbody>
+      <tr><td>一批同结构的记录，每行字段有明确名字</td><td>只有一两条数据、字段很少（直接写两个变量更省事）</td></tr>
+      <tr><td>要逐行读取、增删行、按字段取值</td><td>要做分组 / 排序 / 统计（后续课程 / pandas）</td></tr>
+      <tr><td>承接 CSV、JSON、接口返回的数据</td><td>要做真正的表格计算与导出（电子表格 / pandas）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://docs.python.org/zh-cn/3/tutorial/datastructures.html">5. 数据结构 · Python 官方教程（中文）</a> — 官方对"嵌套的数据结构"的示例：列表里可以放字典等各类对象，展示"用容器装容器"表示复杂数据的标准写法。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/csv.html#csv.DictReader">csv.DictReader · Python 官方文档（中文）</a> — 官方说明：<em>DictReader</em> 把 CSV 的每一行读成一个字典，字段名默认取自第一行表头 —— 这是"列表套字典"就是表格数据常见形状的官方依据。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/json.html">json —— JSON 编码器与解码器 · Python 官方文档（中文）</a> — 官方对 JSON 与 Python 对象对应关系的说明：JSON 对象 ↔ <em>dict</em>、JSON 数组 ↔ <em>list</em>，因此一组记录解析后正是"列表套字典"。</li>
+    <li><a href="https://realpython.com/python-list/">Python's list Data Type: A Deep Dive With Examples · Real Python</a> — 权威二手教程：明确指出列表可以"代表数据库中的一张表"，此时<strong>列表本身叫 table、每个元素是一行（row）</strong>，并给出由字典组成的列表实例。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">一张表 = 列表装行 + 字典装字段名：<em>rows[0]["name"]</em> 就是"第 1 行的姓名"—— 别用列表套列表，那样列名会丢。</p>
+</section>
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 下半场四概念</footer>
+
+</div>
+</body>
+</html>
