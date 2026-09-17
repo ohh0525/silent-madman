@@ -2,6 +2,8 @@
 
 > 一份用 Mermaid 流程图 + 文字解析，把「Agent」「上下文窗口」「Skill」三者联系起来的工作笔记；文末「扩展」一节再接入「上下文工程」与「带溯源的长期记忆」两个概念。
 > 配套学习资料：[agent.html](./learning-materials/agent.html)、[llm-context.html](./learning-materials/llm-context.html)、[skill.html](./learning-materials/skill.html)、[context-engineering.html](./learning-materials/context-engineering.html)、[agent-memory-provenance.html](./learning-materials/agent-memory-provenance.html)
+>
+> **相关图谱（另一领域）**：[Python 第 1 课 · 上手四概念的关系图](./concept-group/python-lesson1-starter/关系图.md) —— 属 Python 教学概念组，与本图谱（AI Agent 领域）分属不同知识网，故独立成篇、仅互为索引，不合并进同一张图。
 
 ---
 

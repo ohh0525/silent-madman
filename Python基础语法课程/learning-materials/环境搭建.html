@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：环境搭建（Environment Setup）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #2e7d4f;
+    --accent-soft: #e6f4ea;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .callout {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Python 第 1 课 · 上手四概念</span>
+  <h1>环境搭建（Environment Setup）</h1>
+  <p class="subtitle">装好解释器与编辑器，让第一个程序真的跑起来 · 生成时间 2026-09-17 · 组内第 1 / 4</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">环境搭建就是在本机装好「解释器」和「写代码的工具」，并让一个最简单的程序真的跑起来、看到它的输出。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>把写 Python 想成做菜。解释器（interpreter）是厨房里的灶台 —— 真正把菜做熟的东西；编辑器（editor）是你切菜备料的案板 —— 你在这里写下代码。光有案板没有灶，菜做不熟；光有灶没有案板，你连菜都没地方切。Python 官网提供的是灶台，VS Code 这类工具提供的是案板。两者必须都装，而且要能接上。</p>
+  <p>为什么新手会在这里卡很久？因为「装好了」和「能用」是两件事。你双击安装包一路下一步，进度条走到 100%，看起来完成了；但真正决定成败的是安装时那个小小的复选框 —— <strong>Add Python to PATH</strong>。它决定系统能不能在任意目录下找到灶台。没勾，你在命令行敲 <em>python</em> 就会得到「不是内部或外部命令」，而绝大多数人此刻会误以为「没装成功」，于是反复重装。</p>
+  <p>一个虚拟场景：你在 Windows 上从 python.org 下载并安装，然后打开终端敲 <em>python --version</em>。如果屏幕上出现版本号，环境就通了；如果提示命令找不到，别急着重装 —— <strong>先去把 PATH 补上</strong>。重新运行安装程序选择「Modify」勾上那个选项，或者手动把 Python 安装目录追加进环境变量，问题通常立刻消失。这个「装完了但命令找不到」是新手第一道坎，也是本概念唯一要求你牢牢记住的排障动作。</p>
+  <p>最后一个心法：搭建环境的验收标准不是「安装向导走完了」，而是「我敲一行代码，屏幕上出现了我预期的结果」。把判据放在<strong>输出</strong>上，而不是放在安装过程上，你就不会在第一步反复打转。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>装解释器</strong>：从 python.org 获取 CPython 安装包并安装（Windows 上可用图形安装程序，也可用 Microsoft Store）。<br />为什么重要：解释器是唯一能真正执行你代码的程序，没有它后面三件事全部无从谈起。</li>
+    <li><strong>选并装一个编辑器 / IDE</strong>：例如 VS Code 加装官方 Python 扩展。<br />为什么重要：记事本能写代码，但不报错、不补全、不提示类型；对初学者来说，一个会实时提示的工具能省下大量「明明写错了却看不出来」的时间。</li>
+    <li><strong>让系统能找到解释器</strong>：勾选 Add Python to PATH，或使用 Windows 的 <em>py</em> 启动器；安装完成后需要<strong>重开终端</strong>才会生效。<br />为什么重要：这是「命令找不到」的唯一根因，也是这一步唯一真正容易出错的地方。</li>
+    <li><strong>验证并跑通第一个程序</strong>：先用 <em>python --version</em> 确认版本号，再写一行 <em>print("Hello")</em> 并运行。<br />为什么重要：看到输出才算环境真的通了 —— 这才是本概念的完成信号，而不是安装进度条。</li>
+  </ol>
+  <div class="mermaid-placeholder"># 第 1 步：在「终端 / 命令行」里执行（不是写在 .py 文件里）
+python --version
+# 如果提示命令找不到，换这个试试：
+py -3 --version
+
+# 第 2 步：把下面这行写进 hello.py，然后运行
+print("Hello, Python!")
+
+# 第 3 步：在终端里运行这个文件
+python hello.py</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 一台全新电脑从零开始</h3>
+    <p><span class="label">背景：</span>刚拿到一台没装过任何开发工具的电脑，要开始学 Python。</p>
+    <p><span class="label">如何应用：</span>先装解释器（勾上 Add Python to PATH），再装 VS Code 与 Python 扩展，用 <em>python --version</em> 确认版本，最后跑通一个 <em>print</em> 文件。</p>
+    <p><span class="label">结果：</span>得到一台「敲得动代码、看得见输出」的可用机器，后续所有练习都建立在它之上。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 排掉「命令找不到」</h3>
+    <p><span class="label">背景：</span>明明装完了，终端却提示 python 不是内部或外部命令。</p>
+    <p><span class="label">如何应用：</span>先重开一个终端（PATH 只在终端启动时读取一次）；仍不行则重跑安装程序选 Modify 勾上 Add Python to PATH，或手动把安装目录加入环境变量。</p>
+    <p><span class="label">结果：</span>把「以为装失败了」变成一次两分钟就能定位的配置问题，避免反复重装。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 分清「编辑器」和「解释器」</h3>
+    <p><span class="label">背景：</span>装了编辑器却跑不起来，或者装了 Python 却发现编辑器里没有提示。</p>
+    <p><span class="label">如何应用：</span>把三者关系记住 —— 编辑器负责写，扩展负责把编辑器接到解释器上，解释器负责跑；VS Code 的 Python 扩展本身不包含解释器。</p>
+    <p><span class="label">结果：</span>出问题时能立刻判断是哪一层没接上，而不是笼统地觉得「环境有问题」。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是「装一个软件」那么简单</strong>：它是三件事一起配好 —— 解释器、编辑器、以及让系统找得到解释器的 PATH。少一件都会表现为「装好了但用不了」。</li>
+    <li><strong>不是以「安装完成」为终点</strong>：终点是「跑通一行代码并看到输出」。以安装过程为判据，是新手在第一步反复打转的根本原因。</li>
+    <li><strong>不含包管理与虚拟环境</strong>：pip、venv、多版本共存属于后续内容。本概念只要求你在遇到相关报错时<strong>能照着关键字搜</strong>，不要求讲透原理。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「装了 Anaconda 还要再装 Python 吗」—— 不需要。Anaconda 自带解释器，重复安装反而容易造成多版本混乱。</li>
+    <li>「有编辑器就够了」—— 不够。编辑器不含解释器，两者是分开安装的独立部件。</li>
+    <li>「版本越新越好」—— 关键指标是<em>能跑、命令能找到</em>。版本取舍与兼容性问题属于后面的内容。</li>
+  </ul>
+  <h3>5.3 与组内邻居的分工</h3>
+  <table>
+    <thead><tr><th>相邻概念</th><th>本概念负责</th><th>交给邻居</th></tr></thead>
+    <tbody>
+      <tr><td><a href="notebook.html">Notebook</a></td><td>把解释器与编辑器装好、让命令可用</td><td>打开 Notebook、单元格与内核怎么用</td></tr>
+      <tr><td><a href="变量与基本类型.html">变量与基本类型</a></td><td>第一个程序只写 <em>print("...")</em>，不引入变量</td><td>引入变量、赋值与四种基本类型</td></tr>
+      <tr><td><a href="报错怎么读.html">报错怎么读</a></td><td>只要求「能照着关键字搜」</td><td>Traceback 四段结构与逐行读法</td></tr>
+    </tbody>
+  </table>
+  <h3>5.4 适用与不适用</h3>
+  <table>
+    <thead><tr><th>适合本概念的场合</th><th>不适合、应去找别处</th></tr></thead>
+    <tbody>
+      <tr><td>第一次在某台机器上跑 Python</td><td>已有可用环境，只想写代码</td></tr>
+      <tr><td>出现「命令找不到」「版本不对」的配置问题</td><td>运行时代码报错（找 <a href="报错怎么读.html">报错怎么读</a>）</td></tr>
+      <tr><td>分不清编辑器 / 扩展 / 解释器的关系</td><td>装包、建虚拟环境（属后续课程）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://docs.python.org/zh-cn/3/using/windows.html">4. 在 Windows 上使用 Python · Python 官方文档（中文）</a> — 安装路径、Add Python to PATH、<em>py</em> 启动器，以及「命令找不到」的故障排查章节。</li>
+    <li><a href="https://www.python.org/downloads/">Python 官方下载页 · python.org</a> — 各平台 CPython 安装包的官方入口。</li>
+    <li><a href="https://docs.python.org/3/using/index.html">Python Setup and Usage · Python 官方文档</a> — 官方对「安装与使用」的总体指引，含各操作系统分支。</li>
+    <li><a href="https://wiki.python.org/moin/BeginnersGuide/Download">Downloading Python · Python 官方 Wiki 初学者指南</a> — 如何用 <em>python --version</em> 判断解释器是否已安装及其版本。</li>
+    <li><a href="https://code.visualstudio.com/docs/python/python-quick-start">Quick Start Guide for Python in VS Code · 微软官方文档</a> — 明确区分「编辑器 / Python 扩展 / 解释器」三者，并给出验证安装与运行第一个文件的步骤。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">环境搭建的完成标志不是「装完了」，而是「敲一行 print 能看到输出」；装完却提示命令找不到，八成是 PATH 没配上，重开终端再修 PATH 即可。</p>
+</section>
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 上手四概念</footer>
+
+</div>
+</body>
+</html>

@@ -76,12 +76,14 @@ agent_created: true
    - 组定位 + 学习路径图（Mermaid，展示先修关系）+ 每份材料的卡片入口（标题 + 一句话定义 + 相对链接）
    - 视觉沿用同一套 CSS 变量
 2. **交叉链接补全** —— 逐份检查 HTML 里对邻居的引用，确保相对路径真实可达（生成后必须实测，不能只写不验）
-3. **关系段落** —— 在 `concept-relationship.md` 追加本组的关系段落（Mermaid 流程图 + 一句话定位），格式对齐该文件既有约定
+3. **关系段落** —— 按「领域边界」二选一（这是最容易犯错的一步）：
+   - **同领域**：在既有关系图谱（如 `concept-relationship.md`）追加本组的关系段落（Mermaid 流程图 + 一句话定位），格式对齐该文件既有约定。
+   - **跨领域**：**不要混入**既有图谱。改为在组目录下新建 `concept-group/<group-slug>/关系图.md`（结构对齐既有图谱：一句话定位 / 关系总览 Mermaid / 边界矩阵 / 学习路径 / 一句话总结），并在既有图谱顶部加**一行**「相关图谱（另一领域）」指引。判断依据：既有图谱的标题与前言已经声明了它的领域，本组若不属于该领域即为跨领域。
 
 ### Phase 4 — 回流图谱与知识库
 
-1. **重建关系图**：`python tools/build_graph.py --no-infer`（`networkx` 在场时 Louvain 社区检测自动启用；重建后确认节点数 ≥ 生成前）
-2. **登记进 LLM Wiki**：`tools/llm-wiki-agent/wiki/index.md` 追加条目；若需要新建 concept 页，按 `tools/llm-wiki-agent/CLAUDE.md` 的 Ingest Workflow 执行
+1. **关系图**：仅当本组**属于该图谱声明的领域**时才重建 —— `python tools/build_graph.py --no-infer`（`networkx` 在场时 Louvain 社区检测自动启用；重建后确认节点数 ≥ 生成前）。**跨领域时跳过重建**：输入没有变化，重建只会产生无意义 diff 与 commit churn。
+2. **登记进 LLM Wiki**：**先判断领域是否匹配**。Wiki 的收录范围由 `wiki/index.md` 的现有条目体现。若本组不属于该范围的领域（例：把 Python 教学概念放进一个 sources 全是 AI / LLM 的 Wiki）→ **不登记**，只在当天 daily log 写明「因领域不匹配未登记」。匹配时才追加索引条目；需要新建 concept 页则按 `tools/llm-wiki-agent/CLAUDE.md` 的 Ingest Workflow 执行。
 3. **不修改 `raw/` 任何文件**
 4. **提交并推送**：
    ```
@@ -101,7 +103,7 @@ agent_created: true
 5. 术语表里的词在各份材料中措辞一致（抽查 3 个词）
 6. 组索引页里所有链接真实可达（相对路径已实测）
 7. 每份材料的来源数达标，无编造 URL，未核实断言已标 `[unverified]`
-8. 图谱重建成功，节点数 ≥ 生成前
+8. 图谱：**同领域**则重建成功且节点数 ≥ 生成前；**跨领域**则既未污染既有图谱（已独立成篇 + 在既有图谱留一行指引），也未误登记进领域不匹配的 Wiki
 9. 组内每份材料都能回答："它和我隔壁那份的边界在哪？"
 
 ## 硬约束（本仓库约定）

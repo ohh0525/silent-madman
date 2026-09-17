@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念组：Python 第 1 课 · 上手四概念</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #2f3e8f;
+    --accent-soft: #e8eaf6;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+    --c1: #2e7d4f;
+    --c2: #3a4fa8;
+    --c3: #8a6a00;
+    --c4: #b02a2a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover { border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 32px; }
+  .tag {
+    display: inline-block; background: var(--accent-soft); color: var(--accent);
+    font-size: 12px; padding: 4px 10px; border-radius: 999px; letter-spacing: 0.04em;
+  }
+  h1 { font-size: 32px; margin: 16px 0 6px; line-height: 1.3; }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 24px 28px; margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px; margin: 0 0 14px; color: var(--accent);
+    letter-spacing: 0.02em; border-left: 3px solid var(--accent); padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def { background: var(--accent-soft); border-radius: 8px; padding: 14px 18px; font-size: 17px; margin: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 600; }
+  .takeaway { background: var(--accent-soft); border-radius: 8px; padding: 16px 20px; font-size: 17px; font-weight: 500; }
+  .callout { background: var(--accent-soft); border-radius: 8px; padding: 12px 16px; font-size: 14px; margin: 12px 0; }
+  footer { margin-top: 32px; text-align: center; color: var(--ink-soft); font-size: 13px; }
+  .diagram { background: var(--code-bg); border-radius: 8px; padding: 8px; overflow-x: auto; }
+  .card {
+    border: 1px solid var(--line); border-left: 4px solid var(--card-accent, var(--accent));
+    border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; background: var(--panel);
+  }
+  .card h3 { margin: 0 0 4px; font-size: 16px; color: var(--card-accent, var(--accent)); }
+  .card .meta { font-size: 12px; color: var(--ink-soft); margin: 0 0 8px; letter-spacing: 0.03em; }
+  .card p { margin: 0 0 8px; font-size: 14px; }
+  .card a { color: var(--card-accent, var(--accent)); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .card a:hover { text-decoration: underline; }
+  .c1 { --card-accent: var(--c1); }
+  .c2 { --card-accent: var(--c2); }
+  .c3 { --card-accent: var(--c3); }
+  .c4 { --card-accent: var(--c4); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Concept Group</span>
+  <h1>Python 第 1 课 · 上手四概念</h1>
+  <p class="subtitle">装好 → 会跑 → 会写 → 会查错 · 生成时间 2026-09-17 · 概念数 4 · 目标读者 beginner</p>
+</header>
+
+<section>
+  <h2>1 · 这一组在解决什么问题</h2>
+  <p class="def">让零基础学员第一次接触 Python 时，把「在哪写 → 怎么跑 → 写什么 → 写错怎么办」这四个动作一次打通，而不是被环境问题挡在门外。</p>
+  <p><strong>学完之后的收益</strong>：能自己装好环境、在 Notebook 里跑通代码、独立看懂并修掉自己的报错、写出带变量的简单程序。</p>
+  <p class="callout">这一组不是四个孤立词条。四份材料共享同一份<strong>边界声明</strong>与<strong>术语表</strong>，并且每一份的第 5 段都明确写出了「我和隔壁那份的分工在哪」—— 这正是「一组材料」区别于「一堆材料」的地方。</p>
+</section>
+
+<section>
+  <h2>2 · 学习路径（先修关系）</h2>
+  <div class="diagram">
+    <svg viewBox="0 0 800 226" width="100%" height="226" role="img" aria-label="四概念先修关系图">
+      <defs>
+        <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#57606a" />
+        </marker>
+        <marker id="arw2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#b02a2a" />
+        </marker>
+      </defs>
+
+      <!-- 主线箭头 -->
+      <line x1="176" y1="80" x2="226" y2="80" stroke="#57606a" stroke-width="1.6" marker-end="url(#arw)" />
+      <line x1="379" y1="80" x2="429" y2="80" stroke="#57606a" stroke-width="1.6" marker-end="url(#arw)" />
+      <line x1="582" y1="80" x2="632" y2="80" stroke="#57606a" stroke-width="1.6" marker-end="url(#arw)" />
+
+      <!-- 节点 1 -->
+      <rect x="26" y="46" width="150" height="68" rx="10" fill="#e6f4ea" stroke="#2e7d4f" stroke-width="1.6" />
+      <text x="101" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#2e7d4f" font-family="PingFang SC, Microsoft YaHei, sans-serif">① 环境搭建</text>
+      <text x="101" y="94" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">装好解释器与编辑器</text>
+
+      <!-- 节点 2 -->
+      <rect x="229" y="46" width="150" height="68" rx="10" fill="#e9ecfa" stroke="#3a4fa8" stroke-width="1.6" />
+      <text x="304" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#3a4fa8" font-family="PingFang SC, Microsoft YaHei, sans-serif">② Notebook</text>
+      <text x="304" y="94" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">知道在哪写、怎么跑</text>
+
+      <!-- 节点 3 -->
+      <rect x="432" y="46" width="150" height="68" rx="10" fill="#f7f1de" stroke="#8a6a00" stroke-width="1.6" />
+      <text x="507" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#8a6a00" font-family="PingFang SC, Microsoft YaHei, sans-serif">③ 变量与基本类型</text>
+      <text x="507" y="94" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">写出第一块会算的代码</text>
+
+      <!-- 节点 4 -->
+      <rect x="635" y="46" width="150" height="68" rx="10" fill="#fbeaea" stroke="#b02a2a" stroke-width="1.6" />
+      <text x="710" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#b02a2a" font-family="PingFang SC, Microsoft YaHei, sans-serif">④ 报错怎么读</text>
+      <text x="710" y="94" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">看懂红字、自己修掉</text>
+
+      <!-- 一句口诀 -->
+      <text x="400" y="148" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2328" font-family="PingFang SC, Microsoft YaHei, sans-serif">装好 → 会跑 → 会写 → 会查错</text>
+
+      <!-- 依赖回边：报错示例依赖变量类型 -->
+      <path d="M 710 118 L 710 176 L 507 176 L 507 122" fill="none" stroke="#b02a2a" stroke-width="1.4"
+            stroke-dasharray="5 4" marker-end="url(#arw2)" />
+      <text x="608" y="196" text-anchor="middle" font-size="12" fill="#b02a2a" font-family="PingFang SC, Microsoft YaHei, sans-serif">报错篇的全部示例都基于「变量与类型」</text>
+    </svg>
+  </div>
+  <p class="callout">之所以把「报错怎么读」排在最后：它的示例全部基于变量与类型（如 TypeError）。代价是前两份材料里学员撞到报错时手上还没有解读工具 —— 这是刻意的取舍，换取的是示例更贴近学员当时的水平。</p>
+</section>
+
+<section>
+  <h2>3 · 四份材料</h2>
+  <div class="card c1">
+    <h3>① 环境搭建（Environment Setup）</h3>
+    <p class="meta">角色：地基 · 无先修</p>
+    <p>把解释器与编辑器装好、让命令找得到、跑通第一个程序。完成标志是「看到输出」，不是「安装向导走完」。</p>
+    <a href="../../Python基础语法课程/learning-materials/环境搭建.html">打开这份材料 →</a>
+  </div>
+  <div class="card c2">
+    <h3>② Notebook（Jupyter Notebook）</h3>
+    <p class="meta">角色：载体 · 先修：①</p>
+    <p>单元格、内核与执行顺序。核心一句：代码在单元格里，状态在内核里，两者不是一回事。</p>
+    <a href="../../Python基础语法课程/learning-materials/notebook.html">打开这份材料 →</a>
+  </div>
+  <div class="card c3">
+    <h3>③ 变量与基本类型（Variables &amp; Basic Types）</h3>
+    <p class="meta">角色：积木 · 先修：①</p>
+    <p>变量是名字指向值；int / float / str / bool 四类值、type() 查看、类型转换与命名规则。</p>
+    <a href="../../Python基础语法课程/learning-materials/变量与基本类型.html">打开这份材料 →</a>
+  </div>
+  <div class="card c4">
+    <h3>④ 报错怎么读（Reading Tracebacks）</h3>
+    <p class="meta">角色：贯穿始终的能力 · 先修：① ③</p>
+    <p>Traceback 四段结构、五步排查法、五类高频错误与常用英文句式。定位为自学速查卡。</p>
+    <a href="../../Python基础语法课程/learning-materials/报错怎么读.html">打开这份材料 →</a>
+  </div>
+</section>
+
+<section>
+  <h2>4 · 边界速查（谁讲什么）</h2>
+  <table>
+    <thead><tr><th>可能重叠的点</th><th>归属裁决</th></tr></thead>
+    <tbody>
+      <tr><td>TypeError 谁来讲</td><td><strong>报错怎么读</strong>完整讲排查；变量与基本类型只留一句「类型不匹配会抛 TypeError」</td></tr>
+      <tr><td>「跑通第一个程序」</td><td>环境搭建的 hello world <strong>只用</strong> print("...")，不引入变量；变量与基本类型才引入赋值</td></tr>
+      <tr><td>「代码写在 Notebook 里」</td><td>Notebook 只管「在哪写、怎么跑」；<strong>代码内容本身</strong>归变量与基本类型</td></tr>
+      <tr><td>报错输出显示的位置</td><td>Notebook 只讲「输出显示在单元格下方」；<strong>输出内容什么意思</strong>归报错怎么读</td></tr>
+      <tr><td>与既有 Word 讲义的关系</td><td>既有 docx 定位为<strong>课堂讲义</strong>（含教学法与练习）；本组 HTML 版定位为<strong>自学速查卡</strong>，不复刻课堂练习</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>5 · 共享术语表</h2>
+  <p>四份材料严格使用下表措辞，避免各写各的。</p>
+  <table>
+    <thead><tr><th>中文</th><th>英文</th><th>本组内统一含义</th></tr></thead>
+    <tbody>
+      <tr><td>解释器</td><td>interpreter</td><td>真正执行 Python 代码的程序</td></tr>
+      <tr><td>编辑器 / IDE</td><td>editor / IDE</td><td>写代码的工具，如 VS Code、PyCharm</td></tr>
+      <tr><td>单元格</td><td>cell</td><td>Notebook 里一个可独立运行的最小单元</td></tr>
+      <tr><td>内核</td><td>kernel</td><td>Notebook 后台真正执行代码的进程</td></tr>
+      <tr><td>变量</td><td>variable</td><td>一个指向某个值的名字</td></tr>
+      <tr><td>类型</td><td>type</td><td>一个值属于哪一类，如 int / str</td></tr>
+      <tr><td>报错信息</td><td>error message / traceback</td><td>屏幕上一整段错误文本</td></tr>
+      <tr><td>异常</td><td>exception</td><td>程序运行中抛出的错误对象</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>6 · 配套与后续</h2>
+  <ul>
+    <li><strong>可运行练习</strong>：<em>Python基础语法课程/notebooks/</em> 下的两份 .ipynb（上半场 / 下半场），与①②③对应。</li>
+    <li><strong>课堂讲义</strong>：<em>Python基础语法课程/Python基础语法讲义（补充·报错怎么读）.docx</em>，与④同主题、不同定位。</li>
+    <li><strong>关系图谱</strong>：仓库根目录 <em>concept-relationship.md</em> 与 LLM Wiki 已登记本组，可在知识图谱中查看。</li>
+  </ul>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">这四个概念合起来是一句话：先让程序跑起来，再让它会算，最后让你看得懂它为什么不听话 —— 顺序不能反，边界不能糊。</p>
+</section>
+
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 上手四概念</footer>
+
+</div>
+</body>
+</html>

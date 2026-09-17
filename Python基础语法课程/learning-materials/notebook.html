@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：Notebook（Jupyter Notebook）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #3a4fa8;
+    --accent-soft: #e9ecfa;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .callout {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Python 第 1 课 · 上手四概念</span>
+  <h1>Notebook（Jupyter Notebook）</h1>
+  <p class="subtitle">代码写在单元格里，状态活在内核里 · 生成时间 2026-09-17 · 组内第 2 / 4</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">Notebook 是一个把代码、运行输出和文字笔记装进同一个文件的交互式编程环境：代码写在「单元格」里，由后台的「内核」真正执行。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>把 Notebook 想成一本会自动批改的作业本。普通的脚本文件像一整篇作文 —— 你写完全篇才交上去批；Notebook 则像一栏一栏的作业格，你写一个单元格、马上看到它的结果对不对，再写下第二个。这种「写一个、跑一个、看一个」的节奏，正是它对新手的最大价值：不必等整段代码写完，才知道自己哪里想错了。</p>
+  <p>但这里有一个反直觉之处，也是新手最容易困惑的地方：<strong>代码显示在单元格里，而变量实际住在内核里</strong>。第一个单元格里你写 <em>name = "小明"</em> 并运行；第二个只写 <em>print(name)</em> 也能打印出「小明」—— 因为名字存在内核的内存中，而不是存在某个单元格的文本里。于是就有了那个经典困惑：「我上面那个单元格都删了，怎么下面还能跑？」答案是你删掉的是<em>屏幕上的代码</em>，内核里那份记忆还在。</p>
+  <p>一个虚拟场景：你把第一个单元格从 <em>x = 10</em> 改成 <em>x = 20</em>，但只运行了改动后的那一个，然后回头去跑下面那个 —— 结果和上次不一样了。这不是 Notebook 出了 bug，而是你<strong>改变了执行顺序</strong>。每个单元格左侧那个 <em>In [n]</em> 里的编号，记录的就是真实的运行次序。想验证「我的代码是否真的自洽」，唯一可靠的做法是<strong>重启内核并全部运行</strong>，让整本作业从第一个单元格按顺序重做一遍。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>单元格（cell）是执行的最小单位</strong>：按 <em>Shift+Enter</em> 运行当前单元格并跳到下一个，<em>Ctrl+Enter</em> 则原地运行不跳。<br />为什么重要：把一段大程序切成一个个单元格，出错范围就被限定在单个单元格内，「哪里错了」一眼可见。</li>
+    <li><strong>每个单元格执行时被送进内核</strong>：内核（kernel）是后台真正执行代码的进程，算出的结果回送到该单元格下方显示。<br />为什么重要：理解「代码送到哪儿、结果从哪儿来」，才理解输出为什么出现在单元格下面，而不是弹出一个新窗口。</li>
+    <li><strong>内核持有全部状态，且与执行顺序绑定</strong>：变量、导入的模块都活在核心里，跨单元格共享。<br />为什么重要：这正是「改了上面的单元格、下面没重跑」导致结果对不上的根因；编号 <em>In [n]</em> 就是你的运行日志。</li>
+    <li><strong>重启内核 / 全部运行</strong>：重启会清空内存状态；Run All 则从第一个单元格按顺序重跑一遍。<br />为什么重要：这是检验代码是否自洽的可靠手段 —— 交付前跑一次 Run All 而不报错，才算真的能用。</li>
+  </ol>
+  <div class="mermaid-placeholder">In [1]: x = 10          # 运行第 1 个单元格
+In [2]: print(x)        # 运行第 2 个单元格  ->  10
+
+# 现在把第 1 个单元格改成 x = 20，只重跑它：
+In [3]: x = 20
+
+# 此时在下面任意一个单元格 print(x) 都会得到 20
+# —— 你没改第 2 个单元格的代码，但结果变了，因为执行顺序变了
+
+# 想回到干净状态：Kernel -> Restart &amp; Run All
+# 保存文件（.ipynb）保存的是代码与输出，不保存内核内存</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 跟着课程逐个单元格练</h3>
+    <p><span class="label">背景：</span>零基础学第一课，每讲一个知识点就想立刻验证一下。</p>
+    <p><span class="label">如何应用：</span>把每个知识点放一个单元格：一个写代码、下一个用 Markdown 写笔记，跑完立刻看到输出。</p>
+    <p><span class="label">结果：</span>形成一份「代码 + 讲解 + 运行结果」三合一的课堂笔记，复习时不用重新回忆当时发生了什么。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 改一个参数看一个结果</h3>
+    <p><span class="label">背景：</span>想试着调一个数值，看看输出怎么变。</p>
+    <p><span class="label">如何应用：</span>只改这个单元格里的数字，按 <em>Ctrl+Enter</em> 原地重跑，不污染其他单元格的内容。</p>
+    <p><span class="label">结果：</span>「试错」的成本降到一次按键，探索过程不会被反复保存、重新运行的仪式感打断。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 把过程和结果一起交出去</h3>
+    <p><span class="label">背景：</span>要把一份分析或作业发给同学或老师看。</p>
+    <p><span class="label">如何应用：</span>保存为单个 <em>.ipynb</em> 文件；对方打开后既能看到代码，也能看到每一个单元格的输出与说明。</p>
+    <p><span class="label">结果：</span>一份自解释的文件，不必再附截图或另写说明；对方若要复现，<em>Run All</em> 即可。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是通用编辑器 / IDE 的替代品</strong>：它擅长交互式试验与讲解，不适合写大型工程（文件组织能力弱、调试器能力有限）。写项目该用 VS Code 这类编辑器。</li>
+    <li><strong>不是「跑一次就存进文件」</strong>：<em>.ipynb</em> 保存的是代码和输出，<strong>内核里的内存状态不会被保存</strong>。重开文件后要重新运行才能恢复变量。</li>
+    <li><strong>不是 Python 自带的</strong>：需要单独安装（例如通过 <em>pip install jupyter</em>），这一步属于环境准备，不是 Notebook 本身的用法。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「单元格一定从上到下按顺序执行」—— 不一定。你可以跳着跑，<em>In [n]</em> 里的编号才是真实顺序。</li>
+    <li>「删掉单元格，变量就没了」—— 不对。变量活在内核里，删单元格只删屏幕上的文本，不清内存。</li>
+    <li>「关掉浏览器页面就等于关掉内核」—— 不一定。内核可能还在后台运行，这也是「明明关了怎么还占着资源」的来源。</li>
+  </ul>
+  <h3>5.3 与组内邻居的分工</h3>
+  <table>
+    <thead><tr><th>相邻概念</th><th>本概念负责</th><th>交给邻居</th></tr></thead>
+    <tbody>
+      <tr><td><a href="环境搭建.html">环境搭建</a></td><td>不装任何东西，只讲怎么用</td><td>解释器 / 编辑器怎么装、PATH 怎么修</td></tr>
+      <tr><td><a href="变量与基本类型.html">变量与基本类型</a></td><td>只讲「代码写在哪、怎么跑」</td><td>代码内容本身：变量、赋值与四种基本类型</td></tr>
+      <tr><td><a href="报错怎么读.html">报错怎么读</a></td><td>只讲「输出显示在单元格下方」</td><td>输出内容什么意思、报错文字怎么逐行读</td></tr>
+    </tbody>
+  </table>
+  <h3>5.4 适用与不适用</h3>
+  <table>
+    <thead><tr><th>适合用 Notebook</th><th>不适合、应换工具</th></tr></thead>
+    <tbody>
+      <tr><td>学习、试验、逐步验证想法</td><td>需要多文件组织的正式项目</td></tr>
+      <tr><td>「代码 + 讲解 + 结果」一体的笔记</td><td>需要长时间运行的生产任务</td></tr>
+      <tr><td>把过程与输出一起分享给别人</td><td>对执行顺序要求严格的批处理脚本</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://jupyter-notebook.readthedocs.io/">Jupyter Notebook Documentation · 官方文档首页</a> — 官方对「计算型笔记本」的定义：把代码、文字说明、数据与可视化放进同一份可分享文档。</li>
+    <li><a href="https://jupyter-notebook.readthedocs.io/en/stable/examples/Notebook/Running%20Code.html">Running Code · Jupyter Notebook 官方文档</a> — 官方对单元格运行快捷键、内核（kernel）是独立进程、可中断与重启、输出按 <em>stdout/stderr</em> 显示的说明。</li>
+    <li><a href="https://realpython.com/jupyter-notebook-introduction/">Jupyter Notebook: An Introduction · Real Python</a> — 权威二手教程：单元格默认是代码、变量可在单元格之间共享、<em>In [ ]</em> 中的数字表示单元格被运行的顺序。</li>
+    <li><a href="https://testnb.readthedocs.io/_/downloads/en/stable/pdf/">Jupyter Notebook Documentation（PDF 版）· 官方文档镜像</a> — 官方文档的 PDF 呈现，含四种单元格类型（code / markdown / raw / heading）与基本工作流。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">Notebook 的关键只有一句：代码在单元格里，状态在内核里，两者不是一回事 —— 所以「删了单元格变量还在」很正常，交付前用「重启内核 + 全部运行」才是干净起点。</p>
+</section>
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 上手四概念</footer>
+
+</div>
+</body>
+</html>
