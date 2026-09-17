@@ -95,3 +95,7 @@ Custom lint over 33 `.md` (4 dimensions): broken `[[wikilinks]]` 0 ✅ · frontm
 Fixed: `[[BaiduBaike]]` and `[[SourceScore]]` had no inbound wikilink (reachable only via `index.md`). Added inbound links — `[[BaiduBaike]]` from `sources/llm-context.md` and `sources/skill.md`, `[[SourceScore]]` from `sources/agent.md` — after verifying both references exist in the raw material (`raw/learning-materials/llm-context.html`, `skill.html`, `agent.html`). Bumped `last_updated` on those 3 source pages.
 raw/: no new un-ingested material — all 6 `source_file` targets still resolve.
 Note: `raw/` untouched; no files deleted; `overview.md` synthesis still current (no new sources today).
+
+## [2026-09-17] graph | Knowledge graph rebuilt
+
+31 nodes, 125 edges (125 extracted, 0 inferred).
