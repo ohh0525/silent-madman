@@ -38,14 +38,20 @@ silent-madman/
 │   ├── skill.html                  # Skill 技能
 │   ├── context-engineering.html    # 上下文工程 (2026-09-16)
 │   └── agent-memory-provenance.html # 带溯源的智能体长期记忆 (2026-09-16)
-├── Python基础语法课程/              # 第 1-4 课教学资料 (Word 讲义 + 可运行 Notebook)
+├── Python基础语法课程/              # 第 1-4 课教学资料 (Word 讲义 + HTML 学习材料 + Notebook)
 │   ├── Python基础语法讲义（第1-4课）.docx
 │   ├── Python基础语法练习题与参考答案（第1-4课）.docx
 │   ├── Python基础语法课程教学方案.docx
 │   ├── Python基础语法讲义（补充·报错怎么读）.docx
+│   ├── learning-materials/         # 两个概念组的 HTML 学习材料 (共 8 份, 2026-09-17)
+│   │   ├── 环境搭建.html · notebook.html · 变量与基本类型.html · 报错怎么读.html   # 上半场
+│   │   └── 运算符.html · 列表.html · 字典.html · 列表套字典.html                # 下半场
 │   └── notebooks/                  # 第 1 课配套可运行 Notebook
 │       ├── 01-第1课上半场-环境搭建与基础语法.ipynb
 │       └── 02-第1课下半场-字符串与运算符.ipynb
+├── concept-group/                  # 概念组骨架 + 组索引页 + 关系图 (concept-group-guide Skill)
+│   ├── python-lesson1-starter/      # 上半场 · 上手四概念
+│   └── python-lesson1-second-half/  # 下半场 · 四概念
 ├── .workbuddy/
 │   ├── memory/                     # 项目级 daily log + MEMORY.md
 │   └── skills/
@@ -155,6 +161,25 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 > 生成脚本见 `output/_tools/make_lesson_notebooks.py`（由讲义 Markdown 自动抽取生成），`output/_tools/render_stage2_error_chapter.py` 负责补充章节的 HTML 排版。
 
+### 学习材料（HTML · 概念组）
+
+由项目级 `concept-group-guide` Skill 生成，分两组、共 8 份 7 段式 HTML，共用同一套 CSS（只替换主题色变量），并共享各组的「边界声明」与「术语表」。
+
+| 概念组 | 文件 | 主题色 |
+|---|---|---|
+| 上半场 · 上手四概念 | `learning-materials/环境搭建.html` | 绿 |
+| | `learning-materials/notebook.html` | 靛 |
+| | `learning-materials/变量与基本类型.html` | 金褐 |
+| | `learning-materials/报错怎么读.html` | 正红 |
+| 下半场 · 四概念 | `learning-materials/运算符.html` | 橄榄绿 |
+| | `learning-materials/列表.html` | 洋红 |
+| | `learning-materials/字典.html` | 石板蓝灰 |
+| | `learning-materials/列表套字典.html` | 森林绿 |
+
+每组另有：骨架 `00-骨架.md`、组索引页 `index.html`、组关系图 `关系图.md`，均在 `concept-group/<组名>/` 下。
+
+> 生成脚本见 `output/_tools/make_concept_group.py`（上半场）与 `output/_tools/make_concept_group_l1b.py`（下半场）。
+
 ---
 
 ## 维护规范（自我约束）
@@ -169,4 +194,4 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 ---
 
-**最后更新**：2026-09-17 · 新增 `Python基础语法课程/notebooks/`（第 1 课配套可运行 Notebook）与 `Python基础语法讲义（补充·报错怎么读）.docx`（补充讲义章节）· 由本人逐条人工核查后入库。
+**最后更新**：2026-09-17 · 新增 `Python基础语法课程/learning-materials/`（两个概念组共 8 份 HTML 学习材料，由 `concept-group-guide` Skill 生成）与 `concept-group/`（骨架 + 索引页 + 关系图）· 由本人逐条人工核查后入库。

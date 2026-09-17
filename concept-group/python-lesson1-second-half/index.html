@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念组：Python 第 1 课 · 下半场四概念</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #39424a;
+    --accent-soft: #e9ecef;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+    --c1: #5f7a1f;
+    --c2: #9c2a7a;
+    --c3: #4f5f6d;
+    --c4: #2f6f2f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover { border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 32px; }
+  .tag {
+    display: inline-block; background: var(--accent-soft); color: var(--accent);
+    font-size: 12px; padding: 4px 10px; border-radius: 999px; letter-spacing: 0.04em;
+  }
+  h1 { font-size: 32px; margin: 16px 0 6px; line-height: 1.3; }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 24px 28px; margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px; margin: 0 0 14px; color: var(--accent);
+    letter-spacing: 0.02em; border-left: 3px solid var(--accent); padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def { background: var(--accent-soft); border-radius: 8px; padding: 14px 18px; font-size: 17px; margin: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 600; }
+  .takeaway { background: var(--accent-soft); border-radius: 8px; padding: 16px 20px; font-size: 17px; font-weight: 500; }
+  .callout { background: var(--accent-soft); border-radius: 8px; padding: 12px 16px; font-size: 14px; margin: 12px 0; }
+  footer { margin-top: 32px; text-align: center; color: var(--ink-soft); font-size: 13px; }
+  .diagram { background: var(--code-bg); border-radius: 8px; padding: 8px; overflow-x: auto; }
+  .card {
+    border: 1px solid var(--line); border-left: 4px solid var(--card-accent, var(--accent));
+    border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; background: var(--panel);
+  }
+  .card h3 { margin: 0 0 4px; font-size: 16px; color: var(--card-accent, var(--accent)); }
+  .card .meta { font-size: 12px; color: var(--ink-soft); margin: 0 0 8px; letter-spacing: 0.03em; }
+  .card p { margin: 0 0 8px; font-size: 14px; }
+  .card a { color: var(--card-accent, var(--accent)); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .card a:hover { text-decoration: underline; }
+  .c1 { --card-accent: var(--c1); }
+  .c2 { --card-accent: var(--c2); }
+  .c3 { --card-accent: var(--c3); }
+  .c4 { --card-accent: var(--c4); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Concept Group</span>
+  <h1>Python 第 1 课 · 下半场四概念</h1>
+  <p class="subtitle">会算 → 会装一串 → 会装带名字的 → 会装一张表 · 生成时间 2026-09-17 · 概念数 4 · 目标读者 beginner（已学完上半场）</p>
+</header>
+
+<section>
+  <h2>1 · 这一组在解决什么问题</h2>
+  <p class="def">把「能存一个值」推进到「能存一组数据、并能按名字准确取出想要的那一份」—— 这是从玩具程序走到处理真实数据的分水岭。</p>
+  <p><strong>学完之后的收益</strong>：能读写「一张表」级别的数据结构；看到 CSV、接口返回的 JSON、数据库查询结果时认得它们的形状；撞到 <em>IndexError</em> / <em>KeyError</em> 时知道回头查哪一篇。</p>
+  <p class="callout">这一组不是四个孤立词条。四份材料共享同一份<strong>边界声明</strong>与<strong>术语表</strong>，并且每一份的第 5 段都明确写出了「我和隔壁那份的分工在哪」—— 这正是「一组材料」区别于「一堆材料」的地方。</p>
+</section>
+
+<section>
+  <h2>2 · 学习路径（先修关系）</h2>
+  <div class="diagram">
+    <svg viewBox="0 0 800 240" width="100%" height="240" role="img" aria-label="下半场四概念先修关系图">
+      <defs>
+        <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#57606a" />
+        </marker>
+      </defs>
+
+      <!-- 组外先修 -->
+      <rect x="26" y="6" width="150" height="30" rx="8" fill="#f6f4ee" stroke="#e5e2dc" stroke-width="1.2" stroke-dasharray="4 3" />
+      <text x="101" y="26" text-anchor="middle" font-size="11.5" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">组外先修 · 变量与基本类型</text>
+      <line x1="101" y1="36" x2="101" y2="56" stroke="#57606a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arw)" />
+
+      <!-- 主线箭头 -->
+      <line x1="176" y1="92" x2="226" y2="92" stroke="#57606a" stroke-width="1.6" marker-end="url(#arw)" />
+      <line x1="379" y1="92" x2="429" y2="92" stroke="#57606a" stroke-width="1.6" marker-end="url(#arw)" />
+      <line x1="582" y1="92" x2="632" y2="92" stroke="#57606a" stroke-width="1.6" marker-end="url(#arw)" />
+
+      <!-- 节点 1 -->
+      <rect x="26" y="58" width="150" height="68" rx="10" fill="#eef3dd" stroke="#5f7a1f" stroke-width="1.6" />
+      <text x="101" y="84" text-anchor="middle" font-size="15" font-weight="700" fill="#5f7a1f" font-family="PingFang SC, Microsoft YaHei, sans-serif">① 运算符</text>
+      <text x="101" y="106" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">算术 / 比较 / 逻辑</text>
+
+      <!-- 节点 2 -->
+      <rect x="229" y="58" width="150" height="68" rx="10" fill="#f9e7f4" stroke="#9c2a7a" stroke-width="1.6" />
+      <text x="304" y="84" text-anchor="middle" font-size="15" font-weight="700" fill="#9c2a7a" font-family="PingFang SC, Microsoft YaHei, sans-serif">② 列表</text>
+      <text x="304" y="106" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">按编号排队的一串值</text>
+
+      <!-- 节点 3 -->
+      <rect x="432" y="58" width="150" height="68" rx="10" fill="#e8edf1" stroke="#4f5f6d" stroke-width="1.6" />
+      <text x="507" y="84" text-anchor="middle" font-size="15" font-weight="700" fill="#4f5f6d" font-family="PingFang SC, Microsoft YaHei, sans-serif">③ 字典</text>
+      <text x="507" y="106" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">按键取值的对应表</text>
+
+      <!-- 节点 4 -->
+      <rect x="635" y="58" width="150" height="68" rx="10" fill="#e6f3e6" stroke="#2f6f2f" stroke-width="1.6" />
+      <text x="710" y="84" text-anchor="middle" font-size="15" font-weight="700" fill="#2f6f2f" font-family="PingFang SC, Microsoft YaHei, sans-serif">④ 列表套字典</text>
+      <text x="710" y="106" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">= 一张表</text>
+
+      <!-- 一句口诀 -->
+      <text x="400" y="160" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2328" font-family="PingFang SC, Microsoft YaHei, sans-serif">会算 → 会装一串 → 会装带名字的 → 会装一张表</text>
+
+      <!-- 依赖回边：一张表同时要用列表取行 -->
+      <path d="M 710 126 L 710 196 L 304 196 L 304 130" fill="none" stroke="#57606a" stroke-width="1.4"
+            stroke-dasharray="5 4" marker-end="url(#arw)" />
+      <text x="507" y="216" text-anchor="middle" font-size="12" fill="#57606a" font-family="PingFang SC, Microsoft YaHei, sans-serif">「一张表」除了字典装字段，还要用列表取「行」</text>
+    </svg>
+  </div>
+  <p class="callout">与上半场的衔接：本组第 ① 篇直接建在上半场「变量与基本类型」之上（不重复讲变量与类型）；第 ④ 篇产出的「表」则需要同时用到 ② 的取行与 ③ 的取字段 —— 所以顺序不能颠倒。</p>
+</section>
+
+<section>
+  <h2>3 · 四份材料</h2>
+  <div class="card c1">
+    <h3>① 运算符（Operators）</h3>
+    <p class="meta">角色：动词 · 先修：组外「变量与基本类型」</p>
+    <p>算术 / 比较 / 逻辑三组运算符，以及「同一个符号遇上不同类型就做不同的事」。核心一句：<em>7 / 2</em> 是 3.5 不是 3，<em>"2" + "3"</em> 是 '23' 不是 5。</p>
+    <a href="../../Python基础语法课程/learning-materials/运算符.html">打开这份材料 →</a>
+  </div>
+  <div class="card c2">
+    <h3>② 列表（Lists）</h3>
+    <p class="meta">角色：第一个容器 · 先修：①</p>
+    <p>索引从 0 开始、切片不含结尾、增删改方法，以及 <em>b = a</em> 只是同一个列表多了个名字（可变性的坑）。</p>
+    <a href="../../Python基础语法课程/learning-materials/列表.html">打开这份材料 →</a>
+  </div>
+  <div class="card c3">
+    <h3>③ 字典（Dictionaries）</h3>
+    <p class="meta">角色：第二个容器 · 先修：① ②</p>
+    <p>按键取值、<em>get()</em> 与 <em>KeyError</em> 的分岔口、键必须不可变，以及 <em>in</em> 查的到底是「键」还是「值」。</p>
+    <a href="../../Python基础语法课程/learning-materials/字典.html">打开这份材料 →</a>
+  </div>
+  <div class="card c4">
+    <h3>④ 列表套字典 = 一张表（List of Dicts）</h3>
+    <p class="meta">角色：把前两者拼成成品 · 先修：② ③</p>
+    <p>列表装「行」、字典装「字段名 → 值」。这就是 CSV、接口返回的 JSON 与数据库查询结果最常见的形状。</p>
+    <a href="../../Python基础语法课程/learning-materials/列表套字典.html">打开这份材料 →</a>
+  </div>
+</section>
+
+<section>
+  <h2>4 · 边界速查（谁讲什么）</h2>
+  <table>
+    <thead><tr><th>可能重叠的点</th><th>归属裁决</th></tr></thead>
+    <tbody>
+      <tr><td>成员运算 <em>in</em> 谁来讲</td><td>运算符篇<strong>只讲算术 / 比较 / 逻辑三组</strong>；<em>in</em> 归 <strong>列表</strong>（<em>x in [...]</em>）与 <strong>字典</strong>（<em>键 in {...}</em>）各自讲，字典篇须写明"查的是键不是值"</td></tr>
+      <tr><td><em>+</em> 施加在容器上</td><td>运算符篇用数字与文本演示「同一符号两种含义」；<strong>列表</strong>只留一句"两个列表也能用 <em>+</em> 合并"，不展开</td></tr>
+      <tr><td><em>KeyError</em> / <em>IndexError</em></td><td>逐行读法归上半场 <strong>报错怎么读</strong>；字典 / 列表篇只说明"什么时候会抛、怎么避免"</td></tr>
+      <tr><td>可变对象的引用共享</td><td>上半场已讲「名字指向值」；<strong>列表</strong>篇负责把它落到可变对象上（<em>b = a</em> 的坑）；字典篇只提一句"字典同样可变"</td></tr>
+      <tr><td>「一条记录」用谁表示</td><td>单条记录用<strong>字典</strong>；多条记录用<strong>列表套字典</strong>；<strong>列表</strong>不承担「记录」职责</td></tr>
+      <tr><td><em>for</em> 遍历取整列</td><td>三篇都不展开；只在代码块里留一行写法预览，并标注属后续控制流课程</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>5 · 共享术语表</h2>
+  <p>四份材料严格使用下表措辞，避免各写各的。</p>
+  <table>
+    <thead><tr><th>中文</th><th>英文</th><th>本组内统一含义</th></tr></thead>
+    <tbody>
+      <tr><td>运算符</td><td>operator</td><td>对值进行运算的符号，如 + / == / and</td></tr>
+      <tr><td>真除法 / 整除</td><td>true division / floor division</td><td>/ 结果永远是小数；// 向下取整</td></tr>
+      <tr><td>列表</td><td>list</td><td>有序、可变的序列，用 [ ] 表示</td></tr>
+      <tr><td>索引</td><td>index</td><td>元素在列表中的位置编号，从 0 开始</td></tr>
+      <tr><td>切片</td><td>slice</td><td>用 [a:b] 取列表中一段（不含结尾位置）</td></tr>
+      <tr><td>字典</td><td>dictionary / dict</td><td>键值对的集合，用 { } 表示</td></tr>
+      <tr><td>键 / 值</td><td>key / value</td><td>字典里"名字"和它对应的"内容"</td></tr>
+      <tr><td>成员运算</td><td>membership test</td><td>判断某值是否在容器里，用 in</td></tr>
+      <tr><td>记录 / 行</td><td>record / row</td><td>一张表里的一个条目</td></tr>
+      <tr><td>字段</td><td>field</td><td>记录里的一个属性名（相当于表格的列名）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>6 · 配套与后续</h2>
+  <ul>
+    <li><strong>组关系图</strong>：<em>concept-group/python-lesson1-second-half/关系图.md</em> —— 本组的先修关系、边界矩阵与学习路径。</li>
+    <li><strong>上半场四份材料</strong>：<em>Python基础语法课程/learning-materials/</em> 下的 环境搭建 / notebook / 变量与基本类型 / 报错怎么读。</li>
+    <li><strong>可运行练习</strong>：<em>Python基础语法课程/notebooks/</em> 下的两份 .ipynb（上半场 / 下半场）。</li>
+    <li><strong>领域边界说明</strong>：本组是 Python 教学概念，与仓库根目录 <em>concept-relationship.md</em>（AI Agent 领域）<strong>分属不同知识网</strong> —— 故独立成篇，不混入同一张图，也未登记进 LLM Wiki。</li>
+  </ul>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">这四个概念合起来也是一句话：先用运算符让程序会算，再用列表和字典把数据装起来，最后拼成一张表 —— 顺序不能反，边界不能糊。</p>
+</section>
+
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 下半场四概念</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：列表（Lists）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #9c2a7a;
+    --accent-soft: #f9e7f4;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .callout {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Python 第 1 课 · 下半场四概念</span>
+  <h1>列表（Lists）</h1>
+  <p class="subtitle">按编号排队的一串值：索引从 0 开始，切片不含结尾 · 生成时间 2026-09-17 · 组内第 2 / 4</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">列表是把一串值按顺序装在一起、并且随时可以增删改的容器，用方括号 <em>[]</em> 表示。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>把列表想成一排按顺序编号的储物柜：左起第一个编号是 <strong>0</strong>，第二个是 1，以此类推。<em>fruits = ["苹果", "香蕉", "梨"]</em> 就是按顺序摆了三样东西。想拿第一个，写 <em>fruits[0]</em>。为什么从 0 开始而不是 1？因为方括号里的数字其实是"<strong>从开头往后偏移几位</strong>"—— 偏移 0 位就是第一个。接受这个解释，你就不会再把 0 当成"第零个"这种别扭的说法。</p>
+  <p>编号还可以是负的。<em>fruits[-1]</em> 是"<strong>从末尾往前数第一位</strong>"，也就是梨；<em>fruits[-2]</em> 是香蕉。当你只关心"最后一个"而不确定列表有多长时，负号索引比先算长度方便得多。</p>
+  <p>最反直觉、也最值得当场讲透的一点是<strong>可变</strong>（mutable）。上半场你已经学过"变量是名字指向值"；现在把这个原理放到列表上，就会出现一个让人吃惊的现象：<em>a = [1, 2, 3]</em> 之后写 <em>b = a</em>，再执行 <em>a.append(4)</em>，你去打印 <em>b</em>，结果也是 <em>[1, 2, 3, 4]</em>。<strong>这不是 bug</strong> —— <em>b = a</em> 并没有复制出一个新列表，它只是让 <em>b</em> 也成了同一个列表的第二个名字。想真正拿到一份独立副本，得写 <em>a.copy()</em> 或 <em>a[:]</em>。这个坑几乎每个人都会踩一次，早踩早免疫。</p>
+  <p>再补一个高频易错点：<strong>切片不含结尾位置</strong>。<em>fruits[0:2]</em> 取的是编号 0 和 1 两个元素，<strong>不包含</strong>编号 2。你可以把它读成"从 0 开始，到 2 之前为止"。想取到最后一个，要么用 <em>fruits[0:3]</em>，要么干脆省略结尾写 <em>fruits[0:]</em>。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>创建</strong>：用方括号直接写 <em>[]</em>，或把别的序列转过来 <em>list(...)</em>。<br />为什么重要：列表可以装任何类型的值，也可以混装 —— 它不挑食，所以几乎什么东西都能先装进去再说。</li>
+    <li><strong>索引与切片</strong>：<em>a[0]</em> 取第一个，<em>a[-1]</em> 取最后一个；<em>a[1:3]</em> 取"从 1 到 3 之前"的一段。<br />为什么重要：这是"取出我要的那一份"的唯一手段；而"切片不含结尾"是新手第一个反复踩的坑。</li>
+    <li><strong>长度与成员运算</strong>：<em>len(a)</em> 得到元素个数；<em>x in a</em> 判断某个值在不在里面。<br />为什么重要：<em>len()</em> 是防止索引越界的依据，<em>in</em> 让"在不在"变成一个可以直接用的真假值。</li>
+    <li><strong>增删改</strong>：<em>append</em> 末尾加一项、<em>insert</em> 指定位置插入、<em>remove</em> 按值删、<em>pop</em> 按位置删并返回被删的那一项、<em>del a[i]</em> 按索引删。<br />为什么重要：列表是"活的"，随用随改；而这些方法<strong>改的是列表本身</strong>，不返回新列表。</li>
+    <li><strong>排序</strong>：<em>a.sort()</em> 原地排序（不返回值）、<em>sorted(a)</em> 返回排好序的新列表。<br />为什么重要：这两者一个改原件、一个出副本，混用会让"我的原数据怎么悄悄变了"变成悬案。</li>
+    <li><strong>可变带来的引用共享</strong>：<em>b = a</em> 是<strong>第二个名字</strong>，不是复制；要独立副本用 <em>a.copy()</em>。<br />为什么重要：这是上半场"名字指向值"在可变对象上的直接后果，也是"我明明没动 b 啊"这类问题的唯一根因。</li>
+  </ol>
+  <div class="mermaid-placeholder">fruits = ["苹果", "香蕉", "梨"]
+fruits[0]      # '苹果'   ← 索引从 0 开始
+fruits[-1]     # '梨'     ← 负数从末尾数
+fruits[0:2]    # ['苹果', '香蕉']  ← 切片不含结尾位置
+len(fruits)    # 3
+"香蕉" in fruits   # True  ← 成员运算（in 的语义见本篇，不属运算符篇）
+
+fruits.append("葡萄")      # 末尾加一项
+fruits.insert(0, "草莓")   # 插到最前面
+fruits.remove("香蕉")      # 按值删（没有这个值会抛 ValueError）
+last = fruits.pop()       # 按位置删并返回被删项；不写位置默认删最后一个
+del fruits[0]             # 按索引删
+
+# 越界：第 4 格不存在，会抛 IndexError（读法见「报错怎么读」）
+# fruits[99]
+
+# 可变带来的坑 —— 上半场「名字指向值」在列表上的后果
+a = [1, 2, 3]
+b = a            # 不是复制！b 是同一个列表的第二个名字
+a.append(4)
+print(b)         # [1, 2, 3, 4]  ← b 也变了，因为它俩是同一个列表
+
+c = a.copy()     # 想要独立副本用 copy() 或 a[:]
+a.append(5)
+print(c)         # [1, 2, 3, 4]  ← c 不受影响
+
+# 原地排序 vs 返回新列表
+nums = [3, 1, 2]
+nums.sort()            # 原地改，返回 None
+print(nums)            # [1, 2, 3]
+print(sorted([3, 1, 2]))   # [1, 2, 3]，原列表不变</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 一份会变的待办列表</h3>
+    <p><span class="label">背景：</span>要按顺序记录今天要做的事，并且随时会加一条、划掉一条。</p>
+    <p><span class="label">如何应用：</span>用列表存事项，新任务 <em>append</em> 到末尾；做完的用 <em>remove</em> 按内容划掉，或 <em>pop</em> 按位置取出。</p>
+    <p><span class="label">结果：</span>一支随时能增删的列表；顺序天然保持，因为列表记住的正是你放进来的先后。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 只看最近三条记录</h3>
+    <p><span class="label">背景：</span>日志攒了很多条，只想快速看最后三条。</p>
+    <p><span class="label">如何应用：</span>用负号切片 <em>logs[-3:]</em>，意思是"从倒数第三个开始，一直取到末尾"。</p>
+    <p><span class="label">结果：</span>不必先知道总条数，也不用算编号；负号与省略结尾的写法把"取最后几条"变成一句话。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 把成绩排名次</h3>
+    <p><span class="label">背景：</span>手上有一串分数，要按从高到低排列。</p>
+    <p><span class="label">如何应用：</span>用 <em>scores.sort(reverse=True)</em> 原地降序排；如果原来的顺序还要留着，就先 <em>copy()</em> 一份再排，或用 <em>sorted(scores, reverse=True)</em>。</p>
+    <p><span class="label">结果：</span>得到排好序的结果，同时清楚"原件有没有被动过"——这正是 <em>sort()</em> 与 <em>sorted()</em> 的分工所在。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是数组</strong>：很多语言里的数组长度固定、类型统一；Python 的列表长度可变、可以混装任何类型 —— 它更像一条能伸缩的队伍。</li>
+    <li><strong>不是字典</strong>：列表按"位置编号"取，字典按"名字"取。要按"第几个"就找列表，要按"叫什么"就找 <a href="字典.html">字典</a>。</li>
+    <li><strong>不负责"记录"这件事</strong>：如果每一项其实有好几个属性（姓名、分数、班级），那它应该是个 <a href="字典.html">字典</a>；多行这样的记录就交给 <a href="列表套字典.html">列表套字典 = 一张表</a>，而不是硬塞进一个列表里靠位置去记。</li>
+    <li><strong>不展开遍历与推导式</strong>：<em>for</em> 循环与列表推导式属于后续课程；本篇只在代码块里给一行写法预览，不展开讲。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「<em>a[1:3]</em> 取三个元素」—— 不是，取两个（编号 1 和 2）。切片<strong>不含结尾位置</strong>。</li>
+    <li>「<em>b = a</em> 是复制了一份」—— 不是。它只是给同一个列表起了第二个名字，改一个两边都变；要复制得用 <em>copy()</em>。</li>
+    <li>「<em>sort()</em> 会返回排好序的列表」—— 不会，它返回 <em>None</em>，排序是<strong>原地</strong>发生的。写 <em>a = a.sort()</em> 会让 <em>a</em> 变成 <em>None</em>。</li>
+    <li>「列表可以从 1 开始编号」—— 不能。索引从 0 开始；要"从末尾数"才用负数。</li>
+  </ul>
+  <h3>5.3 与组内邻居的分工</h3>
+  <table>
+    <thead><tr><th>相邻概念</th><th>本概念负责</th><th>交给邻居</th></tr></thead>
+    <tbody>
+      <tr><td><a href="字典.html">字典</a></td><td>按位置编号存取、切片、增删改</td><td>按键取值、<em>get()</em> 与 <em>KeyError</em>、"这个键在不在"</td></tr>
+      <tr><td><a href="列表套字典.html">列表套字典 = 一张表</a></td><td>讲"列表是行的外壳"这一半</td><td>把字典一行行装进列表、按字段取值的那套结构</td></tr>
+      <tr><td><a href="运算符.html">运算符</a></td><td>用 <em>in</em> 判断值在不在列表里（成员运算归本篇）</td><td><em>+</em> 在数字与文本上的两种含义（本概念只提一句"两个列表也能用 <em>+</em> 合并"）</td></tr>
+      <tr><td><a href="变量与基本类型.html">变量与基本类型</a>（上半场）</td><td>把"名字指向值"落到<strong>可变对象</strong>上（<em>b = a</em> 的坑）</td><td>变量是什么、int / float / str / bool 与类型转换</td></tr>
+    </tbody>
+  </table>
+  <h3>5.4 适用与不适用</h3>
+  <table>
+    <thead><tr><th>适合用列表</th><th>应换别的结构</th></tr></thead>
+    <tbody>
+      <tr><td>一串同类的值，顺序重要</td><td>要按名字取（找 <a href="字典.html">字典</a>）</td></tr>
+      <tr><td>顺序会变、长度会增删</td><td>每一项都有多个属性（找 <a href="列表套字典.html">列表套字典</a>）</td></tr>
+      <tr><td>想取"第几个"或"一小段"</td><td>需要做分组、筛选、统计（后续课程 / pandas）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://docs.python.org/zh-cn/3/tutorial/datastructures.html">5. 数据结构 · Python 官方教程（中文）</a> — 官方对列表全部方法（<em>append</em> / <em>insert</em> / <em>remove</em> / <em>pop</em> / <em>sort</em> / <em>copy</em> 等）的定义与示例，并明确指出"只修改列表的方法返回 <em>None</em>，这是所有可变数据结构的设计原则"。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/stdtypes.html#sequence-types-list-tuple-range">序列类型 list / tuple / range · Python 官方文档（中文）</a> — 官方对通用序列操作的定义：索引、负索引、切片（含"切片不含结尾"的语义）、<em>len()</em> 与成员检测 <em>in</em>。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/functions.html#len">内置函数 len() · Python 官方文档（中文）</a> — 官方对 <em>len()</em> 的定义：返回容器中的项数。</li>
+    <li><a href="https://realpython.com/python-list/">Python's list Data Type: A Deep Dive With Examples · Real Python</a> — 权威二手教程：系统列举列表的关键特性（有序、索引从 0 开始、可变、可混装、可嵌套），并强调"可变意味着列表不可哈希，不能当字典的键"。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">列表是按编号排队的一串值：编号从 0 开始，切片不含结尾，而 <em>b = a</em> 只是同一个列表多了个名字 —— 想复制就 <em>copy()</em>。</p>
+</section>
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 下半场四概念</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：运算符（Operators）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #5f7a1f;
+    --accent-soft: #eef3dd;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .callout {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Python 第 1 课 · 下半场四概念</span>
+  <h1>运算符（Operators）</h1>
+  <p class="subtitle">算术 / 比较 / 逻辑三组运算符，以及「同一符号两种含义」 · 生成时间 2026-09-17 · 组内第 1 / 4</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">运算符就是让 Python 对值做运算的符号：算术运算符负责算数，比较运算符负责比大小，逻辑运算符负责把条件组合起来。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>把一段代码想成一句话。在 <em>3 + 5</em> 里，<em>3</em> 和 <em>5</em> 是名词，<em>+</em> 是动词 —— 运算符就是这门语言里的动词。变量和类型告诉你"有什么"，运算符决定"拿它做什么"。上半场你已经会写 <em>name = "小明"</em> 这种"给数据起名"的句子；从这一篇起，句子开始真的动起来。</p>
+  <p>这里有一条最容易被忽略、却几乎解释了所有相关报错的规则：<strong>同一个符号，遇到不同类型的值，做的事不一样</strong>。<em>+</em> 碰上两个数字就相加，碰上两个文本就拼接。所以 <em>"2" + "3"</em> 得到的是 <em>'23'</em>，不是 5 —— 这不是 Python 有毛病，而是 <em>+</em> 在文本世界里的职责本来就是"接起来"。同理 <em>*</em> 碰上"文本 × 整数"就变成重复：<em>"ab" * 2</em> 得到 <em>'abab'</em>。想通这一层，你以后看到 <em>TypeError</em> 就不会慌，因为你知道那多半是"两种不同类型的值被拿去做同一件要求类型一致的事"。</p>
+  <p>还有一个必须当场分清的对子：<em>=</em> 和 <em>==</em>。<em>=</em> 是<strong>赋值</strong>——把右边的值装进左边的名字；<em>==</em> 是<strong>比较</strong>——问"这两边相等吗"，回答是 <em>True</em> 或 <em>False</em>。把它们写混是新手最高频的一类糊涂：写成 <em>x = 5</em> 是"把 5 给 x"，写成 <em>x == 5</em> 才是"问 x 是不是 5"。</p>
+  <p>最后一个直觉，关于顺序。你写 <em>2 + 3 * 4</em>，Python 给的是 <strong>14</strong> 而不是 20 —— 因为 <em>*</em> 的优先级高于 <em>+</em>，先算 3 * 4 再加 2。<em>7 / 2</em> 也不是 3，而是 <strong>3.5</strong>：Python 的 <em>/</em> 是"真除法"，永远给你小数；想要"整数除以整数得整数"，得用 <em>//</em>。这两条各对应一个很常见的困惑，记住它们比背优先级表划算得多。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <p>入门阶段真正要掌握的是三组运算符。它们的共同点是：输入是值，输出也是一个值 —— 也就是"表达式"。</p>
+  <ol>
+    <li><strong>算术运算符</strong>：<em>+</em> 加、<em>-</em> 减、<em>*</em> 乘、<em>/</em> 除、<em>//</em> 整除、<em>%</em> 取余、<em>**</em> 幂。<br />为什么重要：<em>/</em> 与 <em>//</em> 的区别（3.5 还是 3）是新手第一个"和直觉不符"的点，而 <em>%</em> 是判断奇偶、按编号分组的唯一工具。</li>
+    <li><strong>比较运算符</strong>：<em>==</em> 等于、<em>!=</em> 不等于、<em>&gt;</em> 大于、<em>&lt;</em> 小于、<em>&gt;=</em> 大于等于、<em>&lt;=</em> 小于等于。<br />为什么重要：它们的<strong>结果永远是 <em>bool</em>（True / False）</strong>，不是数字 —— 认清这一点，才知道比较的结果该交给谁（后续课程的条件分支）去用。</li>
+    <li><strong>逻辑运算符</strong>：<em>and</em> 两个都成立、<em>or</em> 任一成立、<em>not</em> 取反。<br />为什么重要：现实里的条件很少只有一个；把"A 且 B"合成一个真假值，靠的就是它们。</li>
+    <li><strong>优先级与括号</strong>：从高到低大致是 括号 → <em>**</em> → <em>* / // %</em> → <em>+ -</em> → 比较 → <em>not</em> → <em>and</em> → <em>or</em>。<br />为什么重要：不必背全表，记住一句"<strong>不确定就加括号</strong>"即可 —— 括号既消除歧义，也让代码更像人话。</li>
+  </ol>
+  <div class="mermaid-placeholder"># 算术：注意 / 与 // 的区别
+7 / 2      # 3.5   ← 真除法：结果永远是小数
+7 // 2     # 3     ← 整除：向下取整
+7 % 2      # 1     ← 取余
+2 ** 3     # 8     ← 幂
+
+# 比较：结果永远是 True / False
+3 == 3     # True
+3 != 3     # False
+2 &lt;= 2     # True
+
+# 逻辑：把多个条件合成一个
+1 &lt; 2 and 2 &lt; 3     # True   两个都成立才为 True
+1 &lt; 2 or 3 &lt; 2      # True   任一个成立就为 True
+not True           # False
+
+# 同一个 +，两种含义 —— 取决于两边是什么类型
+2 + 3         # 5        数字相加
+"2" + "3"     # '23'     文本拼接（不是 5！）
+"ab" * 2      # 'abab'   文本重复
+# 2 + "3"     # TypeError：类型不匹配，读法见「报错怎么读」
+
+# 优先级：不确定就加括号
+2 + 3 * 4      # 14      不是 20
+(2 + 3) * 4    # 20      括号最优先</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 用取余判断奇偶</h3>
+    <p><span class="label">背景：</span>要给一批编号分流：偶数的排左边、奇数的排右边。</p>
+    <p><span class="label">如何应用：</span>用 <em>n % 2</em> —— 结果是 0 就是偶数，是 1 就是奇数；写成 <em>n % 2 == 0</em> 就得到一个 True / False 的结果。</p>
+    <p><span class="label">结果：</span>把"奇数还是偶数"这个需要肉眼判断的问题，变成一个可以被程序直接使用的真假值。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 用真除法算平均分</h3>
+    <p><span class="label">背景：</span>总分 253、人数 3，想算平均分，却发现结果是 84 而不是 84.33。</p>
+    <p><span class="label">如何应用：</span>把 <em>total // count</em> 改成 <em>total / count</em> —— 前者整除会把小数位直接切掉，后者才是真除法。</p>
+    <p><span class="label">结果：</span>拿到 84.33…，小数不再被无声吞掉；也顺手记住了 <em>/</em> 与 <em>//</em> 的分工。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 把多个条件合成一个</h3>
+    <p><span class="label">背景：</span>要表达"成年且有票"这样一个完整条件。</p>
+    <p><span class="label">如何应用：</span>用 <em>and</em> 把两个比较连起来：<em>age &gt;= 18 and has_ticket == True</em>；只要有一个不成立，整个表达式就是 False。</p>
+    <p><span class="label">结果：</span>复杂条件被压成<strong>一个</strong>真假值，可以直接交给后续的判断语句使用，而不必层层嵌套。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是"符号就是运算"</strong>：<em>=</em> 是赋值、<em>==</em> 是比较，两者职责完全不同。把 <em>=</em> 当成"等于"来读，是新手最典型的误读。</li>
+    <li><strong>不含成员运算 <em>in</em></strong>：<em>"x" in "xyz"</em>、<em>3 in [1,2,3]</em>、<em>"name" in {...}</em> 确实都是"某个值在不在里面"，但它们的语义要看容器本身 —— 本篇不展开，"在不在列表里"归 <a href="列表.html">列表</a> 篇，"这个键在不在字典里"归 <a href="字典.html">字典</a> 篇。</li>
+    <li><strong>不含位运算与身份运算</strong>：<em>&amp; | ^ &lt;&lt; &gt;&gt;</em> 是给整数按二进制位做运算的，<em>is</em> 是判断"是不是同一个对象"，入门阶段几乎用不到，本篇不展开。</li>
+    <li><strong>不负责分支</strong>："算出一个 True / False"是本篇的终点；"拿它去决定走哪条路"属于后续的控制流课程。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「<em>7 / 2</em> 得 3」—— 不是，得 <em>3.5</em>。<em>/</em> 是真除法，永远返回小数；要整除必须用 <em>//</em>。</li>
+    <li>「<em>"2" + "3"</em> 得 5」—— 不是，得 <em>'23'</em>。加号在文本上做的是拼接，类型不同则含义不同。</li>
+    <li>「<em>2 + 3 * 4</em> 从左往右算」—— 不是，先乘后加，得 <em>14</em>。真拿不准就加括号。</li>
+    <li>「<em>0.1 + 0.2 == 0.3</em> 是 True」—— 不是。浮点数是二进制近似表示，这个比较会得到 False —— 原理见上半场 <a href="变量与基本类型.html">变量与基本类型</a> 篇。</li>
+  </ul>
+  <h3>5.3 与组内邻居的分工</h3>
+  <table>
+    <thead><tr><th>相邻概念</th><th>本概念负责</th><th>交给邻居</th></tr></thead>
+    <tbody>
+      <tr><td><a href="列表.html">列表</a></td><td>讲 <em>+</em> 在数字与文本上的两种含义</td><td>列表的创建、索引、切片与增删改（本概念只提一句"两个列表也能用 <em>+</em> 合并"）</td></tr>
+      <tr><td><a href="字典.html">字典</a></td><td>只讲算术 / 比较 / 逻辑三组运算符，<strong>不含 <em>in</em></strong></td><td>"这个键在不在字典里"、按键取值与改值</td></tr>
+      <tr><td><a href="列表套字典.html">列表套字典 = 一张表</a></td><td>只给"对单个值做运算"的规则</td><td>把多行记录按字段取出来的整套结构</td></tr>
+      <tr><td>变量与基本类型（上半场）</td><td>直接沿用不变与类型的概念，不重复讲</td><td>变量是名字指向值、int / float / str / bool 与类型转换</td></tr>
+    </tbody>
+  </table>
+  <h3>5.4 适用与不适用</h3>
+  <table>
+    <thead><tr><th>本概念能解决</th><th>要找别处</th></tr></thead>
+    <tbody>
+      <tr><td>算数、比大小、组合条件</td><td>根据条件走不同分支（后续控制流课程）</td></tr>
+      <tr><td>理解同一符号在不同类型上的不同行为</td><td>类型不匹配报错的逐行读法（找 <a href="报错怎么读.html">报错怎么读</a>）</td></tr>
+      <tr><td>知道 <em>/</em> 与 <em>//</em>、<em>=</em> 与 <em>==</em> 的区别</td><td>在容器里找东西（找 <a href="列表.html">列表</a> / <a href="字典.html">字典</a>）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://docs.python.org/zh-cn/3/tutorial/introduction.html">3. 一个非正式介绍 · Python 官方教程（中文）</a> — 官方用"把 Python 当作计算器"的方式介绍算术运算符，并明确 <em>/</em> 返回浮点数、<em>//</em> 用于整除、<em>%</em> 用于取余。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/reference/expressions.html">6. 表达式 · Python 官方语言参考（中文）</a> — 官方对算术转换、比较运算（含 <em>==</em> / <em>!=</em> / <em>&gt;=</em> 等）、布尔运算 <em>and / or / not</em> 的定义，以及完整的<strong>运算符优先级表</strong>。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/stdtypes.html">内置类型 · Python 官方文档（中文）</a> — 官方对数字类型的运算规则与比较运算的说明，是"比较结果永远是布尔值"的直接依据。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/operator.html">operator —— 标准运算符替代函数 · Python 官方文档（中文）</a> — 官方把每个运算符对应到同名函数的一览表，可作为"运算符有哪几类"的权威索引。</li>
+    <li><a href="https://realpython.com/python-operators/">Python Operators · Real Python</a> — 权威二手教程：按算术 / 比较 / 逻辑 / 位运算等分类讲解，并给出优先级与"括号消除歧义"的实践建议。</li>
+  </ol>
+  <p class="callout">说明：「浮点数是二进制近似表示，因此 <em>0.1 + 0.2 == 0.3</em> 会得到 False」这一条属于工程共识，来源于通用知识整理，未逐条绑定上列来源 <strong>[unverified]</strong>；详细原理见上半场 <a href="变量与基本类型.html">变量与基本类型</a> 篇。</p>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">运算符的规则只有两条要刻进肌肉记忆：<em>7 / 2</em> 是 3.5 不是 3，<em>"2" + "3"</em> 是 '23' 不是 5 —— 前者是除法有两种，后者是同一个符号遇上不同类型。</p>
+</section>
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 下半场四概念</footer>
+
+</div>
+</body>
+</html>

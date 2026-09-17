@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：字典（Dictionaries）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #4f5f6d;
+    --accent-soft: #e8edf1;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .callout {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Python 第 1 课 · 下半场四概念</span>
+  <h1>字典（Dictionaries）</h1>
+  <p class="subtitle">按键取值的对应表：get() 与 KeyError 的分岔口 · 生成时间 2026-09-17 · 组内第 3 / 4</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">字典是一张「名字 → 内容」的对应表，用花括号 <em>{}</em> 写，靠键（key）直接取出对应的值（value）。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>列表像一排按编号找的储物柜，字典像一本按姓名找的通讯录。想找列表里的东西你得说"第 5 个"，想找字典里的东西你说"'小明'的电话" —— <strong>取东西的依据从"位置"换成了"名字"</strong>。这就是字典存在的全部理由：当你要按某个有意义的名字去取数据时，用位置去记既容易错、也读不懂。</p>
+  <p>字典的样子是 <em>{键: 值}</em>，一个键配一个值，中间用冒号，多个键值对之间用逗号：<em>tel = {"小明": 138, "小红": 139}</em>。取值写 <em>tel["小明"]</em>，得到 138。这里有个必须知道的规矩：<strong>取一个不存在的键会直接报错</strong>（抛 <em>KeyError</em>），而不是像列表那样给你一个空值。想让"键不存在"这件事变得安全，就用 <em>tel.get("小刚")</em> —— 它取不到时给回一个默认值（不写就是 <em>None</em>），不报错。这是 <em>d[键]</em> 与 <em>d.get(键)</em> 最重要的区别。</p>
+  <p>还有一个反直觉的点，几乎每个人都误解过一次：<em>'小明' in tel</em> 判断的是"<strong>字典里有没有'小明'这个<em>键</em></strong>"，<strong>不是</strong>有没有"小明"这个值。键是"找东西的名字"，值才是"内容"——<em>in</em> 只查名字那一栏。</p>
+  <p>最后一条关于"键本身"的规矩：<strong>键必须是不可变的类型</strong>。字符串、数字、元组都可以当键；列表不行，因为列表能被原地修改。原因很直白：字典是靠"键的名字"来定位的，如果这个名字本身还会变，那这本通讯录就废了。至于为什么按键查找很快 —— 那涉及哈希表的实现原理，超出本篇范围，你只要先建立"按键直取、不靠从头逐个找"这一层直觉就够了。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>创建</strong>：用花括号写键值对 <em>{键: 值, ...}</em>；空字典写 <em>{}</em>。<br />为什么重要：键值成对出现是字典的本质 —— 你永远同时拿到"名字"和"内容"两样东西。</li>
+    <li><strong>按键取值</strong>：<em>d[键]</em> 取不到就抛 <em>KeyError</em>；<em>d.get(键, 默认值)</em> 取不到就给默认值。<br />为什么重要：这是"安全取值"与"直接取值"的分岔口；不确定键在不在时用 <em>get()</em>，能省掉一整类报错。</li>
+    <li><strong>增 / 改 / 删</strong>：赋一个新键就是新增（<em>d["新键"] = 值</em>）；赋一个已有的键就是修改；<em>del d[键]</em> 删除整个键值对。<br />为什么重要：注意<strong>新增和修改的写法完全一样</strong> —— 字典不在乎那个键本来有没有，它只管"现在这个键对应什么值"。</li>
+    <li><strong>键的规矩</strong>：键唯一、且必须是不可变类型（字符串 / 数字 / 元组可以，列表不行）。<br />为什么重要：键重复时后写的会覆盖前一个；键不可变才能被可靠地定位 —— 用列表当键会直接抛 <em>TypeError</em>。</li>
+    <li><strong>成员运算与三个视图</strong>：<em>键 in d</em> 查的是<strong>键</strong>；<em>keys()</em> 看所有键、<em>values()</em> 看所有值、<em>items()</em> 看所有键值对。<br />为什么重要：把"查键"和"查值"分清，能避免"明明值在里面，为什么 <em>in</em> 说是 False"的困惑。</li>
+    <li><strong>保持插入顺序</strong>：较新的 Python 里字典记住你放入键值对的先后。<br />为什么重要：打印出来是人读得懂的顺序，而不是随机乱跳 —— 调试时省心。</li>
+  </ol>
+  <div class="mermaid-placeholder">tel = {"小明": 138, "小红": 139}
+tel["小明"]        # 138      ← 按键直接取
+tel.get("小刚")     # None     ← 取不到时给默认值，不报错
+tel.get("小刚", 0)  # 0        ← 也可以自己指定默认值
+# tel["小刚"]      # KeyError ← 取不存在的键会抛错（读法见「报错怎么读」）
+
+tel["小刚"] = 137   # 新增：键本来不存在
+tel["小明"] = 140   # 修改：键已存在，写法完全一样
+del tel["小红"]     # 删除一个键值对
+
+"小明" in tel        # True   ← 查的是「键」，不是值
+138 in tel          # False  ← 值在字典里，但 in 不查值
+
+list(tel.keys())    # ['小明', '小刚']
+list(tel.values())  # [140, 137]
+list(tel.items())   # [('小明', 140), ('小刚', 137)]
+
+# 键必须是不可变类型：
+ok = {"name": "小明"}          # 字符串当键 —— 可以
+# bad = {["name"]: "小明"}     # TypeError：列表不能当键
+
+# 字典同样可变（原理见「列表」篇：名字指向值）
+d2 = tel
+tel["新键"] = 1
+print(d2)           # d2 也变了 —— 它俩是同一个字典</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 一本通讯录</h3>
+    <p><span class="label">背景：</span>要存一批"姓名 → 电话"，并且经常按姓名直接查。</p>
+    <p><span class="label">如何应用：</span>用姓名当键、电话当值：<em>tel = {"小明": 138, "小红": 139}</em>，查询写 <em>tel["小明"]</em>。</p>
+    <p><span class="label">结果：</span>代码读起来就是一句人话 —— "查小明的电话"，而不是"查第 0 项的第二个字段"。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 一组带名字的配置项</h3>
+    <p><span class="label">背景：</span>程序要保存一堆设置：字体大小、主题色、是否开启提示。</p>
+    <p><span class="label">如何应用：</span>用字典把它们收在一起，每个设置一个键；要用时按名字取，想改就 <em>config["font_size"] = 16</em>。</p>
+    <p><span class="label">结果：</span>配置项自带名字、不用记顺序；新增一项只是多写一个键，不影响已有代码。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 给"查不到"留一个默认值</h3>
+    <p><span class="label">背景：</span>统计里想给某个尚未出现过的项加 1，直接写 <em>counts[项]</em> 会因键不存在而报错。</p>
+    <p><span class="label">如何应用：</span>用 <em>counts[项] = counts.get(项, 0) + 1</em> —— <em>get()</em> 在键不存在时给出 0，再往上加 1 就完成了"首次出现即初始化为 1"。</p>
+    <p><span class="label">结果：</span>把"键可能不存在"这一整类 <em>KeyError</em> 从根上消掉，统计逻辑变得短且稳。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是列表</strong>：列表按位置编号取、字典按名字取。要"第几个"用 <a href="列表.html">列表</a>，要"叫什么"用字典。</li>
+    <li><strong>不是"什么都能当键"</strong>：键必须是不可变类型。列表不能当键（会抛 <em>TypeError</em>）；字符串、数字、元组可以。</li>
+    <li><strong>不等于"查所有值"</strong>：<em>in</em> 只查键。判断某个<strong>值</strong>在不在，得看 <em>values()</em>，这与"键在不在"是两件事。</li>
+    <li><strong>不负责多行记录</strong>：字典天然表达"一条记录"（姓名 / 分数 / 班级各是一个键）；多行记录交给 <a href="列表套字典.html">列表套字典 = 一张表</a> 篇。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「<em>d["不存在的键"]</em> 会返回空或 None」—— 不会，会抛 <em>KeyError</em>。想要"取不到给默认值"必须用 <em>get()</em>。</li>
+    <li>「<em>'小明' in d</em> 是判断有没有这个值」—— 不是，判断的是有没有这个<strong>键</strong>。</li>
+    <li>「键写重复了会报错」—— 不会报错，后写的会<strong>覆盖</strong>先写的。键必须唯一是"约束"，不是"报错"。</li>
+    <li>「字典是乱序的」—— 较新的 Python 里字典<strong>保持插入顺序</strong>；不要再把它当作无序容器来理解。</li>
+  </ul>
+  <h3>5.3 与组内邻居的分工</h3>
+  <table>
+    <thead><tr><th>相邻概念</th><th>本概念负责</th><th>交给邻居</th></tr></thead>
+    <tbody>
+      <tr><td><a href="列表.html">列表</a></td><td>按键取值、<em>get()</em>、键的规矩与三个视图</td><td>索引、切片、增删方法与"<em>b = a</em> 是同一个列表"（本概念只提一句"字典同样可变"）</td></tr>
+      <tr><td><a href="列表套字典.html">列表套字典 = 一张表</a></td><td>讲"一个字典 = 一条记录"这一半</td><td>把多条记录装进列表、按 <em>行 / 字段</em> 取值的那套结构</td></tr>
+      <tr><td><a href="运算符.html">运算符</a></td><td>用 <em>in</em> 判断键在不在字典里（成员运算归本篇，且<strong>只查键</strong>）</td><td>算术 / 比较 / 逻辑运算符与优先级</td></tr>
+      <tr><td><a href="报错怎么读.html">报错怎么读</a>（上半场）</td><td>只说明"取不存在的键会抛 <em>KeyError</em>、用 <em>get()</em> 可避免"</td><td><em>KeyError</em> 的逐行读法与五步排查动作</td></tr>
+    </tbody>
+  </table>
+  <h3>5.4 适用与不适用</h3>
+  <table>
+    <thead><tr><th>适合用字典</th><th>应换别的结构</th></tr></thead>
+    <tbody>
+      <tr><td>按有意义的名字取数据（姓名 / 配置项 / 字段名）</td><td>只按先后顺序存取（找 <a href="列表.html">列表</a>）</td></tr>
+      <tr><td>描述"一个东西的多个属性"</td><td>描述"很多个东西"（找 <a href="列表套字典.html">列表套字典</a>）</td></tr>
+      <tr><td>需要"取不到就给默认值"的安全查询</td><td>要做排序、分组、聚合（后续课程 / pandas）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://docs.python.org/zh-cn/3/tutorial/datastructures.html#dictionaries">5.5 字典 · Python 官方教程（中文）</a> — 官方定义："字典可以看作一组键值对，键必须唯一"，并给出按键取值、<em>del</em> 删除、<em>list(d)</em> 取所有键、<em>in</em> 判断键是否存在的示例。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/stdtypes.html#mapping-types-dict">映射类型 dict · Python 官方文档（中文）</a> — 官方对 <em>dict</em> 的完整定义：键必须是可哈希（因而不可变）的对象、<em>get()</em> 的默认值行为、<em>keys()</em> / <em>values()</em> / <em>items()</em> 视图，以及"字典保持插入顺序"的说明。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/stdtypes.html">内置类型 · Python 官方文档（中文）</a> — 官方对"可哈希"这一条件的定义，是"为什么列表不能当键"的直接依据。</li>
+    <li><a href="https://realpython.com/python-dicts/">Dictionaries in Python · Real Python</a> — 权威二手教程：系统讲解字典的创建、取值（含 <em>get()</em> 与 <em>KeyError</em> 的区别）、增删改与常见陷阱。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">字典是按键取值的对应表：取不存在的键会报错，要么先确认键存在、要么用 <em>get()</em> 给个默认值 —— 而 <em>in</em> 查的一直是键，不是值。</p>
+</section>
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 下半场四概念</footer>
+
+</div>
+</body>
+</html>

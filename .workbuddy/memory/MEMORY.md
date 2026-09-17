@@ -17,8 +17,11 @@
 - 单概念 guide 与概念组 guide 的分工:1 个概念 → `concept-learning-skill`;≥2 个**相关**概念 → `concept-group-guide`。
 - 「guide 模式」在本仓库 = 单概念 Skill 的 7 段式学习指南,**不是** WorkBuddy 的平台模式(平台只有 Craft/Plan/Ask 三档)。
 - **概念组 Phase 4 的领域边界铁律**(2026-09-17 修正):目标图谱/Wiki 已有明确领域时,**不要把不同领域的概念组塞进去**。本仓库 `concept-relationship.md` 是 AI Agent 领域、`tools/llm-wiki-agent/wiki/` 是 AI/LLM 领域 → Python 教学组**两者都不进**:改为在组目录下建 `关系图.md`(结构对齐既有图谱:一句话定位 / 关系总览 Mermaid / 边界矩阵 / 学习路径 / 一句话总结),并在 `concept-relationship.md` 顶部加一行「相关图谱(另一领域)」指引。图谱也**不重建** —— 输入没变,重建只会产生无意义 diff 与 commit churn。
-- 已交付概念组:`concept-group/python-lesson1-starter/`(Python 第 1 课 · 上手四概念,2026-09-17)。4 份材料在 `Python基础语法课程/learning-materials/`(环境搭建 / notebook / 变量与基本类型 / 报错怎么读),生成器 `output/_tools/make_concept_group.py`。组内配色(与既有 5 份 AI 概念不撞色):绿 `#2e7d4f` / 靛 `#3a4fa8` / 金褐 `#8a6a00` / 正红 `#b02a2a`,组索引主色 `#2f3e8f`。
+- 已交付概念组(第 1 组):`concept-group/python-lesson1-starter/`(Python 第 1 课 · 上手四概念,2026-09-17)。4 份材料在 `Python基础语法课程/learning-materials/`(环境搭建 / notebook / 变量与基本类型 / 报错怎么读),生成器 `output/_tools/make_concept_group.py`。组内配色(与既有 5 份 AI 概念不撞色):绿 `#2e7d4f` / 靛 `#3a4fa8` / 金褐 `#8a6a00` / 正红 `#b02a2a`,组索引主色 `#2f3e8f`。
+- 已交付概念组(第 2 组):`concept-group/python-lesson1-second-half/`(Python 第 1 课 · 下半场四概念,2026-09-17)。4 份材料在 `Python基础语法课程/learning-materials/`(运算符 / 列表 / 字典 / 列表套字典),生成器 `output/_tools/make_concept_group_l1b.py`。组内配色:橄榄绿 `#5f7a1f` / 洋红 `#9c2a7a` / 石板蓝灰 `#4f5f6d` / 森林绿 `#2f6f2f`,组索引主色 `#39424a`(深石板,作"组容器色"让四张概念卡跳出来)。**每组生成器各自独立,不共用**。
 - 术语一致性靠概念组骨架里的「共享术语表」强制(例:Notebook 的 cell 必须写「单元格」,不得写成「格子」)。生成后要**脚本复检禁词**,因为口语习惯会偷偷漏进去。
+- **改同一文件的多处编辑必须串行执行**。并行发多条 Edit 到同一文件会相互覆盖(本仓库已两次踩到:一次是 stage1 讲义导语,一次是列表篇术语修正)。批量改动的正解是**脚本原子替换 + 唯一性断言**一次完成,不要并行 Edit。
+- 概念组材料的**新建**输出目录一律是 `Python基础语法课程/learning-materials/`(与第 1、2 组一致),**不要**放进根目录 `learning-materials/` —— 那里是 AI Agent 概念的地盘。
 
 ## 文档流水线(tencent-docx v5.5.3)
 
