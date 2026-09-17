@@ -16,6 +16,9 @@
 - **`concept-group-guide`**(项目级,2026-09-17 新建):在单概念 7 段式之上生成**一组相关概念**的学习材料。核心是"骨架先行 + 人工检查点"——Phase 1 先产出概念组骨架(组定位/清单表/**边界声明**/先修顺序/术语表/冲突检查)交用户确认,Phase 2 逐份生成,Phase 3 出组索引页,Phase 4 重建图谱 + 登记 wiki + 自动推送。骨架落在 `concept-group/<group-slug>/`。铁律:每份材料的边界辨析必须点名组内邻居;out-of-scope 必须点名归属概念(这是防重复的唯一可靠手段)。
 - 单概念 guide 与概念组 guide 的分工:1 个概念 → `concept-learning-skill`;≥2 个**相关**概念 → `concept-group-guide`。
 - 「guide 模式」在本仓库 = 单概念 Skill 的 7 段式学习指南,**不是** WorkBuddy 的平台模式(平台只有 Craft/Plan/Ask 三档)。
+- **概念组 Phase 4 的领域边界铁律**(2026-09-17 修正):目标图谱/Wiki 已有明确领域时,**不要把不同领域的概念组塞进去**。本仓库 `concept-relationship.md` 是 AI Agent 领域、`tools/llm-wiki-agent/wiki/` 是 AI/LLM 领域 → Python 教学组**两者都不进**:改为在组目录下建 `关系图.md`(结构对齐既有图谱:一句话定位 / 关系总览 Mermaid / 边界矩阵 / 学习路径 / 一句话总结),并在 `concept-relationship.md` 顶部加一行「相关图谱(另一领域)」指引。图谱也**不重建** —— 输入没变,重建只会产生无意义 diff 与 commit churn。
+- 已交付概念组:`concept-group/python-lesson1-starter/`(Python 第 1 课 · 上手四概念,2026-09-17)。4 份材料在 `Python基础语法课程/learning-materials/`(环境搭建 / notebook / 变量与基本类型 / 报错怎么读),生成器 `output/_tools/make_concept_group.py`。组内配色(与既有 5 份 AI 概念不撞色):绿 `#2e7d4f` / 靛 `#3a4fa8` / 金褐 `#8a6a00` / 正红 `#b02a2a`,组索引主色 `#2f3e8f`。
+- 术语一致性靠概念组骨架里的「共享术语表」强制(例:Notebook 的 cell 必须写「单元格」,不得写成「格子」)。生成后要**脚本复检禁词**,因为口语习惯会偷偷漏进去。
 
 ## 文档流水线(tencent-docx v5.5.3)
 

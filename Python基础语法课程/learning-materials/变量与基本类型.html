@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：变量与基本类型（Variables & Basic Types）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #8a6a00;
+    --accent-soft: #f7f1de;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .callout {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Python 第 1 课 · 上手四概念</span>
+  <h1>变量与基本类型（Variables &amp; Basic Types）</h1>
+  <p class="subtitle">给数据起名，并认识整数 / 小数 / 文本 / 真假四类值 · 生成时间 2026-09-17 · 组内第 3 / 4</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">变量就是一个指向某个值的名字；基本类型则是把值分成整数 int、小数 float、文本 str、真假 bool 这四类。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>把变量想成一张贴纸标签。你有一个装着 18 的盒子，在盒子上贴一张写着 <em>age</em> 的标签 —— 这就是 <em>age = 18</em>。之后你一提 <em>age</em>，Python 就顺着标签去取那个值。这里最要紧的一点是：<strong>标签不是盒子本身</strong>。同一张标签可以撕下来贴到另一个盒子上（<em>age = 19</em>），原来那个 18 并没有被修改，只是暂时没有名字指着它了。</p>
+  <p>为什么强调这一点？因为它解释了初学者最困惑的现象之一：<em>a = 1</em> 之后写 <em>b = a</em>，再写 <em>a = 2</em>，为什么 <em>b</em> 还是 1？因为第二句只是让 <em>b</em> 也指向了那个 1，第三句是把 <em>a</em> 这张标签挪开了，跟 <em>b</em> 没关系。把变量理解成「名字指向值」而不是「盒子装值」，这类问题从此不再需要死记。</p>
+  <p>一个虚拟场景：你写下 <em>price = 19.9</em> 和 <em>count = 3</em>，然后算 <em>price * count</em>，屏幕却给出 <em>59.699999999999996</em>。这不是 Python 算错，而是<strong>小数在计算机里只能用二进制近似表示</strong> —— 19.9 存进去的那一刻就已经不是精确的 19.9。理解这一点，你既不会被浮点数的「尾巴」吓到，也会知道涉及金额的计算需要专门的处理方式，而不是直接比较是否相等。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>赋值 = 让一个名字指向一个值</strong>：<em>name = "小明"</em>。等号左边是名字，右边是值。<br />为什么重要：这是「给数据起名」的唯一动作，后面所有复用、计算、传递都建立在它之上。</li>
+    <li><strong>值自带类型，类型跟着值走</strong>：写 <em>18</em> 是 int，写 <em>18.0</em> 是 float，写 <em>"18"</em> 是 str，写 <em>True</em> 是 bool。<br />为什么重要：类型决定这个值能参与什么运算 —— <em>"2" + 2</em> 会报错，正是因为它俩类型不同。</li>
+    <li><strong>用 <em>type()</em> 查看类型</strong>：不确定就查，不要猜。<br />为什么重要：初学者相当一部分报错，根源都是「我以为它是数字，其实它是文本」。</li>
+    <li><strong>类型转换：<em>int()</em> / <em>float()</em> / <em>str()</em></strong>：把值从一类变成另一类。<br />为什么重要：<em>input()</em> 拿回来的<strong>永远是文本</strong>，想拿它做算术，必须先显式转成数字。</li>
+  </ol>
+  <div class="mermaid-placeholder">age = 18          # int   整数
+price = 19.9      # float 小数
+name = "小明"      # str   文本（引号包起来的都是文本）
+is_ok = True      # bool  真假，只有 True / False 两个值
+
+print(type(age))    # &lt;class 'int'&gt;
+print(type(name))   # &lt;class 'str'&gt;
+
+# 类型不匹配时会报错：下面是初学者最经典的一种
+# print("年龄：" + 18)          # TypeError
+print("年龄：" + str(18))       # 先用 str() 转成文本，才能拼
+
+n = int("42") + 1  # 文本 "42" -> 整数 42，才能做加法
+print(n)           # 43</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 记住用户的输入并计算</h3>
+    <p><span class="label">背景：</span>要做一个小程序：问用户年龄，然后算出他明年几岁。</p>
+    <p><span class="label">如何应用：</span>用 <em>input()</em> 取回输入（是文本），先 <em>int()</em> 转成整数存进变量，再 <em>+ 1</em> 输出。</p>
+    <p><span class="label">结果：</span>一个真正能和人交互的小程序；同时把「输入永远是文本」这个坑一次性踩明白。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 用真假值描述状态</h3>
+    <p><span class="label">背景：</span>需要记录「是否已完成」「是否登录」这类只有两种状态的信息。</p>
+    <p><span class="label">如何应用：</span>用 bool 变量存 <em>True</em> / <em>False</em>，注意区分<em>赋值用的 =</em> 与 <em>比较用的 ==</em>，别把状态和判断写混。</p>
+    <p><span class="label">结果：</span>程序能表达「条件」而不只是「数值」，为后面的判断与循环打好底子。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 看清小数的误差</h3>
+    <p><span class="label">背景：</span>用 float 做金额或科学计算，发现结果多出一串意料之外的小数位。</p>
+    <p><span class="label">如何应用：</span>理解 float 是二进制近似表示；需要精确比较时用容差判断，或改用专门的十进制处理方式，不做 <em>==</em> 直接比。</p>
+    <p><span class="label">结果：</span>不再把浮点误差误判成「Python 算错了」，也避免写出「永远不相等」的比较条件。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>变量不是盒子、不是容器</strong>：它是<em>名字指向值</em>。这一点直接决定了 <em>b = a</em> 的语义 —— 两个名字指向同一个值，而不是复制出一个盒子。</li>
+    <li><strong>不是「先声明类型再使用」</strong>：Python 不需要提前声明变量类型，类型跟着值走，同一个名字可以先后指向不同类型的值。</li>
+    <li><strong>不是只有这四种类型</strong>：int / float / str / bool 是本课要求认识的四种基本类型；列表、字典等容器类型属于后续课程，本篇不展开。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「<em>1</em> 和 <em>"1"</em> 是一回事」—— 不是。前者是数字可以参与运算，后者是文本，只能拼接，混用就会触发类型错误。</li>
+    <li>「变量名随便起」—— 有规则：由字母、数字、下划线组成，不能以数字开头，不能使用关键字，且区分大小写。</li>
+    <li>「浮点数可以放心用 == 比较」—— 不建议。<em>0.1 + 0.2 == 0.3</em> 在 Python 里结果是 False。</li>
+  </ul>
+  <h3>5.3 与组内邻居的分工</h3>
+  <table>
+    <thead><tr><th>相邻概念</th><th>本概念负责</th><th>交给邻居</th></tr></thead>
+    <tbody>
+      <tr><td><a href="报错怎么读.html">报错怎么读</a></td><td>只留一句「类型不匹配会抛出 TypeError」</td><td>TypeError 的完整排查步骤与逐行读法</td></tr>
+      <tr><td><a href="环境搭建.html">环境搭建</a></td><td>开始引入赋值与变量</td><td>第一个程序只用 <em>print("...")</em>，不引入变量</td></tr>
+      <tr><td><a href="notebook.html">Notebook</a></td><td>讲代码内容本身</td><td>代码写在哪、怎么运行、内核状态怎么管理</td></tr>
+    </tbody>
+  </table>
+  <h3>5.4 适用与不适用</h3>
+  <table>
+    <thead><tr><th>本概念能解决</th><th>要找别处</th></tr></thead>
+    <tbody>
+      <tr><td>给数据起名、做简单计算</td><td>字符串的完整方法清单（后续「字符串专题」）</td></tr>
+      <tr><td>判断一个值是什么类型、如何转换</td><td>类型错误的具体排查（找 <a href="报错怎么读.html">报错怎么读</a>）</td></tr>
+      <tr><td>理解「名字指向值」带来的现象</td><td>列表 / 字典 / 元组等容器类型（后续课程）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://docs.python.org/zh-cn/3/library/stdtypes.html">内置类型 · Python 官方文档（中文）</a> — 官方对数字类型（int / float / complex）、布尔类型是整数子类型、以及真值检测与比较运算的说明。</li>
+    <li><a href="https://docs.python.org/3/library/functions.html">Built-in Functions · Python 官方文档</a> — <em>type()</em>、<em>int()</em>、<em>float()</em>、<em>str()</em> 等内置函数的官方定义，对应本篇的类型查看与转换。</li>
+    <li><a href="https://docs.python.org/3/reference/lexical_analysis.html#identifiers">Lexical analysis — Identifiers · Python 官方文档</a> — 变量命名规则的官方依据：字母 / 数字 / 下划线，不能以数字开头，区分大小写。</li>
+    <li><a href="https://www.cs.toronto.edu/~david/course-notes/csc110-111/A-python-builtins/02-types.html">A.2 Python Built-In Data Types Reference · 多伦多大学 CSC110/111 课程笔记</a> — 权威教学材料：int / float / bool 的行为与 <em>int()</em> 截断、<em>float(x)</em> 转换等示例。</li>
+  </ol>
+  <p class="callout">说明：关于浮点数为二进制近似表示、以及「不建议用 == 直接比较浮点数」的表述，属于工程共识，来源于通用知识整理，未逐条绑定上列来源 <strong>[unverified]</strong>。</p>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">变量是贴在值上的名字，不是装值的盒子；不确定类型就 <em>type()</em> 一下 —— 把文本当数字用，是初学者最常见的一类错误。</p>
+</section>
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 上手四概念</footer>
+
+</div>
+</body>
+</html>

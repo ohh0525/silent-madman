@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：报错怎么读（Reading Tracebacks）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #b02a2a;
+    --accent-soft: #fbeaea;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .callout {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念组 · Python 第 1 课 · 上手四概念</span>
+  <h1>报错怎么读（Reading Tracebacks）</h1>
+  <p class="subtitle">看懂 Traceback 的四段结构，从最后一行定位错误 · 生成时间 2026-09-17 · 组内第 4 / 4</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">读报错，就是看懂 Python 抛出的 Traceback 的结构 —— 先看最后一行知道「错在哪一类」，再顺着文件与行号回到出事的那一行。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>报错信息不是判决书，而是一张体检报告。它从下往上写：<strong>最后一行是「病名」，再往上两行是「病灶在哪儿」</strong>。新手常被一大段英文吓住，习惯从第一行开始逐字读，读到一半就放弃了；正确的姿势恰恰相反 —— <em>倒着读</em>。先看最后一行，你立刻就知道是 TypeError 还是 NameError，十秒之内定位到大类。</p>
+  <p>为什么它长得这么啰嗦？因为 Python 想把话说全：它要告诉你「是哪个文件、第几行、哪个函数里出的问题」，还要把出事那行代码原样抄一遍，并用一个小箭头指出真正出问题的位置。这些信息对新手像是噪音，对熟练的人却是坐标系 —— 有了它，你不必猜，也不必把整段代码从头到尾重看一遍。</p>
+  <p>一个虚拟场景：你写下 <em>print("我的年龄是" + 18)</em>，屏幕弹出一段红字。看最后一行：<em>TypeError: can only concatenate str (not "int") to str</em> —— 意思是「加号只能用文本来拼接文本，你却塞了个整数进来」。再看倒数第二行，它直接把你写的那句抄了出来，并用箭头指向那个加号。修法因此非常清楚：<em>print("我的年龄是" + str(18))</em>。整个过程不需要搜索，也不需要猜。</p>
+  <p>最后一点心法：<strong>报错是信息，不是失败</strong>。它出现的那一刻，正是程序在替你指出「这里你以为的和实际的不一致」。能读懂它的人，调试速度是别人的数倍。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <p>Python 的报错信息称为 Traceback（堆栈回溯）。它由四段构成，认识这四段，就等于拿到了阅读顺序。</p>
+  <div class="mermaid-placeholder">Traceback (most recent call last):                    &lt;- ① 头部：固定开场
+  File "demo.py", line 2, in &lt;module&gt;                  &lt;- ② 位置：哪个文件 / 第几行 / 在哪个函数里
+    print("我的年龄是" + 18)                            &lt;- ③ 代码行：把出事的这行抄给你看
+          ~~~~~~~~~~~~~^~~~                            &lt;- ③ 箭头：指向真正出问题的位置
+TypeError: can only concatenate str (not "int") to str &lt;- ④ 类型 + 原因：整份报告的病名</div>
+  <p>有了结构，再看排查动作。下面五步是固定套路，熟练之后大约十秒走完：</p>
+  <ol>
+    <li><strong>看最后一行</strong> —— 确定错误类型，以及它自带的原因说明。</li>
+    <li><strong>看倒数第二、三行</strong> —— 确认是哪个文件的第几行出了问题。</li>
+    <li><strong>回到代码里那一行</strong> —— 只看这一行，尤其只看操作符（<em>+</em>、<em>[]</em>、<em>(</em>）的左右两边。</li>
+    <li><strong>问三个问题</strong> —— 这个名字我定义过吗？这两个东西的类型对吗？它的值真的是我以为的那个吗？</li>
+    <li><strong>只改一处，再跑一次</strong> —— 一次改五处，你永远不会知道是哪一处修好的。</li>
+  </ol>
+  <p>下表列出入门阶段最常见的五类错误。它们覆盖了绝大多数「新手撞墙」的场景：</p>
+  <table>
+    <thead><tr><th>错误类型</th><th>你看到的关键词</th><th>真实含义</th><th>修法方向</th></tr></thead>
+    <tbody>
+      <tr><td>NameError</td><td>name 'x' is not defined</td><td>这个名字当前不存在</td><td>检查拼写 / 是否漏了赋值 / 是否在内核重启后忘了重跑定义那格</td></tr>
+      <tr><td>TypeError</td><td>can only concatenate str (not "int") to str</td><td>参与运算的两个东西类型不匹配</td><td>用 <em>str()</em> / <em>int()</em> 显式转换后再运算</td></tr>
+      <tr><td>ValueError</td><td>invalid literal for int() with base 10: 'abc'</td><td>类型对，但那个值根本转不过去</td><td>先校验输入，再转换</td></tr>
+      <tr><td>KeyError</td><td>'age'</td><td>字典里没有这个键</td><td>先判断键是否存在，再取值</td></tr>
+      <tr><td>FileNotFoundError</td><td>[Errno 2] No such file or directory: 'data.txt'</td><td>按这个路径找不到文件</td><td>检查路径、当前工作目录与文件名拼写</td></tr>
+    </tbody>
+  </table>
+  <p>最后，记住几句高频英文，读报错的速度会立刻上一个台阶：</p>
+  <table>
+    <thead><tr><th>报错里的英文</th><th>中文意思</th></tr></thead>
+    <tbody>
+      <tr><td>... is not defined</td><td>这个名字没有定义（写错或没赋值）</td></tr>
+      <tr><td>can only concatenate str ... to str</td><td>只能用文本来拼接文本</td></tr>
+      <tr><td>invalid literal for int()</td><td>这个字符串没法转成整数</td></tr>
+      <tr><td>No such file or directory</td><td>没有这个文件或目录</td></tr>
+      <tr><td>expected an indented block</td><td>这里应该有缩进，但没有</td></tr>
+      <tr><td>takes N positional arguments but M were given</td><td>参数个数不对</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 名字写错或没赋值</h3>
+    <p><span class="label">背景：</span>想打印一个变量，屏幕上却出现 <em>NameError: name 'scoer' is not defined</em>。</p>
+    <p><span class="label">如何应用：</span>看最后一行拿到「名字不存在」，再看倒数第二行确认行号，回去核对拼写 —— 通常是 <em>score</em> 拼成了 <em>scoer</em>，或者赋值那格在重启内核后忘了重跑。</p>
+    <p><span class="label">结果：</span>把一个看起来吓人的红字，降解成一次拼写检查。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 把输入直接当数字算</h3>
+    <p><span class="label">背景：</span>用 <em>input()</em> 取回年龄后直接加 1，结果报错。</p>
+    <p><span class="label">如何应用：</span>看最后一行，若关键词是 <em>invalid literal for int()</em>（ValueError），说明输进来的文本根本不像数字；若是 <em>can only concatenate str</em>（TypeError），说明你压根没转换。</p>
+    <p><span class="label">结果：</span>能一眼分辨「值不合法」和「类型不对」这两种截然不同的毛病，修法不会用错。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 读文件时路径不对</h3>
+    <p><span class="label">背景：</span>程序要打开一个数据文件，直接抛 <em>FileNotFoundError: [Errno 2] No such file or directory: 'data.txt'</em>。</p>
+    <p><span class="label">如何应用：</span>最后一行已经给出了它实际在找的完整文件名与路径 —— 对照实际文件位置，多半是路径不对、或运行目录不是你以为的那个。</p>
+    <p><span class="label">结果：</span>不再怀疑「文件明明在啊」，而是直接拿报错给出的路径与实际路径做比对。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是「程序坏了」</strong>：报错是程序在告诉你「这里你以为的和实际的不一致」。它是信息，不是失败，也不是判你代码死刑。</li>
+    <li><strong>不是「要从第一行开始读」</strong>：要从<em>最后一行</em>开始读。从上往下读，等于把结论放在最后才看到。</li>
+    <li><strong>不是一份错误类型大全</strong>：本篇教的是<em>读的方法</em>（四段结构 + 五步动作），不是穷举所有异常。遇到清单之外的类型，方法依然适用。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「报错了就是白写了」—— 恰恰相反。能读懂报错的人，定位问题的速度是别人的数倍，这是投入产出比最高的一项基本功。</li>
+    <li>「搜报错要把整段粘进去」—— 不必。粘<em>最后一行</em>并去掉你自己起的变量名，更容易搜到同款问题。</li>
+    <li>「编辑器有红波浪线，就不用管运行时报错了」—— 红波浪线是静态检查，只能发现一部分问题；运行时错误只有真的跑起来才会暴露。</li>
+  </ul>
+  <h3>5.3 与组内邻居的分工</h3>
+  <table>
+    <thead><tr><th>相邻概念</th><th>本概念负责</th><th>交给邻居</th></tr></thead>
+    <tbody>
+      <tr><td><a href="变量与基本类型.html">变量与基本类型</a></td><td>完整讲 TypeError 等运行时报错的排查步骤</td><td>只留一句「类型不匹配会抛出 TypeError」</td></tr>
+      <tr><td><a href="环境搭建.html">环境搭建</a></td><td>只讲代码运行时抛出的报错</td><td>安装失败、「命令找不到」这类环境问题</td></tr>
+      <tr><td><a href="notebook.html">Notebook</a></td><td>讲报错内容怎么读</td><td>只讲「输出显示在单元格下方」这一现象</td></tr>
+    </tbody>
+  </table>
+  <p class="callout"><strong>与既有讲义的边界</strong>：本篇定位为<strong>自学速查卡</strong>（结构 + 速查表），不复刻课堂练习。课堂用讲义（含教学法、练习与错误记录表）见 <em>Python基础语法课程/Python基础语法讲义（补充·报错怎么读）.docx</em>。</p>
+  <h3>5.4 适用与不适用</h3>
+  <table>
+    <thead><tr><th>本概念能解决</th><th>要找别处</th></tr></thead>
+    <tbody>
+      <tr><td>运行时抛出的报错，如何定位到行</td><td>每种错误背后的类型系统原理（找 <a href="变量与基本类型.html">变量与基本类型</a>）</td></tr>
+      <tr><td>看懂 Traceback 四段结构与高频英文</td><td>断点调试器、pdb 等「调」的工具（本篇只讲「读」，不讲「调」）</td></tr>
+      <tr><td>快速判断错误大类与修法方向</td><td>安装失败类问题（找 <a href="环境搭建.html">环境搭建</a>）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://docs.python.org/zh-cn/3/tutorial/errors.html">8. 错误和异常 · Python 官方教程（中文）</a> — 官方对语法错误与异常的区分、Traceback 的「最后一行说明发生了什么、前段展示堆栈回溯」的权威表述，并给出 TypeError / NameError / ZeroDivisionError 的原始报错样例。</li>
+    <li><a href="https://docs.python.org/zh-cn/3/library/exceptions.html">内置异常 · Python 官方文档（中文）</a> — 官方对异常层级与本篇五类错误（TypeError / NameError / ValueError / KeyError / FileNotFoundError）的定义，是速查表的直接依据。</li>
+    <li><a href="https://docs.python.org/zh-cn/3.9/library/traceback.html">traceback —— 打印或读取栈回溯信息 · Python 官方文档（中文）</a> — 官方对 Traceback 的构造与打印方式的说明，佐证「四段结构」并非民间说法。</li>
+    <li><a href="https://wiki.python.org/moin/HandlingExceptions.html">Handling Exceptions · Python 官方 Wiki</a> — 官方 Wiki 对异常处理与 <em>sys.exc_info()</em> 的说明，并指向内置异常清单页。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">报错要倒着读：最后一行告诉你「错在哪一类」，往上两行告诉你「错在哪一行」，然后只盯那一行 —— 一次只改一个地方，再跑一次。</p>
+</section>
+<footer>由 concept-group-guide Skill 生成 · 2026-09-17 · 概念组：Python 第 1 课 · 上手四概念</footer>
+
+</div>
+</body>
+</html>
