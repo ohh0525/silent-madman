@@ -52,7 +52,11 @@ C:/Users/Lenovo/.venv-html-to-docx/Scripts/python.exe -m html_to_docx convert in
 - `Python基础语法课程/` 已有:主讲义、练习题、教学方案三份 docx + 补充章节《报错怎么读》。
 - 配套可运行 Notebook 在 `Python基础语法课程/notebooks/`:
   - 讲义配套 → 生成器 `output/_tools/make_lesson_notebooks.py`(01 上半场 / 02 下半场)
-  - **概念组配套** → 生成器 `output/_tools/make_concept_group_notebook.py`(03「列表套字典」,2026-09-17 新增)
+  - **概念组配套** → 两个生成器:
+    - `output/_tools/make_concept_group_notebook.py` → 03「列表套字典」(2026-09-17)
+    - `output/_tools/make_concept_group_notebooks_l1b.py` → 04「列表」/ 05「字典」(2026-09-17)
+    - 一个生成器可产出**多份** Notebook:把每份写成 `build_xxx_notebook()` 返回 cells,主函数逐个写盘
+    - 报错演示的**行号不要手数**:写个 `err_line_no(src, marker)` 从被注释的报错行反推真实行号,改代码后自动对齐
   - **本机未装 `nbformat`**,直接构造 nbformat 4.5 JSON(`cells` + `metadata.kernelspec` + `nbformat`/`nbformat_minor`)。
   - 代码格必须**逐格实跑**,markdown 的「预期输出」要与实跑结果**逐字一致**,禁止凭记忆写。
 - **概念组何时该配 Notebook**:"靠动手才立得住"的概念(容器 / 文件 / 循环)才配;示例与术语必须与它那份 HTML **同源**。已写进 `concept-group-guide` 的 Phase 2 与 Self-Check 第 10 条。
@@ -62,5 +66,7 @@ C:/Users/Lenovo/.venv-html-to-docx/Scripts/python.exe -m html_to_docx convert in
     (即 `'KeyError'.ljust(41) + ' ' + 'Traceback (most recent call last)'`,效果是 `Traceback` 落在第 42 列)
   - 之后:`Cell In[N], line N` → `----> N <源码>` → 空行 → `KeyError: 'xxx'`
   - **行号必须与代码格里那一行的真实位置对齐**(改代码后要重算)
-  - 参考实现见 `output/_tools/make_concept_group_notebook.py` 第 5 节
+  - **该宽度已跨异常名验证**:2026-09-17 用 IPython 9.17.1 实测 `IndexError` / `KeyError` / `TypeError` 三者
+    的 ljust 宽度**恒为 41**(与异常名长度无关),`Traceback` 永远落在第 42 列,分隔线永远 75 个 `-`
+  - 参考实现:`make_concept_group_notebook.py` 第 5 节 / `make_concept_group_notebooks_l1b.py` 的 `tb()` 辅助函数
 - 已知讲义笔误:`"张三".replace("张","李")` 输出是 **"李三"**(讲义旧版误写"李四"),Notebook 已更正。
