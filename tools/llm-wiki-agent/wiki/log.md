@@ -83,3 +83,15 @@ Note: supersedes the pre-2026-07-28 (stateful, session-based) description previo
 ## [2026-09-16] graph | Knowledge graph rebuilt
 
 31 nodes, 125 edges (125 extracted, 0 inferred).
+
+## [2026-09-17] graph | Knowledge graph rebuilt
+
+31 nodes, 125 edges (125 extracted, 0 inferred).
+
+## [2026-09-17] lint | Daily maintenance (health + custom lint)
+
+Tool: `python tools/health.py` — 31 pages. Empty/Stub 0 ✅ · Index Sync 0 ✅ · Log Coverage 0 ✅
+Custom lint over 33 `.md` (4 dimensions): broken `[[wikilinks]]` 0 ✅ · frontmatter issues 0 ✅ · invalid `sources` slugs 0 ✅
+Fixed: `[[BaiduBaike]]` and `[[SourceScore]]` had no inbound wikilink (reachable only via `index.md`). Added inbound links — `[[BaiduBaike]]` from `sources/llm-context.md` and `sources/skill.md`, `[[SourceScore]]` from `sources/agent.md` — after verifying both references exist in the raw material (`raw/learning-materials/llm-context.html`, `skill.html`, `agent.html`). Bumped `last_updated` on those 3 source pages.
+raw/: no new un-ingested material — all 6 `source_file` targets still resolve.
+Note: `raw/` untouched; no files deleted; `overview.md` synthesis still current (no new sources today).
