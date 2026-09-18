@@ -159,27 +159,40 @@ def main() -> int:
     blob_cache: dict[str, str] = state.get("blob_cache", {})
 
     # Base comes from the live remote ref, not a pinned constant.
-    parent_remote = api("GET", f"/git/ref/heads/{BRANCH}")["object"]["sha"]
-    parent_tree = api("GET", f"/git/commits/{parent_remote}")["tree"]["sha"]
+    remote_head = api("GET", f"/git/ref/heads/{BRANCH}")["object"]["sha"]
+    remote_tree = api("GET", f"/git/commits/{remote_head}")["tree"]["sha"]
     local_head = git("rev-parse", "HEAD").decode().strip()
+    local_tree = git("rev-parse", "HEAD^{tree}").decode().strip()
 
-    if parent_remote == local_head:
-        print(f"远端 {BRANCH} 已是本地 HEAD（{local_head[:8]}），无需推送。")
+    if remote_tree == local_tree:
+        print(f"远端 {BRANCH} 内容已与本地 HEAD 相同，无需推送。")
+        print(f"  远端 commit {remote_head[:8]} / 本地 {local_head[:8]}"
+              f"（两边的 commit sha 天然不同，以 tree 为准）")
         return 0
 
-    if subprocess.run(["git", "cat-file", "-e", parent_remote], cwd=REPO_DIR,
-                      capture_output=True).returncode != 0:
-        raise SystemExit(f"远端 {BRANCH} 的提交 {parent_remote[:8]} 本地不存在"
-                         f" —— 先 git fetch 再重试")
+    # Every commit on the remote was minted by this script, so its sha almost
+    # never exists locally. Match by TREE instead of by sha: the remote head's
+    # tree equals the tree of some local commit, and that commit is where the
+    # next replay starts.
+    base_local = None
+    for line in git("log", "--format=%H %T", "HEAD").decode().splitlines():
+        if line.strip():
+            sha, tree = line.split()
+            if tree == remote_tree:
+                base_local = sha
+                break
 
-    if subprocess.run(["git", "merge-base", "--is-ancestor", parent_remote, "HEAD"],
-                      cwd=REPO_DIR, capture_output=True).returncode != 0:
-        raise SystemExit(f"远端 {parent_remote[:8]} 不是本地 HEAD 的祖先（历史已分叉）"
-                         f" —— 先 git pull/merge 再重试")
+    if base_local is None:
+        raise SystemExit(
+            f"远端 {BRANCH} 的 tree {remote_tree[:8]} 在本地历史里找不到对应提交"
+            f" —— 远端有本地没有的内容，先 git pull 再重试")
 
     local_commits = git("rev-list", "--reverse",
-                        f"{parent_remote}..HEAD").decode().split()
-    print(f"待推送提交: {len(local_commits)} 个（基于远端 {parent_remote[:8]}）")
+                        f"{base_local}..HEAD").decode().split()
+    print(f"待推送提交: {len(local_commits)} 个"
+          f"（远端 tree 对应本地 {base_local[:8]}）")
+
+    parent_remote, parent_tree = remote_head, remote_tree
 
     for idx, csha in enumerate(local_commits, 1):
         subject = git("log", "-1", "--format=%s", csha).decode().strip()
