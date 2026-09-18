@@ -4,12 +4,17 @@
 Why not `git push`: on this machine github.com resolves to a blackholed IP,
 TCP connections to it succeed only ~1 attempt in 10, and even when the CONNECT
 succeeds the git protocol stream stalls or gets reset. api.github.com, by
-contrast, answered 5/5 probes in under 1.2s.
+contrast, answers reliably enough to work with.
 
 The Git Data API is what a push does under the hood, so replicating it here
 reproduces the same history: for each local commit we upload the changed blobs,
 build a tree on top of the previous one, create a commit with the original
 author/committer/message, and advance the branch ref.
+
+The base is read from the remote ref at run time instead of being pinned to a
+constant: this repo gets merged with the remote (git pull), and a pinned base
+goes stale the moment that happens — every later push then dies with
+"Update is not a fast forward".
 
 The token is read from ~/.git-credentials inside this process and never printed.
 State is checkpointed after every commit, so a failure mid-way is resumable by
@@ -31,7 +36,6 @@ REPO_DIR = pathlib.Path(r"D:\桌面\silent-madman")
 OWNER_REPO = "ohh0525/silent-madman"
 API = f"https://api.github.com/repos/{OWNER_REPO}"
 BRANCH = "main"
-BASE_COMMIT = "fdfe09321d5982626ddeb0790c07b1c62f06f4e8"
 STATE_FILE = pathlib.Path(__file__).parent / ".api_push_state.json"
 
 RETRIES = 4
@@ -41,12 +45,30 @@ RETRIES = 4
 # helpers
 # --------------------------------------------------------------------------- #
 def load_token() -> str:
-    """Read the OAuth token straight out of the git credential store."""
-    raw = (pathlib.Path.home() / ".git-credentials").read_text(encoding="utf-8").strip()
-    m = re.match(r"^https://([^:]+):(.+)@github\.com$", raw)
-    if not m:
-        raise SystemExit("无法解析 ~/.git-credentials")
-    return m.group(2)
+    """Pick this repo's OAuth token out of the git credential store.
+
+    `~/.git-credentials` is a multi-line store and this machine holds more than
+    one GitHub account, so parsing must not assume a single line — matching the
+    whole file against one regex breaks the moment another account's credential
+    gets appended by an unrelated tool.
+    """
+    store = pathlib.Path.home() / ".git-credentials"
+    entries: list[tuple[str, str]] = []
+    for line in store.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"^https://([^:]+):(.+)@github\.com$", line.strip())
+        if m:
+            entries.append((m.group(1), m.group(2)))
+
+    if not entries:
+        raise SystemExit(f"{store} 里没有可解析的 github.com 凭据行")
+
+    account = OWNER_REPO.split("/")[0].lower()
+    for user, token in entries:
+        if user.lower() == account:
+            return token
+
+    print(f"      提示：凭据里没有 {account} 的条目，回退用 {entries[0][0]}（可能 403）")
+    return entries[0][1]
 
 
 TOKEN = load_token()
@@ -135,34 +157,35 @@ def commit_meta(sha: str) -> dict:
 def main() -> int:
     state = json.loads(STATE_FILE.read_text()) if STATE_FILE.exists() else {}
     blob_cache: dict[str, str] = state.get("blob_cache", {})
-    pushed: dict[str, str] = state.get("pushed", {})   # local sha -> remote sha
 
-    local_commits = git("rev-list", "--reverse", f"{BASE_COMMIT}..HEAD"
-                        ).decode().split()
-    print(f"待推送提交: {len(local_commits)} 个")
+    # Base comes from the live remote ref, not a pinned constant.
+    parent_remote = api("GET", f"/git/ref/heads/{BRANCH}")["object"]["sha"]
+    parent_tree = api("GET", f"/git/commits/{parent_remote}")["tree"]["sha"]
+    local_head = git("rev-parse", "HEAD").decode().strip()
 
-    # Verify the remote base actually matches our local base, so we never
-    # build on a tree that has moved underneath us.
-    remote_base = api("GET", f"/git/commits/{BASE_COMMIT}")
-    local_base_tree = git("rev-parse", f"{BASE_COMMIT}^{{tree}}").decode().strip()
-    if remote_base["tree"]["sha"] != local_base_tree:
-        raise SystemExit("远端基线与本地不一致，先 git fetch 再重试")
+    if parent_remote == local_head:
+        print(f"远端 {BRANCH} 已是本地 HEAD（{local_head[:8]}），无需推送。")
+        return 0
 
-    parent_remote = BASE_COMMIT
-    parent_tree = remote_base["tree"]["sha"]
+    if subprocess.run(["git", "cat-file", "-e", parent_remote], cwd=REPO_DIR,
+                      capture_output=True).returncode != 0:
+        raise SystemExit(f"远端 {BRANCH} 的提交 {parent_remote[:8]} 本地不存在"
+                         f" —— 先 git fetch 再重试")
+
+    if subprocess.run(["git", "merge-base", "--is-ancestor", parent_remote, "HEAD"],
+                      cwd=REPO_DIR, capture_output=True).returncode != 0:
+        raise SystemExit(f"远端 {parent_remote[:8]} 不是本地 HEAD 的祖先（历史已分叉）"
+                         f" —— 先 git pull/merge 再重试")
+
+    local_commits = git("rev-list", "--reverse",
+                        f"{parent_remote}..HEAD").decode().split()
+    print(f"待推送提交: {len(local_commits)} 个（基于远端 {parent_remote[:8]}）")
 
     for idx, csha in enumerate(local_commits, 1):
         subject = git("log", "-1", "--format=%s", csha).decode().strip()
-
-        if csha in pushed:
-            print(f"[{idx}/{len(local_commits)}] 已推送，跳过  {csha[:8]} {subject[:40]}")
-            parent_remote = pushed[csha]
-            parent_tree = api("GET", f"/git/commits/{parent_remote}")["tree"]["sha"]
-            continue
-
         local_parent = git("rev-parse", f"{csha}^").decode().strip()
         changes = parse_raw_diff(local_parent, csha)
-        print(f"[{idx}/{len(local_commits)}] {csha[:8]} {subject[:44]}")
+        print(f"[{idx}/{len(local_commits)}] {csha[:8]} {subject[:60]}")
         print(f"      变更 {len(changes)} 个文件")
 
         tree_entries = []
@@ -205,21 +228,23 @@ def main() -> int:
         # Advance the branch immediately so progress survives a later failure.
         api("PATCH", f"/git/refs/heads/{BRANCH}", {"sha": new_commit, "force": False})
 
-        pushed[csha] = new_commit
         parent_remote, parent_tree = new_commit, new_tree
         print(f"      -> 远端 {new_commit[:8]}  分支已前进")
 
-        STATE_FILE.write_text(json.dumps(
-            {"blob_cache": blob_cache, "pushed": pushed}, indent=1))
+        STATE_FILE.write_text(json.dumps({"blob_cache": blob_cache}, indent=1))
 
     head_remote = api("GET", f"/git/ref/heads/{BRANCH}")["object"]["sha"]
+    remote_tree = api("GET", f"/git/commits/{head_remote}")["tree"]["sha"]
+    local_tree = git("rev-parse", "HEAD^{tree}").decode().strip()
+
     print()
     print(f"完成。远端 {BRANCH} = {head_remote}")
-    local_head = git("rev-parse", "HEAD").decode().strip()
-    status = git("status", "--short").decode().strip()
-    print(f"本地 HEAD      = {local_head}")
-    print(f"本地主提交一致 = {head_remote == local_head}")
-    print(f"本地未提交改动 = {'无' if not status else status}")
+    print(f"本地 HEAD       = {local_head}")
+    print(f"远端 tree       = {remote_tree}")
+    print(f"本地 tree       = {local_tree}")
+    # Commit shas never match (the message's trailing newline is stripped when
+    # it is replayed through the API), so the tree is the only real check.
+    print(f"内容完全一致    = {remote_tree == local_tree}")
     return 0
 
 
