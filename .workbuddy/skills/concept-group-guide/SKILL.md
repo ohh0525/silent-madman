@@ -1,6 +1,6 @@
 ---
 name: concept-group-guide
-description: Generate a coherent SET of learning materials for a group of RELATED concepts, building on the single-concept guide format. Use when the user supplies two or more related concepts and wants one coherent set of materials rather than one-off pages — e.g. "把这几个概念做成一套材料", "生成一组相关概念的学习材料", "这几个概念一起做", "概念组", "concept group", "concept set", "batch learning materials". The key value is the RELATIONSHIPS between concepts: this skill first produces a concept-group skeleton (concept list, scope boundaries, prerequisite order, shared glossary) for the user to confirm, then generates each 7-section guide, then builds group-level artifacts and refreshes the knowledge graph. Do NOT use for a single concept (use concept-learning-skill) or for dictionary-style one-line definitions.
+description: Generate a coherent SET of learning materials for a group of RELATED concepts, building on the single-concept guide format. Use when the user supplies two or more related concepts and wants one coherent set of materials rather than one-off pages — e.g. "把这几个概念做成一套材料", "生成一组相关概念的学习材料", "这几个概念一起做", "概念组", "concept group", "concept set", "batch learning materials". The key value is the RELATIONSHIPS between concepts: this skill writes a concept-group skeleton (concept list, scope boundaries, prerequisite order, shared glossary) to disk as a design record, then **runs straight through without stopping for confirmation** — generating each 7-section guide, building group-level artifacts, and refreshing the knowledge graph in one uninterrupted pass. Do NOT stop mid-way waiting for the user to approve the skeleton; only pause if the user explicitly asks to review it first (e.g. "先给我看骨架", "停下等我确认"). Do NOT use for a single concept (use concept-learning-skill) or for dictionary-style one-line definitions.
 agent_created: true
 ---
 
@@ -12,7 +12,9 @@ agent_created: true
 
 与"逐个生成"的本质区别只有一句话：**难点不在生成 N 份，而在 N 份之间的关系**。逐个独立生成几乎必然出现四种病：边界互相重叠、术语各写各的、没有先修顺序、彼此不引用。本 Skill 的增量全部用来治这四种病。
 
-工作方式：**骨架先行 + 人工检查点**。先把关系（清单 / 边界 / 顺序 / 术语）定下来并经用户确认，再逐份生成，最后整合出组级产物并回流更新仓库图谱与知识库。
+工作方式：**骨架先行 + 一口气跑完**。先把关系（清单 / 边界 / 顺序 / 术语）定下来写成骨架文件存档，**不等确认**，直接逐份生成，最后整合出组级产物并回流更新仓库图谱与知识库。
+
+骨架的定位是**设计文档，不是审批单**。它仍然必须写、必须 6 项齐全——因为它是后续 N 份材料保持一致的唯一依据——但它**不再阻塞流程**。自动模式下，骨架落盘后在顶部标注 `> ⚠️ 未确认骨架（自动模式）：以下为模型假设`，供事后追溯；用户想干预时，回头改骨架即可。
 
 ## When to Use
 
@@ -24,13 +26,14 @@ agent_created: true
 
 - 单个概念 → 用 `concept-learning-skill`
 - 词典式一句话定义、任务执行类（代码 / 文档 / 表格）
-- 概念数 ≥ 8 时：先提醒用户可考虑并行编排方案（本项目暂未实现），并建议拆成多个组
+- 概念数 ≥ 8 时：仍按 `auto` 跑完，只在骨架与最终回复里提示「建议拆成多个组，或改用并行编排（本项目暂未实现）」，**不要为此停下等确认**
 
 ## Inputs
 
 | 字段 | 必填 | 默认 | 说明 |
 |---|---|---|---|
 | `concepts` | ✅ | — | 用户显式给出的概念清单（**本 Skill 只接受显式清单**，不自动扩展） |
+| `skeleton_review` |  | `auto` | `auto` = 骨架写完直接开跑，**全程不停**（默认）；`review` = 骨架写完停下等用户确认。**仅当用户显式要求时**才用 `review`（如「先给我看骨架」「停下等我确认」「骨架确认后再生成」） |
 | `group_name` |  | 由骨架阶段提议 | 组名，用于输出目录与索引页标题 |
 | `output_root` |  | `learning-materials/` | 单份 HTML 的输出根目录；课程类概念可改为如 `Python基础语法课程/learning-materials/` |
 | `audience_level` |  | `intermediate` | beginner / intermediate / expert |
@@ -40,7 +43,7 @@ agent_created: true
 
 ## Workflow
 
-### Phase 1 — 概念组骨架（**产出后必须停下等确认**）
+### Phase 1 — 概念组骨架（**产出后直接进 Phase 2，不停**）
 
 产出 `concept-group/<group-slug>/00-骨架.md`，必须包含以下 6 项，一项都不能少：
 
@@ -54,15 +57,20 @@ agent_created: true
 5. **共享术语表** —— 本组内术语的统一措辞（中英文对照），防止各份材料自造词
 6. **冲突检查** —— 显式列出"两两之间可能重叠的点"及归属裁决结论
 
-骨架产出后**停下**，把骨架呈给用户审阅。**用户确认（或改完再确认）之后才进 Phase 2。**
-若用户表示跳过确认直接生成 → 允许，但必须在骨架文件顶部标注 `> ⚠️ 未确认骨架，以下为模型假设`，并在最终回复里提醒。
+骨架产出后**不要停**，直接进 Phase 2。按 `skeleton_review` 模式在骨架文件顶部加标注：
+
+- `auto`（默认）：`> ⚠️ 未确认骨架（自动模式）：以下为模型假设`，然后**立刻开始 Phase 2**
+- `review`（仅在用户显式要求时）：写下标注后**停下**，把骨架呈给用户审阅，用户确认（或改完再确认）后才进 Phase 2
+
+自动模式下，骨架摘要仍要出现在最终回复的**开头**（清单表 + 先修顺序 + 关键边界裁决），方便用户事后一眼核对；但它**不是阻塞点**，不要为它中断流程、也不要问"骨架可以吗"。
+**禁止**：把骨架单独发出来就结束回合、等用户回话再继续。
 
 ### Phase 2 — 逐份生成
 
 对 `concepts` 里每个概念，按 `concept-learning-skill` 的 7 段结构生成（一句话定义 / 个人解释 / 核心机制 / 应用场景 / 边界辨析 / 来源链接 / 一句话回顾），并追加以下**组内强制项**：
 
 - **第 5 段边界辨析必须点名组内相邻概念**，格式如：「与 X 的分工：本概念负责 …，X 负责 …，详见 X 篇」。每份至少点名 1 个，无邻居的孤立概念要显式说明"本组内无直接相邻概念"。
-- **严格服从骨架**：边界声明与术语表以 Phase 1 为准。生成中发现骨架有误（如边界冲突、顺序反了）→ **停下来回报**，不擅自扩写或改边界。
+- **严格服从骨架**：边界声明与术语表以 Phase 1 为准，不擅自扩写或改边界。生成中发现骨架有误（如边界冲突、顺序反了）→ **继续生成**，把问题补记进骨架的「冲突检查」段，并在最终回复末尾单列一份「待你裁决」。只有该错误会导致两份材料自相矛盾、无法自洽时才中断回报 —— **不要为了"请求确认"而停**。
 - **来源要求**沿用单概念 Skill 的领域最低来源数（通用 / 技术 / 法律医学三档），不得编造 URL，未核实断言标 `[unverified]`。
 - 产出到 `<output_root>/<concept>.html`。
 
@@ -123,13 +131,18 @@ agent_created: true
 8. 图谱：**同领域**则重建成功且节点数 ≥ 生成前；**跨领域**则既未污染既有图谱（已独立成篇 + 在既有图谱留一行指引），也未误登记进领域不匹配的 Wiki
 9. 组内每份材料都能回答："它和我隔壁那份的边界在哪？"
 10. （若产出配套 Notebook）每个代码格都实跑无异常；「预期输出」与实跑结果逐字一致；术语与对应 HTML 材料一致；Notebook 里引用的材料与索引页路径真实可达
+11. **流程没有中断**：本回合从 Phase 1 一路跑到 Phase 4，没有出现「骨架已生成，请确认后再继续」这类停顿（除非用户显式要求 `skeleton_review`）
+12. **骨架标注正确**：`auto` 模式下骨架文件顶部有 `> ⚠️ 未确认骨架（自动模式）` 标注，且全文未出现「已确认 / 已验证」的表述
+13. **已发通知**：推送完成后弹出了 Windows 桌面通知
 
 ## 硬约束（本仓库约定）
 
 - **人工核查承诺**：README 有「所有入库资料经本人逐条核查」的承诺。模型可以生成产物，但**不得声称"已验证"**；核查由用户本人完成。
 - **不修改 `raw/` 任何文件**（LLM Wiki 的不可变源材料）。
 - **推送全自动**：commit 后用 `python output/_tools/api_push.py`。不要用 `git push`（本机 git 协议被封）。不要读取 / 打印 token 明文。
-- 不在骨架未经确认时假装已确认。
+- **全程不停（本 Skill 的核心行为约定）**：Phase 1 → 4 一口气跑完，不因等待确认而中断。唯一允许的停点：① 用户显式要求 `skeleton_review`；② 生成陷入无法自洽的硬冲突（须说明原因）。除此之外**不允许出现"骨架已生成，请确认后再继续"这类回合结束**。
+- **不假装已确认**：自动模式骨架一律标注 `> ⚠️ 未确认骨架（自动模式）`，不得声称用户审阅过、不得声称已确认。
+- **跑完要通知**：这是无人值守的长流程，推送结束后弹一条 Windows 桌面通知（见全局约定「任务完成后发通知」）。
 - 中文、结构化输出（编号、表格、清单、分步）。
 
 ## Resources
