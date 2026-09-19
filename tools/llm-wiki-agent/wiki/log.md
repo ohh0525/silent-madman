@@ -111,3 +111,15 @@ Fixes: none needed (all dimensions clean). No wiki content page was modified; on
 Graph: not rebuilt — no change in graph inputs (no new pages, no new cross-page links; this entry adds no wikilink), per the repo rule against meaningless diff / commit churn. Graph remains 31 nodes / 125 edges / 3 communities.
 overview.md: synthesis judged still current (no new sources today) — left unchanged. Flagged for the human only, as a suggestion, that the 2026 "Agent Harness" signal may structurally refine the current Cluster A/B framing; nothing was edited.
 Note: `raw/` untouched; no files deleted.
+
+## [2026-09-19] lint | Daily maintenance (health + custom lint)
+
+Tool: `python tools/health.py` — 31 pages. Empty/Stub 0 ✅ · Index Sync 0 ✅ · Log Coverage 0 ✅
+Custom lint over 33 `.md` (5 dimensions): broken wikilinks 0 ✅ · orphan pages 0 ✅ · frontmatter issues 0 ✅ · invalid `sources` slugs 0 ✅ · index↔disk mismatch (forward + reverse) 0 ✅
+Note on the single scan alert: `log.md` line ~94 contains the literal string `[[wikilinks]]` as narrative prose (not a page reference); `log.md` is a structural file and is excluded from the link dimension. Not a real broken link.
+raw/: no new un-ingested material — all 6 `source_file` targets still resolve (5 concept HTML + 1 MCP spec).
+Orphans: the two entity pages fixed on 2026-09-17 (`BaiduBaike`, `SourceScore`) still have inbound links — no regression; every non-structural page has ≥2 inbound links.
+Fixes: none needed (all dimensions clean). No wiki content page was modified; only this log entry was appended.
+Graph: not rebuilt — no change in graph inputs. Graph remains 31 nodes / 125 edges / 3 communities.
+overview.md: synthesis judged still current (no new sources today) — left unchanged. Flagged for the human only, as a suggestion, that the A2A (Agent2Agent) horizontal-protocol signal may warrant a protocol-layer node next to [[MCP]] (MCP = agent→tool vertical, A2A = agent→agent horizontal); nothing was edited.
+Note: `raw/` untouched; no files deleted.
