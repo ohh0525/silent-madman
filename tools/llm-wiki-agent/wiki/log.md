@@ -147,3 +147,15 @@ Fixes: none needed (all dimensions clean). No wiki content page was modified; on
 Graph: not rebuilt — no change in graph inputs. Graph remains 31 nodes / 125 edges / 3 communities.
 overview.md: synthesis judged still current (no new sources today) — left unchanged. Flagged for the human only, as a suggestion, that the 2026-09-16/17 evidence on **compaction fidelity & safety** (OpenAI's official disclosure of model-generated instructions written into compaction summaries; the 176-config harness ablation finding that rule-based elision *before* summarization beats summarization-first) may require a *fidelity/safety* axis next to [[Compaction]] in the Cluster B framing; nothing was edited.
 Note: `raw/` untouched; no files deleted.
+
+## [2026-09-22] lint | Daily maintenance (health + custom lint)
+
+Tool: `python tools/health.py` — 31 pages. Empty/Stub 0 ✅ · Index Sync 0 ✅ · Log Coverage 0 ✅
+Custom lint over 33 `.md` (5 dimensions): broken wikilinks 0 ✅ · pages missing from `index.md` 0 ✅ · frontmatter issues 0 ✅ · invalid `sources` slugs 0 ✅ · index↔disk mismatch (forward + reverse) 0 ✅
+Note on the recurring scan alert: `log.md` contains the literal string `[[wikilinks]]` as narrative prose (not page references); structural files (`index.md` / `log.md` / `overview.md`) are excluded from the link dimension. Not a real broken link.
+raw/: no new un-ingested material — all 6 `source_file` targets still resolve (5 concept HTML + 1 MCP spec); newest `raw/` mtime is still 2026-09-16.
+Reachability: measured strictly as *distinct non-structural pages that wikilink to a page* (structural files excluded, self-links excluded). Two nodes sit at 1 inbound — `entities/SourceScore.md` (cited only by `sources/agent.md`) and `sources/mcp-2026-07-28.md` (cited by `concepts/MCP.md`). Both are legitimately single-source nodes and both are listed in `index.md`, so neither is an orphan. The previous days' "min = 2" figure came from a looser count that also credited structural-file mentions (`log.md` / `overview.md`); the difference is a counting rule, not a regression. No link was added — `SourceScore` is cited in only one raw document, so a second inbound link could not be sourced.
+Fixes: none needed (all dimensions clean). No wiki content page was modified; only this log entry was appended.
+Graph: not rebuilt — no change in graph inputs. Graph remains 31 nodes / 125 edges / 3 communities.
+overview.md: synthesis judged still current (no new sources today) — left unchanged. Flagged for the human only, as a suggestion, that two unreviewed radar themes from 2026-09-18 through 2026-09-21 are now each tabled for the third or second time (**compaction fidelity & safety** against [[Compaction]]; **memory-use timing as a learned policy** against [[LongTermMemory]]). Both would be *revisions* to existing pages, not new nodes; per standing constraint nothing was edited.
+Note: `raw/` untouched; no files deleted.
