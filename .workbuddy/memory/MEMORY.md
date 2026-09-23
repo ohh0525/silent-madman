@@ -10,6 +10,9 @@
   - 脚本用 API 重建 commit 对象 → **远端 SHA 与本地 SHA 不同但 tree 哈希一致**,属正常,别误判为失败;以脚本末尾 tree 比对为准。
   - `output/_tools/.api_push_state.json` 是断点续传状态,**已 untrack + gitignore**(machine-local),不要再纳入版本库,否则产生 commit churn。
 - **人工核查承诺**:`learning-materials/` 下的资料必须逐条对照原始来源后才能入库,未经核查不得由模型直接写入。
+  - 例外口径(2026-09-22 确立):用户明确点头**可以**落盘;但落盘时必须同时做到 ①页脚标 `由 concept-explainer Skill 自动生成 · <日期> · 待人工核查后入库`;②`README.md` 最后更新行写明「尚未经本人逐条人工核查」;③核查通过后再由本人移除标记并把该行改成「由本人逐条人工核查后入库」。
+  - 落盘后**必须登记**(这是 README 里写明的第 5 步):`README.md` 的目录树 + 「已生成清单」表(含主题色),以及 `concept-relationship.md` 顶部配套列表 + 文末对应「扩展」小节。多个新概念同属一条叙事线时,在 `concept-relationship.md` 里加一个**「扩展N · <线名>」**节(含 Mermaid + 新增连线解释 + 与既有概念的边界要点),而不是散着列。
+  - 概念类材料的主题色**不得与既有 10 个撞色**(AI 单概念 5 个:橙 `#b35900` / 蓝 `#1a6fb4` / 紫 `#5b3a8a` / 青 `#0e7a6d` / 玫红 `#b3426b`;Python 概念组 9 个见下表)。新增时先 `grep --accent` 全目录确认。
 - `.gitignore` 排除 `*_draft.md` / `*.draft.md` / `*.scratch.md` → 流水线中间稿(stage1 的 `final_draft.md`)**不入库**,属正常现象,不要强行 `-f` 添加。
 - 产出目录约定:`learning-materials/<concept>.html`(单概念)、`concept-relationship.md`(图谱);教学资料放 `Python基础语法课程/`。
 - 本仓库有两份同名 Skill:项目级 `.workbuddy/skills/concept-learning-skill/`(优先)与 user 级 `~/.workbuddy/skills/concept-explainer/`,内容同步。

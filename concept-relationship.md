@@ -3,6 +3,8 @@
 > 一份用 Mermaid 流程图 + 文字解析，把「Agent」「上下文窗口」「Skill」三者联系起来的工作笔记；文末「扩展」一节再接入「上下文工程」与「带溯源的长期记忆」两个概念。
 > 配套学习资料：[agent.html](./learning-materials/agent.html)、[llm-context.html](./learning-materials/llm-context.html)、[skill.html](./learning-materials/skill.html)、[context-engineering.html](./learning-materials/context-engineering.html)、[agent-memory-provenance.html](./learning-materials/agent-memory-provenance.html)
 >
+> **行动侧三份（2026-09-22 · 待人工核查）**：[agent-identity.html](./learning-materials/agent-identity.html)、[human-in-the-loop.html](./learning-materials/human-in-the-loop.html)、[tool-hallucination.html](./learning-materials/tool-hallucination.html) —— 对应文末「扩展二 · 行动侧」一节。
+>
 > **相关图谱（另一领域）**：Python 教学概念组 —— [Python 第 1 课 · 上手四概念的关系图](./concept-group/python-lesson1-starter/关系图.md)、[Python 第 1 课 · 下半场四概念的关系图](./concept-group/python-lesson1-second-half/关系图.md)。两组与本图谱（AI Agent 领域）分属不同知识网，故独立成篇、仅互为索引，不合并进同一张图。
 
 ---
@@ -289,3 +291,73 @@ flowchart TB
 - **Skill vs 上下文工程** = 实例 vs 原则。Skill 是"渐进披露"的具体载体，不是原则本身。
 - **RAG vs 带溯源的长期记忆** = 检索手段 vs 完整记忆系统。前者检索到就用完即弃，后者持久化、会更新、且规定"未打开的证据不得引用"。
 - **Agent vs 长期记忆** = 谁去读写 vs 存在哪。Agent 是动作发起方，记忆是状态承载方。
+
+---
+
+## 扩展二：行动侧三份如何接进这张网
+
+> ⚠️ 本节对应的三份材料（`agent-identity.html` / `human-in-the-loop.html` / `tool-hallucination.html`）生成于 2026-09-22，**尚未经本人逐条人工核查**，页脚标为「待人工核查后入库」。
+
+上面五份回答的是「**agent 知道什么、记得什么、凭什么相信**」。可是 agent 一旦从"回答"变成"动手"，还欠三个更靠前的问题——它们共同构成**「信任的行动侧」**：
+
+| 问题 | 概念 | 一句话 |
+|---|---|---|
+| **谁在动手？** | 智能体身份与委派授权<br/>Agent Identity & Delegated Authority | 可验证的身份 + **只能收窄不能放大**的委派链 |
+| **这件事该不该由它自己决定？** | 人在环审批闸门<br/>Human-in-the-Loop / Escalation Gate | 按「影响 × 可逆性」分级，在**不可逆写动作**前插一个可审计、可超时的检查点 |
+| **它说它要调用的那个工具，真的存在吗？** | 工具幻觉与封闭世界消解<br/>Tool Hallucination & Closed-World Resolution | **先**做「注册表成员资格 + 签名」的事实核对，**再**谈权限门控 |
+
+```mermaid
+flowchart TB
+    subgraph Fact["事实侧（已有 · 五份）"]
+        PM["带溯源的长期记忆<br/>Provenance / CitationLock / Abstention"]
+        CE["上下文工程<br/>每一步放什么"]
+    end
+
+    subgraph Action["行动侧（2026-09-22 · 待核查）"]
+        ID["智能体身份<br/>谁在动手 · 代表谁"]
+        HITL["人在环审批闸门<br/>该不该由它自己决定"]
+        RES["封闭世界消解<br/>这个工具真的存在吗"]
+    end
+
+    CW["上下文窗口<br/>物理资源"]
+
+    CE -->|"管理 / 裁剪"| CW
+    PM -->|"提供可信的长期事实"| CW
+    PM -.->|"事实可信 ≠ 行动者可问责"| ID
+    ID -->|"授权范围进入执行路径"| HITL
+    HITL -->|"放行的调用才轮到核对"| RES
+    RES -->|"核对通过后落到"| AG["Agent<br/>执行动作"]
+    HITL -.->|"暂停需持久化<br/>恢复进程未必是原进程"| AG
+
+    classDef fact fill:#fbe9f0,stroke:#b3426b,color:#1f2328
+    classDef act fill:#e8eef9,stroke:#2f4f8f,color:#1f2328
+    classDef ctx fill:#e7f1fa,stroke:#1a6fb4,color:#1f2328
+    classDef agent fill:#fff4e0,stroke:#b35900,color:#1f2328
+    class PM,CE fact
+    class ID,HITL,RES act
+    class CW ctx
+    class AG agent
+```
+
+**四条新增连线，解释了为什么这三份是"行动侧的接缝"而非"第六、七、八个并列项"：**
+
+| 关系 | 含义 |
+|---|---|
+| **事实侧 → 身份（虚线）** | 「带溯源的长期记忆」规定每条**事实**带来源、时间、证据；但它对**行动者**没有任何规定。事实可信 **≠** 行动者可问责——这两件事在 provenance 的经典三分（entity / activity / **agent**）里分属不同格，目前的五份只填了 entity 那一格。 |
+| **身份 → 闸门** | 身份给出「你是谁、代表谁、被允许做什么」；闸门回答「这件事要不要先问人」。前者是**授权的范围**，后者是**执行的节流**——有身份不等于自动放行，也不等于必须人批。 |
+| **闸门 → 消解（顺序不可换）** | 闸门只能对它**放出来的**工具做判定；而幻觉调用指向的工具从未被放出来，因此**不是任何门做过的决策**。所以核对工具是否存在必须**早于**门控，顺序反了就漏掉整整一类失败。 |
+| **闸门 ↔ 执行（虚线）** | 一次人工复核可能持续数秒到数天，而恢复流程的进程未必是最初暂停它的那个进程——所以闸门天然要求「运行态持久化」，这也是 `Agent = Model + Harness` 之下还有一层 runtime 的原因。 |
+
+**与「扩展」一节那段话的关系：**
+
+> 原来：**上下文是桌面，Skill 是文件夹，Agent 是坐在桌前、按文件夹做事的人。上下文工程是他决定桌上摆哪几份材料的手艺；带溯源的长期记忆是他身后那排贴着来源与日期标签的档案柜——取用前必须核对标签，标签对不上就宁可说"我查不到"。**
+>
+> 现在补三句：**这个人在公司里有工牌（身份），工牌上写着"我是谁、我替谁办事、我能动什么"；有的事他得先拿签字（闸门）；而他伸手去拿工具之前，得先确认那个工具真的挂在墙上（消解）——因为墙上没挂的东西，任何签字制度都管不着。**
+
+**行动侧三条之间的边界要点：**
+
+- **身份 vs 闸门** = 逻辑授权 vs 流程控制。前者回答"可不可以"，后者回答"要不要现在做"。
+- **闸门 vs 消解** = 上下游，不可互换顺序。消解在最上游，门控在其后。
+- **身份 vs 沙箱** = 逻辑授权 vs 物理隔离，不可互替（一个身份完全合法的 agent 仍可能跑在能写穿宿主内核的环境里）。
+- **闸门 vs agent 自律（Abstention / CitationLock）** = 主语不同：自律的主语是**模型**、只管"说"；闸门的主语是**系统与人**、管"写 / 付 / 删"。
+
