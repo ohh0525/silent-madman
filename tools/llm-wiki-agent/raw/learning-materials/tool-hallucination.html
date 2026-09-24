@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：工具幻觉与封闭世界消解（Tool Hallucination &amp; Closed-World Resolution）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #6b5b7a;
+    --accent-soft: #f0ecf4;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  .note {
+    background: #fdf6e3;
+    border-left: 3px solid #d9a300;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 工具幻觉</span>
+  <h1>工具幻觉与封闭世界消解（Tool Hallucination &amp; Closed-World Resolution）</h1>
+  <p class="subtitle">agent 会调用根本不存在的工具 —— 而任何权限门控都拦不住它 · 生成时间 2026-09-22</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">工具幻觉，是指 agent 调用了<strong>注册表里根本不存在的工具</strong>，或给真实工具传了<strong>任何 schema 都没声明过的参数</strong>；而因为这种调用在构造上不是任何门做过的决策，所以必须在所有权限门控<strong>之前</strong>先做一次「注册表成员资格 + 签名」的封闭世界消解。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>先打个比方。公司前台给每个员工发了一本内部电话簿，簿子上有各部门的分机号。你吩咐实习助理"给财务的张三打个电话，说报销单我签好了"。助理翻开电话簿 —— 但没有"张三"这个人，于是它<strong>自己编了一个分机号拨出去</strong>；或者簿子上有"报销"这个分机，它却顺手加了一句"顺便帮我把额度改成五万"，而那个分机从来没有"改额度"这个功能。</p>
+  <p>这就是工具幻觉。它跟我们平常担心的"agent 选错工具"不是一回事：选错工具，是它从电话簿里挑了一个不该挑的号码；<strong>工具幻觉，是它拨了一个电话簿上根本没有的号码，或者说了那个分机听不懂的话</strong>。</p>
+  <p>为什么这件事格外麻烦？因为我们现在防 agent 出错的两道防线，都建立在同一个前提上 ——「<strong>这次调用指向一个真实存在的工具</strong>」。一道防线负责"帮你挑对工具"（工具选择），一道防线负责"约束你能用真工具做什么"（权限门控）。可如果那个工具压根不存在，门控在逻辑上就没有对手可判：它只能判断"你有没有权限用 <em>我放出来的</em> 工具"，而一个不存在的工具从来就不在它放出来的名单里，所以这一条调用<strong>根本不是任何一道门做过的决策</strong> —— 门也就无法拒绝它。</p>
+  <p>这不是"防得不够细"，而是一处<strong>结构性盲区</strong>。2026 年 9 月 16 日的一篇论文把它量化了：在 10 个托管模型、两种调用面上，一共捕捉到 <strong>322 次真实幻觉</strong>；更反直觉的是，<strong>模型规模帮不上忙</strong> —— 一个 675B 参数的模型和一个 7–8B 的模型，在这一点上表现相当。指望"下一代更大的模型自己长出免疫力"，这条路走不通。</p>
+  <p>所以正确的做法非常朴素，甚至有点"不够聪明"：在最前面装一道很笨的闸 —— 查一下注册表里到底有没有这个工具、签名对不对得上。论文把它称作 <strong>Resolution Rung（消解阶）</strong>，并强调它的价值<strong>不在算法而在位置</strong>：它只能装在最上游，必须早于任何权限门控。因为门再密，也拦不下一件它从未被问过的事。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>幻觉是怎么产生的</strong>：模型见过大量形如 <code>delete_file</code> 的调用轨迹，于是很自然地在需要时<strong>生成</strong>一个形如 <code>wipe_disk</code> 的"同类工具名"；它知道转账工具需要一个金额，就会顺手续上一个 schema 里从未存在的 <code>override</code> 开关。<br />为什么重要：这说明幻觉来自"语言的顺畅补全"，而不是来自配置错误 —— <em>改文档、改提示词都治不了它</em>，只能靠外部事实核对。</li>
+    <li><strong>为什么门控拦不住它</strong>：门控的判定对象是"被它放进可见集合的工具"；而幻觉工具<strong>按定义不在这个集合里</strong>，因此这次调用不会成为任何一次门控决策，门根本没有机会拒绝它。<br />为什么重要：它把这条防御从"加固我的门"变成了"<strong>在门前加一级事实核对</strong>"，是架构位置的问题，不是策略强度的问题。</li>
+    <li><strong>消解阶：查成员资格 + 验签</strong>：在分发任何调用之前，先做两件免训练的事 —— ①这个工具名是否在<strong>封闭注册表</strong>里；②它的契约签名是否与可信来源一致。通过之后，才轮到权限门控、最小权限、审计这些下游机制。<br />为什么重要：顺序错了等于没做。论文给出的结论很干脆：<strong>幻觉防御必须先于任何因果门</strong>。</li>
+    <li><strong>为什么会话面会新增幻觉面</strong>：当多个 MCP server 被合并进<strong>同一个命名空间</strong>时，会出现单个注册表无法表达的新问题 —— 名称<strong>碰撞（collision）</strong>与<strong>遮蔽（shadowing）</strong>。论文在真实 MCP 调用面上又测到 <strong>154 次幻觉</strong>，其中包括在"单注册表"表面上表现干净的前沿模型。<br />为什么重要：这说明<em>工具数量一多，幻觉面是"合并"这个动作本身带来的</em>，不是某个模型变差了 —— 你越是用 MCP 把工具拼起来，越需要这一级消解。</li>
+  </ol>
+  <div class="mermaid-placeholder"># 顺序就是全部:消解在最上游,门控在其后
+call = model.emit()            # {"tool": "wipe_disk", "args": {...}}
+
+# ---- 第 1 级:封闭世界消解(免训练,只做事实核对)----
+rung = resolve(call, registry) # 注册表成员资格 + 签名校验
+if rung == "UNRESOLVED":
+    return reject(call, reason="no such tool")        # 幻觉在此终止
+if rung == "SIGNATURE_MISMATCH":
+    return reject(call, reason="contract not tamper-evident")
+
+# ---- 第 2 级:到这里才轮到权限门控 ----
+if not policy.allows(call, principal=delegated_token):
+    return reject(call, reason="out of scope")
+
+execute_idempotent(call)       # 幂等执行 + 审计
+
+# 注意:第 2 级永远拦不住第 1 级的失败 ——
+# 幻觉调用不是任何门做过的决策,门对它没有判定权。</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 接了三四个 MCP server 之后（命名空间合并）</h3>
+    <p><span class="label">背景：</span>为了功能齐全，同一个 agent 同时挂了文件、数据库、支付三个 MCP server，工具名被并到同一张清单里。</p>
+    <p><span class="label">如何应用：</span>在工具分发层前加一级封闭世界消解：先按注册表核对名称归属与签名，再处理同名/近名遮蔽问题（例如两个 server 都提供 <code>search</code> 时的歧义）。</p>
+    <p><span class="label">结果：</span>挡住一类"模型本身没问题、合并之后才出现"的调用失败 —— 论文在真实 MCP 面上测到的 154 次幻觉正属于此类，其中包含在单注册表面完全干净的模型。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 让模型直接吐自由 JSON（最宽的调用面）</h3>
+    <p><span class="label">背景：</span>为了让模型灵活，调用格式不做 schema 约束，直接解析一段自由 JSON 当工具调用。</p>
+    <p><span class="label">如何应用：</span>两件事同时做 —— 把调用面收窄（改用未声明参数就发不出来的受约束格式），并且仍然保留最上游的消解阶，因为收窄只是降低概率，不会归零。</p>
+    <p><span class="label">结果：</span>伪造工具名会明显集中出现在最自由的调用面上，这是论文的测量发现之一：<strong>接口的自由度直接放大幻觉空间</strong>。收窄接口 + 最上游核对，两条一起才有效。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 生产环境的工具网关（"想对了、名字写错"）</h3>
+    <p><span class="label">背景：</span>agent 在生产里要删一条测试记录，它"想对了"，但把工具名写成了一个曾在训练数据里见过的近义名。</p>
+    <p><span class="label">如何应用：</span>把消解阶放在工具网关最前面，与权限门控、幂等执行、审计串成固定顺序；未消解的调用直接拒绝并记一条"模型幻觉"指标，而不是让它落到下游变成一次真正的破坏性动作。</p>
+    <p><span class="label">结果：</span>一次幻觉从"对一个 agent 而言是无界动作"降级为一次可统计的解析失败 —— 这类失败会持续发生，但你至少知道它发生了、发生了几次、集中在哪个调用面。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是"工具选择"问题</strong>：工具选择问的是"该用哪个真工具"（在真工具之间排优先级）；工具幻觉问的是"这次调用指向的工具<em>存在吗</em>"。前者优化排序，后者是一条事实前提 —— 论文明确指出选择类方法都以"调用指向真工具"为前提，因此对幻觉无能为力。</li>
+    <li><strong>不是"权限门控"问题，也不在它的上游被替代</strong>：门控约束真工具的使用边界（最小权限、契约完整性校验）。它和消解阶是<strong>上下游关系</strong>：先消解，后门控。顺序反了就漏掉一整类失败。</li>
+    <li><strong>不是普通的解析错误 / 格式错误</strong>：JSON 写坏会被解析器拦下，代价是一次重试；而一个<strong>格式完全合法但指向不存在工具</strong>的调用，格式校验是拦不住的 —— 对会动手的 agent 来说，"执行一次幻觉调用不是无害的解析错误，而是一次无界动作"。</li>
+    <li><strong>不是"等更强的模型就能解决"</strong>：测量显示规模不给免疫力，675B 与 7–8B 在这一点上相当。把它当作能力问题会导致错误的路线选择（继续换更大的模型）而非正确的（在架构里加一级事实核对）。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「我把 schema 写清楚就不会幻觉了」——收窄接口确实显著降低概率（论文也观察到两种调用面之间的巨大差距），但<strong>不会归零</strong>：还有一类"<strong>借来的参数</strong>"在 schema 上与合法调用<strong>无法区分</strong>，是论文明确说明的<em>消不掉的残余</em>。所以约束是必要的，但它是概率手段，不是终极防线。</li>
+    <li>「我加了权限门控就安全了」——门控防的是越权使用真工具，防不住调用不存在的工具。真正能拦住它的位置，比门控更靠前。</li>
+    <li>「工具多了只是管理麻烦一点」——合并命名空间会<strong>新增</strong>幻觉面（碰撞与遮蔽），这是结构性的，不是数量带来的线性增长。</li>
+  </ul>
+  <h3>5.3 适用与不适用</h3>
+  <table>
+    <thead><tr><th>必须加消解阶</th><th>可以暂时不加</th></tr></thead>
+    <tbody>
+      <tr><td>任何能产生副作用的工具调用（写、发、付、删）</td><td>纯离线实验、工具集固定且极小、没有人身损害的玩具环境</td></tr>
+      <tr><td>多个 MCP server / 多家供应商的工具被合并进同一命名空间</td><td>只挂一个 server、且工具名互不冲突的极简集成</td></tr>
+      <tr><td>调用面较自由（自由 JSON、动态生成工具名）</td><td>已用强约束格式把调用面收得很窄（仍建议保留，只是优先级可降低）</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <strong>落手顺序建议：</strong>①先问一句"我有没有一张封闭的工具注册表"（没有就先立这张表，它是消解的前提）；②把消解阶放在分发路径的<strong>最前面</strong>，并断言它<strong>早于</strong>权限门控；③给"未消解"单独记一个指标（哪类工具名最常被编造、集中在哪个调用面）；④合并 MCP server 时，把名称碰撞/遮蔽当作一次需要评审的变更，而不是配置细节。
+  </div>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://arxiv.org/html/2609.19425v1">Closed-World Resolution Against Tool Hallucination in LLM Agents · arXiv:2609.19425v1（2026-09-16）</a> — 本材料主来源。指出幻觉调用「在构造上不是任何门做过的决策」，因此任何门控都无法拒绝它（结构性盲区）；给出 H1–H5 五类分类法与免训练消解器 Resolution Rung（注册表成员资格 + 签名校验），并论证幻觉防御必须先于任何因果门；横跨 10 个托管模型、两种调用面测得 <strong>322 次</strong>真实幻觉；<strong>模型规模不给免疫力</strong>（675B 与 7–8B 相当）；扩展到 MCP 后给出 M1–M5 分类法，在真实 MCP 面测得 <strong>154 次</strong>幻觉（含在单注册表面干净的前沿模型），并说明 collision / shadowing 是合并带来的结构性问题；刻画一处无法消除的残余（借来的参数与合法调用 schema 无法区分）；发布版本化基准 HTB。</li>
+    <li><a href="https://mindpattern.ai/f/26094">Agents hallucinate tools that do not exist, a 675B model does it as often as a 7B one, and merging MCP servers adds new failure surfaces · MindPattern（2026-09-16）</a> — 对该文的独立摘要，可用于交叉核对 322 / 154 / 规模无关这三组结论，以及"修复是在分发前做注册表成员资格与签名校验"这一表述。</li>
+    <li><a href="https://clawpk.net/articles/1126-closed-world-resolution-tool-hallucination-htb-mcp-arxiv-2609-19425.html">调用不存在的工具：工具幻觉的结构性盲区与最上游的消解闸 · 龙虾智能体</a> — 中文拆解，含 H1–H5 / M1–M5、Resolution Rung 与"消不掉的残余"的解释，可用于核对术语译法。</li>
+    <li><a href="https://papers.cool/arxiv/cs.AI,cs.CL,cs.CV,cs.LG?show=100">Cool Papers · cs.AI 列表页</a> — 提供该文在 arXiv 的发布戳（2026-09-16 21:02 UTC）与摘要原文，可作为"当下性"与文本一致性的独立入口。</li>
+  </ol>
+  <div class="note">
+    <strong>口径冲突提示（已如实标注，本材料未采用该数字）：</strong>关于两种调用面的幻觉集中度，arXiv 摘要原文写作 <code>3434 vs. 33</code>，而两个二手来源（Cool Papers 列表页与中文拆解）均转写为 <code>34 vs. 3</code>。总数 322 与 34/3 的分布自洽、与 3434 不自洽，说明至少一方转写有误。本材料因此<strong>只引用口径一致的三组数字（322 / 154 / 675B≈7–8B）</strong>，未采用该处比例；若需引用，请回到 arXiv 原文正文核对。
+  </div>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">门控只能管住"你敢不敢用我放出来的工具"，管不住"你编了一个我从来没放出来的工具" —— 所以在所有门之前，必须先有一道很笨但很靠前的事实核对。</p>
+</section>
+
+<footer>由 concept-explainer Skill 自动生成 · 2026-09-22 · 待人工核查后入库</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：智能体身份与委派授权（Agent Identity &amp; Delegated Authority）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #2f4f8f;
+    --accent-soft: #e8eef9;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  .note {
+    background: #fdf6e3;
+    border-left: 3px solid #d9a300;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 智能体身份</span>
+  <h1>智能体身份与委派授权（Agent Identity &amp; Delegated Authority）</h1>
+  <p class="subtitle">让「谁在动手、代表谁、被允许做什么」变成可验证的事实 · 生成时间 2026-09-22</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">智能体身份与委派授权，是让 agent 在被调用时能证明「我是谁、我代表谁、我被允许做什么」，并让这份授权在 agent 之间传递时只能变窄、不能变宽的一套可验证机制。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>先想一个你熟悉的场景：你去银行代办一笔业务，柜员不会问「你是哪家的人」，而会要求你出示两样东西 —— <strong>你自己的身份证明</strong>，以及<strong>一份写清授权范围的委托书</strong>。这两样缺一不可：只有身份证明，柜员不知道你能替谁办事；只有委托书，柜员不知道拿着它来的是不是本人。而且委托书上一定会写明「只能办这一笔」「只能取这个额度」「有效期到今天下午五点」。</p>
+  <p>智能体身份要解决的，是同一件麻烦事，只不过「来办事的」从人变成了软件。过去企业里给程序开权限，常见做法是发一个 API key，或者干脆用一个共享的服务账号 —— 这相当于给助理配了一把万能钥匙，门都能开，出了事也说不清是谁开的。当 agent 开始替你打电话、改记录、下单付款时，这个做法就彻底不够用了：商户需要确认「来办事的这个 AI 是谁」，平台需要确认「它代表哪位用户」，而用户需要知道「它到底被允许花我多少钱」。</p>
+  <p>所以这套机制的核心产物不是「一个账号」，而是<strong>一条可验证的链条</strong>：agent 的运行实例有身份（换台机器也能被验证），它手里拿的不是用户的原始凭据，而是一张写着「我是 X，代表用户 Y，范围只读/上限 N，30 分钟内有效」的凭据；当这个 agent 又派生出子 agent 时，子 agent 拿到的是<strong>一份全新的、比父级更窄的凭据</strong>，而不是父级令牌的复印件。</p>
+  <p>举个具体的：你对一个差旅 agent 说「帮我订下周三去上海的高铁」。这个 agent 背后可能连着订票服务、酒店服务和报销系统。它自己不具备付款权，但可以带着「代表你、只读你的行程、可写入订单草稿」的凭据去订票；到了真正付款那一步，系统看到的凭据里写的是「代表你，付款上限 ¥0」—— 于是它必须回头找你要一次明确的批准。整个过程里，每一跳都留下了「谁在什么时候、代表谁、用了什么范围」的记录，任何一环的授权都能被单独撤销。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>建立负载身份（workload identity）</strong>：给跑 agent 的那个软件实例发一个可被依赖方验证的身份，而不是复制一份人类账号。<br />为什么重要：<em>名字写在提示词里不是身份</em> —— 一个自称「我是财务助手」的 agent 无法被任何服务验证；身份必须由受信任的运行时或身份系统签发。</li>
+    <li><strong>以「代表用户」的方式换取短期凭据</strong>：agent 从不持有用户的原始凭据，而是通过令牌交换（OAuth 2.0 Token Exchange，RFC 8693）拿到一张用户委派而来、受众受限、短时效的访问令牌。<br />为什么重要：这把「一次泄露 = 全部权限」压缩成「一次泄露 = 单个用户在当次范围内的临时权限」，同时天然产生"每个动作都能映射回一个人类负责人"的审计线索。</li>
+    <li><strong>每一跳收窄（attenuation）</strong>：父 agent 派生子 agent 时，子 agent 必须得到一份<strong>新签发、更窄</strong>的凭据，其范围 / 幅度 / 有效期 / 委派深度只能逐跳变小。<br />为什么重要：这是「权限不能越传越大」从口号变成机制的唯一手段；没有它，一条调用链跑几跳之后，末端的实际权限就没人能说得清。</li>
+    <li><strong>双主体记录 + 撤销可传播</strong>：每个请求的凭据里同时保留「执行的负载」与「被代表的用户」，并接入撤销传播机制（如 OpenID Shared Signals），让一次撤销能抵达所有还握着旧令牌的 agent。<br />为什么重要：只记用户可以，就丢掉「是哪个 agent 在动」；只记负载，就丢掉用户的授权与撤销上下文。<em>这两者合并就没人能问责。</em></li>
+  </ol>
+  <div class="mermaid-placeholder"># 一次被正确委派的 agent 动作
+user_token      = idp.issue(user=U, scope="read:trips")
+agent_identity  = runtime.attest(agent="travel-agent", pod="...")
+
+# 1) 交换成 agent 代表 U 的短期令牌(双主体)
+delegated = oauth.token_exchange(
+    subject_token = user_token,          # 代表谁
+    actor         = agent_identity,      # 谁在动
+    audience      = "booking-service",
+    expires_in    = 1800,
+)
+
+# 2) 派生更窄的子凭据 —— 只许收窄
+child = delegate(delegated, scopes=["read:trips", "write:draft"], pay_limit=0)
+
+# 3) 依赖方自行校验:签发者 / 受众 / 有效期 / 本地策略
+assert verify(child) and child.audience == "booking-service"
+
+# 4) 双主体 + 动作留痕(不是只记 prompt)
+audit.record(actor=child.actor, on_behalf_of=child.sub,
+             scope=child.scopes, target="booking-service")</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 企业把 agent 纳入 IAM（身份治理）</h3>
+    <p><span class="label">背景：</span>一家公司内部已经跑着几十个 agent，分别接 CRM、邮件、日历、财务系统，此前都用共享服务账号。</p>
+    <p><span class="label">如何应用：</span>给每个 agent 一个独立身份（微软 Entra Agent ID 于 2026-05-01 随 Agent 365 正式可用，Okta for AI Agents 于 2026-04-29 正式可用），把最小权限下沉到<strong>工具边界</strong>：读日历的 agent 不会因此获得发邮件或改文档的权限。</p>
+    <p><span class="label">结果：</span>agent 清单、权限范围、撤销流程与员工身份走同一套治理；一条授权可以在不动其他 agent 的前提下单独收回。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 跨平台办事：身份要能"带证上岗"</h3>
+    <p><span class="label">背景：</span>用户让 AI 帮自己安排出差，中间要经过商户、订票、支付等多个平台。</p>
+    <p><span class="label">如何应用：</span>采用在 2026 外滩大会发布的 <strong>APASS</strong>（围绕「Agent 是谁、代表谁、被允许做什么、行为是否可信」提供身份注册、持续核验、意图安全与可信存证）与 <strong>ASL</strong> 互联协议：授权凭证保存在手机端，只开放当前任务所需权限，可随时收回；多智能体接力时用户指令不能被改动、权限不能越传越大，<strong>涉及花钱仍需用户点头</strong>。</p>
+    <p><span class="label">结果：</span>据披露 APASS 已接入<strong>超过 100 万个智能体</strong>、覆盖 442 家服务供给方 —— 也就是说"持证上岗"已从演示走进真实业务链路。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · MCP server 的授权：不止于"自述身份"</h3>
+    <p><span class="label">背景：</span>你接了一个第三方 MCP server，它需要访问你的内部资源。谁来决定它有没有这个权限？</p>
+    <p><span class="label">如何应用：</span>按 MCP 自己的授权 profile 来做 —— 走 HTTP 传输的 server 需作为 <strong>OAuth 2.1 资源服务器</strong>并实现 <strong>OAuth 2.0 Protected Resource Metadata</strong>（RFC 9728）让客户端发现授权服务器；客户端必须实现 <strong>PKCE 的 S256</strong>，并在元数据显示不支持 PKCE 时<strong>拒绝继续</strong>。</p>
+    <p><span class="label">结果：</span>调用方身份由外部专用授权服务器签发（短时效、受众受限），而不是靠 MCP 协议报文里的自述字段 —— 后者只能说明"它说自己是谁"。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是 API key / 共享服务账号</strong>：静态密钥既没有委派语义（不能表达"代表谁"），也没有按动作留痕与撤销能力。把 agent 塞进一个共享人类账号，还会带来一个隐蔽后果：人一离职，agent 的访问权跟着静默失效。</li>
+    <li><strong>不是协议里的"自述身份"</strong>：MCP 在 2026-07-28 修订后把协议层做成无状态，每个请求都带版本与客户端身份；但<strong>自述不等于可验证</strong>。身份（谁在调用）/ 委派（代表谁）/ 授权（允许做什么）/ 运行期策略（此刻是否放行）是四件不同的事，任何一件都不能替代另一件。</li>
+    <li><strong>不是沙箱 / 执行隔离</strong>：身份回答「你是谁、能做什么」（逻辑授权），沙箱回答「你物理上跑在哪」（物理隔离）。<em>两者不可互相替代</em>：一个身份完全合法的 agent 仍然可能跑在一个能写穿宿主内核的环境里。</li>
+    <li><strong>不是权限清单本身</strong>：把工具权限列成表是必要动作，但清单是<strong>输入</strong>，不是机制。机制是这份清单如何被签发、如何逐跳收窄、如何被撤销、如何被依赖方独立校验。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「agent 是我的数字分身，用我的账号最方便」——最方便也最危险：一旦被诱导，攻击者拿到的就是你的真实权限，而且这条路径<strong>能绕开"这个用户本来够不到的数据"这一层保护</strong>。委派模型的价值恰恰是让下游按<em>用户真实权限 + 更窄范围</em>来做检查。</li>
+    <li>「给 agent 的身份就是给它起个名字」——名字不是身份。生产级身份必须由受认证的运行时或身份系统签发、可被依赖方验证；否则它只是一段自我描述。</li>
+    <li>「定好权限就一劳永逸」——agent 身份需要和人类身份一样有生命周期：签发、轮换、暂停、撤销。企业实践里最常见的缺口正是<strong>没有撤销流程</strong>，以及 agent 默默继承共享账号的常驻权限。</li>
+  </ul>
+  <h3>5.3 适用与不适用</h3>
+  <table>
+    <thead><tr><th>适合引入完整身份与委派</th><th>不必上这套</th></tr></thead>
+    <tbody>
+      <tr><td>agent 会写数据、花钱、动权限，或跨组织边界调用</td><td>单工具、单用户、本机短期运行的实验脚本</td></tr>
+      <tr><td>需要"每个动作映射回人类负责人"的审计（受监管行业尤甚）</td><td>纯读取、可随时重建、无副作用的查询型 agent</td></tr>
+      <tr><td>多个 agent 接力完成一个任务（委派链必须收窄）</td><td>还没上生产、权限范围一句话就能说清的小范围试点</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <strong>一条好用的判据：</strong>如果一个 agent 的工具权限<strong>无法用一句话说清</strong>，那它就是过宽的。此外，成本并不高 —— 云上负载身份通常免费或几美元/月；把身份做在<em>第一次上生产之前</em>，比事后给一个已经在 5 个 SaaS 里留了活跃凭据的 agent 补身份，便宜得多。
+  </div>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://labs.cloudsecurityalliance.org/research/csa-research-note-ietf-agent-identity-standards-20260902-csa">IETF's Race to Standardize AI Agent Identity · CSA Labs（2026-09-02）</a> — draft-klrc-aiagent-auth 区分「agent 自身客户端标识」与「令牌 sub 中的被委派主体」；MCP 要求 HTTP server 作为 OAuth 2.1 资源服务器并实现 RFC 9728，客户端须用 PKCE-S256 并在元数据不支持时拒绝继续；Entra Agent ID（2026-05-01 GA）/ Okta for AI Agents（2026-04-29 GA）；仅 28% 组织能把 agent 行为追溯到人类发起者。</li>
+    <li><a href="https://appliedtechnologyindex.com/research/2026-comparative-analysis-workload-identity-delegation-chains-ai-agents">2026 Comparative Analysis: Workload Identity and Delegation Chains for AI Agents · Applied Technology Index</a> — 负载身份 / 委派身份 / 委派授权三者不可互替；MCP 路线图（2026-08-22 更新）把 agent identity 列为优先项并点名 DPoP、workload identity federation、ID-JAG、OAuth 2.0 Token Exchange；RFC 8693 记录委派但不保证逐跳衰减；Verifiable Attenuated Delegation draft-00（2026-08-27）提出范围/幅度/有效期/深度只能收窄的委派链；子 agent 应获新签发窄凭据而非父级 bearer 令牌副本。</li>
+    <li><a href="http://m.ce.cn/bwzg/202609/t20260915_3214653.shtml">AI「上岗」先验身份 办事不能越界 · 中国经济网（2026-09-15）</a> — 2026 国家网络安全宣传周展区演示商户智能体「持证上岗」与用户授权；APASS（2026-09-11 外滩大会发布）已接入超过 100 万个智能体、覆盖 442 家供给方；ASL 协议约束「权限不能越传越大」；授权凭证保存在手机端、只开放当前任务所需权限、可随时收回，涉及花钱仍需用户点头。</li>
+    <li><a href="https://zdnetinside.com/knowledge/what_are_the_agent_identity_and_access_management_best_practices_for_securing_ai_agents_in_2026.php">Agent identity and access management best practices for 2026 · ZDNet Inside</a> — 最小权限宜落在工具边界而非 agent 整体；三种授权架构（委派用户上下文 / agent 服务身份 / 混合）的影响半径与审计线索对比；「工具权限若无法用一句话说清即过宽」；后果阈值（如影响超过 100 条记录、超过金额线、任何删除）应强制人工批准。</li>
+    <li><a href="https://mm-ais.com/knowledge/how_do_you_implement_identity_and_access_controls_for_ai_agents_in_2026.php">How do you implement identity and access controls for AI agents in 2026? · mm-ais</a> — 五类常见错误（复用人类登录、范围过宽、身份当作一次性配置、只记 prompt 不记动作、忽略非人类身份治理）；接入生产前做身份额外约 1–2 工程师周，事后补约 3–6 周。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">Agent 的身份不是一个账号，而是一条「我是谁 + 我代表谁 + 我只被允许做这些」的链条 —— 它的价值不在开头签得全，而在每一跳都只能变窄、且随时收得回。</p>
+</section>
+
+<footer>由 concept-explainer Skill 自动生成 · 2026-09-22 · 待人工核查后入库</footer>
+
+</div>
+</body>
+</html>

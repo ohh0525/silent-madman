@@ -38,9 +38,9 @@ silent-madman/
 │   ├── skill.html                  # Skill 技能
 │   ├── context-engineering.html    # 上下文工程 (2026-09-16)
 │   ├── agent-memory-provenance.html # 带溯源的智能体长期记忆 (2026-09-16)
-│   ├── agent-identity.html          # 智能体身份与委派授权 (2026-09-22 · 待核查)
-│   ├── human-in-the-loop.html       # 人在环审批闸门 (2026-09-22 · 待核查)
-│   └── tool-hallucination.html      # 工具幻觉与封闭世界消解 (2026-09-22 · 待核查)
+│   ├── agent-identity.html          # 智能体身份与委派授权 (2026-09-22 · 已入库 2026-09-24)
+│   ├── human-in-the-loop.html       # 人在环审批闸门 (2026-09-22 · 已入库 2026-09-24)
+│   └── tool-hallucination.html      # 工具幻觉与封闭世界消解 (2026-09-22 · 已入库 2026-09-24)
 ├── Python基础语法课程/              # 第 1-4 课教学资料 (Word 讲义 + HTML 学习材料 + Notebook)
 │   ├── Python基础语法讲义（第1-4课）.docx
 │   ├── Python基础语法练习题与参考答案（第1-4课）.docx
@@ -137,9 +137,9 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 | `learning-materials/skill.html` | Skill 技能 | 单概念 | 紫 |
 | `learning-materials/context-engineering.html` | 上下文工程 Context Engineering | 单概念 | 青 |
 | `learning-materials/agent-memory-provenance.html` | 带溯源的智能体长期记忆 | 单概念 | 玫红 |
-| `learning-materials/agent-identity.html` | 智能体身份与委派授权 · 行动侧 | 单概念 | 深靛蓝（待核查） |
-| `learning-materials/human-in-the-loop.html` | 人在环审批闸门 · 行动侧 | 单概念 | 琥珀赭（待核查） |
-| `learning-materials/tool-hallucination.html` | 工具幻觉与封闭世界消解 · 行动侧 | 单概念 | 灰紫（待核查） |
+| `learning-materials/agent-identity.html` | 智能体身份与委派授权 · 行动侧 | 单概念 | 深靛蓝（已入库 2026-09-24） |
+| `learning-materials/human-in-the-loop.html` | 人在环审批闸门 · 行动侧 | 单概念 | 琥珀赭（已入库 2026-09-24） |
+| `learning-materials/tool-hallucination.html` | 工具幻觉与封闭世界消解 · 行动侧 | 单概念 | 灰紫（已入库 2026-09-24） |
 | `concept-relationship.md` | 概念关联（基础 5 + 扩展 5） | 图谱 | — |
 
 > 想新增一个主题，直接告诉我概念名即可，本 Skill 会沿用同一份样式与结构，确保后续 HTML 之间排版一致。

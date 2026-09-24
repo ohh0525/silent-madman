@@ -23,12 +23,14 @@
 
 | 状态 | 条数 |
 |---|---|
-| ✅ 已入 raw 并摄取 | 3 |
-| 🟡 材料已出待核查 | 3 |
+| ✅ 已入 raw 并摄取 | 6 |
+| 🟡 材料已出待核查 | 0 |
 | ⏸ 已建议未动 | 21 |
 | **合计** | **27** |
 
-> ⚠️ 结构性观察:截至 2026-09-24,雷达已运行 **9 天**、提出 **27 条**候选,而 `learning-materials/` → `raw/` 这条**入库通道自 09-22 起就停着**(3 份「行动侧」材料已提交待核查)。也就是说:**产出速度 > 核查速度**,积压集中在「待核查」这一态。是否要处理这条通道,见当日报告的「给人工核查的提示」。
+> ✅ **2026-09-24 更新:入库通道已打通。** 09-22 那 3 条「行动侧」候选(身份 / 人在环 / 工具幻觉)经用户明确授权后已进入 `raw/learning-materials/` 并完成摄取,`🟡` 这一态**归零**。此前 9 天累积的积压全部结清。
+>
+> ⚠️ 仍需留意的结构事实:雷达已运行 **9 天**、提出 **27 条**候选,其中 **21 条(78%)仍是 `⏸ 已建议未动`** —— 也就是说瓶颈已从「核查」转移到「**决定要不要把它做成材料**」。
 
 ---
 
@@ -54,9 +56,9 @@
 | 09-21 | 压缩的保真度与安全 / Compaction Fidelity | 无 `concepts/CompactionFidelity.md` | ⏸ 已建议未动 | 09-24 候选 2(卸载)是**绕开**压缩的那条路,两者互补 |
 | 09-21 | 记忆调用时机是可学习的策略 / Memory Timing Policy | 无 `concepts/MemoryTimingPolicy.md` | ⏸ 已建议未动 | 与 09-24 候选 1(记忆生命周期)相邻:一个是「何时取」,一个是「何时删」 |
 | 09-21 | Agent 沙箱 / 执行隔离 / Agent Sandbox | 无 `concepts/AgentSandbox.md` | ⏸ 已建议未动 | — |
-| 09-22 | 智能体身份与委派授权 / Agent Identity & Delegated Authorization | 无对应页 | 🟡 材料已出待核查 | `learning-materials/agent-identity.html` 已提交(`bc022af`);未入 `raw/`、未摄取;README 标「待核查」 |
-| 09-22 | 人在环审批闸门 / Human-in-the-Loop | 无对应页 | 🟡 材料已出待核查 | `learning-materials/human-in-the-loop.html` 已提交;未入 `raw/`、未摄取;README 标「待核查」 |
-| 09-22 | 工具幻觉与封闭世界消解 / Tool Hallucination | 无对应页 | 🟡 材料已出待核查 | `learning-materials/tool-hallucination.html` 已提交;未入 `raw/`、未摄取;README 标「待核查」 |
+| 09-22 | 智能体身份与委派授权 / Agent Identity & Delegated Authority | `concepts/AgentIdentity.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源文件 `raw/learning-materials/agent-identity.html`,源页 `sources/agent-identity.md`);README 标签已从「待核查」改为「已入库」 |
+| 09-22 | 人在环审批闸门 / Human-in-the-Loop | `concepts/HumanInTheLoop.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源页 `sources/human-in-the-loop.md`);该材料自带来源强度提示,已在源页如实保留 |
+| 09-22 | 工具幻觉与封闭世界消解 / Tool Hallucination | `concepts/ToolHallucination.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源页 `sources/tool-hallucination.md`,主来源 arXiv:2609.19425v1 **预印本**);材料自身的 `3434 vs 34/3` 口径冲突已如实记录并**未被采用** |
 | 09-23 | 持久化执行 / 智能体运行时 / Durable Execution | 无 `concepts/DurableExecution.md` | ⏸ 已建议未动 | 与 09-24 候选 2 共用「窗口外存储」,但目的相反:卸载是让模型少看,持久化执行是让进程不死 |
 | 09-23 | 间接提示注入 / 对抗性输入 / Prompt Injection | 无 `concepts/PromptInjection.md` | ⏸ 已建议未动 | — |
 | 09-23 | 从自身轨迹中学习 / 自进化智能体 / Self-Improving Agents | 无 `concepts/SelfImprovingAgents.md` | ⏸ 已建议未动 | — |
@@ -69,3 +71,4 @@
 ## 变更记录
 
 - **2026-09-24** 建台账,回填 09-16 起全部 **27** 条候选(3 ✅ / 3 🟡 / 21 ⏸)。同日为 09-24 候选 1 执行了「给 `LongTermMemory.md` 补边界注记」这一低成本动作。
+- **2026-09-24(同日稍后)** 用户授权摄取,09-22 的 3 条「行动侧」候选由 🟡 转为 **✅**;`wiki/` 源页 6 → **9**,wiki 页数 31 → **34**,新增 concept 页 `AgentIdentity` / `HumanInTheLoop` / `ToolHallucination`,并追加更新 `MCP`(授权 profile + 命名空间合并风险)与 `Agent`(权限轴);`overview.md` 完成一次**真正的 synthesis 修订**(新增行动侧 Cluster D)。汇总态变为 **6 ✅ / 0 🟡 / 21 ⏸**。

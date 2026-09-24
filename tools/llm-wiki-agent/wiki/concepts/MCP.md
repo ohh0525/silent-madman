@@ -1,9 +1,9 @@
 ---
 title: "MCP"
 type: concept
-tags: [anthropic, protocol, tools, mcp, stateless]
-sources: [skill, mcp-2026-07-28]
-last_updated: 2026-09-16
+tags: [anthropic, protocol, tools, mcp, stateless, authorization]
+sources: [skill, mcp-2026-07-28, agent-identity, tool-hallucination]
+last_updated: 2026-09-24
 ---
 
 # MCP (Model Context Protocol)
@@ -30,6 +30,19 @@ Clients also expose primitives: **Elicitation** (server asks the user for input/
 - **Cacheable listings** — `ttlMs` + `cacheScope` on list/read results (SEP-2549).
 - **MRTR (SEP-2322)** — server→client requests (elicitation) use Multi Round-Trip Requests instead of a held-open stream: server returns `input_required`, client retries with `inputResponses`.
 
+## Authorization (per [[agent-identity]]) — added 2026-09-24
+MCP does not invent an identity model; it borrows the OAuth one, and the division of labour matters:
+- An MCP server on **HTTP transport must act as an OAuth 2.1 resource server** and implement **OAuth 2.0 Protected Resource Metadata (RFC 9728)** so clients can discover the authorization server.
+- **Clients must implement PKCE with S256**, and must **refuse to continue** when server metadata indicates PKCE is unsupported.
+- Consequence: the caller's identity is issued by an **external, dedicated authorization server** (short-lived, audience-restricted) — **not** asserted in MCP protocol messages. A self-declared `clientInfo` field can only ever mean "it says it is X". See [[AgentIdentity]] for why *identity / delegation / authorization / runtime policy* are four distinct things.
+- Note the interaction with the stateless revision above: statelessness removes *session* state, and the authorization profile is what carries *authority* instead — per request, verifiable.
+
+## Namespace merging hazard (per [[tool-hallucination]]) — added 2026-09-24
+Composing MCP servers is MCP's selling point, and it has a structural cost that the N×M framing hides:
+- When several servers are merged into **one namespace**, new failure modes appear that **no single registry can express** — name **collision** and **shadowing**. Two servers both exposing `search` is an ambiguity, not a naming quirk.
+- Merging therefore **adds a hallucination surface** rather than just adding tools: the source measures **154** hallucinations on a real merged MCP surface, including frontier models that were clean on a single-registry surface.
+- Practical rule: treat a namespace merge as a **review-worthy change**, and run a **closed-world resolution rung** (registry membership + signature check) *before* any permission gate on the dispatch path. See [[ToolHallucination]].
+
 ## Boundary with Skill (per [[skill]])
 - **MCP** = "connect the tool" (standardizes the interface)
 - **Skill** = "teach the model how to use the tool" (organizes the workflow)
@@ -49,3 +62,5 @@ Clients also expose primitives: **Elicitation** (server asks the user for input/
 - [[Agent]] — typical consumer that combines Skill + MCP
 - [[ContextEngineering]] — MCP code-execution mode is a context-engineering technique
 - [[OpenAI]] — adopted MCP in 2025
+- [[AgentIdentity]] — MCP's authorization profile is that concept's concrete instance
+- [[ToolHallucination]] — the failure mode that namespace merging *creates*; the resolution rung belongs on MCP's dispatch path

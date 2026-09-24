@@ -2,17 +2,17 @@
 title: "Overview"
 type: synthesis
 tags: []
-sources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28]
-last_updated: 2026-09-16
+sources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28, agent-identity, human-in-the-loop, tool-hallucination]
+last_updated: 2026-09-24
 ---
 
 # Overview
 
 *This page is maintained by the LLM. It is updated on every ingest to reflect the current synthesis across all sources.*
 
-## Current Synthesis (2026-09-16)
+## Current Synthesis (2026-09-24)
 
-Five silent-madman concept-learning documents have been ingested, plus a sixth source: a spec digest of the MCP 2026-07-28 revision. The first three form a cluster around "how LLMs reason with bounded resources"; the two added on 2026-09-16 supply the **methodology layer** and the **time dimension** that organize them; the MCP digest refreshes a **protocol** page that had gone stale.
+Nine sources: eight silent-madman concept-learning documents plus a spec digest of the MCP 2026-07-28 revision. The synthesis now has **two halves that answer different questions**. Clusters A–C ask *what the agent knows and sees, and how honestly it remembers* — the **entity side**. Cluster D, ingested 2026-09-24, asks *who the agent is, what it is permitted to do, and whether the thing it just called even exists* — the **actor side**. They are not competing answers to one question; they are the **reading discipline** and the **acting discipline**, and the wiki needs both.
 
 ### Cluster A — Bounded resources (2026-09-05)
 - **[[Agent]]** is the autonomous execution layer — a system that picks tools and loops around a goal.
@@ -26,37 +26,61 @@ Five silent-madman concept-learning documents have been ingested, plus a sixth s
 ### Cluster C — Protocol refresh (2026-09-16)
 - **[[MCP]]** was the one page that had gone stale. The **MCP 2026-07-28 revision** makes the protocol **stateless at the protocol layer**: the `initialize` handshake (SEP-2575) and `Mcp-Session-Id` (SEP-2567) are gone; every request carries version + client identity in `_meta`; `Mcp-Method`/`Mcp-Name` headers enable body-free routing; list results are cacheable (`ttlMs`/`cacheScope`); server→client requests use MRTR (SEP-2322). The **[[Skill]]** boundary is unchanged. Ecosystem impact: GitHub's server dropped Redis + deep packet inspection; Manufact −83% package size, +25% speed.
 
+### Cluster D — Actor side: authority, control, factualness (2026-09-22, ingested 2026-09-24)
+- **[[AgentIdentity]]** — *who acts, on whose behalf.* Workload identity + OAuth 2.0 Token Exchange (RFC 8693, carrying a **dual subject**: actor + represented user) + **per-hop attenuation** (a child agent receives a freshly issued, strictly narrower credential — scope / magnitude / validity / depth may only shrink) + dual-subject audit wired to propagated revocation. [[MCP]]'s authorization profile (HTTP servers as OAuth 2.1 resource servers implementing RFC 9728; clients implementing PKCE S256 and refusing when it is unsupported) is its concrete instance.
+- **[[HumanInTheLoop]]** — *may it act, now.* Grade every action by **impact × reversibility**, then gate the irreversible classes on the rule "**read freely, keep writes human**". The rule must live **in code/config, not the prompt**; the pause must be **persisted** and the resume **idempotent**; effectiveness is measured by automation / override / **escape** rate and review latency.
+- **[[ToolHallucination]]** — *does the tool exist.* Calls to tools that are **not in the registry**, or with undeclared arguments. Such a call is **not a decision any gate ever made**, so it survives every permission check by construction — hence a **closed-world resolution rung** (registry membership + signature verification) placed **upstream of every gate**.
+
+The three compose into one **fixed order**, and the order *is* the content:
+
+```
+propose ──▶ resolve ──▶ authorize ──▶ gate ──▶ idempotent execute
+            (exists?)    (may you?)   (now?)
+       ToolHallucination  AgentIdentity  HumanInTheLoop
+```
+
 ### How they connect
 
 ```
-Context Engineering  ──manages/crops──▶  LLM Context Window
-        │                                   ▲
-        │ Progressive Disclosure is          │ supplies trusted
-        │ one instance of it                 │ long-term facts
-        ▼                                   │
-      Skill                              Long-Term Memory
-        │                                   ▲
-        └──────loads into────────────────────┘
-                     Agent reads/writes ─────┘
+                        ┌─────────────── ENTITY SIDE (what it knows) ───────────────┐
+Context Engineering ──manages/crops──▶ LLM Context Window ◀──supplies trusted── Long-Term Memory
+        │                                    ▲                      facts            │
+        │ Progressive Disclosure             │                                       │
+        │ is one instance of it              │                          Provenance /  │
+        ▼                                    │                          CitationLock /│
+      Skill ──────loads into─────────────────┘                          Abstention    │
+                                                   Agent reads/writes ─────────────────┘
+
+                        ┌─────────────── ACTOR SIDE (what it may do) ───────────────┐
+   model proposes ──▶ resolve ──▶ authorize ──▶ gate ──▶ idempotent execute ──▶ audit
+                     (ToolHallucination) (AgentIdentity) (HumanInTheLoop)      record
+                                                                                ▲
+                            same traceability instinct as Provenance ───────────┘
 ```
 
-The five-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand (Progressive Disclosure); Context Engineering decides what belongs in that window each step; and provenance-aware Long-Term Memory lets the Agent remember across sessions — honestly.**
+The nine-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand; Context Engineering decides what belongs in that window each step; provenance-aware Long-Term Memory lets it remember across sessions — honestly. And on the acting side, it proves who it is with strictly narrowing authority, asks a human before the irreversible step, and can only call tools that provably exist.**
 
 ## Cross-Cutting Themes
-- **Bounded context is the central constraint** — every concept traces back to a token / window / cost limit. [[ContextRot]] sharpens it: capacity ≠ effective capacity.
+- **Bounded context is the central constraint** — every concept in Clusters A–C traces back to a token / window / cost limit. [[ContextRot]] sharpens it: capacity ≠ effective capacity.
 - **"On-demand loading" is the dominant solution shape** — Skills (progressive disclosure), RAG, and memory retrieval all share it. [[ContextEngineering]] names it as a principle.
-- **Trust is the new frontier** — Cluster A assumed more/cleaner context; Cluster B adds that retrieved context must be *sourced and current* ([[Provenance]], [[CitationLock]], [[Abstention]]).
+- **Trust is the new frontier** — Cluster A assumed more/cleaner context; Cluster B adds that retrieved context must be *sourced and current* ([[Provenance]], [[CitationLock]], [[Abstention]]); Cluster D adds that the **actor** must be sourced and constrained too. Trust now has two objects: the *fact* and the *hand*.
 - **Memory errors compound** — a mistake written to durable memory recurs; this reframes memory as a *reliability subsystem*, not a recall feature.
-- **[[Anthropic]] is the primary vendor** contributing this design vocabulary; [[OpenAI]] complements; memory systems now contribute [[AgentZeroMemory]], [[MemGPT]], [[Zep]].
+- **NEW (2026-09-24) — the model is not the only place to put a control.** Every mechanism in Clusters A–C has **the model itself** as its subject: they are *honesty* mechanisms, enforced by the model's own behaviour. Cluster D moves three levers **outside** the model — issuance (an identity authority), attenuation (a credential chain), and deterministic gating (code). Both the [[human-in-the-loop]] and [[tool-hallucination]] sources are explicit that the gate/rung must **not** be a prompt-resident rule, precisely because a prompt can be ignored, overridden or talked around. This is the first time the wiki records a control whose subject is not the LLM.
+- **NEW (2026-09-24) — ordering is a first-class design object.** Three times now the answer has been *where* a mechanism sits rather than how strong it is: the resolution rung must precede every gate; the authorization check precedes the gate; and the gate precedes execution. A control in the wrong position is not a weaker control — it is not a control.
+- **[[Anthropic]] is the primary vendor** contributing this design vocabulary; [[OpenAI]] complements; memory systems now contribute [[AgentZeroMemory]], [[MemGPT]], [[Zep]]; the actor side draws on a wider set (Microsoft Entra Agent ID, Okta, and the OAuth/IETF layer) — the first cluster not dominated by one vendor.
 
 ## Open Questions (suggested next sources)
-- A concrete RAG system case study (vector DB choice, chunking strategy, retrieval quality) — still open from 2026-09-09.
+- A concrete RAG system case study (vector DB choice, chunking strategy, retrieval quality) — still open from 2026-09-09, now the **oldest** open item.
 - ~~The MCP stateless revision (2026-07-28 spec)~~ — **resolved 2026-09-16**: [[MCP]] page rewritten from [[mcp-2026-07-28]].
 - How [[ContextEngineering]] techniques are measured end-to-end (beyond single-provider claims) — needs an independent evaluation.
 - Multi-agent memory sharing and role-based access control on shared persistent memory.
 - MCP **Tasks / MCP Apps / EMA** extensions — now first-class; worth a dedicated page if usage grows.
+- **NEW — execution isolation as the missing third leg.** Cluster D covers *logical* authority (who may act) and *procedural* control (when to ask). All three new pages name **sandboxing** as an explicit adjacent concept they are **not**: authority is not isolation, and a gate is not isolation. A fully legitimate, fully approved action can still run somewhere it can write through the host kernel. (Radar candidate 2026-09-21.)
+- **NEW — persistent execution.** The gate's own requirement — that a paused workflow be resumable by a *different* process, days later — is a durable-execution requirement, and the wiki has no page for it. (Radar candidate 2026-09-23.)
+- **NEW — independent verification of Cluster D's numbers.** Several figures (28% traceability, 1–2 vs 3–6 engineer-weeks) come from third-party/commercial pages rather than primary vendors; see the provenance note on [[agent-identity]]. The 322 / 154 hallucination counts come from a **preprint** (arXiv:2609.19425v1, 2026-09-16), not peer-reviewed — and the material already records one internal inconsistency in its numbers (`3434 vs 33` vs `34 vs 3`) that it declined to use.
 
 ## Next Ingest Suggestions
-- `raw/papers/rag-survey.md` — RAG foundations
-- ~~`raw/specs/mcp-2026-07-28.md`~~ — **ingested 2026-09-16** ✅
+- `raw/papers/rag-survey.md` — RAG foundations (the oldest open gap)
 - `raw/papers/context-engineering-eval.md` — independent context-engineering evaluation
+- **NEW** `raw/papers/agent-sandbox-isolation.md` — execution isolation, the missing third leg beside authority + gating
+- **NEW** an **independent** evaluation of the agent-identity traceability / attenuation claims — the current figures are vendor-survey grade

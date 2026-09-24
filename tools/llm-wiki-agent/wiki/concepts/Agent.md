@@ -1,9 +1,9 @@
 ---
 title: "Agent"
 type: concept
-tags: [ai-agent, llm, autonomous-system]
-sources: [agent, skill]
-last_updated: 2026-09-09
+tags: [ai-agent, llm, autonomous-system, authority]
+sources: [agent, skill, agent-identity, human-in-the-loop, tool-hallucination]
+last_updated: 2026-09-24
 ---
 
 # Agent
@@ -42,9 +42,21 @@ while not done:
 | Need to adapt based on results | Millisecond-SLA hot paths |
 | Single failures acceptable via retry | Any failure is irreversible |
 
+## Authority axis (added 2026-09-24, per [[agent-identity]] · [[human-in-the-loop]] · [[tool-hallucination]])
+The Boundary section above says an Agent is "bounded by permissions, token budget, stopping condition". That sentence named a ceiling but never said **who grants it, how far it travels, or who checks whether the action was physically possible**. Three pages now supply that axis:
+
+| Question | Page |
+|---|---|
+| **Who is acting, on whose behalf, and how far may that authority travel?** | [[AgentIdentity]] — workload identity + RFC 8693 token exchange + strictly narrowing per-hop attenuation + dual-subject audit |
+| **May it do this, or must a person approve first?** | [[HumanInTheLoop]] — grade by impact × reversibility; read freely, keep writes human; the rule lives in code, not the prompt |
+| **Does the thing it just called even exist?** | [[ToolHallucination]] — a closed-world resolution rung *before* any gate, because a hallucinated call is not a decision any gate ever made |
+
+The ordering between them is not decoration: **resolve the call → verify authority → gate the irreversible step**. Read in that order, the agent's loop above (reason → choose tool → execute) acquires the three failure checks it was missing. This also fixes a boundary previously left implicit: an Agent's loop can be *correct* and still *unauthorized*, *unapproved*, or *aimed at a tool that does not exist* — three independent ways to fail that "did it complete the task?" cannot detect.
+
 ## See Also
 - [[Skill]] — the packaging unit that turns general models into domain experts
 - [[LLMContext]] — Agent operations constrained by context window
 - [[ProgressiveDisclosure]] — load-on-demand that lets Agents use Skills within bounded context
 - [[ReAct]] — reasoning pattern used in Agent's step 2
 - [[Anthropic]] / [[OpenAI]] — primary vendors shaping Agent design vocabulary
+- [[AgentIdentity]] · [[HumanInTheLoop]] · [[ToolHallucination]] — the authority / control / factualness axis (see above)
