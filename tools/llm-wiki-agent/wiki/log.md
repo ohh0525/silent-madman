@@ -227,3 +227,11 @@ Sources 6 → **9**; wiki pages 31 → **34** (3 new source pages, 3 new concept
 No dangling `[[wikilink]]` introduced: every new link targets a page that now exists ([[AgentIdentity]], [[HumanInTheLoop]], [[ToolHallucination]], the three new source slugs) or already existed ([[Agent]], [[MCP]], [[Skill]], [[Provenance]], [[Abstention]], [[CitationLock]], [[ContextEngineering]], [[Transformer]], [[LLMContext]], [[ProgressiveDisclosure]], [[ContextRot]], [[Compaction]], [[LongTermMemory]], [[MemGPT]], [[AgentZeroMemory]], [[Zep]], [[LongMemEval]], [[Anthropic]], [[OpenAI]]).
 `wiki/concepts/LongTermMemory.md` keeps the `pending ingest` banner added earlier the same day — that note's claims are still sourced only to the concept-radar report, not to a source page, so the banner stays until that material is ingested.
 `raw/` was **not modified**: three files were **added** to `raw/learning-materials/` under explicit human authorisation; nothing in `raw/` was edited or deleted, and no file anywhere was deleted.
+
+## [2026-09-25] lint | Daily maintenance (health + custom lint)
+
+First maintenance day after the 2026-09-24 actor-side triple ingest. Wiki now at **9 sources / 37 pages**.
+`tools/health.py`: 37 pages · Empty/Stub 0 ✅ · Index Sync 0 ✅ · Log Coverage 0 ✅.
+Custom 5-dimension lint: dangling `[[wikilink]]` 0 ✅ · orphan pages (0 inbound links) 0 ✅ · frontmatter completeness 0 issues (incl. `sources/` pages' `date` + `source_file`) · `sources` slugs all valid (9/9) · `index.md` ↔ disk 0 divergence (forward + reverse).
+`raw/` scan: **0 un-ingested files** (9/9 `source_file` targets exist; latest addition 2026-09-24). No fixes required; **no wiki content page modified today**. `overview.md` synthesis (2026-09-24) remains current — Cluster D's three open questions (execution isolation / persistent execution / independent verification of Cluster D's numbers) all remain open.
+External signal note (for the record, not ingested): this week's news independently converges on two of those open questions — execution isolation (Docker Cloud Sandboxes + OCI-standard Kits, 2026-09-24; Nvidia OpenShell, 2026-09-21) and agent-memory evaluation (Agent Memory Challenge Cycle 2, opened 2026-09-20). Details in `.workbuddy/memory/concept-radar/2026-09-25.md`.

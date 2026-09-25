@@ -25,8 +25,8 @@
 |---|---|
 | ✅ 已入 raw 并摄取 | 6 |
 | 🟡 材料已出待核查 | 0 |
-| ⏸ 已建议未动 | 21 |
-| **合计** | **27** |
+| ⏸ 已建议未动 | 23 |
+| **合计** | **29** |
 
 > ✅ **2026-09-24 更新:入库通道已打通。** 09-22 那 3 条「行动侧」候选(身份 / 人在环 / 工具幻觉)经用户明确授权后已进入 `raw/learning-materials/` 并完成摄取,`🟡` 这一态**归零**。此前 9 天累积的积压全部结清。
 >
@@ -55,7 +55,7 @@
 | 09-20 | 提示词自动优化 / GEPA | 无 `concepts/PromptOptimization.md` | ⏸ 已建议未动 | — |
 | 09-21 | 压缩的保真度与安全 / Compaction Fidelity | 无 `concepts/CompactionFidelity.md` | ⏸ 已建议未动 | 09-24 候选 2(卸载)是**绕开**压缩的那条路,两者互补 |
 | 09-21 | 记忆调用时机是可学习的策略 / Memory Timing Policy | 无 `concepts/MemoryTimingPolicy.md` | ⏸ 已建议未动 | 与 09-24 候选 1(记忆生命周期)相邻:一个是「何时取」,一个是「何时删」 |
-| 09-21 | Agent 沙箱 / 执行隔离 / Agent Sandbox | 无 `concepts/AgentSandbox.md` | ⏸ 已建议未动 | — |
+| 09-21 | Agent 沙箱 / 执行隔离 / Agent Sandbox | 无 `concepts/AgentSandbox.md` | ⏸ 已建议未动 | **09-25 承接强化**:当时仅是 overview Open Question 一句话,本周被 Docker Cloud Sandboxes(2026-09-24,microVM + OCI Kits→CNCF)与 Nvidia OpenShell(2026-09-21,策略在推理环之外)各自产品化,证据强度完全不同,当周被列为 ⭐ 首选。与 09-23 持久化执行可合并成文(Docker 已把两者捆在同一产品里) |
 | 09-22 | 智能体身份与委派授权 / Agent Identity & Delegated Authority | `concepts/AgentIdentity.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源文件 `raw/learning-materials/agent-identity.html`,源页 `sources/agent-identity.md`);README 标签已从「待核查」改为「已入库」 |
 | 09-22 | 人在环审批闸门 / Human-in-the-Loop | `concepts/HumanInTheLoop.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源页 `sources/human-in-the-loop.md`);该材料自带来源强度提示,已在源页如实保留 |
 | 09-22 | 工具幻觉与封闭世界消解 / Tool Hallucination | `concepts/ToolHallucination.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源页 `sources/tool-hallucination.md`,主来源 arXiv:2609.19425v1 **预印本**);材料自身的 `3434 vs 34/3` 口径冲突已如实记录并**未被采用** |
@@ -64,7 +64,9 @@
 | 09-23 | 从自身轨迹中学习 / 自进化智能体 / Self-Improving Agents | 无 `concepts/SelfImprovingAgents.md` | ⏸ 已建议未动 | — |
 | 09-24 | **智能体记忆的生命周期治理 / 遗忘 · Memory Lifecycle Governance / Agent Forgetting** ⭐ | 无 `concepts/MemoryLifecycle.md` | ⏸ 已建议未动 | **首选**。已按建议给 `concepts/LongTermMemory.md` 补边界注记(2026-09-24,待摄取后转为正式来源) |
 | 09-24 | 上下文卸载 / 文件系统即上下文层 · Context Offloading / Filesystem as Context Layer | 无 `concepts/ContextOffloading.md` | ⏸ 已建议未动 | 承接自 `Compaction.md` 的注记建议(尚未执行) |
-| 09-24 | 模型路由 / 成本-质量路由 · Model Routing / Cost-Quality Routing | 无 `concepts/ModelRouting.md` | ⏸ 已建议未动 | 承接 09-23 备查表承诺(「若再现则单列」);与 09-20 提示缓存构成概念对 |
+| 09-24 | 模型路由 / 成本-质量路由 · Model Routing / Cost-Quality Routing | 无 `concepts/ModelRouting.md` | ⏸ 已建议未动 | 承接 09-23 备查表承诺(「若再现则单列」);与 09-20 提示缓存构成概念对;评测经济学(09-25 候选 3)是其成本侧背景 |
+| 09-25 | 记忆时效性 / 「旧记忆比没记忆更糟」 · Memory Freshness / Stale-Memory Evaluation | 无 `concepts/MemoryFreshness.md` | ⏸ 已建议未动 | Agent Memory Challenge Cycle 2(2026-09-20 开赛,11-04 截止,11 月中出结果)**建议等结果再成文**;与 [[Provenance]]/[[CitationLock]]/[[Abstention]] 构成真实性三闸门;与 09-24 候选 1(生命周期)为上下游 |
+| 09-25 | Agent 评测经济学 / 评测税 · Agent Evaluation Economics | 无 `concepts/EvaluationEconomics.md` | ⏸ 已建议未动 | 三条中最不急:建议作为 09-17 候选 2(Agent Evals)材料的成本章,不单独成文;「~62% 推理账单来自重发上下文」(Stanford,二手转述)值得记进 [[ContextEngineering]] 开篇 |
 
 ---
 
@@ -72,3 +74,4 @@
 
 - **2026-09-24** 建台账,回填 09-16 起全部 **27** 条候选(3 ✅ / 3 🟡 / 21 ⏸)。同日为 09-24 候选 1 执行了「给 `LongTermMemory.md` 补边界注记」这一低成本动作。
 - **2026-09-24(同日稍后)** 用户授权摄取,09-22 的 3 条「行动侧」候选由 🟡 转为 **✅**;`wiki/` 源页 6 → **9**,wiki 页数 31 → **34**,新增 concept 页 `AgentIdentity` / `HumanInTheLoop` / `ToolHallucination`,并追加更新 `MCP`(授权 profile + 命名空间合并风险)与 `Agent`(权限轴);`overview.md` 完成一次**真正的 synthesis 修订**(新增行动侧 Cluster D)。汇总态变为 **6 ✅ / 0 🟡 / 21 ⏸**。
+- **2026-09-25** 新增 2 条候选(记忆时效性 / 评测经济学);另将 09-21「Agent 沙箱」行标注**承接强化**(本周 Docker Cloud Sandboxes + Nvidia OpenShell 各自产品化,09-25 报告将其列为 ⭐ 首选,属同义候选的证据升级而非重复推荐)。汇总态变为 **6 ✅ / 0 🟡 / 23 ⏸**。
