@@ -1,9 +1,9 @@
 ---
 title: "Agent"
 type: concept
-tags: [ai-agent, llm, autonomous-system, authority]
-sources: [agent, skill, agent-identity, human-in-the-loop, tool-hallucination]
-last_updated: 2026-09-24
+tags: [ai-agent, llm, autonomous-system, authority, runtime]
+sources: [agent, skill, agent-identity, human-in-the-loop, tool-hallucination, agent-harness]
+last_updated: 2026-09-26
 ---
 
 # Agent
@@ -53,6 +53,9 @@ The Boundary section above says an Agent is "bounded by permissions, token budge
 
 The ordering between them is not decoration: **resolve the call → verify authority → gate the irreversible step**. Read in that order, the agent's loop above (reason → choose tool → execute) acquires the three failure checks it was missing. This also fixes a boundary previously left implicit: an Agent's loop can be *correct* and still *unauthorized*, *unapproved*, or *aimed at a tool that does not exist* — three independent ways to fail that "did it complete the task?" cannot detect.
 
+## Runtime axis (added 2026-09-26, per [[agent-harness]])
+Everything above describes the loop's **semantics**. Something must actually *run* that loop — assemble the prompt, inject tool definitions, execute calls, compact the window near its limit, resume after crashes, schedule subagents. That engineering shell is the **harness**, giving the canonical split **`Agent = Model + Harness`**. The wiki's mechanism pages ([[Compaction]], [[ToolHallucination]]'s rung, [[Skill]] loading, [[ContextEngineering]]'s per-turn policy) are **parts inside that shell**; as of 2026-09 the shell itself is being productised as managed infrastructure by both [[OpenAI]] (Agents API on the Codex harness) and [[Anthropic]] (Opus 5.5 managed orchestration). See [[AgentHarness]].
+
 ## See Also
 - [[Skill]] — the packaging unit that turns general models into domain experts
 - [[LLMContext]] — Agent operations constrained by context window
@@ -60,3 +63,4 @@ The ordering between them is not decoration: **resolve the call → verify autho
 - [[ReAct]] — reasoning pattern used in Agent's step 2
 - [[Anthropic]] / [[OpenAI]] — primary vendors shaping Agent design vocabulary
 - [[AgentIdentity]] · [[HumanInTheLoop]] · [[ToolHallucination]] — the authority / control / factualness axis (see above)
+- [[AgentHarness]] — the runtime axis: the shell that hosts and executes this page's loop (see above)

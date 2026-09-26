@@ -3,7 +3,9 @@
 > 一份用 Mermaid 流程图 + 文字解析，把「Agent」「上下文窗口」「Skill」三者联系起来的工作笔记；文末「扩展」一节再接入「上下文工程」与「带溯源的长期记忆」两个概念。
 > 配套学习资料：[agent.html](./learning-materials/agent.html)、[llm-context.html](./learning-materials/llm-context.html)、[skill.html](./learning-materials/skill.html)、[context-engineering.html](./learning-materials/context-engineering.html)、[agent-memory-provenance.html](./learning-materials/agent-memory-provenance.html)
 >
-> **行动侧三份（2026-09-22 · 待人工核查）**：[agent-identity.html](./learning-materials/agent-identity.html)、[human-in-the-loop.html](./learning-materials/human-in-the-loop.html)、[tool-hallucination.html](./learning-materials/tool-hallucination.html) —— 对应文末「扩展二 · 行动侧」一节。
+> **行动侧三份（2026-09-22 · 已入库 2026-09-24）**：[agent-identity.html](./learning-materials/agent-identity.html)、[human-in-the-loop.html](./learning-materials/human-in-the-loop.html)、[tool-hallucination.html](./learning-materials/tool-hallucination.html) —— 对应文末「扩展二 · 行动侧」一节。
+>
+> **运行时底座（2026-09-26 · 已入库）**：[agent-harness.html](./learning-materials/agent-harness.html) —— 对应文末「扩展三 · 运行时底座」一节。
 >
 > **相关图谱（另一领域）**：Python 教学概念组 —— [Python 第 1 课 · 上手四概念的关系图](./concept-group/python-lesson1-starter/关系图.md)、[Python 第 1 课 · 下半场四概念的关系图](./concept-group/python-lesson1-second-half/关系图.md)。两组与本图谱（AI Agent 领域）分属不同知识网，故独立成篇、仅互为索引，不合并进同一张图。
 
@@ -296,7 +298,7 @@ flowchart TB
 
 ## 扩展二：行动侧三份如何接进这张网
 
-> ⚠️ 本节对应的三份材料（`agent-identity.html` / `human-in-the-loop.html` / `tool-hallucination.html`）生成于 2026-09-22，**尚未经本人逐条人工核查**，页脚标为「待人工核查后入库」。
+> 本节对应的三份材料（`agent-identity.html` / `human-in-the-loop.html` / `tool-hallucination.html`）生成于 2026-09-22，**已由本人核查并于 2026-09-24 入库**（摄取记录见 `tools/llm-wiki-agent/wiki/log.md`）。
 
 上面五份回答的是「**agent 知道什么、记得什么、凭什么相信**」。可是 agent 一旦从"回答"变成"动手"，还欠三个更靠前的问题——它们共同构成**「信任的行动侧」**：
 
@@ -360,4 +362,66 @@ flowchart TB
 - **闸门 vs 消解** = 上下游，不可互换顺序。消解在最上游，门控在其后。
 - **身份 vs 沙箱** = 逻辑授权 vs 物理隔离，不可互替（一个身份完全合法的 agent 仍可能跑在能写穿宿主内核的环境里）。
 - **闸门 vs agent 自律（Abstention / CitationLock）** = 主语不同：自律的主语是**模型**、只管"说"；闸门的主语是**系统与人**、管"写 / 付 / 删"。
+
+---
+
+## 扩展三：运行时底座 —— harness 如何接进这张网
+
+> 本节对应的材料 `agent-harness.html` 生成并入库于 2026-09-26（摄取记录见 `tools/llm-wiki-agent/wiki/log.md`；经用户指令授权完成）。
+
+前面八份材料画的是「**agent 知道什么、凭什么信、被允许做什么**」——但所有这些机制都要**跑在一段循环代码里**：谁来拼提示词、谁来注入工具定义、窗口满了谁做压缩、崩了谁负责恢复、子智能体谁调度。这个壳此前在图谱里是**隐形的**——每张图都画了「Agent 推理」，却没画「什么在跑这个推理」。2026 年 9 月，这个壳本身被两家头部厂商同时做成了托管基础设施（OpenAI Agents API 公测 2026-09-10 / Anthropic Opus 5.5 托管编排，行业通讯命名为「Harness Wars」），它从「实现细节」升格为**值得单独命名的一层**。
+
+### 壳内零件图：既有概念全部落座
+
+```mermaid
+flowchart TB
+    T["目标 / 任务"] --> H
+    M["Model 模型<br/>只决定「下一步做什么」"] --> H
+
+    subgraph H["Agent Harness 外壳 —— 谁跑这个循环（运行时底座层）"]
+        direction LR
+        ASM["① 组装上下文<br/>prompt 拼装 · 工具检索注入"]
+        LOOP["② 跑循环 / 判停<br/>终止条件"]
+        GOV["③ 治理窗口<br/>automatic compaction"]
+        DUR["④ 韧性 / 子智能体<br/>保活 · 恢复 · 调度"]
+        ASM --> LOOP --> GOV --> DUR
+    end
+
+    PARTS["既有概念页 = 壳内零件<br/>Skill 按需加载 · 封闭世界消解 ·<br/>上下文工程（每步放什么的原则）"] -.被 ①②③ 调用.-> H
+
+    H ==>|"可插拔执行环境<br/>openai_hosted / self_hosted / none"| ENV["沙箱 / 执行隔离<br/>在哪跑 · 能碰到什么<br/>（行动侧链的 execute 格 · 页待建）"]
+
+    DUR --> OUT["结果 / 产物 artifact"]
+
+    classDef model fill:#fde8e8,stroke:#b35900,color:#1f2328
+    classDef harness fill:#e9f1ec,stroke:#3d6b4f,color:#1f2328
+    classDef parts fill:#f6f4ee,stroke:#57606a,color:#1f2328
+    classDef env fill:#e8eef9,stroke:#2f4f8f,color:#1f2328
+    class M model
+    class ASM,LOOP,GOV,DUR harness
+    class PARTS parts
+    class ENV,OUT,T parts
+```
+
+### 为什么 harness 是「底座」而非「第九个并列项」
+
+| 关系 | 含义 |
+|---|---|
+| **harness → Agent** | 语义 vs 实现。Agent 页画的是 `观察→推理→行动` 的循环**语义**；harness 是这段循环的具体**宿主**。工程圈的拆法一句话：**`Agent = Model + Harness`**。 |
+| **harness → 既有全部机制页** | 零件 vs 容器。压缩（③ 的展开）、封闭世界消解（② 分发路径上的事实核对）、Skill（① 按需加载的知识）、上下文工程（①③ 背后的原则）——**全都是壳内的零件**，harness 决定它们何时被调用、用什么阈值。佐证：OpenAI Agents API 的三个主打卖点（automatic compaction / tool search / multi-agent）恰好就是这几个既有概念。 |
+| **harness ⇒ 沙箱（双线，显式分离）** | 谁编排 vs 在哪跑。OpenAI 把两者拆成 `Agent` 与 `Environment` 两个对象——壳可以插在不同环境上，环境也不非得配壳。行动侧链 `propose → resolve → authorize → gate → execute` 的最后一格 **execute**（沙箱）因此有了明确的上家，但那一页本身仍未建。 |
+| **harness → 人在环闸门** | 闸门要求「暂停可持久化、恢复可幂等、恢复者未必是原进程」——这本来就是 harness 第 ④ 职责（保活/恢复）的规格说明。 |
+
+### 与「一句话总结」的接续
+
+> 原来八份的总结：**上下文是桌面，Skill 是文件夹，Agent 是坐在桌前、按文件夹做事的人；他有工牌（身份）、有的活要签字（闸门）、伸手前先确认工具挂在墙上（消解）。**
+>
+> 现在补最后一句：**而这间办公室本身——供电、照明、档案调度、事故恢复——是 harness。2026 年 9 月起，整间办公室可以按小时租了。**
+
+### 边界要点
+
+- **harness vs Agent** = 实现层 vs 语义层。问「下一步做什么」是模型；问「这个决定能不能被可靠执行成一场长跑」是 harness。
+- **harness vs 框架** = 任何手写 50 行 while 循环也是 harness，只是零件不全、没人运维。问题从来不是「有没有壳」，而是「**零件谁补、漏洞谁修**」。
+- **harness vs 沙箱** = 编排 vs 隔离，两者应**分开决策**（厂商已把对象拆开，选型也应拆开）。
+- **托管 vs 安全** = 默认值就是安全边界，而这套默认值是宽松的（出网默认 `enabled`；`restricted` 只收 1–100 个精确主机名；注入的密钥仍暴露）。托管 harness 不消除沙箱风险，只是把修补责任集中到厂商的发版节奏。
 

@@ -2,17 +2,17 @@
 title: "Overview"
 type: synthesis
 tags: []
-sources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28, agent-identity, human-in-the-loop, tool-hallucination]
-last_updated: 2026-09-24
+sources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28, agent-identity, human-in-the-loop, tool-hallucination, agent-harness]
+last_updated: 2026-09-26
 ---
 
 # Overview
 
 *This page is maintained by the LLM. It is updated on every ingest to reflect the current synthesis across all sources.*
 
-## Current Synthesis (2026-09-24)
+## Current Synthesis (2026-09-26)
 
-Nine sources: eight silent-madman concept-learning documents plus a spec digest of the MCP 2026-07-28 revision. The synthesis now has **two halves that answer different questions**. Clusters A–C ask *what the agent knows and sees, and how honestly it remembers* — the **entity side**. Cluster D, ingested 2026-09-24, asks *who the agent is, what it is permitted to do, and whether the thing it just called even exists* — the **actor side**. They are not competing answers to one question; they are the **reading discipline** and the **acting discipline**, and the wiki needs both.
+Ten sources: nine silent-madman concept-learning documents plus a spec digest of the MCP 2026-07-28 revision. The synthesis now has **two halves that answer different questions**. Clusters A–C ask *what the agent knows and sees, and how honestly it remembers* — the **entity side**. Cluster D, ingested 2026-09-24, asks *who the agent is, what it is permitted to do, and whether the thing it just called even exists* — the **actor side**. Cluster E, ingested 2026-09-26, asks *what actually runs the loop* — the **runtime side**. The first two are the **reading discipline** and the **acting discipline**; the third is their **host**: every mechanism in A–D is a part inside a shell that had gone un-named until now.
 
 ### Cluster A — Bounded resources (2026-09-05)
 - **[[Agent]]** is the autonomous execution layer — a system that picks tools and loops around a goal.
@@ -39,6 +39,10 @@ propose ──▶ resolve ──▶ authorize ──▶ gate ──▶ idempoten
        ToolHallucination  AgentIdentity  HumanInTheLoop
 ```
 
+### Cluster E — Runtime side: the loop's host (2026-09-26)
+- **[[AgentHarness]]** — *what runs the loop.* The engineering shell that turns one model call into an agent: **`Agent = Model + Harness`**. Four duties — assemble context (tool search over schema injection), run the loop and judge stopping, govern the window (automatic **[[Compaction]]**), keep alive / recover / schedule subagents. It is the **container** of the wiki's mechanism pages, not a peer of them: OpenAI's three Agents-API headline features (compaction / tool search / multi-agent) are exactly pre-existing wiki concepts. Boundary: decides **who orchestrates**, while the sandbox decides **where it runs** (OpenAI splits this as separate `Agent` / `Environment` objects — the `execute` leg of Cluster D's chain remains an open page).
+- The layer became **managed infrastructure in 2026-09** ("Harness Wars"): OpenAI rents the Codex harness (public beta 2026-09-10), [[Anthropic]] counters with Opus 5.5 managed orchestration. Managed ≠ safe: egress defaults `enabled`, `restricted` takes only 1–100 exact hostnames, secrets injected into the environment remain exposed — the defaults *are* the security boundary, and same-week Codex sandbox escapes (Heapjack / Overpatch) show management centralises patching, not risk. [[Skill]] is becoming this ecosystem's packaging format (372 / 216 / 193 skills, 2026-09).
+
 ### How they connect
 
 ```
@@ -56,9 +60,16 @@ Context Engineering ──manages/crops──▶ LLM Context Window ◀──sup
                      (ToolHallucination) (AgentIdentity) (HumanInTheLoop)      record
                                                                                 ▲
                             same traceability instinct as Provenance ───────────┘
+
+                        ┌─────────────── RUNTIME SIDE (what runs the loop) ─────────┐
+   Agent Harness ──hosts──▶ the Agent loop — and inside it: Compaction · tool search ·
+   (Agent = Model           the resolution rung · Skill loading · subagent scheduling
+    + Harness)                                     │ pluggable
+                                                  ▼
+                            Execution Environment (sandbox) ── still an open page
 ```
 
-The nine-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand; Context Engineering decides what belongs in that window each step; provenance-aware Long-Term Memory lets it remember across sessions — honestly. And on the acting side, it proves who it is with strictly narrowing authority, asks a human before the irreversible step, and can only call tools that provably exist.**
+The ten-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand; Context Engineering decides what belongs in that window each step; provenance-aware Long-Term Memory lets it remember across sessions — honestly. On the acting side, it proves who it is with strictly narrowing authority, asks a human before the irreversible step, and can only call tools that provably exist. And all of it — the loop, the compaction, the gates, the subagents — runs inside a harness that as of 2026-09 is itself becoming managed infrastructure.**
 
 ## Cross-Cutting Themes
 - **Bounded context is the central constraint** — every concept in Clusters A–C traces back to a token / window / cost limit. [[ContextRot]] sharpens it: capacity ≠ effective capacity.
@@ -67,6 +78,8 @@ The nine-page story: **an Agent, bounded by a Context Window, uses Skills to loa
 - **Memory errors compound** — a mistake written to durable memory recurs; this reframes memory as a *reliability subsystem*, not a recall feature.
 - **NEW (2026-09-24) — the model is not the only place to put a control.** Every mechanism in Clusters A–C has **the model itself** as its subject: they are *honesty* mechanisms, enforced by the model's own behaviour. Cluster D moves three levers **outside** the model — issuance (an identity authority), attenuation (a credential chain), and deterministic gating (code). Both the [[human-in-the-loop]] and [[tool-hallucination]] sources are explicit that the gate/rung must **not** be a prompt-resident rule, precisely because a prompt can be ignored, overridden or talked around. This is the first time the wiki records a control whose subject is not the LLM.
 - **NEW (2026-09-24) — ordering is a first-class design object.** Three times now the answer has been *where* a mechanism sits rather than how strong it is: the resolution rung must precede every gate; the authorization check precedes the gate; and the gate precedes execution. A control in the wrong position is not a weaker control — it is not a control.
+- **NEW (2026-09-26) — the loop needs a host.** Every mechanism page in Clusters A–D implicitly ran inside something that no page named. [[AgentHarness]] names it, and in doing so reorganises the wiki: compaction, the resolution rung, Skill loading and subagent scheduling stop being peers and become **parts of one shell**. The test this suggests for future gaps: for each page, ask *what does this mechanism run inside, and does that thing have a page?*
+- **NEW (2026-09-26) — vendor defaults are citable; vendor benchmarks are not.** The harness sources split cleanly into two grades: **documented defaults** (egress `enabled` by default; `restricted` = 1–100 exact hostnames; secrets remain exposed) are facts about the product and can be cited; **self-reported performance** (latency ~¼, cost −60%, failures −86%) is marketing-grade until independently reproduced. The wiki should keep these two grades in separate columns whenever it records vendor claims.
 - **[[Anthropic]] is the primary vendor** contributing this design vocabulary; [[OpenAI]] complements; memory systems now contribute [[AgentZeroMemory]], [[MemGPT]], [[Zep]]; the actor side draws on a wider set (Microsoft Entra Agent ID, Okta, and the OAuth/IETF layer) — the first cluster not dominated by one vendor.
 
 ## Open Questions (suggested next sources)

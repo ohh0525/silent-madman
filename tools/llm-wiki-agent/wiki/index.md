@@ -15,6 +15,7 @@ This file is maintained by the LLM. Updated on every ingest.
 - [智能体身份与委派授权(Agent Identity & Delegated Authority)](sources/agent-identity.md) — concept-learning HTML on workload identity, RFC 8693 delegation and per-hop attenuation (silent-madman, 2026-09-22)
 - [人在环审批闸门(Human-in-the-Loop / Escalation Gate)](sources/human-in-the-loop.md) — concept-learning HTML on grading actions and gating irreversible writes (silent-madman, 2026-09-22)
 - [工具幻觉与封闭世界消解(Tool Hallucination & Closed-World Resolution)](sources/tool-hallucination.md) — concept-learning HTML on the pre-gate resolution rung (silent-madman, 2026-09-22; primary source arXiv:2609.19425v1)
+- [Agent Harness(智能体外壳)](sources/agent-harness.md) — concept-learning HTML on the engineering shell that hosts the loop (silent-madman, 2026-09-26; "Harness Wars" evidence)
 
 ## Entities
 - [Anthropic](entities/Anthropic.md) — creator of Claude; primary source for Agent / Skill / MCP design
@@ -46,6 +47,7 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Agent Identity](concepts/AgentIdentity.md) — who acts, on whose behalf, and authority that only narrows per hop
 - [Human-in-the-Loop](concepts/HumanInTheLoop.md) — grade actions by impact × reversibility; read freely, keep writes human
 - [Tool Hallucination](concepts/ToolHallucination.md) — calls to non-existent tools; needs a closed-world rung before any gate
+- [Agent Harness](concepts/AgentHarness.md) — the engineering shell that runs the Agent loop; `Agent = Model + Harness`
 
 ## Syntheses
 - [Overview](overview.md) — living synthesis across all sources
