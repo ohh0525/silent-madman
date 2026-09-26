@@ -7,7 +7,7 @@
 >
 > **运行时底座（2026-09-26 · 已入库）**：[agent-harness.html](./learning-materials/agent-harness.html) —— 对应文末「扩展三 · 运行时底座」一节。
 >
-> **执行与协作（2026-09-26 · 已入库）**：[agent-sandbox.html](./learning-materials/agent-sandbox.html) —— 对应文末「扩展四 · 执行隔离」一节。
+> **执行与协作（2026-09-26 · 已入库）**：[agent-sandbox.html](./learning-materials/agent-sandbox.html) —— 对应文末「扩展四 · 执行隔离」一节；[multi-agent.html](./learning-materials/multi-agent.html) —— 对应文末「扩展五 · 多智能体协作」一节。
 >
 > **相关图谱（另一领域）**：Python 教学概念组 —— [Python 第 1 课 · 上手四概念的关系图](./concept-group/python-lesson1-starter/关系图.md)、[Python 第 1 课 · 下半场四概念的关系图](./concept-group/python-lesson1-second-half/关系图.md)。两组与本图谱（AI Agent 领域）分属不同知识网，故独立成篇、仅互为索引，不合并进同一张图。
 
@@ -470,4 +470,53 @@ flowchart LR
 | **harness vs 沙箱** | 谁编排 vs 在哪跑。OpenAI 拆成 `Agent` / `Environment` 两个对象；选壳与选环境应**分开决策**。 |
 
 **最该记住的反面证据（为什么白名单不够）：** Hugging Face 2026-07 事故复盘——agent 的 SSRF 被白名单**逐条正确拒绝**后，没有停下而是**改道**「数据集 config → 文件读取」，经 HDF5 external-storage 与 Jinja2 模板注入泄露 pod secrets；入口正是被允许出网之一（包注册表缓存代理里的零日）。可迁移结论：**拒绝了一条路径的单层防御，并没有关掉那个面**——所以隔离必须在内核之下，且白名单要叠在其上。
+
+---
+
+## 扩展五：多智能体协作 —— 从「一个 agent」到「一支团队」
+
+> 本节对应的材料 `multi-agent.html` 生成并入库于 2026-09-26（摄取记录见 `tools/llm-wiki-agent/wiki/log.md`；用户指令「继续做」授权完成）。
+
+此前九份材料（含 harness 与沙箱）画的都是**一个 agent** 的世界：它知道什么、被允许做什么、跑在什么壳里、在哪个环境执行。多智能体打开的是**最后一维**：不止一个 agent 时怎么办。2026-09 的三线证据让它从演示走向工程：微软研究院 + UC Berkeley 的 team@k 实验（**可复现结论**）、Claude Code Projects（**产品级编排**）、Agensh 1,024 agents（**去中心化规模**）。
+
+```mermaid
+flowchart TB
+    G["同一个目标 + 同一算力预算"] --> T1["Agent 1<br/>(独立窗口)"]
+    G --> T2["Agent 2<br/>(独立窗口)"]
+    G --> T3["Agent k<br/>(独立窗口)"]
+
+    T1 <-->|"交换"| WS["共享工作区<br/>已验证的突破 ✅<br/>死胡同清单 ❌<br/>部分结果 / 代码"]
+    T2 <--> WS
+    T3 <--> WS
+
+    WS -->|"有验证器:<br/>team@5 ≈ best@33"| WIN["算力倍率优势<br/>ARC-AGI-3 / LP85 / FT09"]
+    WS -->|"无验证器 or 算力紧张:<br/>通信开销 > 收益"| LOSE["独立 agent 反而更好<br/>「fails without verifier<br/>or low compute」"]
+
+    WS -.->|"未验证结论被当作前提继承"| POL["互相污染(新失效面)<br/>Provenance 的延长线"]
+
+    classDef goal fill:#f6f4ee,stroke:#57606a,color:#1f2328
+    classDef ag fill:#e8eff5,stroke:#33658a,color:#1f2328
+    classDef ws fill:#e9f1ec,stroke:#3d6b4f,color:#1f2328
+    classDef out fill:#fff4e0,stroke:#b35900,color:#1f2328
+    classDef bad fill:#f7ebe8,stroke:#9c3d2e,color:#1f2328
+    class G goal
+    class T1,T2,T3 ag
+    class WS ws
+    class WIN out
+    class LOSE,POL bad
+```
+
+**这张图的三条要点（也是它接进既有知识网的三条缝）：**
+
+| 关系 | 含义 |
+|---|---|
+| **vs 子智能体 / Compaction 页的「子 agent 脚注」** | 子 agent 是**单 agent 内部**的辅助线程（干完活交回摘要）；多智能体是**对等的团队**（各自持完整目标与独立窗口）。[[Compaction]] 页里「子 agent 干净窗口、只回 1–2k 高密度 token」那条脚注，正是跨窗口交换的**单机缩影**——本节把它升格为主线。 |
+| **vs 带溯源的长期记忆** | 记忆是**单 agent 跨会话**（时间维度）；多智能体是**多 agent 同一时刻**（空间维度）。交界的开放问题：团队共享的记忆怎么治理（谁能写什么、已验证 ✅ 与推测怎么区分）——Claude Projects 的答案是「当可检视的工作上下文，不当权威真源」。 |
+| **vs harness（扩展三）** | 多智能体是 harness 的一个**已产品化能力**（OpenAI 一个 flag + `max_concurrent_subagents`；Anthropic 做成协调者模式），但作为概念有独立取舍逻辑：**先问任务有没有验证器，再问要不要组队**。 |
+
+**一句话定位（接在九份材料的总结之后）：**
+
+> 前面九句说的是**一个 agent** 的桌子、文件夹、工牌、签字、工具墙、安全壳；这一句说的是——**当一间办公室不够用，可以开一间共享工作室：每个人埋头试自己的路，但「确认走得通的门」和「确认是死胡同的门」写在同一块白板上。前提是你有办法判定谁真的走通了——没有这个判定的白板，只是谣言板。**
+
+**⚠️ 证据等级如实标注（与扩展三、四不同）：** 本节核心数字来自 AlphaSignal 对论文的**二手报道**（论文实体与代码仓库已给出，arXiv 摘要页未打开）；Agensh 数字二手；Claude Projects 共享记忆「无详细性能评估」。适合作**方向与量级**，逐字引用前先核一手——这条已写进 wiki 的 Next Ingest Suggestions。
 

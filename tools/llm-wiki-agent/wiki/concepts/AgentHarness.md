@@ -39,4 +39,5 @@ Four duties per loop; miss any one and the agent degrades from "works" to "demo"
 - [[HumanInTheLoop]] — its pause/resume requirements are harness durability requirements
 - [[MCP]] — remote MCP tools are called by the harness even with no environment selected
 - [[AgentSandbox]] — the execution environment the harness plugs into (added 2026-09-26)
+- [[MultiAgent]] — subagent scheduling (duty ④) productised; the team-vs-single trade-off has its own page (added 2026-09-26)
 - [[OpenAI]] · [[Anthropic]] — the two vendors simultaneously productising this layer

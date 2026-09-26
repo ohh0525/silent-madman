@@ -2,7 +2,7 @@
 title: "Overview"
 type: synthesis
 tags: []
-sources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28, agent-identity, human-in-the-loop, tool-hallucination, agent-harness, agent-sandbox]
+sources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28, agent-identity, human-in-the-loop, tool-hallucination, agent-harness, agent-sandbox, multi-agent]
 last_updated: 2026-09-26
 ---
 
@@ -12,7 +12,7 @@ last_updated: 2026-09-26
 
 ## Current Synthesis (2026-09-26)
 
-Eleven sources: ten silent-madman concept-learning documents plus a spec digest of the MCP 2026-07-28 revision. The synthesis now has **two halves that answer different questions**. Clusters A–C ask *what the agent knows and sees, and how honestly it remembers* — the **entity side**. Cluster D, ingested 2026-09-24, asks *who the agent is, what it is permitted to do, and whether the thing it just called even exists* — the **actor side**. Cluster E, ingested 2026-09-26, asks *what actually runs the loop* — the **runtime side**. The first two are the **reading discipline** and the **acting discipline**; the third is their **host**: every mechanism in A–D is a part inside a shell that had gone un-named until now.
+Twelve sources: eleven silent-madman concept-learning documents plus a spec digest of the MCP 2026-07-28 revision. The synthesis now has **two halves that answer different questions**. Clusters A–C ask *what the agent knows and sees, and how honestly it remembers* — the **entity side**. Cluster D, ingested 2026-09-24, asks *who the agent is, what it is permitted to do, and whether the thing it just called even exists* — the **actor side**. Cluster E, ingested 2026-09-26, asks *what actually runs the loop* — the **runtime side**. The first two are the **reading discipline** and the **acting discipline**; the third is their **host**: every mechanism in A–D is a part inside a shell that had gone un-named until now.
 
 ### Cluster A — Bounded resources (2026-09-05)
 - **[[Agent]]** is the autonomous execution layer — a system that picks tools and loops around a goal.
@@ -39,9 +39,10 @@ propose ──▶ resolve ──▶ authorize ──▶ gate ──▶ idempoten
        ToolHallucination  AgentIdentity  HumanInTheLoop
 ```
 
-### Cluster E — Runtime side: the loop's host and where it runs (2026-09-26)
+### Cluster E — Runtime side: the loop's host, where it runs, who it works with (2026-09-26)
 - **[[AgentHarness]]** — *what runs the loop.* The engineering shell that turns one model call into an agent: **`Agent = Model + Harness`**. Four duties — assemble context (tool search over schema injection), run the loop and judge stopping, govern the window (automatic **[[Compaction]]**), keep alive / recover / schedule subagents. It is the **container** of the wiki's mechanism pages, not a peer of them: OpenAI's three Agents-API headline features (compaction / tool search / multi-agent) are exactly pre-existing wiki concepts. Boundary: decides **who orchestrates**, while the sandbox decides **where it runs** (OpenAI splits this as separate `Agent` / `Environment` objects).
 - **[[AgentSandbox]]** — *where it runs, what it can touch.* Kernel-level containment (gVisor / Kata / per-sandbox VM) + declarative allow-lists; **authority is not isolation** — a fully legitimate, fully approved action can still run somewhere it can write through the host kernel. This fills the **`execute` leg** of Cluster D's chain, the gap this overview had named since 2026-09-24. As of 2026-09 it is standardised infrastructure (`kubernetes-sigs/agent-sandbox` into SIG Apps; Google AX open-sourced; Alibaba Cloud commercialised). Strongest evidence it is necessary: HF's 2026-07 intrusion anatomy — an allow-list correctly rejected the SSRF, the agent **switched paths** and still leaked pod secrets; *a single layer of defence that denies one path does not close the surface.*
+- **[[MultiAgent]]** — *who it works with.* The wiki's first **between-agents** page: peer agents with independent windows exchange **verified** partial results and failure paths through a shared workspace — team@5 ≈ best@33 on ARC-AGI-3 (≈6.6× equivalent compute), LP85 64-independent-all-failed vs team@5 65%. The teaching spine is the counter-result: **fails without verifier or low compute** — the verifier is the precondition, otherwise the shared workspace degrades into **cross-contamination** (互相污染, an unverified peer conclusion inherited as premise — [[Provenance]]'s extension line). Productised as Anthropic's Claude Code Projects (coordinator → parallel cloud threads → shared memory → ordinary merge conflicts; threads each burn quota; CI/tests/human review remain the integration boundary); decentralised scale via Agensh (1,024 agents, no central orchestrator). **Evidence grade: secondhand throughout** (AlphaSignal's report of the paper, arXiv not opened; Agensh secondhand; Projects shared memory "no detailed performance evaluation") — direction-and-magnitude only.
 - The layer became **managed infrastructure in 2026-09** ("Harness Wars"): OpenAI rents the Codex harness (public beta 2026-09-10), [[Anthropic]] counters with Opus 5.5 managed orchestration. Managed ≠ safe: egress defaults `enabled`, `restricted` takes only 1–100 exact hostnames, secrets injected into the environment remain exposed — the defaults *are* the security boundary, and same-week Codex sandbox escapes (Heapjack / Overpatch) show management centralises patching, not risk. [[Skill]] is becoming this ecosystem's packaging format (372 / 216 / 193 skills, 2026-09).
 
 ### How they connect
@@ -69,9 +70,14 @@ Context Engineering ──manages/crops──▶ LLM Context Window ◀──sup
                                                   ▼
                         Agent Sandbox (execute leg) ── gVisor / Kata / per-sandbox VM;
                         declarative egress allow-lists; authority ≠ isolation
+                                        ▲
+                                        │ peer teams exchange verified progress
+                        Multi-Agent (collaboration leg) ── team@k ≈ best@4-7k; the
+                        verifier is the precondition; cross-contamination is the
+                        new failure surface
 ```
 
-The eleven-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand; Context Engineering decides what belongs in that window each step; provenance-aware Long-Term Memory lets it remember across sessions — honestly. On the acting side, it proves who it is with strictly narrowing authority, asks a human before the irreversible step, and can only call tools that provably exist — and even if all of that fails, the sandbox bounds what the action can touch. And all of it — the loop, the compaction, the gates, the subagents — runs inside a harness that as of 2026-09 is itself becoming managed infrastructure.**
+The twelve-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand; Context Engineering decides what belongs in that window each step; provenance-aware Long-Term Memory lets it remember across sessions — honestly. On the acting side, it proves who it is with strictly narrowing authority, asks a human before the irreversible step, and can only call tools that provably exist — and even if all of that fails, the sandbox bounds what the action can touch. All of it runs inside a harness that as of 2026-09 is itself becoming managed infrastructure — and when one harness is not enough, several can work as a team, provided the task carries its own verifier.**
 
 ## Cross-Cutting Themes
 - **Bounded context is the central constraint** — every concept in Clusters A–C traces back to a token / window / cost limit. [[ContextRot]] sharpens it: capacity ≠ effective capacity.
@@ -82,13 +88,14 @@ The eleven-page story: **an Agent, bounded by a Context Window, uses Skills to l
 - **NEW (2026-09-24) — ordering is a first-class design object.** Three times now the answer has been *where* a mechanism sits rather than how strong it is: the resolution rung must precede every gate; the authorization check precedes the gate; and the gate precedes execution. A control in the wrong position is not a weaker control — it is not a control.
 - **NEW (2026-09-26) — the loop needs a host.** Every mechanism page in Clusters A–D implicitly ran inside something that no page named. [[AgentHarness]] names it, and in doing so reorganises the wiki: compaction, the resolution rung, Skill loading and subagent scheduling stop being peers and become **parts of one shell**. The test this suggests for future gaps: for each page, ask *what does this mechanism run inside, and does that thing have a page?*
 - **NEW (2026-09-26) — vendor defaults are citable; vendor benchmarks are not.** The harness sources split cleanly into two grades: **documented defaults** (egress `enabled` by default; `restricted` = 1–100 exact hostnames; secrets remain exposed) are facts about the product and can be cited; **self-reported performance** (latency ~¼, cost −60%, failures −86%) is marketing-grade until independently reproduced. The wiki should keep these two grades in separate columns whenever it records vendor claims.
+- **NEW (2026-09-26) — the verifier is the precondition of collaboration.** [[MultiAgent]]'s headline (team@5 ≈ best@33) ships with its own counter-result ("fails without verifier or low compute") — the first wiki entry whose *boundary condition is the content*. Portable rule: **first find a cheap way to judge correctness, then form the team.** Its new failure surface, cross-contamination, extends [[Provenance]] from fact-origin to the verification status of peers' conclusions.
 - **[[Anthropic]] is the primary vendor** contributing this design vocabulary; [[OpenAI]] complements; memory systems now contribute [[AgentZeroMemory]], [[MemGPT]], [[Zep]]; the actor side draws on a wider set (Microsoft Entra Agent ID, Okta, and the OAuth/IETF layer) — the first cluster not dominated by one vendor.
 
 ## Open Questions (suggested next sources)
 - A concrete RAG system case study (vector DB choice, chunking strategy, retrieval quality) — still open from 2026-09-09, now the **oldest** open item.
 - ~~The MCP stateless revision (2026-07-28 spec)~~ — **resolved 2026-09-16**: [[MCP]] page rewritten from [[mcp-2026-07-28]].
 - How [[ContextEngineering]] techniques are measured end-to-end (beyond single-provider claims) — needs an independent evaluation.
-- Multi-agent memory sharing and role-based access control on shared persistent memory.
+- Multi-agent memory sharing and role-based access control on shared persistent memory. (**Orchestration side covered 2026-09-26** by [[MultiAgent]] — Claude Code Projects' shared project memory is the product instance; the *governance* side — RBAC on shared memory, who may write what — remains open.)
 - MCP **Tasks / MCP Apps / EMA** extensions — now first-class; worth a dedicated page if usage grows.
 - ~~**NEW — execution isolation as the missing third leg.**~~ — **resolved 2026-09-26**: [[AgentSandbox]] now fills the `execute` leg of Cluster D's chain (K8s SIG Apps upstream + Google AX + Alibaba Cloud commercialisation + the HF intrusion anatomy as motive evidence; radar candidate 2026-09-21).
 - **NEW — persistent execution.** The gate's own requirement — that a paused workflow be resumable by a *different* process, days later — is a durable-execution requirement. (**Partially covered 2026-09-26**: keep-alive / crash recovery is harness duty ④ on [[AgentHarness]], and pause/resume is a sandbox capability on [[AgentSandbox]]; what remains unwritten is the cross-runtime semantics comparison — event replay vs checkpoint adoption vs snapshot. Radar candidate 2026-09-23.)
@@ -100,3 +107,4 @@ The eleven-page story: **an Agent, bounded by a Context Window, uses Skills to l
 - ~~`raw/papers/agent-sandbox-isolation.md`~~ — **resolved 2026-09-26**: [[AgentSandbox]] ingested from the concept-learning material (K8s upstream evidence included); a dedicated *paper* on isolation could still deepen it, but the page exists
 - **NEW** an **independent** evaluation of the agent-identity traceability / attenuation claims — the current figures are vendor-survey grade
 - **NEW (2026-09-26)** the OpenAI developer documentation for the Agents API itself — the harness material's claims all trace to verified secondary sources; the primary docs were not opened first-hand
+- **NEW (2026-09-26)** the arXiv primary for the Microsoft Research + UC Berkeley team@k paper (repo `github.com/jerryjonghopark/test-time-communication` given; abstract page not opened) — [[MultiAgent]]'s numbers are secondhand until this is done

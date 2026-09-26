@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：多智能体协作的工程化（Multi-Agent Orchestration）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #33658a;
+    --accent-soft: #e8eff5;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  .note {
+    background: #fdf6e3;
+    border-left: 3px solid #d9a300;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 多智能体协作</span>
+  <h1>多智能体协作的工程化（Multi-Agent Orchestration）</h1>
+  <p class="subtitle">k 个通气的 agent 能追平几十个单干的 —— 但前提是有可验证的进度；2026 年 9 月，「多智能体」第一次同时拿到可复现的实验结论与产品级的编排入口 · 生成时间 2026-09-26</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">多智能体协作是让<strong>多个各自拥有独立上下文窗口的 agent</strong> 围绕同一目标工作：通过共享工作区交换<strong>已验证的</strong>部分结果、失败路径与中间得分，用更少的总算力拿到比「大量独立采样取最好」更好的结果——<strong>前提是存在可验证的进度</strong>；没有验证器或算力紧张时，通信的开销会盖过收益，独立 agent 反而更好。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>想象 solving 一道很难的谜题，你有两种花预算的方式。方式一：<strong>33 个人各自关在房间里独立解题</strong>，最后取最好的一份（best@33）。方式二：<strong>5 个人坐在同一间工作室里</strong>，谁验证出一条走得通的路就喊出来，其他人立刻从那里继续，走过的死胡同也贴在墙上不再重试（team@5）。2026 年 9 月微软研究院与 UC Berkeley 的实验结论是：<strong>方式二追平方式一</strong>——5 个通气的 ≈ 33 个单干的，相当于 6.6 倍的独立算力。</p>
+  <p>为什么通气这么值钱？因为 agent 之间交换的不是闲聊，而是<strong>「已验证的突破」</strong>：一个人确认「这扇门后面有路」，其他人就不用再试那扇门和它旁边的一排死门。收益全部来自「<strong>建立在别人已确认的进展之上</strong>」——这不是分工（没有预设角色），也不是中央调度（没有指挥官），就是一张共享的白板。</p>
+  <p>但这份材料最想让你记住的是那个「<strong>但</strong>」字。同一篇论文明确给出反例：<strong>在没有验证器（无法判断谁真的进展了）或算力紧张（等别人验证太贵）时，通信带来的开销会盖过收益，独立 agent 反而更好</strong>。通信不是免费的——它需要「可验证的进度」作锚。没有这个锚，共享白板会退化成谣言板：一个人的错误结论被其他人当作已验证的前提继承下去。这就是多智能体独有的新失效面：<strong>互相污染</strong>。</p>
+  <p>为什么「当下」学它？因为这一周它凑齐了三种证据：论文（可复现的 team@k vs best@k 对比）、产品（Anthropic 把「协调者 → 并行线程 → 共享记忆」搬进 Claude Code Projects）、规模（微软 Agensh 在没有中央编排者的前提下扩到 1,024 个 agent）。问题已经从「多智能体<strong>能不能</strong>」变成「<strong>什么条件下值得、谁来承担协调成本</strong>」。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>交换的对象是「已验证的进度」，不是消息</strong>：k 个同目标、同算力预算的 agent 通过共享工作区交换部分结果、失败路径与代码；没有预设角色、没有中央编排者。<br />为什么重要：这划清了它与「工作流编排」的界限——收益不来自流程设计，来自<strong>增量被验证后即可复用</strong>。</li>
+    <li><strong>验证器是收益的前提条件</strong>：只有当「谁真的进展了」可以被便宜地判定时，「建立在别人进展之上」才成立。LP85 任务上 64 次独立尝试全部失败、team@5 却解出 65%，靠的正是进度可验证。<br />为什么重要：它把「要不要上多智能体」从品味问题变成工程判据——<strong>先问任务有没有验证器，再问要不要组队</strong>。</li>
+    <li><strong>反例与正例同在，边界即结论</strong>：ARC-AGI-3 上 team@3 追平 best@13、team@5 追平 best@33；polyomino packing 被 team@3 刷到 SOTA 0.945；但论文摘要同时写明方法「<strong>fails without verifier or low compute</strong>」。<br />为什么重要：引用多智能体收益时必须连同它的边界条件一起引用，否则就是把有条件的结论讲成万灵药。</li>
+    <li><strong>新失效面：互相污染</strong>：一个 agent 的未验证结论被同伴当作前提继承——这是单 agent 世界不存在的失败模式，而且恰好打在你已学的 [[Provenance]]（来源溯源）概念的延长线上。<br />为什么重要：多智能体系统里的「信任」不只要管事实来源，还要管<strong>同伴结论的验证状态</strong>；共享记忆要当「可检视的工作上下文」，不能当权威真源。</li>
+  </ol>
+  <div class="mermaid-placeholder"># team@k vs best@k —— 交换的是"已验证的突破"
+#
+#  best@33:  ┌──┐┌──┐┌──┐     ┌──┐   33 个独立采样,各试各的
+#            │A1││A2││A3│ ... │A33│   大量重复劳动,取 max
+#            └┬─┘└┬─┘└┬─┘     └┬─┘
+#             └───┴───┴── max ──┘
+#
+#  team@5:   ┌──┐┌──┐┌──┐┌──┐┌──┐   5 个 agent + 1 个共享工作区
+#            │B1││B2││B3││B4││B5│   交换: 部分结果 / 失败路径 / 代码
+#            └┬─┘└┬─┘└┬─┘└┬─┘└┬─┘   "建立在别人已确认的突破之上"
+#             └───┴───┼───┴───┘
+#                [共享白板: 已验证的进展 ✅ / 死胡同清单 ❌]
+#                      │
+#              前提: 存在验证器(进度可判定)
+#              反例: 无验证器 or 算力紧张 → 通信开销 > 收益
+#                    → 独立 agent 反而更好 ("fails without
+#                      verifier or low compute")</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 难题攻坚：用 team@k 替代暴力采样</h3>
+    <p><span class="label">背景：</span>一类任务的解可以通过程序自动判定对错（ARC-AGI-3 网格世界、LP85、polyomino packing、MNIST 分类器压缩）——天然自带验证器。</p>
+    <p><span class="label">如何应用：</span>把同一目标与同一算力预算发给 k 个 agent，共享一个工作区，让它们交换已验证的部分解与失败路径。实验结果：ARC-AGI-3 上 team@5 ≈ best@33（6.6× 等效算力）；LP85 上独立 64 次全败而 team@5 解出 65%；FT09 解出率约 26% → 90%；polyomino packing 0.894 → 0.945 创 SOTA；4-agent 团队写出仅 1,957 字节、99.4% 准确率的 MNIST 分类器，比人类最优还小 20%。</p>
+    <p><span class="label">结果：</span>在自带验证器的任务上，「通气的小团队」对「单干的大队伍」形成算力倍率优势——前提写进边界条件：无验证器或算力紧张时不要用。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 工程落地：Claude Code Projects 的协调者模式（beta 2026-09-17）</h3>
+    <p><span class="label">背景：</span>一个工程目标（迁移、重构、多模块改造）单线程 agent 要跑很久，且上下文装不下整个仓库。</p>
+    <p><span class="label">如何应用：</span>一个 coordinator 会话把目标拆成并行线程——每条线程是一整个独立的云端 Claude Code 会话，自带分支与仓库副本，能跑测试、开 PR、还能再开子 agent；线程间共享项目记忆与资料库，让「改过的发布日、砍掉的功能」这类决定跨会话存续；重叠改动按<strong>普通 merge conflict</strong> 处理，不静默合并。同时接受它自陈的边界：线程各自消耗订阅配额（并行不免费）；launch 阶段线程只跑在云端；共享记忆是「可检视的工作上下文」而非权威真源；CI / 测试 / 人工评审仍是集成边界——即便协调者报告「全部完成」。</p>
+    <p><span class="label">结果：</span>多智能体从「实验设置」变成「产品里一个按需打开的模式」；协调成本从自研框架变成厂商托管，但验证与合并的最终责任仍在人。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 规模化：去掉中央编排者（微软 Agensh）</h3>
+    <p><span class="label">背景：</span>中央协调者本身会成为规模瓶颈——1,000+ agent 时单点调度不可扩展。</p>
+    <p><span class="label">如何应用：</span>Agensh（微软研究院 Furu Wei 团队）用「共享工作区 + 消息接口 + 可复用发现的共享上下文」替代中央编排者，agent 异步自组织协作；在 pandoc 上把 agent 数从 1 扩到 1,024，通过率 33.89% → 55.06%；ProgramBench 最难五项在 1 → 128 agent 时平均通过率 19.31% → 28.78%。</p>
+    <p><span class="label">结果：</span>去中心化路线的规模证据（注：数字来自二手报道，未见一手发布；作方向与量级参考）。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是子智能体（subagent）</strong>：子智能体是<strong>单 agent 内部</strong>开出的辅助线程（干完活把摘要交回主上下文）；多智能体是<strong>对等的团队</strong>，成员各自持有完整目标与独立窗口。Claude Code Projects 恰好把两者接起来：线程是团队，线程内部还能再开子 agent。</li>
+    <li><strong>不是共享记忆系统</strong>：长期记忆是<strong>单个 agent 跨会话</strong>的持久化（时间维度）；多智能体是<strong>多个 agent 同一时刻</strong>的共享状态（空间维度）。两者互补：团队共享的记忆怎么治理，正是两者交界处的开放问题。</li>
+    <li><strong>不是上下文工程的替代</strong>：上下文工程管<strong>单窗口内</strong>放什么；多智能体管<strong>多窗口间</strong>换什么。后者可以看作前者在跨窗口维度上的延伸——子 agent「干净窗口、只回 1–2k 高密度 token」正是这条路的缩影。</li>
+    <li><strong>不是「更多 agent 总是更好」</strong>：论文自带反例——无验证器或算力紧张时独立更好；产品自带成本——线程各自烧配额。多智能体是一个<strong>有边界条件的工具</strong>，不是免费午餐。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「多智能体 = 给每个 agent 分配一个角色」——实验里恰恰<strong>没有预设角色</strong>。收益来自「已验证进度的复用」，不是角色扮演的分工剧本。</li>
+    <li>「组了队就该共享一切」——未验证的结论会被同伴当作前提继承（<strong>互相污染</strong>）。共享的对象要区分「已验证 ✅」与「推测」，这正是 [[Provenance]] 思想在多智能体里的延伸。</li>
+    <li>「协调者说完成了就是完成了」——Claude Projects 自己写明：CI / 测试 / 人工评审仍是集成边界，「所有线程已完成」不是「集成正确」。</li>
+  </ul>
+  <h3>5.3 适用与不适用</h3>
+  <table>
+    <thead><tr><th>值得组队</th><th>先别组队</th></tr></thead>
+    <tbody>
+      <tr><td>任务有便宜的验证器（测试、可执行判定、编译通过）</td><td>没有验证器、进度无法判定</td></tr>
+      <tr><td>失败路径多且昂贵（别人试过错能省你大量算力）</td><td>算力紧张、单次尝试很便宜</td></tr>
+      <tr><td>目标可拆成并行分支、冲突面可控</td><td>强串行依赖、冲突面大（merge 成本吞掉并行收益）</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <strong>落手顺序建议：</strong>①先找验证器——没有它，后面全部免谈；②从 k=2–5 的小团队开始，别上来就 1,024；③把「已验证 ✅ / 推测」的状态显式写进共享工作区，防互相污染；④预算按「线程各自计费」估算，别按「一个 agent 乘 N」低估；⑤集成边界（CI / 测试 / 人审）留在团队之外。
+  </div>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://alphasignal.ai/news/microsoft-shows-5-communicating-agents-matching-33-independent-ai-attempts">Microsoft Shows 5 Communicating Agents Matching 33 Independent AI Attempts · AlphaSignal（2026-09-22）</a> — team@k vs best@k 核心数字：ARC-AGI-3 team@3 = best@13 / team@5 = best@33；LP85 独立 64 次全败 vs team@5 65%；FT09 约 26% → 90%；polyomino 0.945 SOTA；MNIST 1,957 字节 @ 99.4%；「fails without verifier or low compute」。论文代码仓库 github.com/jerryjonghopark/test-time-communication 已给出。</li>
+    <li><a href="https://beyondthe.news/dossiers/claude-code-projects-parallel-cloud-agent-coordinator-shared-memory">Claude Code Projects turns one engineering goal into parallel cloud-agent branches · Beyond the News（2026-09-22）</a> — 协调者 / 独立云端线程 / 共享项目记忆 / merge conflict 处理 / 线程各自消耗配额 / 云端执行边界 / 「CI 与人审仍是集成边界」。</li>
+    <li><a href="https://agihunt.info/en/p/1a0cc27a26151fef5c255f14947">Microsoft's Agensh Scales Multi-Agent Systems to 1,024 Agents Without a Central Orchestrator · AGI Hunt</a> — 去中心化规模证据：pandoc 1 → 1,024 agent 通过率 33.89% → 55.06%；ProgramBench 最难五项 19.31% → 28.78%。</li>
+    <li><a href="https://radarai.top/en/updates/weekly-2026-09-25">Weekly AI Highlights 2026-09-25 · RadarAI</a> — 「多智能体协作从 demo 走向工程」的周度归纳与交叉印证。</li>
+  </ol>
+  <div class="note">
+    <strong>来源强度如实标注：</strong>本材料核心实验数字来自 AlphaSignal 对论文的报道（二手；论文实体与代码仓库已给出，但<strong>未打开 arXiv 原页核对摘要口径</strong>）；Agensh 数字来自二手报道，未见一手发布；Claude Code Projects 的项目记忆与性能「没有详细性能评估」（原报道如此）。三条均适合做<strong>方向与量级</strong>，逐字引用前建议核一手。这是本材料与 agent-harness / agent-sandbox 两份（一手来源已复核）在证据等级上的差异，已如实标注。
+  </div>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">k 个通气的 agent 能追平几十个单干的——但「通气」只在有验证器时才值钱：先找到便宜的判定对错的方法，再组队；没有它，共享白板就是谣言板。</p>
+</section>
+
+<footer>由 concept-explainer Skill 自动生成 · 2026-09-26 · 用户指令「继续做」授权入库</footer>
+
+</div>
+</body>
+</html>

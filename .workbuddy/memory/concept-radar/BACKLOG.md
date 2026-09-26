@@ -23,9 +23,9 @@
 
 | 状态 | 条数 |
 |---|---|
-| ✅ 已入 raw 并摄取 | 8 |
+| ✅ 已入 raw 并摄取 | 9 |
 | 🟡 材料已出待核查 | 0 |
-| ⏸ 已建议未动 | 22 |
+| ⏸ 已建议未动 | 21 |
 | **合计** | **30** |
 
 > ✅ **2026-09-24 更新:入库通道已打通。** 09-22 那 3 条「行动侧」候选(身份 / 人在环 / 工具幻觉)经用户明确授权后已进入 `raw/learning-materials/` 并完成摄取,`🟡` 这一态**归零**。此前 9 天累积的积压全部结清。
@@ -67,7 +67,7 @@
 | 09-24 | 模型路由 / 成本-质量路由 · Model Routing / Cost-Quality Routing | 无 `concepts/ModelRouting.md` | ⏸ 已建议未动 | 承接 09-23 备查表承诺(「若再现则单列」);与 09-20 提示缓存构成概念对;评测经济学(09-25 候选 3)是其成本侧背景 |
 | 09-25 | 记忆时效性 / 「旧记忆比没记忆更糟」 · Memory Freshness / Stale-Memory Evaluation | 无 `concepts/MemoryFreshness.md` | ⏸ 已建议未动 | Agent Memory Challenge Cycle 2(2026-09-20 开赛,11-04 截止,11 月中出结果)**建议等结果再成文**;与 [[Provenance]]/[[CitationLock]]/[[Abstention]] 构成真实性三闸门;与 09-24 候选 1(生命周期)为上下游 |
 | 09-25 | Agent 评测经济学 / 评测税 · Agent Evaluation Economics | 无 `concepts/EvaluationEconomics.md` | ⏸ 已建议未动 | 三条中最不急:建议作为 09-17 候选 2(Agent Evals)材料的成本章,不单独成文;「~62% 推理账单来自重发上下文」(Stanford,二手转述)值得记进 [[ContextEngineering]] 开篇 |
-| 09-26 | 多智能体协作的工程化 · Multi-Agent Orchestration | 无 `concepts/MultiAgent.md` | ⏸ 已建议未动 | **本期唯一新增候选**。全库 37 页零覆盖(所有图都是单 agent)。2026-09 三线证据:微软研究院 + UC Berkeley「team@k vs best@k」(ARC-AGI-3 team@5=best@33;LP85 独立 64 次全败 vs team@5 65%;且**无验证器或算力紧张时独立 agent 反而更好**)、Anthropic Claude Code Projects(2026-09-17 beta,协调者+并行云端线程+共享记忆,重叠按 merge conflict)、微软 Agensh(无中央编排者扩到 1,024 agent)。与 09-17(多智能体共享记忆,记忆侧)、09-18(子智能体上下文隔离,单 agent 内部)相邻但不同;与 09-26 候选 1(harness)是「harness 的一个已产品化能力」但作为概念有独立取舍逻辑。新失效面:**多 agent 间未验证结论被当作前提继承(互相污染)** |
+| 09-26 | 多智能体协作的工程化 · Multi-Agent Orchestration | `concepts/MultiAgent.md` **已建** | ✅ 已入 raw 并摄取 | **本期唯一新增候选**。全库 37 页零覆盖(所有图都是单 agent)。2026-09 三线证据:微软研究院 + UC Berkeley「team@k vs best@k」(ARC-AGI-3 team@5=best@33;LP85 独立 64 次全败 vs team@5 65%;且**无验证器或算力紧张时独立 agent 反而更好**)、Anthropic Claude Code Projects(2026-09-17 beta,协调者+并行云端线程+共享记忆,重叠按 merge conflict)、微软 Agensh(无中央编排者扩到 1,024 agent)。与 09-17(多智能体共享记忆,记忆侧)、09-18(子智能体上下文隔离,单 agent 内部)相邻但不同;与 09-26 候选 1(harness)是「harness 的一个已产品化能力」但作为概念有独立取舍逻辑。新失效面:**多 agent 间未验证结论被当作前提继承(互相污染)**。**09-26(同日)全链路落地**:用户指令「继续做」授权——`multi-agent.html` 产出并入 raw、摄取(源 11→12、页 41→43,新增 [[MultiAgent]],overview Cluster E 补协作层、新增横断主题「验证器是协作的前提」),`concept-relationship.md` 增「扩展五 · 多智能体协作」。证据等级二手(AlphaSignal/AGI Hunt 报道,arXiv 摘要未开)已在材料、源页与 overview 三处标注,arXiv 一手已列入 Next Ingest Suggestions |
 
 ---
 
@@ -80,3 +80,4 @@
 - **2026-09-26(同日稍后)** 用户以指令「1」选定 09-26 候选 1(Agent Harness)为落地对象;`learning-materials/agent-harness.html` 由 concept-explainer Skill 产出并提交,README 已生成清单同步登记。09-18 行状态 ⏸ → **🟡**。汇总态变为 **6 ✅ / 1 🟡 / 23 ⏸**(合计 30)。
 - **2026-09-26(再稍后)** 用户指令「你帮我做完」,授权自动化完成全链路:HTML 复制入 `raw/learning-materials/`(md5 一致)→ 按 Ingest Workflow 摄取(源 9→**10**、wiki 页 37→**39**:新增 `sources/agent-harness.md` 与 `concepts/AgentHarness.md`,`[[Agent]]` 增运行时轴,`overview.md` 新增 **Cluster E** 与两条新横断主题)→ `concept-relationship.md` 新增「扩展三 · 运行时底座」并修正两条 09-24 已过时的「待核查」标注。09-18 行 🟡 → **✅**。汇总态变为 **7 ✅ / 0 🟡 / 23 ⏸**(合计 30)。**注意:本次入库为用户指令授权,非逐条人工核查,已在 wiki log.md、README 与来源页如实标注**。
 - **2026-09-26(晚间)** 用户指令「继续做」,候选 2(Agent 沙箱)全链路落地:`agent-sandbox.html` 产出并入 `raw/`(md5 一致)→ 摄取(源 10→**11**、wiki 页 39→**41**:`sources/agent-sandbox.md` + `concepts/AgentSandbox.md`,overview Cluster E 补执行层、行动侧链 `execute` 格关闭、open question「执行隔离 missing third leg」标记 resolved)→ `concept-relationship.md`「扩展四 · 执行隔离」+ 扩展三沙箱节点更新。09-21 行 ⏸ → **✅**。汇总态 **8 ✅ / 0 🟡 / 22 ⏸**。同轮修复:发现并补回上轮丢失的 overview 两处编辑(open questions sharpened + OpenAI docs 摄取建议),已在 wiki log 记录。
+- **2026-09-26(更晚)** 候选 3(多智能体协作)全链路落地:`multi-agent.html`(靛青)产出并入 raw(md5 一致)→ 摄取(源 11→**12**、页 41→**43**:`sources/multi-agent.md` + `concepts/MultiAgent.md`;overview Cluster E 补协作层并改题「host / where it runs / who it works with」、十二页故事、新横断主题「验证器是协作的前提」;open question「多智能体共享记忆」标注编排侧已覆盖、治理侧仍开放)→ `concept-relationship.md`「扩展五 · 多智能体协作」。09-26 行 ⏸ → **✅**。**至此 2026-09-26 雷达三条候选全部当日落地**。汇总态 **9 ✅ / 0 🟡 / 21 ⏸**(合计 30)。证据等级二手已三处标注。
