@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：Agent Harness（智能体外壳）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #3d6b4f;
+    --accent-soft: #e9f1ec;
+    --line: #e5e2dc;
+    --code-bg: #f6f4ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  .note {
+    background: #fdf6e3;
+    border-left: 3px solid #d9a300;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · Agent Harness</span>
+  <h1>Agent Harness（智能体外壳）</h1>
+  <p class="subtitle">「Agent = Model + Harness」的后半截 —— 2026 年 9 月，这层壳从「每个团队自己写一遍」变成了可以购买的基础设施 · 生成时间 2026-09-26</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">Agent Harness 是把「一次模型调用」变成「一个能干活的 agent」的那层工程外壳：组装提示词、检索并注入工具定义、执行工具、在上下文窗口将满时决定丢什么、崩溃后从哪里续起、把子智能体调度起来——它不是模型，也不是你的业务逻辑，而是<strong>模型与真实世界之间的那段循环代码</strong>。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>想象一支 F1 车队。车手（模型）天赋异禀，但比赛从来不是车手一个人跑完的：得有人造赛车、决定什么时候进站换胎、盯着遥测防止爆缸、出了事故把它拖回来修好再上场。<strong>车手决定「怎么开」；车队决定「这场比赛能不能被跑完」。</strong></p>
+  <p>agent 也一样。你在 <code>agent.html</code> 里学过那个朴素的循环——观察 → 思考 → 行动 → 再观察——但那是循环的<strong>语义</strong>。总得有一段代码真的去跑这个循环：每轮把系统提示词和工具清单拼进上下文、把模型吐出的工具调用真的执行掉、把结果塞回历史、判断该停还是该继续；窗口快满时决定摘要掉哪一段；进程崩了从哪一步续起；任务太大时拆给几个子智能体分头跑。这段代码就是 harness。所以工程圈有个流传很广的拆法：<strong>Agent = Model + Harness</strong>。</p>
+  <p>为什么「当下」值得单独学它？因为 2026 年 9 月，这层壳本身变成了商品。OpenAI 在 09-10 把支撑 Codex 的那套 harness 开成了 Agents API 公测——你交「任务 + 模型 + 工具 + 环境」，它负责跑循环、自动压缩上下文、协调子智能体、把会话保活好几天；Anthropic 同一周用 Opus 5.5 打「托管编排」，builder 圈的反响是「别再过度优化了，让模型自己编排自己，又便宜又够用」。行业通讯 Agent Brief 直接把这一周命名为「<strong>Harness Wars（外壳战争）</strong>」，并给出定性：<strong>编排本身正在变成受管基础设施</strong>。</p>
+  <p>对你个人还有一层意义：你库里的那些机制页——压缩、工具幻觉、技能、上下文工程——其实<strong>都是 harness 内部的零件</strong>，只是那个「壳」一直没有被单独写出来。这一页补的就是那个壳。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <p>一个 harness 在每轮循环里大致做四件事，缺一件，agent 就从「能用」退回「演示」：</p>
+  <ol>
+    <li><strong>组装上下文</strong>：把系统提示词、工具定义、对话历史拼进本轮请求；现代 harness 用「工具检索」（tool search）<em>按需</em>取工具定义，而不是每轮把全部 schema 塞满窗口。<br />为什么重要：窗口是稀缺资源，模型只能看见被放进去的东西——放什么、放多少，直接决定 agent 的视野与成本。</li>
+    <li><strong>跑循环并判停</strong>：发请求 → 解析工具调用 → 执行 → 把观察结果回填历史 → 判断「完成 / 继续 / 放弃」。<br />为什么重要：「自主」的全部含义就是这段循环；而<strong>没有终止条件的循环，就是一个无限烧钱的循环</strong>。</li>
+    <li><strong>治理窗口</strong>：临近上下文上限时，自动把早先的上下文摘要压缩（automatic compaction），让任务跨越多个窗口继续，而不是在窗口边界上断掉。<br />为什么重要：长任务的瓶颈从来不是模型智力，而是窗口大小——<strong>谁决定「满了丢什么」，谁就握着长任务的质量</strong>。</li>
+    <li><strong>韧性与扩展</strong>：会话保活与崩溃恢复（真实任务以天计，单进程循环撑不住）；子智能体调度（harness 自己提供 create / message / wait / interrupt 四个工具，一个开关加并发上限即可打开）。<br />为什么重要：这四件事加起来，就是「demo 能跑」和「生产能用」之间的全部距离。</li>
+  </ol>
+  <div class="mermaid-placeholder">        目标/任务                                结果/产物
+            │                                       ▲
+            ▼                                       │
+  ┌────────────────── Agent Harness（壳）──────────────────┐
+  │                                                         │
+  │  ① 组装上下文   ② 跑循环/判停   ③ 治理窗口    ④ 韧性与扩展│
+  │    prompt 拼装    执行工具、观察、   automatic     保活/恢复/│
+  │    工具检索注入   判断终止        compaction    子智能体调度│
+  │       │             │              │              │      │
+  │       ▼             ▼              ▼              ▼      │
+  │   Skill 按需     工具幻觉消解     压缩保真度     执行沙箱   │
+  │   加载知识       （存在性核对）   （丢什么）    （在哪执行）│
+  │  (skill.html)(tool-hallucination.html)(见既有材料)        │
+  │                                                         │
+  │     ↑ 图中下行 = 壳内的「零件」，对应你已学的概念页 ↑      │
+  └────────────────────────┬────────────────────────────────┘
+                           ▼  执行环境（可插拔，独立概念：沙箱）
+                openai_hosted / self_hosted / none
+                壳决定「谁编排」；环境决定「在哪跑、能碰到什么」</div>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · OpenAI Agents API：把 Codex 的壳租给你（2026-09-10 公测）</h3>
+    <p><span class="label">背景：</span>小团队想做能连续跑几天的深度任务 agent，自己维护循环、压缩、恢复既费人又容易坏。</p>
+    <p><span class="label">如何应用：</span>创建 Agent（模型 + 指令 + 工具 + MCP server）与 Session；执行环境三选一（openai_hosted / self_hosted / none，不选环境就没有沙箱和文件系统，但循环与远程 MCP 工具照跑）；三个主力特性 automatic compaction / tool search / programmatic tool calling 开箱即用；子智能体用一个 flag 加 max_concurrent_subagents 打开。</p>
+    <p><span class="label">结果：</span>你不再写压缩逻辑、恢复逻辑、调度逻辑，只为 token 与工具付费；会话可保活数天，写到 /workspace/outputs 的产物自动发布为 artifact。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 上生产前先读默认值：托管不等于安全</h3>
+    <p><span class="label">背景：</span>团队打算给 agent 挂上生产凭据，整体交给托管 harness。</p>
+    <p><span class="label">如何应用：</span>把「逐条核对默认值」当作上线检查单第一项——宿主沙箱出网 network.access <strong>默认 enabled</strong>；收紧到 restricted 只接受 1–100 个精确主机名（不支持通配符、协议、路径、端口，子域与重定向目标都要单列）；文档明说「Agent 生成的代码可以访问其环境可用的文件、凭据与网络」，注入的密钥仍会暴露给 agent 代码，要改用 vault；并确认补丁节奏——同周披露的 Codex 沙箱逃逸 Heapjack / Overpatch 修复于 Desktop build 26.818.21641 与 CLI 0.149.0。</p>
+    <p><span class="label">结果：</span>认识到「托管 harness 不消除沙箱风险，只是把修补责任集中到厂商的发版节奏上」——安全工作从「我自己修」变成「我盯着厂商修、每版核对默认值」。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 自建还是托管：编排复杂度的去留</h3>
+    <p><span class="label">背景：</span>一个步骤无法预先穷举的数据清洗 agent，团队在「用框架自己拼 harness」与「买托管」之间摇摆。</p>
+    <p><span class="label">如何应用：</span>按三条判据取舍——任务时长（以小时/天计 → 托管的保活与恢复更值钱）；合规边界（该公测仅美国数据驻留、不支持零数据保留 ZDR → 强监管负载先别上）；循环特殊性（毫秒级 SLA 或循环本身就是核心竞争力 → 自建）。同时留意 Anthropic 用 Opus 5.5（$4/$20 每百万 token，缓存读降 60% 至 $0.20）把「模型编排模型」打到很便宜，builder 圈的教训是「别在壳里过度工程，让模型自己编排往往又便宜又够用」。</p>
+    <p><span class="label">结果：</span>「谁跑循环」从应用代码里挪出去，团队只保留业务判断与验收——但托管约束（地域、数据驻留）成为新的采购条件。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是 Agent 本身</strong>：<code>agent.html</code> 讲的是循环的<em>语义</em>（推理 → 选工具 → 执行 → 观察）；harness 是这段循环的具体<em>实现</em>——谁拼 prompt、谁管工具表、谁做压缩、谁管恢复。语义回答「agent 是什么」，壳回答「它靠什么跑起来」。</li>
+    <li><strong>不是任何一个机制页，而是装它们的容器</strong>：压缩（满了丢什么）、工具幻觉消解（调用先核对存在性）、Skill（知识按需加载）、上下文工程（每步放什么的原则）都是<strong>壳内的零件</strong>；harness 决定的是「何时调用哪个零件、用什么阈值」。一个佐证：OpenAI 这次主打的三个卖点——automatic compaction、tool search、子智能体——恰好就是你已经学过的概念。</li>
+    <li><strong>不是上下文工程</strong>：上下文工程是一套<em>原则</em>（每一步该往窗口里放什么）；harness 是<em>执行这套原则的那个程序</em>。原则可以写在纸上，壳必须跑在机器上。</li>
+    <li><strong>不是沙箱</strong>：harness 决定「谁编排」，沙箱决定「在哪跑、能碰到什么」。OpenAI 把两者显式拆成 Agent 与 Environment 两个对象——壳可以插在不同的执行环境上，环境也不非得配壳。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「不用框架就没有 harness」——不对。哪怕你手写 50 行 while 循环，那也是 harness，只是零件不全、没人替你运维。问题从来不是「有没有」，而是「<strong>零件谁补、漏洞谁修</strong>」。</li>
+    <li>「交给托管就安全了」——默认值就是安全边界，而这套默认值是宽松的：出网默认开、注入的密钥仍暴露、逃逸补丁跟着厂商节奏走。<strong>托管改变的是责任分配，不是风险总量。</strong></li>
+    <li>「厂商给的效率数字可以当基准引用」——延迟约 1/4、单任务成本 −60%、失败响应 −86%、某客户评测 0.71 → 0.85，这些是 OpenAI 及其设计伙伴的<em>自报</em>数字，引用前必须打折扣并标注来源性质。</li>
+  </ul>
+  <h3>5.3 适用与不适用</h3>
+  <table>
+    <thead><tr><th>适合托管 harness</th><th>适合自己写壳</th></tr></thead>
+    <tbody>
+      <tr><td>长时任务（小时 / 天级），需要保活与恢复</td><td>毫秒级 SLA 的高频路径</td></tr>
+      <tr><td>多子智能体协作，不想自研调度</td><td>强合规 / 零数据保留（ZDR）要求</td></tr>
+      <tr><td>团队小，想省掉循环 / 压缩 / 恢复的运维</td><td>循环本身高度定制、构成核心竞争力</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <strong>落手顺序建议：</strong>①先问「我的循环里现在缺哪个零件」（多数团队缺的是压缩与判停，不是更聪明的模型）；②若选托管，把「逐条读默认值」当作上线检查单第一项；③把沙箱选择与壳选择<strong>分开决策</strong>（OpenAI 已把两者拆成两个对象，你也应该拆）。<br />
+    <strong>另一个同周信号（与 skill.html 直接相接）：</strong>壳内零件正在标准化分发——Claude Skills 公开库 372 个技能 / 20 个领域，另有 216 个单文件零依赖技能遵循 Agent Skills 开放标准（跨 Claude Code / Codex CLI / Gemini CLI / Cursor 可用），Azure Agent Skills 193 个 / 19 类目。「技能」正在变成 harness 生态的<em>包管理格式</em>。
+  </div>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://ai-agent-engineering.org/news/openai-now-runs-your-agent-harness-read-the-defaults">OpenAI Now Runs Your Agent Harness. Read the Defaults. · AI Agent Engineering（2026-09）</a> — Agent / Environment / Session 交付形态；automatic compaction / tool search / programmatic tool calling 三特性；9 家沙箱合作方；出网默认 enabled、restricted 仅 1–100 个精确主机名；「Agent 生成的代码可以访问其环境可用的文件、凭据与网络」。</li>
+    <li><a href="https://stackademic.com/blog/openai-agents-api-public-beta-a-developer-s-guide-to-cloud-agents-on-the-codex-harness">OpenAI Agents API Public Beta: A Developer's Guide to Cloud Agents on the Codex Harness · Stackademic（2026-09）</a> — 公测日期 2026-09-10；定价口径（无额外费用、只为 token 与工具付费、宿主沙箱按标准容器费率）；公测仅美国数据驻留、不支持 ZDR；Heapjack / Overpatch 沙箱逃逸补丁（Desktop 26.818.21641 / CLI 0.149.0）。</li>
+    <li><a href="https://news.agentcommunity.org/issues/2026-09-25-harness-wars-meet">Harness Wars Meet Benchmark Reality · Agent Brief（2026-09-25）</a> — 「编排正在变成受管基础设施」的定性；Opus 5.5 报价 $4/$20、缓存读降 60% 至 $0.20；Skills 成为打包格式（372 / 216 / 193）。</li>
+    <li><a href="https://m.sohu.com/a/1079100386_121180782">OpenAI 把 Codex 那套循环开放了 · 搜狐科技（2026-09）</a> — 厂商自报的早期数字：延迟约 1/4、单任务成本 −60%、失败响应 −86%、某客户评测 0.71 → 0.85。</li>
+  </ol>
+  <div class="note">
+    <strong>来源口径说明：</strong>本材料全部事实取自 2026-09-26 概念雷达（<code>.workbuddy/memory/concept-radar/2026-09-26.md</code>）当日的 WebSearch 检索，四个主来源另经 WebFetch 打开原页复核，可相互交叉。未直接打开 OpenAI 官方文档一手页面——人工核查时建议补验 OpenAI 开发者文档中 Agents API 的对应条目。厂商自报数字已在正文与上表标注来源性质，不得当作独立基准引用。
+  </div>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">模型决定「下一步做什么」，harness 决定「这些决定能不能被可靠地执行成一场长跑」——你学过的每个机制页都是它的零件，而 2026 年 9 月起，这个壳本身成了可以购买的基础设施。</p>
+</section>
+
+<footer>由 concept-explainer Skill 自动生成 · 2026-09-26 · 待人工核查后入库</footer>
+
+</div>
+</body>
+</html>

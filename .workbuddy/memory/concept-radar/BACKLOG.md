@@ -24,8 +24,8 @@
 | 状态 | 条数 |
 |---|---|
 | ✅ 已入 raw 并摄取 | 6 |
-| 🟡 材料已出待核查 | 0 |
-| ⏸ 已建议未动 | 24 |
+| 🟡 材料已出待核查 | 1 |
+| ⏸ 已建议未动 | 23 |
 | **合计** | **30** |
 
 > ✅ **2026-09-24 更新:入库通道已打通。** 09-22 那 3 条「行动侧」候选(身份 / 人在环 / 工具幻觉)经用户明确授权后已进入 `raw/learning-materials/` 并完成摄取,`🟡` 这一态**归零**。此前 9 天累积的积压全部结清。
@@ -44,7 +44,7 @@
 | 09-17 | RAG / 检索增强生成 | 无 `concepts/RAG.md` | ⏸ 已建议未动 | — |
 | 09-17 | 智能体评测 / Agent Evals | 无 `concepts/AgentEvals.md` | ⏸ 已建议未动 | 与 09-24 候选 3(模型路由)构成上下游:evals 是路由的决策信号供给 |
 | 09-17 | 多智能体共享记忆 / 记忆互操作 | 无 `concepts/AgentMemoryInterop.md` | ⏸ 已建议未动 | 与 09-24 备查「企业上下文层」有交叠,需先厘清边界 |
-| 09-18 | Agent Harness / 智能体外壳 | 无 `concepts/AgentHarness.md` | ⏸ 已建议未动 | 09-24 候选 2(上下文卸载)是它内部的一个机制。**09-26 承接强化**:当时只有一句话,2026-09 被三方同时产品化——**OpenAI 2026-09-10 把 Codex harness 做成 Agents API 公测**(automatic compaction / tool search / programmatic tool calling / `max_concurrent_subagents`,环境可选 openai_hosted / self_hosted / none,9 家沙箱合作方)、**Anthropic 以 Opus 5.5 打「托管编排」**、Agent Brief 09-25 命名为「**Harness Wars**」并定性「orchestration as managed infrastructure」。被列为 09-26 ⭐ 首选,理由:一次成文激活最多既有节点(把 Compaction / ToolHallucination / Skill / ContextEngineering / 子智能体 / 沙箱 / 恢复全收进同一张「壳内零件图」),且是 concept-relationship.md 缺的**底座层** |
+| 09-18 | Agent Harness / 智能体外壳 | 无 `concepts/AgentHarness.md` | 🟡 材料已出待核查 | 09-24 候选 2(上下文卸载)是它内部的一个机制。**09-26 承接强化**:当时只有一句话,2026-09 被三方同时产品化——**OpenAI 2026-09-10 把 Codex harness 做成 Agents API 公测**(automatic compaction / tool search / programmatic tool calling / `max_concurrent_subagents`,环境可选 openai_hosted / self_hosted / none,9 家沙箱合作方)、**Anthropic 以 Opus 5.5 打「托管编排」**、Agent Brief 09-25 命名为「**Harness Wars**」并定性「orchestration as managed infrastructure」。被列为 09-26 ⭐ 首选,理由:一次成文激活最多既有节点(把 Compaction / ToolHallucination / Skill / ContextEngineering / 子智能体 / 沙箱 / 恢复全收进同一张「壳内零件图」),且是 concept-relationship.md 缺的**底座层**。**09-26(同日稍后)落地**:用户指令选定本条,`learning-materials/agent-harness.html` 已产出并提交(concept-explainer Skill,墨绿,页脚标「待人工核查后入库」),README 清单已登记;**未入 raw/、未摄取**——待人工核查 |
 | 09-18 | 子智能体上下文隔离 | 无对应页 | ⏸ 已建议未动 | — |
 | 09-18 | 智能体记忆投毒 / Memory Poisoning(ASI06) | 无 `concepts/MemoryPoisoning.md` | ⏸ 已建议未动 | 与 09-24 候选 1(遗忘)是记忆卫生的两端:投毒=写进来的东西是恶意的;遗忘=写进来的东西是陈旧的 |
 | 09-19 | A2A 协议 / Agent2Agent | 无 `concepts/A2A.md` | ⏸ 已建议未动 | — |
@@ -77,3 +77,4 @@
 - **2026-09-24(同日稍后)** 用户授权摄取,09-22 的 3 条「行动侧」候选由 🟡 转为 **✅**;`wiki/` 源页 6 → **9**,wiki 页数 31 → **34**,新增 concept 页 `AgentIdentity` / `HumanInTheLoop` / `ToolHallucination`,并追加更新 `MCP`(授权 profile + 命名空间合并风险)与 `Agent`(权限轴);`overview.md` 完成一次**真正的 synthesis 修订**(新增行动侧 Cluster D)。汇总态变为 **6 ✅ / 0 🟡 / 21 ⏸**。
 - **2026-09-25** 新增 2 条候选(记忆时效性 / 评测经济学);另将 09-21「Agent 沙箱」行标注**承接强化**(本周 Docker Cloud Sandboxes + Nvidia OpenShell 各自产品化,09-25 报告将其列为 ⭐ 首选,属同义候选的证据升级而非重复推荐)。汇总态变为 **6 ✅ / 0 🟡 / 23 ⏸**。
 - **2026-09-26** 新增 **1** 条候选(多智能体协作的工程化);另将 **09-18「Agent Harness」** 与 **09-21「Agent 沙箱」** 两行标注**承接强化**,当日报告将其并列为 ⭐ 首选与次选。两条均**只改备注、不新增行**——其中沙箱是连续第二天承接强化,本次强调「变的是证据的性质(产品→基础设施原语)而非热度」,该判据已写进当日报告的经验节。汇总态变为 **6 ✅ / 0 🟡 / 24 ⏸**(合计 30)。
+- **2026-09-26(同日稍后)** 用户以指令「1」选定 09-26 候选 1(Agent Harness)为落地对象;`learning-materials/agent-harness.html` 由 concept-explainer Skill 产出并提交,README 已生成清单同步登记。09-18 行状态 ⏸ → **🟡**。汇总态变为 **6 ✅ / 1 🟡 / 23 ⏸**(合计 30)。
