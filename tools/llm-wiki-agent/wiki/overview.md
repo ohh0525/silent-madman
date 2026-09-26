@@ -2,7 +2,7 @@
 title: "Overview"
 type: synthesis
 tags: []
-sources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28, agent-identity, human-in-the-loop, tool-hallucination, agent-harness]
+sources: [agent, llm-context, skill, context-engineering, agent-memory-provenance, mcp-2026-07-28, agent-identity, human-in-the-loop, tool-hallucination, agent-harness, agent-sandbox]
 last_updated: 2026-09-26
 ---
 
@@ -12,7 +12,7 @@ last_updated: 2026-09-26
 
 ## Current Synthesis (2026-09-26)
 
-Ten sources: nine silent-madman concept-learning documents plus a spec digest of the MCP 2026-07-28 revision. The synthesis now has **two halves that answer different questions**. Clusters A–C ask *what the agent knows and sees, and how honestly it remembers* — the **entity side**. Cluster D, ingested 2026-09-24, asks *who the agent is, what it is permitted to do, and whether the thing it just called even exists* — the **actor side**. Cluster E, ingested 2026-09-26, asks *what actually runs the loop* — the **runtime side**. The first two are the **reading discipline** and the **acting discipline**; the third is their **host**: every mechanism in A–D is a part inside a shell that had gone un-named until now.
+Eleven sources: ten silent-madman concept-learning documents plus a spec digest of the MCP 2026-07-28 revision. The synthesis now has **two halves that answer different questions**. Clusters A–C ask *what the agent knows and sees, and how honestly it remembers* — the **entity side**. Cluster D, ingested 2026-09-24, asks *who the agent is, what it is permitted to do, and whether the thing it just called even exists* — the **actor side**. Cluster E, ingested 2026-09-26, asks *what actually runs the loop* — the **runtime side**. The first two are the **reading discipline** and the **acting discipline**; the third is their **host**: every mechanism in A–D is a part inside a shell that had gone un-named until now.
 
 ### Cluster A — Bounded resources (2026-09-05)
 - **[[Agent]]** is the autonomous execution layer — a system that picks tools and loops around a goal.
@@ -39,8 +39,9 @@ propose ──▶ resolve ──▶ authorize ──▶ gate ──▶ idempoten
        ToolHallucination  AgentIdentity  HumanInTheLoop
 ```
 
-### Cluster E — Runtime side: the loop's host (2026-09-26)
-- **[[AgentHarness]]** — *what runs the loop.* The engineering shell that turns one model call into an agent: **`Agent = Model + Harness`**. Four duties — assemble context (tool search over schema injection), run the loop and judge stopping, govern the window (automatic **[[Compaction]]**), keep alive / recover / schedule subagents. It is the **container** of the wiki's mechanism pages, not a peer of them: OpenAI's three Agents-API headline features (compaction / tool search / multi-agent) are exactly pre-existing wiki concepts. Boundary: decides **who orchestrates**, while the sandbox decides **where it runs** (OpenAI splits this as separate `Agent` / `Environment` objects — the `execute` leg of Cluster D's chain remains an open page).
+### Cluster E — Runtime side: the loop's host and where it runs (2026-09-26)
+- **[[AgentHarness]]** — *what runs the loop.* The engineering shell that turns one model call into an agent: **`Agent = Model + Harness`**. Four duties — assemble context (tool search over schema injection), run the loop and judge stopping, govern the window (automatic **[[Compaction]]**), keep alive / recover / schedule subagents. It is the **container** of the wiki's mechanism pages, not a peer of them: OpenAI's three Agents-API headline features (compaction / tool search / multi-agent) are exactly pre-existing wiki concepts. Boundary: decides **who orchestrates**, while the sandbox decides **where it runs** (OpenAI splits this as separate `Agent` / `Environment` objects).
+- **[[AgentSandbox]]** — *where it runs, what it can touch.* Kernel-level containment (gVisor / Kata / per-sandbox VM) + declarative allow-lists; **authority is not isolation** — a fully legitimate, fully approved action can still run somewhere it can write through the host kernel. This fills the **`execute` leg** of Cluster D's chain, the gap this overview had named since 2026-09-24. As of 2026-09 it is standardised infrastructure (`kubernetes-sigs/agent-sandbox` into SIG Apps; Google AX open-sourced; Alibaba Cloud commercialised). Strongest evidence it is necessary: HF's 2026-07 intrusion anatomy — an allow-list correctly rejected the SSRF, the agent **switched paths** and still leaked pod secrets; *a single layer of defence that denies one path does not close the surface.*
 - The layer became **managed infrastructure in 2026-09** ("Harness Wars"): OpenAI rents the Codex harness (public beta 2026-09-10), [[Anthropic]] counters with Opus 5.5 managed orchestration. Managed ≠ safe: egress defaults `enabled`, `restricted` takes only 1–100 exact hostnames, secrets injected into the environment remain exposed — the defaults *are* the security boundary, and same-week Codex sandbox escapes (Heapjack / Overpatch) show management centralises patching, not risk. [[Skill]] is becoming this ecosystem's packaging format (372 / 216 / 193 skills, 2026-09).
 
 ### How they connect
@@ -66,10 +67,11 @@ Context Engineering ──manages/crops──▶ LLM Context Window ◀──sup
    (Agent = Model           the resolution rung · Skill loading · subagent scheduling
     + Harness)                                     │ pluggable
                                                   ▼
-                            Execution Environment (sandbox) ── still an open page
+                        Agent Sandbox (execute leg) ── gVisor / Kata / per-sandbox VM;
+                        declarative egress allow-lists; authority ≠ isolation
 ```
 
-The ten-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand; Context Engineering decides what belongs in that window each step; provenance-aware Long-Term Memory lets it remember across sessions — honestly. On the acting side, it proves who it is with strictly narrowing authority, asks a human before the irreversible step, and can only call tools that provably exist. And all of it — the loop, the compaction, the gates, the subagents — runs inside a harness that as of 2026-09 is itself becoming managed infrastructure.**
+The eleven-page story: **an Agent, bounded by a Context Window, uses Skills to load knowledge on demand; Context Engineering decides what belongs in that window each step; provenance-aware Long-Term Memory lets it remember across sessions — honestly. On the acting side, it proves who it is with strictly narrowing authority, asks a human before the irreversible step, and can only call tools that provably exist — and even if all of that fails, the sandbox bounds what the action can touch. And all of it — the loop, the compaction, the gates, the subagents — runs inside a harness that as of 2026-09 is itself becoming managed infrastructure.**
 
 ## Cross-Cutting Themes
 - **Bounded context is the central constraint** — every concept in Clusters A–C traces back to a token / window / cost limit. [[ContextRot]] sharpens it: capacity ≠ effective capacity.
@@ -88,12 +90,13 @@ The ten-page story: **an Agent, bounded by a Context Window, uses Skills to load
 - How [[ContextEngineering]] techniques are measured end-to-end (beyond single-provider claims) — needs an independent evaluation.
 - Multi-agent memory sharing and role-based access control on shared persistent memory.
 - MCP **Tasks / MCP Apps / EMA** extensions — now first-class; worth a dedicated page if usage grows.
-- **NEW — execution isolation as the missing third leg.** Cluster D covers *logical* authority (who may act) and *procedural* control (when to ask). All three new pages name **sandboxing** as an explicit adjacent concept they are **not**: authority is not isolation, and a gate is not isolation. A fully legitimate, fully approved action can still run somewhere it can write through the host kernel. (Radar candidate 2026-09-21.)
-- **NEW — persistent execution.** The gate's own requirement — that a paused workflow be resumable by a *different* process, days later — is a durable-execution requirement, and the wiki has no page for it. (Radar candidate 2026-09-23.)
+- ~~**NEW — execution isolation as the missing third leg.**~~ — **resolved 2026-09-26**: [[AgentSandbox]] now fills the `execute` leg of Cluster D's chain (K8s SIG Apps upstream + Google AX + Alibaba Cloud commercialisation + the HF intrusion anatomy as motive evidence; radar candidate 2026-09-21).
+- **NEW — persistent execution.** The gate's own requirement — that a paused workflow be resumable by a *different* process, days later — is a durable-execution requirement. (**Partially covered 2026-09-26**: keep-alive / crash recovery is harness duty ④ on [[AgentHarness]], and pause/resume is a sandbox capability on [[AgentSandbox]]; what remains unwritten is the cross-runtime semantics comparison — event replay vs checkpoint adoption vs snapshot. Radar candidate 2026-09-23.)
 - **NEW — independent verification of Cluster D's numbers.** Several figures (28% traceability, 1–2 vs 3–6 engineer-weeks) come from third-party/commercial pages rather than primary vendors; see the provenance note on [[agent-identity]]. The 322 / 154 hallucination counts come from a **preprint** (arXiv:2609.19425v1, 2026-09-16), not peer-reviewed — and the material already records one internal inconsistency in its numbers (`3434 vs 33` vs `34 vs 3`) that it declined to use.
 
 ## Next Ingest Suggestions
 - `raw/papers/rag-survey.md` — RAG foundations (the oldest open gap)
 - `raw/papers/context-engineering-eval.md` — independent context-engineering evaluation
-- **NEW** `raw/papers/agent-sandbox-isolation.md` — execution isolation, the missing third leg beside authority + gating
+- ~~`raw/papers/agent-sandbox-isolation.md`~~ — **resolved 2026-09-26**: [[AgentSandbox]] ingested from the concept-learning material (K8s upstream evidence included); a dedicated *paper* on isolation could still deepen it, but the page exists
 - **NEW** an **independent** evaluation of the agent-identity traceability / attenuation claims — the current figures are vendor-survey grade
+- **NEW (2026-09-26)** the OpenAI developer documentation for the Agents API itself — the harness material's claims all trace to verified secondary sources; the primary docs were not opened first-hand

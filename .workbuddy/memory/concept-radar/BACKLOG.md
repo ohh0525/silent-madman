@@ -23,9 +23,9 @@
 
 | 状态 | 条数 |
 |---|---|
-| ✅ 已入 raw 并摄取 | 7 |
+| ✅ 已入 raw 并摄取 | 8 |
 | 🟡 材料已出待核查 | 0 |
-| ⏸ 已建议未动 | 23 |
+| ⏸ 已建议未动 | 22 |
 | **合计** | **30** |
 
 > ✅ **2026-09-24 更新:入库通道已打通。** 09-22 那 3 条「行动侧」候选(身份 / 人在环 / 工具幻觉)经用户明确授权后已进入 `raw/learning-materials/` 并完成摄取,`🟡` 这一态**归零**。此前 9 天累积的积压全部结清。
@@ -55,7 +55,7 @@
 | 09-20 | 提示词自动优化 / GEPA | 无 `concepts/PromptOptimization.md` | ⏸ 已建议未动 | — |
 | 09-21 | 压缩的保真度与安全 / Compaction Fidelity | 无 `concepts/CompactionFidelity.md` | ⏸ 已建议未动 | 09-24 候选 2(卸载)是**绕开**压缩的那条路,两者互补 |
 | 09-21 | 记忆调用时机是可学习的策略 / Memory Timing Policy | 无 `concepts/MemoryTimingPolicy.md` | ⏸ 已建议未动 | 与 09-24 候选 1(记忆生命周期)相邻:一个是「何时取」,一个是「何时删」 |
-| 09-21 | Agent 沙箱 / 执行隔离 / Agent Sandbox | 无 `concepts/AgentSandbox.md` | ⏸ 已建议未动 | **09-25 承接强化**:当时仅是 overview Open Question 一句话,本周被 Docker Cloud Sandboxes(2026-09-24,microVM + OCI Kits→CNCF)与 Nvidia OpenShell(2026-09-21,策略在推理环之外)各自产品化,证据强度完全不同,当周被列为 ⭐ 首选。与 09-23 持久化执行可合并成文(Docker 已把两者捆在同一产品里)。**09-26 承接强化(连续第二次,变的是证据"性质"而非热度)**:从「厂商发产品」升级为「**被标准化为基础设施原语**」——`kubernetes-sigs/agent-sandbox` 作为 **SIG Apps 子项目**提供声明式 `Sandbox` CRD(gVisor 默认 / Kata 可插拔 / warm pool 300 沙箱每秒 / suspend-resume),GKE 版 2026-05-20 GA、5 个月增长 16×、LangChain 与 Lovable 部署数百万 agent;**Google 开源 AX**(Apache 2.0,Task/Workspace/Gateway/Model);**阿里云智能体沙箱 2026-09-22 正式商业化**(10 万沙箱/分钟、百万级并发、独立 VM、兼容 E2B 与 K8s API)。与 09-26 候选 1(harness)可合成一篇「Agent 运行时」(上半编排 / 下半执行)。 |
+| 09-21 | Agent 沙箱 / 执行隔离 / Agent Sandbox | `concepts/AgentSandbox.md` **已建** | ✅ 已入 raw 并摄取 | **09-25 承接强化**:当时仅是 overview Open Question 一句话,本周被 Docker Cloud Sandboxes(2026-09-24,microVM + OCI Kits→CNCF)与 Nvidia OpenShell(2026-09-21,策略在推理环之外)各自产品化,证据强度完全不同,当周被列为 ⭐ 首选。与 09-23 持久化执行可合并成文(Docker 已把两者捆在同一产品里)。**09-26 承接强化(连续第二次,变的是证据"性质"而非热度)**:从「厂商发产品」升级为「**被标准化为基础设施原语**」——`kubernetes-sigs/agent-sandbox` 作为 **SIG Apps 子项目**提供声明式 `Sandbox` CRD(gVisor 默认 / Kata 可插拔 / warm pool 300 沙箱每秒 / suspend-resume),GKE 版 2026-05-20 GA、5 个月增长 16×、LangChain 与 Lovable 部署数百万 agent;**Google 开源 AX**(Apache 2.0,Task/Workspace/Gateway/Model);**阿里云智能体沙箱 2026-09-22 正式商业化**(10 万沙箱/分钟、百万级并发、独立 VM、兼容 E2B 与 K8s API)。与 09-26 候选 1(harness)可合成一篇「Agent 运行时」(上半编排 / 下半执行)。**09-26(同日)全链路落地**:用户指令「继续做」授权——`agent-sandbox.html` 产出并入 raw、摄取(源 10→11、页 39→41,新增 [[AgentSandbox]],overview Cluster E 补执行层、行动侧链 execute 格关闭),`concept-relationship.md` 增「扩展四 · 执行隔离」。入库方式为用户指令授权,非逐条人工核查,已在 wiki log 与 README 如实标注 |
 | 09-22 | 智能体身份与委派授权 / Agent Identity & Delegated Authority | `concepts/AgentIdentity.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源文件 `raw/learning-materials/agent-identity.html`,源页 `sources/agent-identity.md`);README 标签已从「待核查」改为「已入库」 |
 | 09-22 | 人在环审批闸门 / Human-in-the-Loop | `concepts/HumanInTheLoop.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源页 `sources/human-in-the-loop.md`);该材料自带来源强度提示,已在源页如实保留 |
 | 09-22 | 工具幻觉与封闭世界消解 / Tool Hallucination | `concepts/ToolHallucination.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源页 `sources/tool-hallucination.md`,主来源 arXiv:2609.19425v1 **预印本**);材料自身的 `3434 vs 34/3` 口径冲突已如实记录并**未被采用** |
@@ -79,3 +79,4 @@
 - **2026-09-26** 新增 **1** 条候选(多智能体协作的工程化);另将 **09-18「Agent Harness」** 与 **09-21「Agent 沙箱」** 两行标注**承接强化**,当日报告将其并列为 ⭐ 首选与次选。两条均**只改备注、不新增行**——其中沙箱是连续第二天承接强化,本次强调「变的是证据的性质(产品→基础设施原语)而非热度」,该判据已写进当日报告的经验节。汇总态变为 **6 ✅ / 0 🟡 / 24 ⏸**(合计 30)。
 - **2026-09-26(同日稍后)** 用户以指令「1」选定 09-26 候选 1(Agent Harness)为落地对象;`learning-materials/agent-harness.html` 由 concept-explainer Skill 产出并提交,README 已生成清单同步登记。09-18 行状态 ⏸ → **🟡**。汇总态变为 **6 ✅ / 1 🟡 / 23 ⏸**(合计 30)。
 - **2026-09-26(再稍后)** 用户指令「你帮我做完」,授权自动化完成全链路:HTML 复制入 `raw/learning-materials/`(md5 一致)→ 按 Ingest Workflow 摄取(源 9→**10**、wiki 页 37→**39**:新增 `sources/agent-harness.md` 与 `concepts/AgentHarness.md`,`[[Agent]]` 增运行时轴,`overview.md` 新增 **Cluster E** 与两条新横断主题)→ `concept-relationship.md` 新增「扩展三 · 运行时底座」并修正两条 09-24 已过时的「待核查」标注。09-18 行 🟡 → **✅**。汇总态变为 **7 ✅ / 0 🟡 / 23 ⏸**(合计 30)。**注意:本次入库为用户指令授权,非逐条人工核查,已在 wiki log.md、README 与来源页如实标注**。
+- **2026-09-26(晚间)** 用户指令「继续做」,候选 2(Agent 沙箱)全链路落地:`agent-sandbox.html` 产出并入 `raw/`(md5 一致)→ 摄取(源 10→**11**、wiki 页 39→**41**:`sources/agent-sandbox.md` + `concepts/AgentSandbox.md`,overview Cluster E 补执行层、行动侧链 `execute` 格关闭、open question「执行隔离 missing third leg」标记 resolved)→ `concept-relationship.md`「扩展四 · 执行隔离」+ 扩展三沙箱节点更新。09-21 行 ⏸ → **✅**。汇总态 **8 ✅ / 0 🟡 / 22 ⏸**。同轮修复:发现并补回上轮丢失的 overview 两处编辑(open questions sharpened + OpenAI docs 摄取建议),已在 wiki log 记录。

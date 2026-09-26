@@ -41,7 +41,8 @@ silent-madman/
 │   ├── agent-identity.html          # 智能体身份与委派授权 (2026-09-22 · 已入库 2026-09-24)
 │   ├── human-in-the-loop.html       # 人在环审批闸门 (2026-09-22 · 已入库 2026-09-24)
 │   ├── tool-hallucination.html      # 工具幻觉与封闭世界消解 (2026-09-22 · 已入库 2026-09-24)
-│   └── agent-harness.html           # Agent Harness 智能体外壳 (2026-09-26 · 已入库 2026-09-26)
+│   ├── agent-harness.html           # Agent Harness 智能体外壳 (2026-09-26 · 已入库 2026-09-26)
+│   └── agent-sandbox.html           # Agent 沙箱与执行隔离 (2026-09-26 · 已入库 2026-09-26)
 ├── Python基础语法课程/              # 第 1-4 课教学资料 (Word 讲义 + HTML 学习材料 + Notebook)
 │   ├── Python基础语法讲义（第1-4课）.docx
 │   ├── Python基础语法练习题与参考答案（第1-4课）.docx
@@ -142,6 +143,7 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 | `learning-materials/human-in-the-loop.html` | 人在环审批闸门 · 行动侧 | 单概念 | 琥珀赭（已入库 2026-09-24） |
 | `learning-materials/tool-hallucination.html` | 工具幻觉与封闭世界消解 · 行动侧 | 单概念 | 灰紫（已入库 2026-09-24） |
 | `learning-materials/agent-harness.html` | Agent Harness 智能体外壳 · 运行时底座 | 单概念 | 墨绿（已入库 2026-09-26） |
+| `learning-materials/agent-sandbox.html` | Agent 沙箱与执行隔离 · 运行时执行层 | 单概念 | 铁锈红（已入库 2026-09-26） |
 | `concept-relationship.md` | 概念关联（基础 5 + 扩展 5） | 图谱 | — |
 
 > 想新增一个主题，直接告诉我概念名即可，本 Skill 会沿用同一份样式与结构，确保后续 HTML 之间排版一致。
@@ -210,5 +212,5 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 
 ---
 
-**最后更新**：2026-09-26 · 新增 `learning-materials/agent-harness.html`（Agent Harness 智能体外壳——2026-09-26 概念雷达候选 1「运行时三层」之首），并在 `concept-relationship.md` 增加「扩展三 · 运行时底座」一节。09-22 的行动侧三份已于 2026-09-24 核查入库。
-> ℹ️ `agent-harness.html` 于 2026-09-26 同日入库（用户指令「你帮我做完」授权自动化完成 raw 投递 + 摄取 + 图谱修订；材料事实全部来自当日雷达 WebSearch/WebFetch 已核来源，OpenAI 官方一手文档未打开、已在来源页与 wiki 中如实标注）。此前的全部资料维持原样。
+**最后更新**：2026-09-26 · 新增 `learning-materials/agent-harness.html`（智能体外壳）与 `learning-materials/agent-sandbox.html`（Agent 沙箱与执行隔离）—— 2026-09-26 概念雷达候选 1、2「运行时三层」的前两层，并在 `concept-relationship.md` 增加「扩展三 · 运行时底座」「扩展四 · 执行隔离」两节。09-22 的行动侧三份已于 2026-09-24 核查入库。
+> ℹ️ `agent-harness.html` 与 `agent-sandbox.html` 于 2026-09-26 同日入库（用户指令「你帮我做完」「继续做」授权自动化完成 raw 投递 + 摄取 + 图谱修订；材料事实全部来自当日雷达 WebSearch/WebFetch 已核来源，OpenAI 官方一手文档未打开、已在来源页与 wiki 中如实标注）。此前的全部资料维持原样。

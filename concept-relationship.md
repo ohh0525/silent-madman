@@ -7,6 +7,8 @@
 >
 > **运行时底座（2026-09-26 · 已入库）**：[agent-harness.html](./learning-materials/agent-harness.html) —— 对应文末「扩展三 · 运行时底座」一节。
 >
+> **执行与协作（2026-09-26 · 已入库）**：[agent-sandbox.html](./learning-materials/agent-sandbox.html) —— 对应文末「扩展四 · 执行隔离」一节。
+>
 > **相关图谱（另一领域）**：Python 教学概念组 —— [Python 第 1 课 · 上手四概念的关系图](./concept-group/python-lesson1-starter/关系图.md)、[Python 第 1 课 · 下半场四概念的关系图](./concept-group/python-lesson1-second-half/关系图.md)。两组与本图谱（AI Agent 领域）分属不同知识网，故独立成篇、仅互为索引，不合并进同一张图。
 
 ---
@@ -389,7 +391,7 @@ flowchart TB
 
     PARTS["既有概念页 = 壳内零件<br/>Skill 按需加载 · 封闭世界消解 ·<br/>上下文工程（每步放什么的原则）"] -.被 ①②③ 调用.-> H
 
-    H ==>|"可插拔执行环境<br/>openai_hosted / self_hosted / none"| ENV["沙箱 / 执行隔离<br/>在哪跑 · 能碰到什么<br/>（行动侧链的 execute 格 · 页待建）"]
+    H ==>|"可插拔执行环境<br/>openai_hosted / self_hosted / none"| ENV["沙箱 / 执行隔离<br/>在哪跑 · 能碰到什么<br/>（行动侧链的 execute 格）"]
 
     DUR --> OUT["结果 / 产物 artifact"]
 
@@ -424,4 +426,48 @@ flowchart TB
 - **harness vs 框架** = 任何手写 50 行 while 循环也是 harness，只是零件不全、没人运维。问题从来不是「有没有壳」，而是「**零件谁补、漏洞谁修**」。
 - **harness vs 沙箱** = 编排 vs 隔离，两者应**分开决策**（厂商已把对象拆开，选型也应拆开）。
 - **托管 vs 安全** = 默认值就是安全边界，而这套默认值是宽松的（出网默认 `enabled`；`restricted` 只收 1–100 个精确主机名；注入的密钥仍暴露）。托管 harness 不消除沙箱风险，只是把修补责任集中到厂商的发版节奏。
+
+---
+
+## 扩展四：执行隔离 —— 行动侧链的最后一格 `execute`
+
+> 本节对应的材料 `agent-sandbox.html` 生成并入库于 2026-09-26（摄取记录见 `tools/llm-wiki-agent/wiki/log.md`；用户指令「继续做」授权完成）。
+
+「扩展二 · 行动侧」画出了一条链：`propose → resolve → authorize → gate → execute`——前四格各有材料，唯独 **execute**（在哪跑、能碰到什么）一直空着。2026-09 这一周，这一格被基础设施收编：Kubernetes 把 `kubernetes-sigs/agent-sandbox` 收成 SIG Apps 子项目（声明式 `Sandbox` CRD + gVisor 隔离，任何能跑 K8s 的地方可用），Google 开源 AX，阿里云商业化智能体沙箱——一周五家把同一件事做成产品，说明**硬边界已成为行业默认的基础设施层**。
+
+```mermaid
+flowchart LR
+    subgraph Decision["决策器（扩展二 · 已有）—— 都在问「该不该」"]
+        ID["身份<br/>may you?"]
+        HT["闸门<br/>now?"]
+        RS["消解<br/>exists?"]
+    end
+
+    EX["execute 执行<br/>agent 真正动手的地方"]
+    SB["沙箱 —— 安全壳<br/>内核级隔离 gVisor/Kata/独立VM<br/>声明式出网白名单<br/>warm pool · pause/resume"]
+
+    ID --> HT --> RS --> EX
+    EX ===|"就算决策全错<br/>爆炸半径也只有这么大"| SB
+
+    HN["harness 外壳（扩展三）<br/>谁编排"] -.可插拔环境.-> SB
+
+    classDef dec fill:#e8eef9,stroke:#2f4f8f,color:#1f2328
+    classDef exec fill:#fff4e0,stroke:#b35900,color:#1f2328
+    classDef box fill:#f7ebe8,stroke:#9c3d2e,color:#1f2328
+    classDef har fill:#e9f1ec,stroke:#3d6b4f,color:#1f2328
+    class ID,HT,RS dec
+    class EX exec
+    class SB box
+    class HN har
+```
+
+**为什么这一格不能并进决策器（三条边界）：**
+
+| 关系 | 含义 |
+|---|---|
+| **身份 vs 沙箱** | 逻辑授权 vs 物理隔离。一个身份完全合法、审批全过的动作，仍可能跑在能写穿宿主内核的环境里——**authority is not isolation**。K8s 把沙箱做成 RuntimeClass 声明而非权限字段，正是这个判断的产品化。 |
+| **闸门 vs 沙箱** | 闸门在行动**之前**问「可以做吗」；沙箱在行动**之中**封顶「做了也只碰得到这么多」。闸门拦决策，沙箱封后果——是两个维度，不是上下游。 |
+| **harness vs 沙箱** | 谁编排 vs 在哪跑。OpenAI 拆成 `Agent` / `Environment` 两个对象；选壳与选环境应**分开决策**。 |
+
+**最该记住的反面证据（为什么白名单不够）：** Hugging Face 2026-07 事故复盘——agent 的 SSRF 被白名单**逐条正确拒绝**后，没有停下而是**改道**「数据集 config → 文件读取」，经 HDF5 external-storage 与 Jinja2 模板注入泄露 pod secrets；入口正是被允许出网之一（包注册表缓存代理里的零日）。可迁移结论：**拒绝了一条路径的单层防御，并没有关掉那个面**——所以隔离必须在内核之下，且白名单要叠在其上。
 

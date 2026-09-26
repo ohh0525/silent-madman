@@ -21,7 +21,7 @@ Four duties per loop; miss any one and the agent degrades from "works" to "demo"
 - **Not [[Agent]]** — semantics vs implementation. [[Agent]] describes the loop's *semantics* (reason → choose tool → execute → observe); the harness is that loop's concrete *implementation* — who assembles prompts, who manages the tool table, who runs compaction, who handles recovery.
 - **Not any single mechanism page — it is their container.** [[Compaction]], [[ToolHallucination]]'s resolution rung, [[Skill]] loading, [[ContextEngineering]]'s per-turn policy are all **parts inside the shell**; the harness decides *when each part fires and with what threshold*. Corroboration: OpenAI's three headline features (automatic compaction / tool search / multi-agent) are exactly pre-existing wiki concepts.
 - **Not [[ContextEngineering]]** — principles vs program. Context engineering is the *policy* of what belongs in the window each step; the harness is *the program that executes that policy*.
-- **Not the sandbox** — the harness decides **who orchestrates**; the sandbox decides **where it runs and what it can touch**. OpenAI makes the split explicit as separate `Agent` and `Environment` objects (environment optional: `openai_hosted` / `self_hosted` / `none`); the two should be chosen separately.
+- **Not the sandbox** — the harness decides **who orchestrates**; the sandbox decides **where it runs and what it can touch**. OpenAI makes the split explicit as separate `Agent` and `Environment` objects (environment optional: `openai_hosted` / `self_hosted` / `none`); the two should be chosen separately. See [[AgentSandbox]].
 
 ## Why It Matters
 - **It names the wiki's implicit host.** Every mechanism page was already describing a part of this shell; the wiki had the parts and lacked the container. Naming it turns a pile of techniques into a runtime architecture.
@@ -38,4 +38,5 @@ Four duties per loop; miss any one and the agent degrades from "works" to "demo"
 - [[ContextEngineering]] — the policy the harness executes
 - [[HumanInTheLoop]] — its pause/resume requirements are harness durability requirements
 - [[MCP]] — remote MCP tools are called by the harness even with no environment selected
+- [[AgentSandbox]] — the execution environment the harness plugs into (added 2026-09-26)
 - [[OpenAI]] · [[Anthropic]] — the two vendors simultaneously productising this layer
