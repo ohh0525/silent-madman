@@ -25,12 +25,14 @@
 |---|---|
 | ✅ 已入 raw 并摄取 | 9 |
 | 🟡 材料已出待核查 | 0 |
-| ⏸ 已建议未动 | 21 |
-| **合计** | **30** |
+| ⏸ 已建议未动 | 22 |
+| **合计** | **31** |
 
 > ✅ **2026-09-24 更新:入库通道已打通。** 09-22 那 3 条「行动侧」候选(身份 / 人在环 / 工具幻觉)经用户明确授权后已进入 `raw/learning-materials/` 并完成摄取,`🟡` 这一态**归零**。此前 9 天累积的积压全部结清。
 >
 > ⚠️ 仍需留意的结构事实:雷达已运行 **9 天**、提出 **27 条**候选,其中 **21 条(78%)仍是 `⏸ 已建议未动`** —— 也就是说瓶颈已从「核查」转移到「**决定要不要把它做成材料**」。
+>
+> ⚠️ **2026-09-27 更新上述结构事实**:雷达已运行 **12 天**、提出 **31 条**候选,其中 **22 条(71%)仍是 `⏸`**。09-24 之后「核查」瓶颈已被打通(09-24 与 09-26 两天共 6 条候选经用户授权当日全链路落地),但**未动比例仍高达七成**——瓶颈依旧在「**决定要不要把它做成材料**」,且 09-25/09-27 两条新候选被明确标注「**建议等基准结果再成文**」(记忆时效性)与「**不建议单独成文**」(评测经济学),说明「该等/该并」本身也是一种处置。
 
 ---
 
@@ -41,7 +43,7 @@
 | 09-16 | 上下文工程 / Context Engineering | `concepts/ContextEngineering.md` | ✅ 已入 raw 并摄取 | 已产出 `learning-materials/context-engineering.html` |
 | 09-16 | 带溯源的智能体长期记忆 / Provenance-Aware Agent Memory | `concepts/Provenance.md` · `LongTermMemory.md` · `CitationLock.md` · `Abstention.md` | ✅ 已入 raw 并摄取 | 已产出 `learning-materials/agent-memory-provenance.html` |
 | 09-16 | MCP 无状态化 / Stateless MCP(2026-07-28 规范) | `concepts/MCP.md` · `sources/mcp-2026-07-28.md` | ✅ 已入 raw 并摄取 | 已产出 `learning-materials/agent.html` |
-| 09-17 | RAG / 检索增强生成 | 无 `concepts/RAG.md` | ⏸ 已建议未动 | — |
+| 09-17 | RAG / 检索增强生成 | 无 `concepts/RAG.md` | ⏸ 已建议未动 | **09-27 承接强化(证据性质变化,非重复推荐)**:已从「你缺一页 RAG 基础」变为「**RAG 的默认起点本身被推翻**」——Amazon Science 在 AAAI 2026 的《Keyword Search Is All You Need》(Subramanian 等,同 LLM/同 6 数据集/同评测框架,唯一变量是检索器)实证:无向量库的 agentic 关键词检索达成 RAG 的 **Faithfulness 94.5%**、Context Recall 88.0%、Answer Correctness 91.5%,且在长表格密集的 FinanceBench 上**反转胜出**(30.40% > 24.24%);Search-R1(arXiv 2503.09516)用 RL 训检索策略,多跳 QA 相对 **+24%**;Windsurf / Cline / Devin / Sourcegraph Amp 已在编码场景放弃 embedding。仍是 overview **最老**的开放项。**建议下一步**:生成 `learning-materials/agentic-rag.html`(青碧) |
 | 09-17 | 智能体评测 / Agent Evals | 无 `concepts/AgentEvals.md` | ⏸ 已建议未动 | 与 09-24 候选 3(模型路由)构成上下游:evals 是路由的决策信号供给 |
 | 09-17 | 多智能体共享记忆 / 记忆互操作 | 无 `concepts/AgentMemoryInterop.md` | ⏸ 已建议未动 | 与 09-24 备查「企业上下文层」有交叠,需先厘清边界 |
 | 09-18 | Agent Harness / 智能体外壳 | `concepts/AgentHarness.md` **已建** | ✅ 已入 raw 并摄取 | 09-24 候选 2(上下文卸载)是它内部的一个机制。**09-26 承接强化**:当时只有一句话,2026-09 被三方同时产品化——**OpenAI 2026-09-10 把 Codex harness 做成 Agents API 公测**(automatic compaction / tool search / programmatic tool calling / `max_concurrent_subagents`,环境可选 openai_hosted / self_hosted / none,9 家沙箱合作方)、**Anthropic 以 Opus 5.5 打「托管编排」**、Agent Brief 09-25 命名为「**Harness Wars**」并定性「orchestration as managed infrastructure」。被列为 09-26 ⭐ 首选,理由:一次成文激活最多既有节点,且是 concept-relationship.md 缺的**底座层**。**09-26(同日)全链路落地**:用户指令「1」选定 → concept-explainer 产出 HTML → 用户指令「你帮我做完」授权完成 raw 投递 + 摄取(wiki 源 9→10、页 37→39,新增 [[AgentHarness]] 概念页与 [[Agent]] 运行时轴,overview 新增 Cluster E)+ `concept-relationship.md`「扩展三 · 运行时底座」。入库方式为用户指令授权自动化,非逐条人工核查,已在 wiki log 与 README 如实标注 |
@@ -59,7 +61,7 @@
 | 09-22 | 智能体身份与委派授权 / Agent Identity & Delegated Authority | `concepts/AgentIdentity.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源文件 `raw/learning-materials/agent-identity.html`,源页 `sources/agent-identity.md`);README 标签已从「待核查」改为「已入库」 |
 | 09-22 | 人在环审批闸门 / Human-in-the-Loop | `concepts/HumanInTheLoop.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源页 `sources/human-in-the-loop.md`);该材料自带来源强度提示,已在源页如实保留 |
 | 09-22 | 工具幻觉与封闭世界消解 / Tool Hallucination | `concepts/ToolHallucination.md` | ✅ 已入 raw 并摄取 | **2026-09-24 摄取**(源页 `sources/tool-hallucination.md`,主来源 arXiv:2609.19425v1 **预印本**);材料自身的 `3434 vs 34/3` 口径冲突已如实记录并**未被采用** |
-| 09-23 | 持久化执行 / 智能体运行时 / Durable Execution | 无 `concepts/DurableExecution.md` | ⏸ 已建议未动 | 与 09-24 候选 2 共用「窗口外存储」,但目的相反:卸载是让模型少看,持久化执行是让进程不死 |
+| 09-23 | 持久化执行 / 智能体运行时 / Durable Execution | 无 `concepts/DurableExecution.md` | ⏸ 已建议未动 | **09-27 承接强化(连续关注,证据性质升级)**:当时只是「与 09-24 候选 2 共用窗口外存储、目的相反」的一句判断;现已成为 **harness(09-26 新建)的下一层**——LangChain 原话「*To build a good agent, you need a good harness. To deploy that agent, you need a good runtime. The runtime is everything underneath*」。变了的是**证据类别**,不是热度:①**2026-09-19 首次出现中立的多运行时恢复语义对比**(Seed Hypermedia:证据截止 09-17),直接补上 overview 自认「尚未写」的那句;②确立 **checkpoint ≠ durable execution**(检查点保留控制状态,不是下游副作用的 exactly-once);③「resume」在四家**不是同一个操作**(Temporal 事件历史重放 / DBOS 按持久化位点采纳已完成操作 / MS Agent Framework superstep 检查点 / LangGraph 线程快照 + pending writes);④Nirvana Labs 给出可引用的判据句「问厂商的不是它**是否**持久化,而是**一次没人安排的 kill 之后还剩什么**」。**建议下一步**:生成 `learning-materials/durable-execution.html`(深灰蓝);**只改本行备注,不新增行** |
 | 09-23 | 间接提示注入 / 对抗性输入 / Prompt Injection | 无 `concepts/PromptInjection.md` | ⏸ 已建议未动 | — |
 | 09-23 | 从自身轨迹中学习 / 自进化智能体 / Self-Improving Agents | 无 `concepts/SelfImprovingAgents.md` | ⏸ 已建议未动 | — |
 | 09-24 | **智能体记忆的生命周期治理 / 遗忘 · Memory Lifecycle Governance / Agent Forgetting** ⭐ | 无 `concepts/MemoryLifecycle.md` | ⏸ 已建议未动 | **首选**。已按建议给 `concepts/LongTermMemory.md` 补边界注记(2026-09-24,待摄取后转为正式来源) |
@@ -68,6 +70,7 @@
 | 09-25 | 记忆时效性 / 「旧记忆比没记忆更糟」 · Memory Freshness / Stale-Memory Evaluation | 无 `concepts/MemoryFreshness.md` | ⏸ 已建议未动 | Agent Memory Challenge Cycle 2(2026-09-20 开赛,11-04 截止,11 月中出结果)**建议等结果再成文**;与 [[Provenance]]/[[CitationLock]]/[[Abstention]] 构成真实性三闸门;与 09-24 候选 1(生命周期)为上下游 |
 | 09-25 | Agent 评测经济学 / 评测税 · Agent Evaluation Economics | 无 `concepts/EvaluationEconomics.md` | ⏸ 已建议未动 | 三条中最不急:建议作为 09-17 候选 2(Agent Evals)材料的成本章,不单独成文;「~62% 推理账单来自重发上下文」(Stanford,二手转述)值得记进 [[ContextEngineering]] 开篇 |
 | 09-26 | 多智能体协作的工程化 · Multi-Agent Orchestration | `concepts/MultiAgent.md` **已建** | ✅ 已入 raw 并摄取 | **本期唯一新增候选**。全库 37 页零覆盖(所有图都是单 agent)。2026-09 三线证据:微软研究院 + UC Berkeley「team@k vs best@k」(ARC-AGI-3 team@5=best@33;LP85 独立 64 次全败 vs team@5 65%;且**无验证器或算力紧张时独立 agent 反而更好**)、Anthropic Claude Code Projects(2026-09-17 beta,协调者+并行云端线程+共享记忆,重叠按 merge conflict)、微软 Agensh(无中央编排者扩到 1,024 agent)。与 09-17(多智能体共享记忆,记忆侧)、09-18(子智能体上下文隔离,单 agent 内部)相邻但不同;与 09-26 候选 1(harness)是「harness 的一个已产品化能力」但作为概念有独立取舍逻辑。新失效面:**多 agent 间未验证结论被当作前提继承(互相污染)**。**09-26(同日)全链路落地**:用户指令「继续做」授权——`multi-agent.html` 产出并入 raw、摄取(源 11→12、页 41→43,新增 [[MultiAgent]],overview Cluster E 补协作层、新增横断主题「验证器是协作的前提」),`concept-relationship.md` 增「扩展五 · 多智能体协作」。证据等级二手(AlphaSignal/AGI Hunt 报道,arXiv 摘要未开)已在材料、源页与 overview 三处标注,arXiv 一手已列入 Next Ingest Suggestions |
+| 09-27 | **智能体记忆治理 / 记忆的权限·冲突·审计 · Agent Memory Governance** | 无 `concepts/MemoryGovernance.md` | ⏸ 已建议未动 | **本期唯一新增候选**。直接回应 overview 自认开放的治理侧:「the governance side — **RBAC on shared memory, who may write what** — remains open」(编排侧已被 09-26 的 [[MultiAgent]] 覆盖)。现有记忆簇四页(Provenance / CitationLock / Abstention / LongTermMemory)**只治理单 agent 跨会话的事实来源**,对「谁能往共享记忆里写、冲突谁裁决、写错了怎么撤」零覆盖。2026-09 产业证据齐备:①**三种共享记忆架构**(分层知识图谱 / 事件驱动 append-only 日志 = HydraDB Hive Memory / 监督者+私有记忆,各换一致性 vs 吞吐);②**冲突四策略**(last-write-wins / supervisor decides / versioning 保留多个真相 / temporal ordering);③企业记忆 **「Git-like 五原则」**(Scoped / Versioned / Reviewable / Auditable / **Portable**);④**治理四层**(身份与授权 / 编排控制 / **数据与记忆治理** / 运行时观测);⑤中文源的组织级记忆三层内容架构(宪法 / 典籍 / 战报)。与 09-24 候选 1(生命周期/遗忘)**上下游但不同**:治理管「**谁能写**」,生命周期管「**何时删**」。与 [[AgentIdentity]] 那句「事实可信 ≠ 行动者可问责」**同构**。**建议下一步**:生成 `learning-materials/agent-memory-governance.html`(砖橙);**不建议**与 09-23 持久化执行合并成文(制度层 vs 执行层,取舍逻辑不同) |
 
 ---
 
@@ -81,3 +84,4 @@
 - **2026-09-26(再稍后)** 用户指令「你帮我做完」,授权自动化完成全链路:HTML 复制入 `raw/learning-materials/`(md5 一致)→ 按 Ingest Workflow 摄取(源 9→**10**、wiki 页 37→**39**:新增 `sources/agent-harness.md` 与 `concepts/AgentHarness.md`,`[[Agent]]` 增运行时轴,`overview.md` 新增 **Cluster E** 与两条新横断主题)→ `concept-relationship.md` 新增「扩展三 · 运行时底座」并修正两条 09-24 已过时的「待核查」标注。09-18 行 🟡 → **✅**。汇总态变为 **7 ✅ / 0 🟡 / 23 ⏸**(合计 30)。**注意:本次入库为用户指令授权,非逐条人工核查,已在 wiki log.md、README 与来源页如实标注**。
 - **2026-09-26(晚间)** 用户指令「继续做」,候选 2(Agent 沙箱)全链路落地:`agent-sandbox.html` 产出并入 `raw/`(md5 一致)→ 摄取(源 10→**11**、wiki 页 39→**41**:`sources/agent-sandbox.md` + `concepts/AgentSandbox.md`,overview Cluster E 补执行层、行动侧链 `execute` 格关闭、open question「执行隔离 missing third leg」标记 resolved)→ `concept-relationship.md`「扩展四 · 执行隔离」+ 扩展三沙箱节点更新。09-21 行 ⏸ → **✅**。汇总态 **8 ✅ / 0 🟡 / 22 ⏸**。同轮修复:发现并补回上轮丢失的 overview 两处编辑(open questions sharpened + OpenAI docs 摄取建议),已在 wiki log 记录。
 - **2026-09-26(更晚)** 候选 3(多智能体协作)全链路落地:`multi-agent.html`(靛青)产出并入 raw(md5 一致)→ 摄取(源 11→**12**、页 41→**43**:`sources/multi-agent.md` + `concepts/MultiAgent.md`;overview Cluster E 补协作层并改题「host / where it runs / who it works with」、十二页故事、新横断主题「验证器是协作的前提」;open question「多智能体共享记忆」标注编排侧已覆盖、治理侧仍开放)→ `concept-relationship.md`「扩展五 · 多智能体协作」。09-26 行 ⏸ → **✅**。**至此 2026-09-26 雷达三条候选全部当日落地**。汇总态 **9 ✅ / 0 🟡 / 21 ⏸**(合计 30)。证据等级二手已三处标注。
+- **2026-09-27** 新增 **1** 条候选(**智能体记忆治理 / Agent Memory Governance** —— 补上 overview 自认开放的「治理侧」);另将 **09-17「RAG」** 与 **09-23「持久化执行」** 两行标注**承接强化**。两条均**只改备注、不新增行**,且本次强化强调的是「**变化的是证据的性质,不是热度**」:RAG 从「缺一页基础」变为「**默认起点被 AAAI 2026 论文推翻**」;持久化执行从「Temporal 已存在」变为「**四个运行时恢复语义首次被中立并列 + checkpoint ≠ durable execution**」。汇总态变为 **9 ✅ / 0 🟡 / 22 ⏸**(合计 31)。
