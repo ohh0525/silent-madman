@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：记忆的治理——从档案库到策略（Agent Memory: From Archive to Policy）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #2e7d6e;
+    --accent-soft: #e6f2ef;
+    --line: #e5e2dc;
+    --code-bg: #f2f5f2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+  h3 {
+    font-size: 15px;
+    margin: 18px 0 8px;
+    color: var(--ink);
+  }
+  .warn {
+    background: #fdf6ec;
+    border: 1px solid #ecd9b5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 智能体记忆治理(四行合并:生命周期 / 调用时机 / 完整性 / 学习化策略)</span>
+  <h1>记忆的治理:从档案库到策略</h1>
+  <p class="subtitle">Agent Memory: From Archive to Policy —— 记什么、何时取、何时删,以及<strong>这三个决定由谁做</strong> · 生成时间 2026-10-06</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">智能体记忆的治理,是把记忆从"一个只会增长的档案库"改造成"一套有人拍板、可审计、可遗忘的决策系统"——写什么(捕获)、怎么改(更新)、何时取(召回)、何时删(遗忘)是<strong>四个各自会坏的动作</strong>,每个动作都要回答"由谁、按什么目标来做决定",而 2026 年的答案正在从人工写死的规则,变成带独立奖励目标的可训练策略。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>想象一个从不整理的档案室。管理员把每一份进门的文件都编目上架——包括后来被推翻的旧决定、已经被取消的偏好、甚至被人偷偷塞进来的伪造公文。半年后你问他"我们现在的供应商是谁",他从架上抽出<strong>语义最相似</strong>的五份文件摊在你面前,里面新旧混杂、真假并存。多数 agent 的记忆系统就是这个档案室:一个向量库,只管"存"和"按相似度取",不管"哪个已经作废"、"哪份是伪造的",更不管"今天该不该还记得这件事"。</p>
+  <p>为什么这是个严重问题?因为记忆有一个单轮对话没有的特性:<strong>错误会复利</strong>。模型这一轮说错话,下个窗口就忘了;但一条写错的记忆,会变成它未来每一轮规划的固定输入。更隐蔽的是四种"静悄悄的坏":该捕获的没捕获(你上周改了地址,它没记);该更新的没更新(两版发布日期并存,它自己打架);召回不完整(只召回三条相关记忆里的一条);删除不安全(把还被引用着的事实删了)。DyadMem 基准第一次给这四种病各配了体检指标——它发现前沿模型拿着<strong>金标准记忆</strong>答题时表现很强,一旦要走<strong>完整流水线</strong>(自己捕获、自己更新、自己召回)分数就骤降。换句话说:不是模型不会用记忆,是"记忆的四个动作"各自都有洞。</p>
+  <p>那谁来补这些洞?此前业界默认的答案是"工程师写规则":重要性打分到多少就删、时间过了 TTL 就过期、每次对话结束抽取三条写入。2026 年出现了两条新的回答。一条是<strong>把决定训成策略</strong>:六个独立团队用强化学习训练"记什么/何时取/何时删"——Memory-R1 只用 152 条 QA 对训练,就在 LoCoMo 上把 F1 相对 Mem0 拉高 68.9%,因为"删掉一条过期记忆"本身就在它的动作空间里。另一条来自攻击者,是没人想要的回答:如果没人治理记忆,<strong>决定权会自动流向想利用它的人</strong>——PMPA 攻击把恶意指令藏进良性文档诱导 agent 自己写进持久记忆;Darktrace 证明四家主流编码工具全都接受伪造的会话历史,78 条假对话就把 agent 从"拒绝渗透"推到"主动接管域控"。</p>
+  <p>所以这份材料把四个此前分立的议题(生命周期/遗忘、调用时机、完整性/投毒、学习化策略)合成一张图:<strong>记忆是一个由四个动作组成的系统,每个动作都有失效模式、都有决定权归属问题;治理就是让四个动作都可审计、可回滚、有主人</strong>。档案库只解决"存";策略解决"存什么、何时用、何时忘";而安全解决"别让别人的策略跑在你的记忆上"。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>把"记忆"拆成四个动作,而不是一个仓库</strong>。DyadMem 把长期记忆显式拆成 Capture(捕获本会话新记忆)→ Update(与既有记忆库调和)→ Recall(选出仍有效的条目)→ QA(用证据作答)四段,并在<strong>每一段</strong>都放置金标注(3,065 个情节、50,961 个会话、61,210 个问答,覆盖 16 个开源 + 4 个闭源模型)。<br />为什么重要:端到端 QA 分数会把四个动作的好坏搅在一起——答对了可能记忆库是坏的(碰巧蒙对),答错了也定位不到坏在哪一段。<strong>只有拆开量,才知道该修哪里。</strong></li>
+    <li><strong>每个动作都有可量化的失效模式</strong>。这是 2026 年几份基准合起来给出的"体检表":捕获端,DyadMem 测出前沿模型的 Capture 召回率系统性偏低;更新端,Memora(ACL 2026 Findings)的 FAMA 指标显式惩罚"依赖已删除/已被取代的记忆",发现现有记忆 agent"频繁复用无效记忆、难以调和不断演化的记忆";作证端,Memory Is a Derivation 审计发现压缩后的记忆即便放回更完整的写入前历史,仍有 17–21% 得不到支撑;遗忘端,MemoryAgentBench 把"选择性遗忘"列为与检索、测试时学习并列的四大能力之一,PATH-Bench 进一步定义了前向/后向遗忘迁移指标并给出"强迁移不保证留存"。<br />为什么重要:<strong>"该忘的没忘"从此不是修辞,而是一个可扣分的指标</strong>(FAMA = 召回分 − 陈旧依赖罚项)。</li>
+    <li><strong>关键变量是决定权的归属:谁在拍板三个决定</strong>。同一套失效模式,有三种截然不同的"决定者":
+      <table>
+        <thead><tr><th>决定者</th><th>记什么 / 何时取 / 何时删</th><th>代表证据</th><th>核心短板</th></tr></thead>
+        <tbody>
+          <tr><td>人工规则(现状默认)</td><td>工程师写死:重要性阈值、TTL、抽取条数、相似度 top-k</td><td>分层记忆已成 2026 生产系统主流形态(常驻核心 + 外部检索 + 显式遗忘策略)</td><td>规则对"什么算陈旧"没有判断力;每换一个任务域要重调</td></tr>
+          <tr><td><strong>可训练策略(2026 新答案)</strong></td><td>把 ADD / UPDATE / DELETE / NOOP 放进动作空间,用任务成功奖励联合 RL 训练</td><td>Memory-R1(ACL 2026 主会,152 条 QA 对,LoCoMo 相对 Mem0 F1 +68.9%)、ATMem(AndroidWorld 76.6%,参数约 1/29 于对照闭源模型)等六个独立团队</td><td><strong>六系统全部尚未生产部署</strong>;基准不覆盖分布漂移与对抗输入;写/取/变换尚无单一系统同时拥有</td></tr>
+          <tr><td>攻击者(没人想要的决定者)</td><td>写入时机与内容由注入者决定</td><td>PMPA(arXiv:2609.13889):Claude Code 中毒率 66.9%/81.7% 且良性任务表现不变;Darktrace:四家 harness 全部接受伪造会话历史</td><td>修复在厂商侧(消息签名 + 服务端校验),防守方自己部署不了</td></tr>
+        </tbody>
+      </table>
+      为什么重要:前两行是工程选型问题,第三行是安全底线——<strong>如果记忆没有主人,主人位置不会空缺</strong>。</li>
+    <li><strong>治理的四条底线:可审计、可回滚、有权限、信签名</strong>。写什么、何时忘,必须像 git 提交一样可追溯(谁写的、何时、依据哪条来源——这正是"带溯源记忆"那一页的入口纪律);删除必须是真实、可记录、可证明的操作,而不是"从不可见存储里手动翻找";谁有权写入共享记忆要像数据库权限一样显式管理;而对 Darktrace 类攻击,唯一根治是<strong>模型回复带密码学签名、服务端逐轮校验</strong>——在那之前,本地会话历史库要被当作"安全敏感文件"对待:任何非 harness 进程写入它都是明确的攻击信号。<br />为什么重要:前三条管"自己出错",第四条管"别人使坏"——<strong>可靠性纪律与安全纪律在记忆这一层合流</strong>。</li>
+  </ol>
+  <div class="mermaid-placeholder">记忆治理的最小骨架(伪代码:四个动作 + 决定者 + 治理底线)
+
+# —— 三个决定,三种决定者 ——
+DECIDER := RULES | TRAINED_POLICY | ATTACKER     # 若缺席,默认流向 ATTACKER
+
+def capture(session):          # 动作①:捕获
+    for m in DECIDER.what_to_write(session):
+        write(m, origin=m.source, evidence=m.ptr, ts=now())   # 溯源是入场券
+
+def update(bank, new):         # 动作②:调和(取代,不是并存)
+    old = bank.conflicts_with(new)
+    if old: bank.supersede(old, by=new)         # 新事实显式取代旧事实
+    if DECIDER is TRAINED_POLICY: bank.delete(DECIDER.stale(bank))  # DELETE 在动作空间里
+
+def recall(question):          # 动作③:召回
+    hits = [m for m in bank if relevant(m, question) and not superseded(m) and fresh(m)]
+    return hits or ABSTAIN                     # 召回不完整 → 宁可弃答
+
+# —— 治理底线 ——
+audit_log.record(every write / supersede / delete)     # 可审计
+git_like.version(bank)                                  # 可回滚(删除可撤销)
+acl.check(writer)                                       # 有权限
+assert verify_signature(model_reply)                    # 信签名(Darktrace 的根治位)
+</div>
+  <p class="warn"><strong>必须与"分数"一起读的三句提醒:</strong>① 记忆基准的分数高度依赖评测脚手架与裁判选择,Memora 论文里六个记忆 agent 在自己的评测里也"仅带来边际提升"——把任何单一榜单数字当采购依据都不成立;② 六个学习化策略系统无一经过"记忆累积数月"的生产检验,RL 奖励仍是代理指标;③ Darktrace 的攻击效果按模型与 harness 而异(Opus 5 的护栏在 Claude Code 下守住了),但<strong>历史管理这一层结构缺陷是四家通用的</strong>。</p>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 跨月服务的个人助理:"该忘的没忘"是可扣分的病</h3>
+    <p><span class="label">背景:</span>助理服务同一用户数月,偏好会漂移、决定会被推翻、地址会搬家;用户最怕的不是它忘了,而是它<strong>拿着三个月前作废的事实当现状</strong>,而且满怀自信。</p>
+    <p><span class="label">如何应用:</span>用 Memora 式的演化仿真构造评测集(周/月/季三档,内置偏好漂移与目标推进),用 FAMA(召回分减去陈旧依赖罚项)做验收指标;更新动作必须"取代"而非"并存",每条记忆带被谁取代的指针;DyadMem 式分段金标注定位坏在捕获还是更新。</p>
+    <p><span class="label">结果:</span>一套能把"什么时候该忘"量化成回归测试的记忆运维流程——改了记忆策略,跑一遍就知道陈旧依赖是升是降,而不是等用户投诉。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 企业编码 Agent:把会话历史库当安全敏感文件</h3>
+    <p><span class="label">背景:</span>编码工具把会话历史存在客户端(常为明文 SQLite),不校验存储的"模型回复"是否真由模型产生;一次恶意包安装就能注入伪造历史,让 agent 相信自己"早已被授权渗透测试"。</p>
+    <p><span class="label">如何应用:</span>监控会话数据库的非 harness 进程写入(包安装脚本的 postinstall 碰它就是攻击信号);把"会话恢复/回滚编辑"当不可信输入对待;记录并固化模型选型(便宜模型默认值 = 未登记的安全决策);等厂商侧消息签名落地前,出站行为监控比工具审批更能发现被劫持的 agent——因为它做的事"看起来完全合法"。</p>
+    <p><span class="label">结果:</span>在"修复不由你部署"的窗口期内,把 78 条假对话式的攻击从"零成本"变成"至少要在监控里留痕";配合写入端溯源闸门,PMPA 式的诱导写入也难以升级为可信事实。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 长任务 Agent 的记忆运维:让"删"进入动作空间</h3>
+    <p><span class="label">背景:</span>任务横跨数百次工具调用的 agent,窗口外记忆只增不减,top-k 里挤满过期与重复条目,信号被噪音淹没;人工调阈值跟不上任务域的变化。</p>
+    <p><span class="label">如何应用:</span>参考 Memory-R1 的双 agent 架构(一个管抽取/更新/删除/不动的四选一,一个管下游任务)加任务成功奖励的 RL;或 ATMem 的记忆成本感知奖励,在效率与召回间自动权衡;训练数据门槛远低于直觉(百量级 QA 对即可起步)。</p>
+    <p><span class="label">结果:</span>"何时压缩、何时删除"从每次人工调参变成随任务反馈持续改进的策略——但投产前必须补上生产环境的长周期检验与对抗输入测试,这一步 2026 年还没有人走过。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是"更大的上下文窗口"</strong>:窗口是容量,治理是结构与纪律。DyadMem 的证据是反向的——Gold-Memory(直接喂对的记忆)很强而 Full-Pipeline(自己管记忆)骤降,说明瓶颈不在"装不装得下",在"四个动作各自的质量"。</li>
+    <li><strong>不是上下文压缩(Compaction)</strong>:压缩治理的是<strong>窗口内</strong>这一轮的历史怎么裁;本页治理的是<strong>窗口外</strong>跨会话的记忆库怎么写、怎么改、何时删。两者相邻(压缩丢的信息若重要,应当落进长期记忆而非蒸发)但对象不同。</li>
+    <li><strong>不是"带溯源记忆"那一页的重复</strong>:溯源(Provenance / CitationLock / Abstention)管的是<strong>入口与出口的纪律</strong>——写入要带来源、引用只引打开过的、无据弃答;本页管的是<strong>中间的全生命周期</strong>——更新、遗忘、决定权归属。入口干净不等于生命周期干净:PMPA 的注入恰恰是"带着合法来源"进来的良性文档里埋的雷。</li>
+    <li><strong>不是"记得越多越好"的反面装饰</strong>:遗忘不是失败,是能力。FAMA 把"复用已删除信息"列为扣分项;一个从不遗忘的系统在只测召回的老基准上是满分,在测治理的新基准上是重灾区。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「记忆是个性化功能,锦上添花」——在生产里它是<strong>可靠性子系统</strong>:写错一条,未来每一轮都跑在错的输入上;被投毒一条,攻击会在此后所有会话复发。</li>
+    <li>「遗忘 = 数据丢失 = 事故」——恰恰相反,<strong>不安全的不遗忘才是事故</strong>(把已取消的偏好、已作废的授权继续当真);而"不安全的删除"(删掉仍被引用的事实)同样要测——DyadMem 把两端都量了。</li>
+    <li>「学习化策略一举解决记忆问题」——六系统无一经过生产长周期检验,基准不含分布漂移与对抗输入,且写/取/变换三步尚无单一系统同时拥有;它们证明的是"方向可行",不是"方案可用"。</li>
+    <li>「基准分数可以直接横向比」——记忆评测的分数依赖脚手架与裁判选择;连 Memora 论文自己测的六个记忆 agent 也"仅带来边际提升"。任何单一数字都只是起点假设。</li>
+  </ul>
+  <h3>5.3 适用与不适用</h3>
+  <table>
+    <thead><tr><th>值得上"记忆治理"这一整套</th><th>不必上这套复杂度</th></tr></thead>
+    <tbody>
+      <tr><td>跨周/月/季持续服务同一用户的助理</td><td>单会话、用完即弃的问答</td></tr>
+      <tr><td>事实会被反复更新、推翻、需要时间序</td><td>一次写入、永不变化的静态资料</td></tr>
+      <tr><td>读取不可信外部内容(网页/工单/文档)并持久化</td><td>输入可信且不写回长期存储</td></tr>
+      <tr><td>错误代价高,需要可审计、可证明"已遗忘"</td><td>错误无所谓、随时清库重来</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sources">
+  <h2>6 · 来源链接</h2>
+  <ol>
+    <li><a href="https://arxiv.org/abs/2610.03020">DyadMem: A Long-Term Memory Benchmark of How Agents Work with Users · Tao et al.(arXiv:2610.03020,2026-10-02,NTU/NUS/HKU/StepFun)</a> — Capture/Update/Recall/QA 全流程分段金标注;Gold-Memory 强而 Full-Pipeline 骤降;前沿模型捕获召回率低、召回不完整、删除不安全;URAM("同一用户,不同 agent 该记的不同")。</li>
+    <li><a href="https://arxiv.org/abs/2604.20006">From Recall to Forgetting: Benchmarking Long-Term Memory for Personalized Agents(Memora)· Uddin et al.(ACL 2026 Findings,arXiv:2604.20006,ASU/Genies/U. Arizona)</a> — FAMA 遗忘感知指标(惩罚对已删除/已被取代记忆的依赖);现有基准 94%/85% 的题目至多跨 2 个会话;四个 LLM 与六个记忆 agent"频繁复用无效记忆、难以调和演化中的记忆",记忆模块仅边际提升。</li>
+    <li><a href="https://arxiv.org/abs/2609.36130">Memory Is a Derivation(arXiv:2609.36130,2026-09)</a> — 对压缩后记忆的审计:放回更完整的写入前历史后约六成"看似无支撑"的记忆能找回支撑,但 17–21% 仍无支撑;组合记忆可能断言历史从未建立过的关系。</li>
+    <li><a href="https://arxiv.org/abs/2508.19828">Memory-R1: RL-empowered Long-term Memory(arXiv:2508.19828,ACL 2026 主会长文 2026.acl-long.583)</a> — 双 agent 架构 + ADD/UPDATE/DELETE/NOOP 动作空间 + PPO/GRPO;仅 152 条 QA 对即可训练,LoCoMo 相对 Mem0 F1 +68.9%。</li>
+    <li><a href="https://arxiv.org/abs/2606.31612">ATMem(arXiv:2606.31612)</a> — 记忆成本感知奖励 + STR-GRPO;ATMem-UI-8B 在 AndroidWorld 达 76.6%,超过 UI-TARS-2-230B 的 73.3%,参数量约 1/29。同族工作另见 ICML 交互记忆学习(arXiv:2609.17088)、UI-Mem(arXiv:2602.05832)、MemChain(arXiv:2607.24097)、MMPO(arXiv:2605.30159)。</li>
+    <li><a href="https://arxiv.org/abs/2609.13889">PMPA: 持久记忆投毒攻击(arXiv:2609.13889,2026-09-12,Auckland/Fudan)</a> — 把恶意指令嵌入良性外部来源诱导 harness 型 agent 自行写入持久记忆;OpenClaw ISR/C-ASR 73.7%/55.5%,Claude Code 66.9%/81.7%,且良性任务表现保持不变;prompt 级防御在记忆已污染后保护有限。</li>
+    <li><a href="https://tech.yahoo.com/cybersecurity/articles/darktrace-proved-ai-agent-tools-235742644.html">Darktrace: conversation history poisoning(Eric Rozon,2026-09-24 发布;2026-08-18 负责任披露 Anthropic/OpenAI/AWS)</a> — 四家 harness(Claude Code/Codex/Kiro-CLI/Pi)全部接受伪造会话历史;Kiro-CLI 下达成 Active Directory 全域接管,Codex 下说服外传数据;根治方案为厂商侧消息签名 + 服务端校验,终端防守方无法部署。</li>
+    <li><a href="https://arxiv.org/abs/2608.01149">PATH-Bench(arXiv:2608.01149)</a> — 显式定义前向/后向遗忘迁移(FWT/BWT/FGT)指标;结论"强迁移不保证留存"。</li>
+    <li><a href="https://arxiv.org/abs/2507.05257">MemoryAgentBench(arXiv:2507.05257)</a> — 把"选择性遗忘"与精确检索、测试时学习、长程理解并列为四大记忆能力。</li>
+    <li><a href="https://arxiv.org/abs/2310.08560">MemGPT: Towards LLMs as Operating Systems · Packer et al.(arXiv:2310.08560,2023)</a> — "上下文即内存、工具调用换页"的奠基类比;本页的立场是:虚拟内存若无生命周期治理,只是让坏状态优雅地规模化。</li>
+    <li><a href="https://arxiv.org/abs/2410.10813">LongMemEval · Wu et al.(ICLR 2025,arXiv:2410.10813)</a> — 长期记忆五能力框架(抽取/跨会话推理/时间推理/知识更新/弃答),是 DyadMem/Memora 所修正的"端到端 QA 评测世代"的代表。</li>
+    <li><a href="https://cruxdigits.nl/blog/ai-agent-memory">AI Agent Memory: Why Agents Forget and How to Fix It · Crux Digits(2026)</a> — 2026 生产系统收敛的分层形态(常驻核心 + 外部检索 + 显式遗忘策略);"把榜单数字当起点假设而非采购决策";Anthropic 已在其开发者平台提供 memory tool 与 context editing。</li>
+    <li><a href="https://bayesiansapien.github.io/cere-bro/agentic-systems/agent-memory">Agent Memory 追踪页 · bayesiansapien(2026-10 更新)</a> — 9-28 → 10-05 逐日记忆系统动态(Memory Is a Derivation、AutoCompact、GitHarness 等);Mem0 方面认为纯召回式基准正在饱和。</li>
+  </ol>
+  <p style="font-size:13px;color:#57606a;margin-top:12px;">来源说明:第 1、2、7、13 条及第 3 条于 2026-10-06 经检索真实返回并核对;第 4、5、6、8、9 条于 2026-09-24 ~ 09-30 各期概念雷达检索时核对(见 .workbuddy/memory/concept-radar/ 各期报告),本次沿用其记录的 arXiv 编号;第 10–12 条为此前入库材料(agent-memory-provenance 等)已核对的既有引用。无 [unverified] 条目。</p>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">记忆不是一个仓库,而是四个会各自出错的动作(写/改/取/删)加上一个必须有人回答的问题——<strong>这些决定由谁做</strong>;治理就是让每个动作可审计、可回滚、有主人,因为放任不管的时候,决定权不会空缺,它会流向想利用你的人。</p>
+</section>
+
+<footer>由 concept-explainer Skill 自动生成 · 2026-10-06 · 四行积压合并成文(生命周期 + 调用时机 + 完整性 + 学习化策略) · 待人工核查后入库</footer>
+
+</div>
+</body>
+</html>

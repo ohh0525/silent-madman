@@ -43,7 +43,8 @@ silent-madman/
 │   ├── tool-hallucination.html      # 工具幻觉与封闭世界消解 (2026-09-22 · 已入库 2026-09-24)
 │   ├── agent-harness.html           # Agent Harness 智能体外壳 (2026-09-26 · 已入库 2026-09-26)
 │   ├── agent-sandbox.html           # Agent 沙箱与执行隔离 (2026-09-26 · 已入库 2026-09-26)
-│   └── multi-agent.html             # 多智能体协作的工程化 (2026-09-26 · 已入库 2026-09-26)
+│   ├── multi-agent.html             # 多智能体协作的工程化 (2026-09-26 · 已入库 2026-09-26)
+│   └── memory-lifecycle.html        # 记忆的治理:从档案库到策略 (2026-10-06 · 四行合并 · 待核查)
 ├── Python基础语法课程/              # 第 1-4 课教学资料 (Word 讲义 + HTML 学习材料 + Notebook)
 │   ├── Python基础语法讲义（第1-4课）.docx
 │   ├── Python基础语法练习题与参考答案（第1-4课）.docx
@@ -146,6 +147,7 @@ C:\Users\Lenovo\.workbuddy\skills\concept-explainer\SKILL.md
 | `learning-materials/agent-harness.html` | Agent Harness 智能体外壳 · 运行时底座 | 单概念 | 墨绿（已入库 2026-09-26） |
 | `learning-materials/agent-sandbox.html` | Agent 沙箱与执行隔离 · 运行时执行层 | 单概念 | 铁锈红（已入库 2026-09-26） |
 | `learning-materials/multi-agent.html` | 多智能体协作的工程化 · 运行时协作层 | 单概念 | 靛青（已入库 2026-09-26） |
+| `learning-materials/memory-lifecycle.html` | 记忆的治理:从档案库到策略 · 记忆簇合并（生命周期+时机+完整性+学习化策略） | 单概念（合并） | 氧化铜绿（待人工核查） |
 | `concept-relationship.md` | 概念关联（基础 5 + 扩展 5） | 图谱 | — |
 
 > 想新增一个主题，直接告诉我概念名即可，本 Skill 会沿用同一份样式与结构，确保后续 HTML 之间排版一致。
