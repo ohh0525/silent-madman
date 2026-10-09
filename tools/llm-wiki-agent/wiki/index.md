@@ -18,6 +18,7 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Agent Harness(智能体外壳)](sources/agent-harness.md) — concept-learning HTML on the engineering shell that hosts the loop (silent-madman, 2026-09-26; "Harness Wars" evidence)
 - [Agent 沙箱与执行隔离(Agent Sandbox / Execution Isolation)](sources/agent-sandbox.md) — concept-learning HTML on kernel-level containment as the `execute` leg (silent-madman, 2026-09-26; K8s SIG Apps upstream)
 - [多智能体协作的工程化(Multi-Agent Orchestration)](sources/multi-agent.md) — concept-learning HTML on team@k vs best@k and the verifier precondition (silent-madman, 2026-09-26; secondhand evidence, flagged)
+- [记忆的治理:从档案库到策略(Agent Memory: From Archive to Policy)](sources/memory-lifecycle.md) — concept-learning HTML merging memory lifecycle · recall timing · integrity/poisoning · learned policy into one governance spine (silent-madman, 2026-10-06; ingested 2026-10-09, clears five backlog rows)
 
 ## Entities
 - [Anthropic](entities/Anthropic.md) — creator of Claude; primary source for Agent / Skill / MCP design
@@ -28,6 +29,7 @@ This file is maintained by the LLM. Updated on every ingest.
 - [AgentZeroMemory](entities/AgentZeroMemory.md) — provenance-aware long-term memory system (Wu & Zhu, 2026)
 - [LongMemEval](entities/LongMemEval.md) — benchmark for long-term interactive memory (Wu et al., ICLR 2025)
 - [Zep](entities/Zep.md) — vendored agent memory on temporal context graphs
+- [DyadMem](entities/DyadMem.md) — staged long-term-memory benchmark: Capture/Update/Recall/QA with gold annotations at every stage (Tao et al., arXiv:2610.03020, 2026-10-02)
 
 ## Concepts
 - [Agent](concepts/Agent.md) — autonomous LLM-driven system with tool use + loop
@@ -52,6 +54,8 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Agent Harness](concepts/AgentHarness.md) — the engineering shell that runs the Agent loop; `Agent = Model + Harness`
 - [Agent Sandbox](concepts/AgentSandbox.md) — kernel-level containment; the `execute` leg — authority is not isolation
 - [Multi-Agent Orchestration](concepts/MultiAgent.md) — peer agents exchanging verified progress; the verifier is the precondition
+- [Memory Governance](concepts/MemoryGovernance.md) — memory as four actions that each fail differently + who holds the decision rights
+- [Memory Poisoning](concepts/MemoryPoisoning.md) — write-side attack surface: an attacker inherits the decision rights you never claimed
 
 ## Syntheses
 - [Overview](overview.md) — living synthesis across all sources
