@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今天穿什么 · 少女换装</title>
+<style>
+  :root{
+    --ink:#3E3348; --ink2:#7A6E88; --line:#EDE3E9;
+    --cream:#FFFBF7; --pink:#F5A9C4; --pink-d:#E0809F;
+    --mint:#9FD8C4; --lav:#C9B6EE; --peach:#FBD9C0; --sky:#A9C8E8;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  body{
+    margin:0; min-height:100vh; color:var(--ink);
+    font:15px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    background:#FFF6F2;
+    background-image:radial-gradient(circle at 12% 8%, #FFE7EF 0, transparent 42%),
+                     radial-gradient(circle at 88% 92%, #E6F4EF 0, transparent 40%);
+    display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  #app{width:100%; max-width:1000px}
+  .top{display:flex; align-items:baseline; gap:12px; margin-bottom:14px; padding:0 4px; flex-wrap:wrap}
+  .top h1{margin:0; font-size:21px; font-weight:600; letter-spacing:.5px}
+  .top .sub{color:var(--ink2); font-size:13px}
+  .top .day{margin-left:auto; font-size:13px; color:var(--ink2)}
+  .top .day b{color:var(--pink-d); font-size:17px}
+
+  .layout{display:grid; grid-template-columns:290px 1fr; gap:16px; align-items:start}
+  .card{background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px;
+        box-shadow:0 6px 20px rgba(200,160,180,.10)}
+
+  /* ---------- 左：舞台 ---------- */
+  .stage{position:relative; display:flex; flex-direction:column; align-items:center; padding-top:8px}
+  .dollwrap{position:relative; width:100%; display:flex; justify-content:center}
+  #doll{width:230px; height:372px; display:block}
+  .bubble{
+    position:relative; margin:0 0 10px; background:#fff; border:1.5px solid var(--pink);
+    color:var(--ink); border-radius:14px; padding:8px 12px; font-size:13px; max-width:220px;
+    text-align:center; opacity:0; transform:translateY(6px); transition:.28s;
+  }
+  .bubble.on{opacity:1; transform:none}
+  .bubble::after{content:""; position:absolute; left:50%; bottom:-7px; margin-left:-6px;
+    width:12px; height:12px; background:#fff; border-right:1.5px solid var(--pink);
+    border-bottom:1.5px solid var(--pink); transform:rotate(45deg)}
+  .scorering{display:flex; align-items:center; gap:10px; margin-top:12px; font-size:13px; color:var(--ink2)}
+  .scorering b{font-size:24px; color:var(--ink); font-weight:600}
+  .scorering .of{font-size:12px}
+
+  /* ---------- 右：简报 ---------- */
+  .brief{display:flex; flex-direction:column; gap:14px}
+  .daycard{position:relative; overflow:hidden}
+  .daycard .scene{font-size:11px; letter-spacing:2px; color:var(--pink-d); font-weight:600}
+  .daycard h2{margin:4px 0 6px; font-size:19px; font-weight:600}
+  .daycard p{margin:0; color:var(--ink2); font-size:13.5px}
+  .weights{display:flex; flex-wrap:wrap; gap:7px; margin-top:12px}
+  .wchip{font-size:12px; padding:4px 10px; border-radius:999px; background:#FFF0F5; color:var(--pink-d);
+         border:1px solid #FBD6E3}
+  .wchip.neg{background:#FFF4EC; color:#C97A4A; border-color:#F7DCC4}
+  .taboo{margin-top:11px; font-size:12.5px; color:#C9635F; background:#FFF3F2;
+         border:1px dashed #F3C7C4; border-radius:12px; padding:7px 11px}
+  .wash{margin-top:9px; font-size:12.5px; color:#5E8C7B; background:#F1FAF6;
+        border:1px dashed #C4E6D9; border-radius:12px; padding:7px 11px}
+
+  .stats{display:grid; grid-template-columns:1fr 1fr; gap:11px 18px}
+  .stat{font-size:12.5px}
+  .stat .lbl{display:flex; justify-content:space-between; color:var(--ink2); margin-bottom:5px}
+  .stat .lbl b{color:var(--ink); font-weight:600}
+  .bar{height:8px; border-radius:99px; background:#F3EEF5; overflow:hidden}
+  .bar i{display:block; height:100%; border-radius:99px; transition:width .35s cubic-bezier(.3,1.4,.5,1)}
+  .s0 i{background:var(--pink)} .s1 i{background:var(--sky)}
+  .s2 i{background:var(--mint)} .s3 i{background:var(--lav)}
+
+  /* ---------- 衣柜 ---------- */
+  .closet{margin-top:16px; background:#fff; border:1px solid var(--line); border-radius:18px;
+          padding:14px 16px 16px; box-shadow:0 6px 20px rgba(200,160,180,.10)}
+  .tabs{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px}
+  .tab{border:0; background:#F7F1F5; color:var(--ink2); font:inherit; font-size:13px;
+       padding:6px 15px; border-radius:999px; cursor:pointer; transition:.18s}
+  .tab:hover{background:#FBE4EE; color:var(--pink-d)}
+  .tab.on{background:var(--pink); color:#fff; box-shadow:0 3px 10px rgba(245,169,196,.45)}
+  .items{display:grid; grid-template-columns:repeat(auto-fill,minmax(154px,1fr)); gap:9px}
+  .item{display:flex; align-items:center; gap:10px; text-align:left; cursor:pointer;
+        border:1.5px solid var(--line); background:#fff; border-radius:14px; padding:9px 11px;
+        font:inherit; color:var(--ink); transition:.16s}
+  .item:hover{border-color:#F3C6D7; transform:translateY(-1px)}
+  .item.on{border-color:var(--pink); background:#FFF5F9; box-shadow:0 0 0 3px #FCE3EC}
+  .item .sw{width:26px; height:26px; border-radius:9px; flex:0 0 auto;
+            border:1px solid rgba(0,0,0,.10); box-shadow:inset 0 -4px 8px rgba(0,0,0,.06)}
+  .item .nm{font-size:13.5px; line-height:1.25}
+  .item .st{font-size:11px; color:var(--ink2); letter-spacing:-.2px}
+  .item.wash{opacity:.42; cursor:not-allowed; border-style:dashed}
+  .item.wash:hover{transform:none; border-color:var(--line)}
+
+  .actions{display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-top:14px}
+  .btn{border:0; font:inherit; font-size:14.5px; font-weight:600; padding:11px 26px; border-radius:999px;
+       cursor:pointer; transition:.18s}
+  .btn.ghost{background:#F7F1F5; color:var(--ink2); font-weight:500}
+  .btn.ghost:hover{background:#F1E7EE}
+  .btn.main{background:linear-gradient(135deg,#F7AFC8,#EE8FB4); color:#fff;
+            box-shadow:0 8px 20px rgba(238,143,180,.42)}
+  .btn.main:hover{transform:translateY(-1px); box-shadow:0 11px 24px rgba(238,143,180,.5)}
+  .btn.main:disabled{background:#E8DFE5; box-shadow:none; color:#fff; cursor:not-allowed; transform:none}
+
+  /* ---------- 遮罩 ---------- */
+  .ov{position:fixed; inset:0; background:rgba(62,51,72,.45); backdrop-filter:blur(3px);
+      display:none; align-items:center; justify-content:center; padding:18px; z-index:40}
+  .ov.on{display:flex; animation:fade .22s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet{background:#fff; border-radius:22px; padding:26px; width:100%; max-width:430px;
+         box-shadow:0 24px 60px rgba(80,50,70,.3); animation:pop .3s cubic-bezier(.2,1.3,.5,1)}
+  @keyframes pop{from{opacity:0; transform:translateY(14px) scale(.97)}to{opacity:1; transform:none}}
+  .sheet h2{margin:0 0 6px; font-size:20px; font-weight:600}
+  .sheet .hint{color:var(--ink2); font-size:13px; margin-bottom:16px}
+  .stars{font-size:29px; letter-spacing:3px; color:#F0C14B; line-height:1}
+  .stars .off{color:#E7DDE6}
+  .bigscore{font-size:15px; color:var(--ink2); margin:8px 0 2px}
+  .bigscore b{font-size:30px; color:var(--ink); font-weight:600}
+  .verdict{background:#FFF6F9; border-radius:14px; padding:11px 14px; font-size:13.5px; margin:14px 0}
+  .verdict.warn{background:#FFF5F1; color:#B9603F}
+  .post{border:1px solid var(--line); border-radius:16px; padding:13px 14px; margin:14px 0}
+  .post .who{font-size:13px; font-weight:600; margin-bottom:2px}
+  .post .cap{font-size:13px; color:var(--ink2); margin-bottom:10px}
+  .cmt{font-size:13px; padding:7px 11px; background:#F8F4FA; border-radius:11px; margin-top:6px}
+  .cmt b{color:var(--pink-d); font-weight:600}
+  input[type=text]{width:100%; font:inherit; padding:11px 14px; border-radius:13px;
+                   border:1.5px solid var(--line); outline:0; color:var(--ink); background:#FFFDFE}
+  input[type=text]:focus{border-color:var(--pink); box-shadow:0 0 0 3px #FCE3EC}
+  .nameRow{display:flex; gap:10px; margin:6px 0 18px}
+  .title-medal{font-size:15px; margin:10px 0 0; color:var(--pink-d); font-weight:600}
+  @media(max-width:720px){
+    .layout{grid-template-columns:1fr}
+    #doll{width:200px; height:324px}
+    .actions{flex-direction:column-reverse}
+    .btn{width:100%}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top">
+    <h1>今天穿什么</h1>
+    <div class="sub">五天穿搭挑战</div>
+    <div class="day" id="dayLabel"></div>
+  </div>
+
+  <div class="layout">
+    <div class="card stage">
+      <div class="bubble" id="bubble"></div>
+      <div class="dollwrap"><svg id="doll" viewBox="0 0 260 400" aria-label="角色试穿预览"></svg></div>
+      <div class="scorering">
+        <span>这套出门大概</span><b id="scoreNow">0</b><span class="of">分</span>
+      </div>
+    </div>
+
+    <div class="brief">
+      <div class="card daycard">
+        <div class="scene" id="dayScene"></div>
+        <h2 id="dayName"></h2>
+        <p id="dayDesc"></p>
+        <div class="weights" id="dayWeights"></div>
+        <div class="taboo" id="dayTaboo"></div>
+        <div class="wash" id="dayWash"></div>
+      </div>
+      <div class="card stats" id="stats"></div>
+    </div>
+  </div>
+
+  <div class="closet">
+    <div class="tabs" id="tabs"></div>
+    <div class="items" id="items"></div>
+    <div class="actions">
+      <button class="btn ghost" id="btnRand">随机一套</button>
+      <button class="btn main" id="btnGo">就这样出门</button>
+    </div>
+  </div>
+</div>
+
+<div class="ov on" id="startOv">
+  <div class="sheet">
+    <h2>今天穿什么</h2>
+    <div class="hint">你是刚搬到这座城市的女孩，衣柜不大，但每天都有不同的事要做。<br>五天，五个场合，穿对衣服比什么都重要。</div>
+    <label class="hint" for="nameInput">先给自己起个名字</label>
+    <div class="nameRow"><input type="text" id="nameInput" value="林小满" maxlength="8"></div>
+    <button class="btn main" id="btnStart" style="width:100%">开始第一天</button>
+  </div>
+</div>
+
+<div class="ov" id="resultOv"><div class="sheet" id="resultSheet"></div></div>
+
+<script>
+/* ============================================================
+   数据区：全部是 JS 的 对象 / 数组 / 数字，改这里就能改游戏内容
+   ------------------------------------------------------------
+   ITEMS  六个分类，每类几件单品
+   每件单品：name 名字、color 颜色、shape 画法、st 四个属性
+   四个属性顺序固定：正式 formal / 保暖 warm / 舒适 comfy / 甜美 sweet
+   ============================================================ */
+const ITEMS = {
+  hair: [
+    {id:'h1', name:'齐耳短发', color:'#3B2E3A', shape:'short', st:[3,1,3,1]},
+    {id:'h2', name:'长直发',   color:'#4A3428', shape:'long',  st:[2,2,1,3]},
+    {id:'h3', name:'双马尾',   color:'#6B4A32', shape:'twin',  st:[0,1,2,5]},
+    {id:'h4', name:'高马尾',   color:'#3B2E3A', shape:'pony',  st:[2,1,4,2]}
+  ],
+  top: [
+    {id:'t1', name:'白衬衫',     color:'#FAFAFC', shape:'shirt',  collar:1, st:[5,2,2,1]},
+    {id:'t2', name:'米色针织衫', color:'#E4D4BC', shape:'knit',   st:[2,4,5,2]},
+    {id:'t3', name:'碎花小吊带', color:'#F3C5D5', shape:'cami',   st:[1,0,3,4]},
+    {id:'t4', name:'宽松卫衣',   color:'#BFD8CE', shape:'hoodie', st:[0,3,5,2]}
+  ],
+  bottom: [
+    {id:'b1', name:'西装长裤', color:'#3A4152', shape:'pants',  st:[5,3,2,0]},
+    {id:'b2', name:'牛仔短裙', color:'#7EA0C8', shape:'mini',   st:[1,0,2,3]},
+    {id:'b3', name:'百褶长裙', color:'#D8C7E8', shape:'pleat',  st:[3,1,3,4]},
+    {id:'b4', name:'加绒长裤', color:'#6E5C4C', shape:'warmp',  st:[2,5,4,0]}
+  ],
+  coat: [
+    {id:'c1', name:'小西装',   color:'#4A5468', shape:'blazer',   st:[5,1,2,1]},
+    {id:'c2', name:'毛呢大衣', color:'#C9A98C', shape:'wool',     st:[4,5,3,1]},
+    {id:'c3', name:'针织开衫', color:'#EFD9C0', shape:'cardigan', st:[1,2,4,3]},
+    {id:'c4', name:'长羽绒服', color:'#9FB4C7', shape:'puffer',   st:[0,5,4,0]},
+    {id:'c5', name:'不穿外套', color:'transparent', shape:'none', st:[0,0,0,0]}
+  ],
+  shoes: [
+    {id:'s1', name:'尖头高跟', color:'#2E2A33', shape:'heel',   st:[5,0,0,3]},
+    {id:'s2', name:'白色板鞋', color:'#FAFAFC', shape:'sneak',  st:[1,1,5,2]},
+    {id:'s3', name:'乐福鞋',   color:'#5A4638', shape:'loafer', st:[4,1,3,1]},
+    {id:'s4', name:'雪地靴',   color:'#B08A63', shape:'boot',   st:[1,5,4,1]}
+  ],
+  acc: [
+    {id:'a1', name:'珍珠耳钉', color:'#F2E3C8', shape:'earring', st:[3,0,0,2]},
+    {id:'a2', name:'毛线帽',   color:'#E0A9A1', shape:'hat',     st:[0,4,2,2]},
+    {id:'a3', name:'帆布包',   color:'#DCC9A8', shape:'bag',     st:[1,0,3,2]},
+    {id:'a4', name:'羊毛围巾', color:'#C58A8A', shape:'scarf',   st:[3,4,2,3]},
+    {id:'a5', name:'不戴配饰', color:'transparent', shape:'none',st:[0,0,0,0]}
+  ]
+};
+const CATS = [['hair','发型'],['top','上衣'],['bottom','下装'],['coat','外套'],['shoes','鞋子'],['acc','配饰']];
+const DIMS = ['正式','保暖','舒适','甜美'];
+
+/* 五天：每天一张场合卡。w = 四项权重，taboo = 当天的翻车条件 */
+const DAYS = [
+  { scene:'DAY 1', name:'开学第一课', desc:'新学校的教学楼你还不认识，先给人留个好印象吧。',
+    w:[1,1,3,2], taboo:null,
+    hi:['新生里最会穿的就是你了。','后排同学一直在偷看你的衣服。'],
+    lo:['老师以为你是来查课的。','同桌问你：你也是老师吗？'] },
+
+  { scene:'DAY 2', name:'雨天去图书馆', desc:'雨下了一整夜，你要背着书穿过三个街区去还书。',
+    w:[1,2,4,1], taboo:{i:2, op:'<', v:11, text:'脚在鞋里游泳 —— 舒适度不够。'},
+    hi:['湿雨天还能这么清爽！','你这鞋是真懂雨天。'],
+    lo:['你鞋在冒水吧……','还书回来就感冒了。'] },
+
+  { scene:'DAY 3', name:'实习面试', desc:'第一次面试。面试官说他们公司"氛围比较正式"。',
+    w:[5,2,2,-1], taboo:{i:3, op:'>', v:9, text:'面试官盯着你的蝴蝶结看了十秒 —— 甜美超标。'},
+    hi:['这身一看就很靠谱。','HR 当场说：明天来上班吧。'],
+    lo:['HR 问：你是来参加派对的吗？','面试官全程在看你的鞋。'] },
+
+  { scene:'DAY 4', name:'闺蜜生日派对', desc:'她说今晚主题是"谁最好看谁买单"。你笑了，但你已经准备好了。',
+    w:[1,1,2,5], taboo:{i:3, op:'<', v:11, text:'被吐槽：你今天是来开会的吗？'},
+    hi:['全场最好看，我服。','寿星说：我今天的风头全被你抢了。'],
+    lo:['寿星以为你是来帮忙收拾的。','有人问你：加班刚下班？'] },
+
+  { scene:'DAY 5', name:'跨年夜露天倒数', desc:'零下的风，露天的广场，你要站三个小时等十二点。',
+    w:[1,5,2,2], taboo:{i:1, op:'<', v:15, text:'在寒风里等到十二点，鼻涕先开始倒计时。'},
+    hi:['冷风里也能这么好看，服了。','你居然不冷？这不科学。'],
+    lo:['你冻成冰棍了，还在笑。','跨年的第一秒你在打喷嚏。'] }
+];
+
+const COMMENT_HI = ['这套绝了，链接发我！','配色好高级，是学过的吧。','今天是氛围感美女。','偷偷截屏存了，参考一下。'];
+const COMMENT_MID = ['挺好，就是有点保守。','安全牌，不会出错那种。','感觉还能再大胆一点。','嗯……不错吧。'];
+const COMMENT_LOW = ['宝，你还好吗？','这是什么混搭流派？','我瞎了，但我尊重。','下次我陪你去买衣服。'];
+
+/* ============================================================
+   画娃娃：每个分类一个画法，按层次叠上去
+   顺序 = 后发 → 脖子 → 手臂 → 腿 → 下装 → 鞋 → 上衣 → 外套 → 头 → 刘海 → 配饰
+   ============================================================ */
+const SKIN = '#F7DCC7', SKIN2 = '#EFCDB4';
+const S = {
+  neck : () => `<rect x="120" y="120" width="20" height="26" rx="9" fill="${SKIN2}"/>`,
+  arms : () => `<rect x="72" y="146" width="18" height="88" rx="9" fill="${SKIN}"/>
+                <rect x="170" y="146" width="18" height="88" rx="9" fill="${SKIN}"/>`,
+  legs : () => `<rect x="110" y="238" width="17" height="106" rx="8" fill="${SKIN}"/>
+                <rect x="133" y="238" width="17" height="106" rx="8" fill="${SKIN}"/>`,
+  head : () => `<circle cx="130" cy="98" r="33" fill="${SKIN}"/>`,
+  face : () => `<ellipse cx="118" cy="101" rx="3.6" ry="4.6" fill="#3B2E3A"/>
+                <ellipse cx="142" cy="101" rx="3.6" ry="4.6" fill="#3B2E3A"/>
+                <ellipse cx="110" cy="112" rx="6" ry="3.2" fill="#F0A5A5" opacity=".55"/>
+                <ellipse cx="150" cy="112" rx="6" ry="3.2" fill="#F0A5A5" opacity=".55"/>
+                <path d="M126,116 q4,3.4 8,0" stroke="#C9707A" stroke-width="1.8" fill="none" stroke-linecap="round"/>`
+};
+
+function shade(hex, a){
+  const n = parseInt(hex.slice(1), 16);
+  const r = (n>>16)&255, g = (n>>8)&255, b = n&255;
+  return `rgba(${Math.round(r*0.72)},${Math.round(g*0.72)},${Math.round(b*0.72)},1)`;
+}
+
+function hairBack(it){
+  if(!it) return '';
+  const c = it.color;
+  if(it.shape === 'long') return `<rect x="88" y="66" width="84" height="196" rx="42" fill="${c}"/>`;
+  if(it.shape === 'twin') return `<circle cx="130" cy="96" r="37" fill="${c}"/>
+    <ellipse cx="73" cy="172" rx="15" ry="50" fill="${c}"/><ellipse cx="187" cy="172" rx="15" ry="50" fill="${c}"/>
+    <circle cx="79" cy="128" r="7" fill="${shade(c)}"/><circle cx="181" cy="128" r="7" fill="${shade(c)}"/>`;
+  if(it.shape === 'pony') return `<circle cx="130" cy="96" r="37" fill="${c}"/>
+    <ellipse cx="178" cy="150" rx="15" ry="52" fill="${c}"/><circle cx="170" cy="106" r="7" fill="${shade(c)}"/>`;
+  return `<circle cx="130" cy="96" r="37" fill="${c}"/>`;
+}
+function hairFront(it){
+  if(!it) return '';
+  const c = it.color;
+  if(it.shape === 'twin') return `<ellipse cx="112" cy="74" rx="22" ry="19" fill="${c}"/>
+    <ellipse cx="148" cy="74" rx="22" ry="19" fill="${c}"/><ellipse cx="130" cy="70" rx="6" ry="12" fill="${SKIN}"/>`;
+  if(it.shape === 'long') return `<ellipse cx="130" cy="72" rx="35" ry="22" fill="${c}"/>
+    <ellipse cx="130" cy="80" rx="30" ry="14" fill="${c}"/>`;
+  if(it.shape === 'pony') return `<ellipse cx="130" cy="74" rx="34" ry="20" fill="${c}"/>
+    <ellipse cx="98" cy="86" rx="12" ry="18" fill="${c}"/>`;
+  return `<ellipse cx="130" cy="74" rx="34" ry="20" fill="${c}"/>
+    <ellipse cx="152" cy="86" rx="13" ry="20" fill="${c}"/>`;
+}
+
+function bottomShape(it){
+  if(!it) return '';
+  const c = it.color;
+  if(it.shape === 'pants' || it.shape === 'warmp'){
+    return `<rect x="104" y="234" width="52" height="46" rx="14" fill="${c}"/>
+            <rect x="107" y="266" width="19" height="78" rx="9" fill="${c}"/>
+            <rect x="134" y="266" width="19" height="78" rx="9" fill="${c}"/>
+            <rect x="104" y="234" width="52" height="10" rx="5" fill="#000" opacity=".10"/>`;
+  }
+  const bottom = it.shape === 'mini' ? 286 : (it.shape === 'pleat' ? 320 : 300);
+  const outX = it.shape === 'mini' ? 168 : 182;
+  let s = `<path d="M98,236 L162,236 L${outX},${bottom} L${260-outX},${bottom} Z" fill="${c}"/>
+           <rect x="98" y="232" width="64" height="12" rx="6" fill="#000" opacity=".10"/>`;
+  if(it.shape === 'pleat') s += `<path d="M114,240 L104,318 M130,240 L130,320 M146,240 L156,318"
+    stroke="rgba(0,0,0,.12)" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  if(it.shape === 'mini') s += `<rect x="104" y="248" width="52" height="7" rx="3.5" fill="#000" opacity=".10"/>`;
+  return s;
+}
+
+function shoesShape(it){
+  if(!it) return '';
+  const c = it.color;
+  const L = it.shape === 'heel' ? `<rect x="103" y="336" width="30" height="14" rx="6" fill="${c}"/>
+      <rect x="114" y="350" width="7" height="17" rx="2" fill="${c}"/>`
+    : `<rect x="102" y="336" width="31" height="19" rx="9" fill="${c}"/>
+       <rect x="102" y="349" width="31" height="6" rx="3" fill="#000" opacity=".14"/>`;
+  const R = it.shape === 'heel' ? `<rect x="127" y="336" width="30" height="14" rx="6" fill="${c}"/>
+      <rect x="139" y="350" width="7" height="17" rx="2" fill="${c}"/>`
+    : `<rect x="127" y="336" width="31" height="19" rx="9" fill="${c}"/>
+       <rect x="127" y="349" width="31" height="6" rx="3" fill="#000" opacity=".14"/>`;
+  if(it.shape === 'boot'){
+    return `<rect x="100" y="318" width="34" height="37" rx="12" fill="${c}"/>
+            <rect x="126" y="318" width="34" height="37" rx="12" fill="${c}"/>
+            <rect x="100" y="344" width="34" height="8" rx="4" fill="#000" opacity=".14"/>
+            <rect x="126" y="344" width="34" height="8" rx="4" fill="#000" opacity=".14"/>`;
+  }
+  return L + R;
+}
+
+function topShape(it){
+  if(!it) return '';
+  const c = it.color;
+  if(it.shape === 'cami'){
+    return `<rect x="103" y="152" width="54" height="94" rx="16" fill="${c}"/>
+            <rect x="112" y="134" width="9" height="26" rx="4.5" fill="${c}"/>
+            <rect x="139" y="134" width="9" height="26" rx="4.5" fill="${c}"/>
+            <rect x="72" y="146" width="18" height="34" rx="9" fill="${c}"/>
+            <rect x="170" y="146" width="18" height="34" rx="9" fill="${c}"/>`;
+  }
+  const w = it.shape === 'hoodie' ? 94 : 84, x = 130 - w/2;
+  let s = `<rect x="${x}" y="140" width="${w}" height="106" rx="18" fill="${c}"/>
+           <rect x="72" y="146" width="18" height="88" rx="9" fill="${c}"/>
+           <rect x="170" y="146" width="18" height="88" rx="9" fill="${c}"/>`;
+  if(it.collar) s += `<polygon points="115,141 130,166 145,141" fill="#fff"/>
+                      <polygon points="115,141 130,166 130,141" fill="#EDEDF2"/>`;
+  if(it.shape === 'hoodie')
+    s += `<path d="M106,142 q24,20 48,0" fill="none" stroke="rgba(0,0,0,.13)" stroke-width="5" stroke-linecap="round"/>
+          <rect x="112" y="212" width="36" height="20" rx="8" fill="rgba(0,0,0,.10)"/>`;
+  if(it.shape === 'knit')
+    s += `<path d="M100,146 L100,242 M120,144 L120,244 M140,144 L140,244 M160,144 L160,242"
+      stroke="rgba(0,0,0,.07)" stroke-width="2.5" fill="none"/>`;
+  return s;
+}
+
+function coatShape(it){
+  if(!it || it.shape === 'none') return '';
+  const c = it.color;
+  if(it.shape === 'blazer')
+    return `<rect x="82" y="136" width="48" height="114" rx="13" fill="${c}"/>
+            <rect x="130" y="136" width="48" height="114" rx="13" fill="${c}"/>
+            <polygon points="112,140 130,178 130,140" fill="${shade(c)}"/>
+            <polygon points="148,140 130,178 130,140" fill="${shade(c)}"/>`;
+  if(it.shape === 'cardigan')
+    return `<rect x="84" y="138" width="42" height="112" rx="14" fill="${c}"/>
+            <rect x="134" y="138" width="42" height="112" rx="14" fill="${c}"/>
+            <rect x="84" y="138" width="42" height="9" rx="4" fill="#000" opacity=".08"/>
+            <rect x="134" y="138" width="42" height="9" rx="4" fill="#000" opacity=".08"/>`;
+  if(it.shape === 'puffer')
+    return `<rect x="78" y="134" width="104" height="130" rx="26" fill="${c}"/>
+            <path d="M78,168 H182 M78,198 H182 M78,228 H182" stroke="rgba(0,0,0,.12)" stroke-width="3"/>
+            <rect x="118" y="134" width="24" height="130" fill="rgba(0,0,0,.05)"/>`;
+  return `<rect x="80" y="134" width="100" height="128" rx="22" fill="${c}"/>
+          <rect x="104" y="134" width="52" height="22" rx="10" fill="${shade(c)}"/>
+          <path d="M130,156 V262" stroke="rgba(0,0,0,.12)" stroke-width="2.5"/>`;
+}
+
+function accShape(it){
+  if(!it || it.shape === 'none') return '';
+  const c = it.color;
+  if(it.shape === 'hat')
+    return `<ellipse cx="130" cy="66" rx="37" ry="28" fill="${c}"/>
+            <rect x="94" y="78" width="72" height="13" rx="6.5" fill="${shade(c)}"/>
+            <circle cx="130" cy="46" r="7" fill="${shade(c)}"/>`;
+  if(it.shape === 'earring')
+    return `<circle cx="97" cy="106" r="4.4" fill="${c}" stroke="#E4D2B4" stroke-width="1"/>
+            <circle cx="163" cy="106" r="4.4" fill="${c}" stroke="#E4D2B4" stroke-width="1"/>`;
+  if(it.shape === 'bag')
+    return `<path d="M168,152 Q192,178 190,206" stroke="${shade(c)}" stroke-width="3.5" fill="none"/>
+            <rect x="178" y="200" width="34" height="40" rx="11" fill="${c}"/>
+            <rect x="178" y="200" width="34" height="9" rx="4.5" fill="${shade(c)}"/>`;
+  return `<rect x="100" y="124" width="60" height="21" rx="10" fill="${c}"/>
+          <rect x="104" y="140" width="17" height="48" rx="8" fill="${c}"/>`;
+}
+
+function hairOf(){ return findItem('hair', state.worn.hair); }
+function findItem(cat, id){ return (ITEMS[cat] || []).find(x => x.id === id) || null; }
+
+function renderDoll(){
+  const w = state.worn;
+  const svg =
+    `<ellipse cx="130" cy="378" rx="60" ry="9" fill="#E9DEE4"/>` +
+    hairBack(hairOf()) +
+    S.neck() + S.arms() + S.legs() +
+    bottomShape(findItem('bottom', w.bottom)) +
+    shoesShape(findItem('shoes', w.shoes)) +
+    topShape(findItem('top', w.top)) +
+    coatShape(findItem('coat', w.coat)) +
+    S.head() + S.face() +
+    hairFront(hairOf()) +
+    accShape(findItem('acc', w.acc));
+  document.getElementById('doll').innerHTML = svg;
+}
+
+/* ============================================================
+   算分：四维加权求和；当天满分 = 暴力枚举所有组合取最高
+   ============================================================ */
+function totals(worn){
+  const t = [0,0,0,0];
+  CATS.forEach(([cat]) => {
+    const it = findItem(cat, worn[cat]);
+    if(it) it.st.forEach((v,i) => t[i] += v);
+  });
+  return t;
+}
+function scoreOf(t, day){ return day.w.reduce((sum,wt,i) => sum + wt*t[i], 0); }
+
+/* 把六件单品的属性加起来 */
+function tally(list){
+  const sum = [0,0,0,0];
+  list.forEach(it => it.st.forEach((v,i) => sum[i] += v));
+  return sum;
+}
+
+/* 当天满分 = 把 6400 种搭配全部试一遍，取最高分。这样"满分"永远是可达的 */
+function dayBest(day){
+  let best = -Infinity;
+  ITEMS.hair.forEach(h => ITEMS.top.forEach(t => ITEMS.bottom.forEach(b =>
+    ITEMS.coat.forEach(c => ITEMS.shoes.forEach(s => ITEMS.acc.forEach(a => {
+      best = Math.max(best, scoreOf(tally([h,t,b,c,s,a]), day));
+    }))))));
+  return best;
+}
+function percent(){
+  const day = DAYS[state.day];
+  const best = state.best || 1;
+  const raw = scoreOf(totals(state.worn), day);
+  return Math.max(0, Math.min(100, Math.round(raw / best * 100)));
+}
+function dimMax(i){
+  return CATS.reduce((s,[cat]) => s + Math.max(...ITEMS[cat].map(x => x.st[i])), 0);
+}
+
+/* ============================================================
+   界面刷新
+   ============================================================ */
+const state = { day:0, worn:{hair:null,top:null,bottom:null,coat:null,shoes:null,acc:null},
+                stars:[], best:1, washing:null, tab:'hair', player:'林小满' };
+
+/* 每天开始时：算出当天满分，并让洗衣机随机霸占一件单品（第一天除外，先熟悉玩法） */
+function beginDay(){
+  state.best = dayBest(DAYS[state.day]);
+  if(state.day > 0){
+    state.washing = allItems()[Math.floor(Math.random() * allItems().length)].id;
+    CATS.forEach(([cat]) => { if(state.worn[cat] === state.washing) state.worn[cat] = null; });
+  } else {
+    state.washing = null;
+  }
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+function refresh(){
+  const day = DAYS[state.day];
+  document.getElementById('dayLabel').innerHTML =
+    `第 <b>${state.day+1}</b> / 5 天　累计 ★ ${state.stars.reduce((a,b)=>a+b,0)}`;
+
+  document.getElementById('dayScene').textContent = day.scene;
+  document.getElementById('dayName').textContent = day.name;
+  document.getElementById('dayDesc').textContent = day.desc;
+
+  document.getElementById('dayWeights').innerHTML = day.w.map((v,i) =>
+    `<span class="wchip${v<0?' neg':''}">${DIMS[i]} ${v>0?'+':''}${v}</span>`).join('');
+
+  const tb = document.getElementById('dayTaboo');
+  if(day.taboo){
+    const sym = day.taboo.op === '>' ? '别超过' : '至少要有';
+    tb.style.display = 'block';
+    tb.textContent = `⚠ 今天最怕翻车：${DIMS[day.taboo.i]}${sym} ${day.taboo.v}`;
+  } else { tb.style.display = 'none'; }
+
+  const ws = document.getElementById('dayWash');
+  ws.style.display = state.washing ? 'block' : 'none';
+  if(state.washing){
+    const it = allItems().find(x => x.id === state.washing);
+    ws.textContent = `🌀 洗衣机今天霸占了「${it.name}」，明天才还你。`;
+  }
+
+  const t = totals(state.worn);
+  document.getElementById('stats').innerHTML = t.map((v,i) =>
+    `<div class="stat s${i}">
+       <div class="lbl"><span>${DIMS[i]}</span><b>${v}</b></div>
+       <div class="bar"><i style="width:${Math.round(v/dimMax(i)*100)}%"></i></div>
+     </div>`).join('');
+
+  document.getElementById('scoreNow').textContent = percent();
+
+  document.getElementById('tabs').innerHTML = CATS.map(([k,label]) =>
+    `<button class="tab${state.tab===k?' on':''}" data-tab="${k}">${label}</button>`).join('');
+
+  const stName = ['正','暖','舒','甜'];
+  document.getElementById('items').innerHTML = ITEMS[state.tab].map(it => {
+    const on = state.worn[state.tab] === it.id;
+    const washing = state.washing === it.id;
+    const st = it.st.every(v => v === 0) ? '空着也是种选择'
+      : it.st.map((v,i) => v === 0 ? '' : `${stName[i]}${v}`).filter(Boolean).join(' ');
+    return `<button class="item${on?' on':''}${washing?' wash':''}" data-id="${it.id}"
+              ${washing?'disabled':''}>
+              <span class="sw" style="background:${it.color}"></span>
+              <span><span class="nm">${it.name}</span><br><span class="st">${washing?'洗涤中':st}</span></span>
+            </button>`;
+  }).join('');
+
+  const missing = !state.worn.top || !state.worn.bottom;
+  document.getElementById('btnGo').disabled = missing;
+  document.getElementById('btnGo').textContent = missing ? '先穿上衣服' : '就这样出门';
+
+  renderDoll();
+  speak();
+}
+
+function allItems(){
+  return CATS.flatMap(([cat]) => ITEMS[cat]);
+}
+
+/* 镜子里的自己：按当前这身和今天的场合说一句话 */
+function speak(){
+  const day = DAYS[state.day], w = state.worn, t = totals(w), pct = percent();
+  const need = day.taboo;
+  let line = '还在挑？慢慢来。';
+  if(!w.top && !w.bottom) line = '……总得穿点什么吧？';
+  else if(!w.top || !w.bottom) line = '上面或下面还空着呢。';
+  else if(need && ((need.op === '>' && t[need.i] > need.v) || (need.op === '<' && t[need.i] < need.v)))
+    line = need.text;
+  else if(pct >= 92) line = '就是这套，别改了。';
+  else if(pct >= 80) line = '不错，挺像那么回事。';
+  else if(pct >= 60) line = '还行吧，但总觉得少了点什么。';
+  else if(pct >= 40) line = '你确定要这样出门吗……';
+  else line = '我建议你把衣柜再翻一遍。';
+
+  const b = document.getElementById('bubble');
+  b.textContent = line;
+  b.classList.remove('on');
+  requestAnimationFrame(() => b.classList.add('on'));
+}
+
+/* ============================================================
+   出门结算
+   ============================================================ */
+function goOut(){
+  const day = DAYS[state.day];
+  const t = totals(state.worn);
+  const pct = percent();
+  let stars = pct >= 97 ? 5 : pct >= 88 ? 4 : pct >= 76 ? 3 : pct >= 60 ? 2 : 1;
+
+  let warn = '';
+  if(day.taboo){
+    const hit = day.taboo.op === '>' ? t[day.taboo.i] > day.taboo.v : t[day.taboo.i] < day.taboo.v;
+    if(hit){
+      stars = Math.max(1, stars - 1);
+      warn = day.taboo.text;
+    }
+  }
+  state.stars[state.day] = stars;
+
+  const pool = (stars >= 4 ? COMMENT_HI : stars >= 3 ? COMMENT_MID : COMMENT_LOW)
+    .concat(stars >= 4 ? day.hi : stars <= 2 ? day.lo : []);
+  const picks = [];
+  while(picks.length < 3 && pool.length){
+    picks.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
+  }
+  const names = ['阿柚','小鹿','卷卷','老陈','静静','豆浆'];
+  const cmts = picks.map(c => `<div class="cmt"><b>${names[Math.floor(Math.random()*names.length)]}</b>：${c}</div>`).join('');
+
+  const verdict = warn ? warn
+    : stars === 5 ? '完美贴合今天的场合，无可挑剔。'
+    : stars === 4 ? '很稳，细节上再讲究一点就是满分。'
+    : stars === 3 ? '说得过去，但今天本来可以更好。'
+    : stars === 2 ? '勉强应付过去了。'
+    : '……只能说，人还是得有点勇气。';
+
+  const starHtml = Array.from({length:5}, (_,i) =>
+    i < stars ? '★' : '<span class="off">★</span>').join('');
+
+  const last = state.day === DAYS.length - 1;
+
+  document.getElementById('resultSheet').innerHTML = `
+    <h2>${escapeHtml(day.name)}</h2>
+    <div class="hint">${escapeHtml(day.desc)}</div>
+    <div class="stars">${starHtml}</div>
+    <div class="bigscore"><b>${pct}</b> / 100 分</div>
+    <div class="verdict${warn?' warn':''}">${warn ? '翻车警告：' + warn : verdict}</div>
+    <div class="post">
+      <div class="who">${escapeHtml(state.player)}</div>
+      <div class="cap">今天穿这样去「${escapeHtml(day.name)}」，${'★'.repeat(stars)}</div>
+      ${cmts}
+    </div>
+    <button class="btn main" id="btnNext" style="width:100%">${last ? '看看这五天的结果' : '回家，准备明天'}</button>`;
+
+  document.getElementById('resultOv').classList.add('on');
+  document.getElementById('btnNext').onclick = () => {
+    document.getElementById('resultOv').classList.remove('on');
+    if(last) ending(); else nextDay();
+  };
+}
+
+function nextDay(){
+  state.day++;
+  beginDay();
+  state.tab = 'hair';
+  refresh();
+}
+
+function ending(){
+  const total = state.stars.reduce((a,b) => a+b, 0);
+  const tier = total >= 23 ? ['街头时尚偶像','你的穿搭被这座城市记住了。']
+    : total >= 19 ? ['穿搭博主','已经有人开始模仿你的搭配了。']
+    : total >= 15 ? ['小有名气','走在路上会被多看两眼。']
+    : total >= 11 ? ['普普通通','不出错，也不出彩。']
+    : ['时尚灾难','朋友们决定陪你去买衣服。'];
+
+  const medal = Array.from({length:5}, (_,i) =>
+    `<div style="margin:2px 0">D${i+1} <span style="color:#F0C14B">${'★'.repeat(state.stars[i]||0)}<span style="color:#E7DDE6">${'★'.repeat(5-(state.stars[i]||0))}</span></span></div>`).join('');
+
+  document.getElementById('resultSheet').innerHTML = `
+    <h2>五天结束了</h2>
+    <div class="hint">你一共拿到 ${total} / 25 颗星</div>
+    <div style="font-size:13px; color:var(--ink2)">${medal}</div>
+    <div class="title-medal">称号：${tier[0]}</div>
+    <div class="verdict">${tier[1]}</div>
+    <button class="btn main" id="btnRestart" style="width:100%">再挑战一次</button>`;
+
+  document.getElementById('resultOv').classList.add('on');
+  document.getElementById('btnRestart').onclick = () => {
+    state.day = 0; state.worn = {hair:null,top:null,bottom:null,coat:null,shoes:null,acc:null};
+    state.stars = []; state.tab = 'hair';
+    beginDay();
+    document.getElementById('resultOv').classList.remove('on');
+    refresh();
+  };
+}
+
+/* ============================================================
+   事件绑定
+   ============================================================ */
+document.getElementById('tabs').onclick = e => {
+  const b = e.target.closest('.tab');
+  if(!b) return;
+  state.tab = b.dataset.tab;
+  refresh();
+};
+
+document.getElementById('items').onclick = e => {
+  const b = e.target.closest('.item');
+  if(!b || b.disabled) return;
+  const id = b.dataset.id;
+  state.worn[state.tab] = (state.worn[state.tab] === id) ? null : id;   // 再点一次 = 脱掉
+  refresh();
+};
+
+document.getElementById('btnRand').onclick = () => {
+  CATS.forEach(([cat]) => {
+    const pool = ITEMS[cat].filter(x => x.id !== state.washing);
+    state.worn[cat] = pool[Math.floor(Math.random()*pool.length)].id;
+  });
+  refresh();
+};
+
+document.getElementById('btnGo').onclick = goOut;
+
+document.getElementById('btnStart').onclick = () => {
+  const v = document.getElementById('nameInput').value.trim();
+  state.player = v || '无名少女';
+  state.day = 0;
+  beginDay();
+  document.getElementById('startOv').classList.remove('on');
+  refresh();
+};
+
+beginDay();
+refresh();
+</script>
+</body>
+</html>

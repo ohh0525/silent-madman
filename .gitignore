@@ -203,6 +203,7 @@ public/build/
 *.log
 *.tmp
 *.bak
+*.bak[0-9]
 *.swp
 *.orig
 *.rej
