@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：训练—部署错配——你优化的那个 agent，是部署的那个吗？（Train–Deploy Mismatch &amp; Harnessed Agentic RL）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #6b5b95;
+    --accent-soft: #ece9f4;
+    --line: #e5e2dc;
+    --code-bg: #f3f1f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+  h3 {
+    font-size: 15px;
+    margin: 18px 0 8px;
+    color: var(--ink);
+  }
+  .warn {
+    background: #fdf6ec;
+    border: 1px solid #ecd9b5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 训练—部署一致性（Harnessed Agentic RL / 环境错配 / 自进化智能体）</span>
+  <h1>训练—部署错配：你优化的那个 agent，是部署的那个吗？</h1>
+  <p class="subtitle">Train–Deploy Mismatch &amp; Harnessed Agentic RL —— 重写版 vs 部署版逐项对照 × 被抽掉的约束清单 × 代理层怎么接 · 生成时间 2026-10-11</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">训练—部署错配，指的是<strong>训练回路里的那个 agent 与真正上线的那个 agent 不是同一个东西</strong>：为了接入训练框架，交互循环被重写了一遍，而重写时顺手丢掉的那些工程细节（超时兜底、脏数据清洗、system prompt 拼接顺序、历史压缩长度）<strong>恰恰是定义任务难度的约束本身</strong>。于是模型学到的是一个<strong>被移除约束后的环境</strong>里的最优解——这不是 reward hacking，是<strong>环境错配</strong>；而错配的代价，通常被记在「模型泛化不行」的账上。修法不是调奖励，而是<strong>让部署用的那个 harness 原样参加训练</strong>。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>设想你要训练一位厨师。你在训练场里给他搭了一个厨房：食材永远新鲜、灶火从不熄、订单一条一条来、没有客人催。他在这个厨房里练得极好，出餐速度快、味道稳定。然后你把他送进真实餐厅——食材偶尔不新鲜、高峰期三个锅同时糊、订单会插队、客人会改单。他表现崩了。你会怎么归因？</p>
+  <p>大多数团队的归因是「<strong>他泛化能力不行</strong>」。但真正的问题在更早的地方：<strong>你训练他的那个厨房，和他要工作的那个厨房，不是同一个厨房</strong>。你不是在训练他，你是在训练一个<strong>活在简化世界里的他</strong>。</p>
+  <p>agent 训练里这件事更隐蔽，因为那个厨房不是别人搭的，是<strong>你自己重写一遍搭出来的</strong>。主流 RL 框架（verl / AReaL / slime）要接管交互循环才能发 rollout，于是每换一个 agent，就要在训练框架里重新实现一遍它的循环。而重写时，那些「不算核心逻辑」的东西最先被砍掉：接口超时的兜底重试、工具返回脏数据的清洗、system prompt 各段的拼接顺序、历史消息压缩到多长。它们看起来都是工程细节——<strong>但正是它们决定了模型能看见什么（观测空间）和能做什么（动作空间）</strong>。</p>
+  <p>这就接上了本库此前已有的那条判断：[[AgentHarness]] 列出 harness 做哪四件事（组装上下文 / 跑循环并判停 / 治理窗口 / 保活与调度），而 09-24 立的教义是「<strong>模型不是唯一可以放控制的地方</strong>」。把两者合起来会得到一个此前没人写下的推论：<strong>既然控制不在模型里，那训练就不能只喂模型</strong>——你必须把那个承载控制的 harness 一起放进训练回路。中文报道把这句话说得最锋利：<strong>「harness 是策略的一部分，不是外挂」</strong>。</p>
+  <p>2026-10 出现了第一个把这件事做成可用工具的开源实现：<strong>Agent Lightning v1.0</strong>（微软亚洲研究院，2026-10-07/08 开源，约 3,500 行）。它的思路简单到近乎狡猾——<strong>不去重写 harness，而是在 harness 与模型之间插一个 OpenAI 兼容的 LLM 代理</strong>：harness 以为自己还在正常调模型，一行代码都不用改；代理在旁边把 prompt、response、logprob 全部记下来喂给训练器。部署用的那个 harness，原样参加了训练。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>重写版 vs 部署版：逐项对照</strong>。这是本页的骨架——把「重写一遍」究竟丢了什么摊开来看：
+      <table>
+        <thead><tr><th>环节</th><th>部署版里它长什么样</th><th>重写版里通常被砍成什么样</th><th>被抽掉的约束是什么</th></tr></thead>
+        <tbody>
+          <tr><td>工具调用</td><td>有超时、有重试、有降级兜底</td><td>直接同步调用，超时即失败</td><td><strong>时间成本与失败恢复</strong>——模型学不会「这一步可能要等」</td></tr>
+          <tr><td>工具返回</td><td>脏数据清洗、截断、结构化</td><td>原样塞回上下文</td><td><strong>观测空间的信噪比</strong>——模型没见过真实噪声</td></tr>
+          <tr><td>system prompt</td><td>多段按固定顺序拼接（规则 / 工具 / 记忆）</td><td>简化成一段</td><td><strong>指令优先级结构</strong>——冲突时听谁的，训练里从未发生</td></tr>
+          <tr><td>历史消息</td><td>压缩到某个长度、有取舍策略</td><td>不压缩或随便截断</td><td><strong>记忆衰减曲线</strong>——这正是 [[Compaction]] 管的那件事</td></tr>
+          <tr><td>判停条件</td><td>步数 / 预算 / 验证器多重判停</td><td>固定步数</td><td><strong>动作空间的终止结构</strong></td></tr>
+        </tbody>
+      </table>
+      为什么重要：这五行里<strong>没有一行是「模型能力」</strong>，但每一行都在改变模型面对的那个环境。<strong>在训练框架里重写 agent，不是在复刻它，是在造一个约束更少的新世界。</strong></li>
+
+    <li><strong>为什么这不是 reward hacking，而是环境错配</strong>。可引原文把两者的区别钉得很死：<strong>「这不算是 reward hacking，更准确的叫法是环境错配。而错配的代价，通常被记在『模型泛化不行』的账上。」</strong><br />
+      <ul>
+        <li><strong>reward hacking</strong>：奖励函数被钻了空子，<strong>环境是对的、目标错了</strong> ⇒ 修法是改奖励。</li>
+        <li><strong>环境错配</strong>：目标是对的，<strong>环境被换了</strong> ⇒ 改奖励毫无用处，必须把环境换回来。</li>
+      </ul>
+      为什么重要：两者的<strong>修法方向相反</strong>。误判成 reward hacking 的团队会去调奖励、加惩罚，越调越远，而真正的病灶在训练回路之外。</li>
+
+    <li><strong>代理层怎么接：三部件，harness 一行不改</strong>。Agent Lightning 的结构是：<strong>API 网关</strong>（对 harness 伪装成一个 OpenAI 兼容的模型端点）+ <strong>Rollout 控制器</strong>（编排批量任务）+ <strong>定制训练器</strong>（基于 verl）。harness 照常发请求，网关转发给真实模型并把<strong>prompt / response / logprob</strong> 全部落盘；harness 全程不知道自己在被训练。原生 Kubernetes 批量跑任务，不依赖付费商业沙箱。<br />为什么重要：<strong>“零侵入”是这件事能不能落地的关键</strong>——只要要求改 harness，每换一个 agent 就要重写一次的原病就会复发。</li>
+
+    <li><strong>遥测即训练 substrate：与可观测是同一份数据的两个消费者</strong>。代理记录的 prompt / response / logprob，<strong>正是 trace</strong>。也就是说：给可观测系统装的那一套埋点，和给 RL 训练器喂的那一批数据，<strong>是同一份东西</strong>。<br />为什么重要：它把两条此前分开的线合成一条——<strong>可观测不只是运维工具，它同时是训练数据的采集层</strong>；反过来说，你在可观测上偷的懒，会直接变成训练数据的缺口。</li>
+
+    <li><strong>它同时是「自进化智能体」的第一份硬证据</strong>。台账里「从自身轨迹中学习 / 自进化智能体」这一格挂了 <strong>18 天、零证据</strong>——此前它只是一个名字：agent 能不能从自己跑出来的轨迹里变好？本条给出了可验证的形态：<strong>轨迹来自真实部署的 harness，而不是重写版</strong>，这正是「从自身经验学习」能否成立的前提条件。⇒ 两条<strong>合并</strong>，不并列：没有 harness 保真，「自进化」只是把错配固化得更快。</li>
+
+    <li><strong>一点成本侧的工程增益（非核心，但解释了它为什么现在才出现）</strong>。Agent Lightning 的 <strong>Collocated Async RL</strong> 端到端约为同步 RL 的 <strong>2 倍</strong>，且用卡少于完全异步——训练长轨迹 agent 的算力门槛，是这件事此前不划算的主要原因之一。</li>
+  </ol>
+
+  <div class="mermaid-placeholder">训练—部署一致性审计的最小骨架（伪代码）
+
+# —— 错的接法：在训练框架里重写一遍 agent ——
+def train_WRONG():
+    for rollout in range(N):
+        ctx  = build_prompt(tools=tools, history=raw_history)   # 砍掉拼接顺序 / 压缩长度
+        act  = model(ctx)
+        obs  = call_tool(act)                                   # 砍掉超时兜底 / 脏数据清洗
+        ctx += obs
+    # ⇒ 模型在 CONSTRAINTS_REMOVED 的世界里求最优
+    # ⇒ 上线崩了，归因写「模型泛化不行」
+
+# —— 对的接法：部署用的 harness 原样参加训练 ——
+class ProxyGateway:                      # 对 harness 伪装成 OpenAI 兼容端点
+    def chat_completions(self, req):
+        resp = real_model(req)           # 真的去调模型
+        trace.record(prompt=req, response=resp, logprob=resp.logprob)   # 落盘
+        return resp                      # harness 无感知
+
+def train_RIGHT():
+    harness = load(PRODUCTION_HARNESS)   # 一行不改
+    trainer = Trainer(base="verl")
+    for batch in rollout_controller(harness, env=REAL_ENV, k8s=True):
+        trainer.step(traces=batch)       # 用真实 trace 更新策略
+    # ⇒ 优化对象 == 部署对象
+
+# —— 一条审计问句（每次训练前问一遍）——
+assert optimize_target is deploy_target, "TRAIN–DEPLOY MISMATCH"
+</div>
+
+  <p class="warn"><strong>必须与那个 +14.6 pp 一起读的五条限制：</strong>① <strong>单一模型</strong>（Qwen3.5-9B）；② <strong>单一基准</strong>（SWE-bench Verified，Pass@1 41.8% → 56.4%）；③ <strong>微软自报</strong>，且 v1.0 自称 early-stage；④ 约 <strong>6,000 条样本的可比性未说明</strong>——没有说明基线用了多少、是否同分布；⑤ 它修的是<strong>训练侧错配</strong>，<strong>不解决部署后的漂移</strong>（环境上线之后继续变化，仍是另一个问题）。⇒ 这个数字证明的是「<strong>方向可行、量级可观</strong>」，不是「方案可用」。</p>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 编码 agent 训完了，一上线就崩</h3>
+    <p><span class="label">背景：</span>团队用 RL 把编码 agent 在离线环境里训到指标很好，换进生产 harness 后表现明显下滑，复盘结论写的是「模型泛化能力不足」。</p>
+    <p><span class="label">如何应用：</span>先做<strong>逐项对照</strong>而不是换模型：把重写版与部署版的五处差异（超时兜底 / 脏数据清洗 / prompt 拼接顺序 / 压缩长度 / 判停条件）列成表，逐项确认训练回路里是否缺失。若缺失项 ≥1，先归因环境错配，再谈调奖励。</p>
+    <p><span class="label">结果：</span>归因从「模型不行」改成「<strong>训练世界与部署世界不同</strong>」——修法从调超参变成接代理层，两者的工作量与人月完全不是一个量级。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 想让 agent 从自己的轨迹里变好</h3>
+    <p><span class="label">背景：</span>「自进化智能体」很长一段时间只是个愿望：线上轨迹攒了几百万条，拿去微调却越训越差。</p>
+    <p><span class="label">如何应用：</span>先问轨迹的<strong>来源保真度</strong>——这些 trace 是生产 harness 跑出来的，还是某个评测脚本跑出来的？用代理层在生产链路上采集（prompt / response / logprob 全留），保证「优化对象 == 部署对象」。</p>
+    <p><span class="label">结果：</span>「自进化」的前提被写成了可检查的一句断言：<strong>assert optimize_target is deploy_target</strong>。不满足它，越努力训练，错配固化得越快。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 可观测埋点该做到多细</h3>
+    <p><span class="label">背景：</span>团队在争论要不要为 agent 上完整的 trace 埋点，理由是「运维用得上，但短期看不到收益」。</p>
+    <p><span class="label">如何应用：</span>把埋点同时算成<strong>训练数据采集层</strong>：代理层记录的正是 trace，两者共用同一份基础设施。缺了 logprob，未来做策略梯度就没有可用的数据；缺了工具返回原文，观测空间就还原不出来。</p>
+    <p><span class="label">结果：</span>可观测从成本项变成<strong>双用途资产</strong>——这也解释了为什么“遥测即训练 substrate”是本库两条线索的接缝，而不是巧合。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是 reward hacking</strong>：reward hacking 是环境对、目标错；本条是目标对、<strong>环境被换了</strong>。修法方向相反——一个改奖励，一个改回路。</li>
+    <li><strong>不是上下文工程</strong>：上下文工程回答「每一步往窗口里放什么」；本条回答「<strong>你优化时看到的那个窗口，是不是部署时的那个窗口</strong>」。前者是取舍方法，后者是<strong>一致性前提</strong>。</li>
+    <li><strong>不是 [[Compaction]] 的重复</strong>：压缩长度的差异只是<strong>被抽掉的约束之一</strong>。但这一条把上下文治理的性质改了——它从「工程细节」升级为「<strong>训练正确性前提</strong>」。</li>
+    <li><strong>不是持久化执行</strong>：那一层管「长跑能不能活过崩溃」（时间维度），本条管「训练与部署是不是同一个世界」（<strong>一致性维度</strong>）。两者族不同，不合并。</li>
+    <li><strong>不是评测</strong>：评测测「跑得好不好」，本条问「<strong>你在优化的那个东西存不存在于生产里</strong>」。评测做得再扎实，也无法发现环境错配。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「只要奖励设计得好就行」——奖励再好也救不了<strong>被换掉的环境</strong>；这是环境错配与 reward hacking 最关键的分野。</li>
+    <li>「重写一遍是为了跑得快，逻辑一样就行」——被砍掉的那些「非核心逻辑」<strong>恰恰定义了动作空间与观测空间</strong>；它们不是装饰。</li>
+    <li>「harness 是外挂，训练只管模型」——<strong>「harness 是策略的一部分，不是外挂」</strong>。控制不在模型里，训练就不能只喂模型。</li>
+    <li>「+14.6 pp 说明这条路已经通了」——单模型、单基准、自报、early-stage、样本可比性未说明；它证明<strong>方向可行</strong>，不证明<strong>方案可用</strong>。</li>
+    <li>「解决了训练错配，部署后就稳了」——它<strong>不解决部署后的漂移</strong>；环境上线之后继续变化，是另一个独立问题。</li>
+  </ul>
+  <h3>5.3 适用与不适用</h3>
+  <table>
+    <thead><tr><th>值得先做训练—部署一致性审计</th><th>可以先不做</th></tr></thead>
+    <tbody>
+      <tr><td>要用 RL / 微调让 agent 变好，且已有生产 harness</td><td>agent 完全靠 prompt，不做任何训练</td></tr>
+      <tr><td>训练环境与生产环境由两套代码维护</td><td>训练与部署共用同一条代码路径</td></tr>
+      <tr><td>出现「离线指标好、上线就退化」且归因为泛化</td><td>离线与线上指标本来就一致</td></tr>
+      <tr><td>agent 依赖大量工具返回与历史压缩</td><td>单轮、无工具、无历史</td></tr>
+      <tr><td>长轨迹任务（步数多、环境交互密集）</td><td>一步出结果的短任务</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>6 · 来源链接</h2>
+  <ul class="sources">
+    <li>[verified] <a href="https://aiproducthub.cn/newsflash/microsoft-agent-lightning-v1-lightweight-agentic-rl">微软 Agent Lightning v1.0 发布</a> —— 微软亚洲研究院 2026-10-08 开源（~3,500 行），Harnessed Agentic RL 范式；Qwen3.5-9B + 约 6,000 条样本，SWE-bench Verified Pass@1 <strong>41.8% → 56.4%</strong></li>
+    <li>[verified] <a href="http://roboticlifestyle.com/article/agent-lightning-trains-agents-through-their-real-harnesses-185427-689">Agent Lightning Trains Agents Through Their Real Harnesses</a> —— 英文一手：OpenAI 兼容代理插在 harness 与模型之间，<strong>harness 不改一行代码</strong>；三部件 = API 网关 / Rollout 控制器 / 定制训练器（基于 verl）；Collocated Async RL ≈ 同步 RL 的 <strong>2 倍</strong>、用卡更少</li>
+    <li>[verified] <a href="https://www.lumevalley.com/article-10848.html">Agent Lightning 中文解读</a> —— 本页最锋利的两句可引原文出处：<strong>「harness 是策略的一部分，不是外挂」</strong>；<strong>「这不算是 reward hacking，更准确的叫法是环境错配。而错配的代价，通常被记在『模型泛化不行』的账上。」</strong></li>
+    <li>[verified] <a href="https://toolnavs.com/zh/article/2386-agent-lightning-1-0-kai-yuan-3-5-0-0-xing-dai-ma-xun-lian-zhen-shi-zhi-neng-ti">Agent Lightning 1.0 开源（约 3,500 行）</a> —— 2026-10-07 开源；传统框架（verl / AReaL / slime）需接管交互循环 ⇒ <strong>每换一个 agent 重写一次</strong>；原生 K8s 任务批量运行</li>
+  </ul>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">每次开始训练之前，先问一句：<strong>「我们优化的那个对象，和被部署的那个对象，是同一个吗？」</strong>——为了接入训练框架而重写的那个 agent，已经被抽掉了超时兜底、脏数据清洗、prompt 拼接顺序和压缩长度，而正是这些「工程细节」定义了动作空间与观测空间。所以<strong>harness 是策略的一部分，不是外挂</strong>；训得好、上线崩的账单，不该记在「模型泛化不行」头上。</p>
+</section>
+
+<footer>由 concept-explainer Skill 自动生成 · 2026-10-11 · 台账 10-11「训练—部署错配」⭐ 新行与 09-23「自进化智能体」行合并成文 · <strong>草稿待人工核查，未写入 learning-materials/</strong></footer>
+
+</div>
+</body>
+</html>

@@ -11,6 +11,8 @@
 >
 > **记忆治理（2026-10-06 · 已入库 2026-10-09）**：[memory-lifecycle.html](./learning-materials/memory-lifecycle.html) —— 对应文末「扩展六 · 记忆治理」一节（用户指令「结清 5 条」授权同日一次结清 5 条积压行）。
 >
+> **运行时层的下层 + 训练侧（2026-10-11 · ⚠️ 草稿待核查，未入库）**：[durable-execution.html](./output/pending-review/durable-execution.html) —— 对应文末「扩展七 · 持久化执行」一节；[agent-training-loop.html](./output/pending-review/agent-training-loop.html) —— 对应文末「扩展八 · 训练—部署错配」一节（由 10-11 ⭐ 新行与 09-23「自进化智能体」行合并成篇）。**两者均落在 `output/pending-review/` 而非 `learning-materials/`**，因 README「人工核查承诺」要求入库前经本人逐条核查；核查通过后移入 `learning-materials/` 再走 `raw/` + 摄取。
+>
 > **相关图谱（另一领域）**：Python 教学概念组 —— [Python 第 1 课 · 上手四概念的关系图](./concept-group/python-lesson1-starter/关系图.md)、[Python 第 1 课 · 下半场四概念的关系图](./concept-group/python-lesson1-second-half/关系图.md)。两组与本图谱（AI Agent 领域）分属不同知识网，故独立成篇、仅互为索引，不合并进同一张图。
 
 ---
@@ -583,3 +585,126 @@ flowchart TB
 > 原来：**……带溯源的长期记忆是他身后那排「每份材料都贴着来源与日期标签」的档案柜——取用前必须核对标签，标签对不上就宁可说「我查不到」。**
 >
 > 现在补两句：**那排档案柜还有一份从来没写进任何规则的台账——什么该销毁、什么时候销毁、谁能签字；而只要这份台账空着，就一定有人替你把它填上。**
+
+---
+
+## 扩展七：运行时层的下层 —— 持久化执行
+
+> 本节对应的材料 `durable-execution.html` **生成于 2026-10-11，仍为草稿**：[output/pending-review/durable-execution.html](./output/pending-review/durable-execution.html)。
+> ⚠️ **未写入 `learning-materials/`** —— 受 README「人工核查承诺」约束，草稿先落在 `output/pending-review/`，核查通过后移入再走入库链路。台账 09-23 行状态为 `🟡 材料已出待核查`。
+
+「扩展三」把 harness 画成办公室——供电、照明、档案调度、事故恢复。但那张图里**「事故恢复」只是壳的第 ④ 项职责**，没有单独成层。2026 年它被命名为一层，判据句是 LangChain 那句：**「To build a good agent, you need a good harness. To deploy that agent, you need a good runtime.」** —— 造与部署，需要的不是同一样东西。
+
+```mermaid
+flowchart TB
+    subgraph H["Harness 外壳（扩展三 · 已有）"]
+        direction LR
+        ASM["① 组装上下文"] --> LOOP["② 跑循环 / 判停"]
+        LOOP --> GOV["③ 治理窗口"]
+        GOV --> DUR["④ 韧性 / 子智能体"]
+    end
+
+    subgraph RT["Runtime 运行时层（扩展七 · 2026-10-11 草稿）"]
+        direction LR
+        DR["durable runs<br/>run 有 id / 状态机 / 可跨进程接管"] --> LC["lifecycle controls<br/>archive 可撤销 · delete 不可逆"]
+        LC --> SP["streaming primitives<br/>Last-Event-ID 断线续传"]
+        SP --> VA["versioned APIs<br/>旧 run 不被新代码改语义"]
+    end
+
+    DUR ==>|"上下层：壳第④职责的规格<br/>在这里才被真正实现"| RT
+
+    RT --> DL["交付语义三分<br/>at-least-once / at-most-once / effectively-once"]
+    DL --> VERDICT["「跨进程与外部服务的<br/>真正 exactly-once 一般不可能」"]
+
+    RT -.->|"checkpoint ≠ memory"| MEM["带溯源的长期记忆<br/>（扩展 · 已有）"]
+    RT -.->|"pause 必须持久 / resume 必须幂等<br/>⇒ 需求方在闸门，实现方在这一层"| HITL["人在环闸门（扩展二 · 已有）"]
+    RT ==>|"跑得完 ≠ 跑得好<br/>两个正交轴，不能互为替代指标"| EVAL["评测（另一栏）"]
+
+    classDef har fill:#e9f1ec,stroke:#3d6b4f,color:#1f2328
+    classDef rt fill:#e9eff5,stroke:#3f5a75,color:#1f2328
+    classDef out fill:#fff4e0,stroke:#b35900,color:#1f2328
+    classDef old fill:#f6f4ee,stroke:#57606a,color:#1f2328
+    class ASM,LOOP,GOV,DUR har
+    class DR,LC,SP,VA rt
+    class DL,VERDICT,EVAL out
+    class MEM,HITL old
+```
+
+**四条新增连线：**
+
+| 关系 | 含义 |
+|---|---|
+| **harness 第 ④ 职责 → 运行时层（双线）** | 上下层，不是并列。「扩展二」的闸门要求「暂停可持久化、恢复可幂等、恢复者未必是原进程」——这本来就是第 ④ 职责的规格说明，而实现它的地方在这一层。 |
+| **运行时 → 交付语义** | 这一层真正的验收点不在「能不能恢复」，而在「**那个不可逆的副作用被交付了几次**」。裁决句：「跨进程与外部服务的真正 exactly-once 一般不可能」⇒ **effectively-once 是上限，不是可选项**。承重理由是代价不对称：**模型调用重复只是多花 token，退款重复就是一次客户事故**。 |
+| **运行时 ⇢ 记忆（虚线）** | **checkpoint ≠ memory**。memory 帮 agent 回答下一个问题；checkpoint 说的是当前任务哪几步已完成。两者写入时机、生命周期、失效判据全都不同——混在一个「记忆库」里就是最常见的生产事故。 |
+| **运行时 ⇢ 评测（双线，分栏）** | **一次运行可以可靠地跑完却给出糟糕答案，也可以给出一次精彩答案却活不过下一次部署——两者都要测。** ⇒ 可靠性与质量是**两个正交轴**，此前一直被混记。 |
+
+**与「一句话总结」的接续：**
+
+> 原来：**……而这间办公室本身——供电、照明、档案调度、事故恢复——是 harness。**
+>
+> 现在补一句：**可这栋楼会停电。持久化执行问的是：在第 90 分钟突然断电之后，这位职员做到第几份了、已经寄出去的那三封信会不会再寄一遍——而这两件事，都不归「他聪不聪明」管。**
+
+**边界要点：**
+
+- **harness vs runtime** = 造 vs 部署。前者是循环的宿主，后者是「让这场长跑活过崩溃」的那一层。
+- **检查点 vs 记忆 vs 会话** = 三样东西。检查点保留控制状态；记忆回答下一个问题；会话只是 memory continuity，**不是**持久化执行。
+- **「resume」在四家不是同一个操作** = 事件重放 / 位点采纳 / 超步检查点 / 节点快照，对幂等性的义务完全不同。且实机崩溃对照的结论是 **none of them holds by default**。
+- **已 GA ≠ 已是边界**：MXC 虽已随 Windows 11 GA（2026-10-07），微软自己的仓库仍警告其策略在某些地方过于宽松。
+
+---
+
+## 扩展八：训练侧 —— 训练—部署错配
+
+> 本节对应的材料 `agent-training-loop.html` **生成于 2026-10-11，仍为草稿**：[output/pending-review/agent-training-loop.html](./output/pending-review/agent-training-loop.html)。
+> ⚠️ 同样未写入 `learning-materials/`。本篇由台账两条合并：10-11「训练—部署错配」⭐ 新行 + 09-23「自进化智能体」行（该行挂了 18 天、零证据）。
+
+前面七份材料回答的都是**推理侧**的问题：agent 知道什么、记得什么、被允许做什么、跑在什么壳里、活不活得过崩溃。这一份问的是**训练侧**的一句审计问句：
+
+> **我们优化的那个对象，和被部署的那个对象，是同一个吗？**
+
+这是本图谱的**第六条扫描线**（前五条：横轴时间 / 纵轴层级 / 动词盘点 / 资源定价 / 生命周期·作用域）。它也是 09-24 那条教义——「**模型不是唯一可以放控制的地方**」——的直接推论：**既然控制不在模型里，那训练就不能只喂模型。**
+
+```mermaid
+flowchart TB
+    subgraph WRONG["错的做法：在训练框架里重写一遍 agent"]
+        direction TB
+        RW["重写版 harness"] --> RM["被抽掉的约束<br/>超时兜底 / 脏数据清洗 /<br/>prompt 拼接顺序 / 压缩长度 / 判停条件"]
+        RM --> RW2["约束更少的新世界"]
+        RW2 --> RB["训得好、上线崩<br/>⇒ 被错记为「模型泛化不行」"]
+    end
+
+    subgraph RIGHT["对的做法：部署用的 harness 原样参加训练"]
+        direction TB
+        PH["PRODUCTION HARNESS<br/>一行不改"] --> PX["OpenAI 兼容代理<br/>记录 prompt / response / logprob"]
+        PX --> TR["训练器（基于 verl）<br/>用真实 trace 更新策略"]
+        TR --> AS["assert optimize_target is deploy_target"]
+    end
+
+    HN["Harness 外壳（扩展三）"] -->|"harness 是策略的一部分，不是外挂"| PH
+    PX -.->|"代理记录的正是 trace<br/>⇒ 遥测即训练 substrate"| OBS["可观测与评测<br/>（同一份数据的两个消费者）"]
+    AS --> SI["自进化智能体<br/>前提 = 轨迹来源保真"]
+
+    classDef bad fill:#f7ebe8,stroke:#9c3d2e,color:#1f2328
+    classDef good fill:#ece9f4,stroke:#6b5b95,color:#1f2328
+    classDef old fill:#e9f1ec,stroke:#3d6b4f,color:#1f2328
+    class RW,RM,RW2,RB bad
+    class PH,PX,TR,AS,SI good
+    class HN,OBS old
+```
+
+**为什么这一格此前一直空着：** 主流 RL 框架（verl / AReaL / slime）要接管交互循环才能发 rollout，于是**每换一个 agent，就要在训练框架里重新实现一遍它的循环**。重写时最先被砍掉的，正是那些「不算核心逻辑」的工程细节——而它们恰恰**定义了动作空间与观测空间**。
+
+**三条边界（这是本页最容易混淆的地方）：**
+
+| 辨析 | 含义 |
+|---|---|
+| **环境错配 ≠ reward hacking** | reward hacking 是**环境对、目标错**（改奖励）；环境错配是**目标对、环境被换了**（改回路）。**修法方向相反**——误判就会越调越远。 |
+| **不是上下文工程的重复** | 上下文工程回答「每一步往窗口里放什么」；本条回答「**你优化时看到的那个窗口，是不是部署时的那个窗口**」。取舍方法 vs 一致性前提。 |
+| **不是持久化执行** | 那一层管「长跑能不能活过崩溃」（时间维度）；本条管「训练与部署是不是同一个世界」（一致性维度）。族不同，不合并。 |
+
+**与「一句话总结」的接续：**
+
+> 现在补最后一句：**我们花了很多力气描述这位职员的桌子、工牌、签字、办公室和断电预案——却从没问过一件事：我们训练他的时候，用的是不是同一间办公室。如果不是，他学得越好，错得越深。**
+
+**🔴 必须同屏：** 这一格的第一份硬证据（Agent Lightning v1.0，微软亚洲研究院 2026-10-07/08 开源）是**单模型（Qwen3.5-9B）、单基准（SWE-bench Verified，Pass@1 41.8% → 56.4%）、微软自报、v1.0 自称 early-stage**，且约 6,000 条样本的可比性未说明；它修的是**训练侧错配**，**不解决部署后的漂移**。证明的是「方向可行」，不是「方案可用」。

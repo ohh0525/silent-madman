@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：持久化执行——让一场长跑活过崩溃（Durable Execution &amp; the Agent Runtime）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #3f5a75;
+    --accent-soft: #e9eff5;
+    --line: #e5e2dc;
+    --code-bg: #f1f4f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .scenario {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .scenario h3 { margin: 0 0 6px; font-size: 15px; color: var(--ink); }
+  .scenario p { margin: 0 0 4px; font-size: 14px; }
+  .scenario .label { font-weight: 600; color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  th { background: var(--code-bg); font-weight: 600; }
+  .sources li { font-size: 14px; word-break: break-all; }
+  .sources a { color: var(--accent); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .takeaway {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .mermaid-placeholder {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 18px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--ink-soft);
+  }
+  h3 {
+    font-size: 15px;
+    margin: 18px 0 8px;
+    color: var(--ink);
+  }
+  .warn {
+    background: #fdf6ec;
+    border: 1px solid #ecd9b5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 智能体运行时（持久化执行 / 恢复语义 / 交付语义）</span>
+  <h1>持久化执行：让一场长跑活过崩溃</h1>
+  <p class="subtitle">Durable Execution &amp; the Agent Runtime —— 壳下面那一层负责什么、resume 在四家为什么不是同一个操作、以及“跑得完”与“跑得好”为什么必须分栏 · 生成时间 2026-10-11</p>
+</header>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">持久化执行，是让一次 agent 运行<strong>在被 kill、被部署打断、或被人暂停数天之后，仍能在另一个进程里接着做完</strong>的那一层能力——它管的不是“模型聪不聪明”，而是“这场已经跑了 90 分钟的长跑，还剩什么”。它有三个彼此独立、常被混为一谈的问题：<strong>存的是什么</strong>（检查点 vs 记忆 vs 事件日志）、<strong>恢复时怎么重放</strong>（四家语义不同），以及<strong>副作用被交付了几次</strong>（at-least-once / at-most-once / effectively-once）。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>想象你把一件复杂工作交给一位助理：整理三百份合同、把每张的关键条款抽出来、做成一张表。他干了两个小时，做到第 90 分钟时——电脑蓝屏了。重开之后你最想知道的其实只有三件事：<strong>他做到第几份了</strong>、<strong>已经发出去的那几封确认邮件会不会再发一遍</strong>、以及<strong>他重开之后还记不记得自己原本要做什么</strong>。</p>
+  <p>多数 agent 系统在这三件事上是裸奔的。不是因为工程师不努力，而是因为“跑完”这件事此前一直被当成<strong>框架的实现细节</strong>，而不是一个需要被命名、被分类、被验收的东西。2026 年它终于有了一层名字。LangChain 的判据句把这条界线划得很清楚：造一个好 agent 需要好 harness，而<strong>部署</strong>一个好 agent 需要好 runtime——“the runtime is everything underneath: durable execution, memory, multi-tenancy, observability”。</p>
+  <p>为什么这一层的缺席在 2026 年变得致命？因为 agent 的工作时长变了。以前一次调用几秒，崩了重跑就是了；现在的 agent 会被派去“把整个仓库迁到新框架”“跑完一轮跨月对账”，单任务上限已经做到 <strong>7 天</strong>。一旦任务时长超过“一次进程能活多久”，崩溃就从<strong>异常情况</strong>变成<strong>必然事件</strong>——于是“一次没人安排的 kill 之后还剩什么”，从一句运维吐槽变成了选型的第一问。</p>
+  <p>更麻烦的是，这一层里最容易踩的三个坑，全都是<strong>看起来无害的同名事物</strong>：检查点不是记忆（一个说“当前任务哪几步已完成”，一个说“下次该怎么回答你”）；会话不是持久化执行（OpenAI Agents SDK 的 Session 是 memory continuity, not durable execution）；而“resume”这个词在 Temporal、DBOS、LangGraph 里指向的是<strong>三个不同的操作</strong>。把它们当成一件事，就会写出“以为已经恢复、实际把检查点用空列表覆盖掉”的代码——这类事故在实机崩溃对照里已经被复现过：四家框架全都活下来了，但 <strong>none of them holds by default</strong>。</p>
+  <p>所以这份材料把这一层拆成四问：<strong>谁调度</strong>（运行时管什么）、<strong>一次没人安排的 kill 之后还剩什么</strong>（恢复语义）、<strong>存的是什么</strong>（检查点 / 记忆 / 日志的边界）、<strong>副作用被交付了几次</strong>（交付语义）。最后补上一条此前一直没写清的分界：<strong>跑得完 ≠ 跑得好</strong>。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <ol>
+    <li><strong>先认层：harness 是壳，runtime 是壳下面那一层</strong>。工程圈的拆法一句话 —— <code>Agent = Model + Harness</code>；而 2026-04 起行业补上了后半句：把 agent <strong>部署</strong>出去还需要 runtime。这一层被拆成<strong>四项关注点</strong>：<strong>durable runs</strong>（一次运行有 id、有状态机、可跨进程接管）、<strong>lifecycle controls</strong>（archive / unarchive / delete 这类生命周期动作及其可逆性）、<strong>streaming primitives</strong>（断线能从 Last-Event-ID 续传，而不是重来）、<strong>versioned APIs</strong>（客户端与服务端版本协商，旧 run 不被新代码悄悄改掉语义）。Anthropic 把它写成 “Any Harness instance can pick up any Session and continue from where it left off”；Thoughtworks 2026-04 雷达给的选型规则是“先用框架自带的 durable 支持，工作流变关键了再上独立平台”。<br />为什么重要：这四项是<strong>可以逐条向厂商提问的验收清单</strong>，而不是一句“我们支持断点续跑”。</li>
+
+    <li><strong>“resume”在四家不是同一个操作</strong>。这是本层最反直觉的一点，也是最容易写错的地方：
+      <table>
+        <thead><tr><th>形态</th><th>代表</th><th>恢复时做了什么</th><th>对你的硬约束</th></tr></thead>
+        <tbody>
+          <tr><td>事件溯源 / 全量重放</td><td>Temporal、Azure Durable Functions、AWS Step Functions、GCP Workflows</td><td>重放事件历史来重建状态</td><td><strong>编排函数必须确定性</strong>；副作用要用「run + step 身份」构成的稳定键</td></tr>
+          <tr><td>持久状态库 / 代码优先</td><td>Restate、DBOS、Inngest</td><td>DBOS 按持久化位点采纳已完成操作（写 PostgreSQL，无独立服务）；Restate journal 重放；Inngest 步骤记忆化</td><td>停在外部信号上<strong>不耗算力</strong>，这是它相对重放派的省钱点</td></tr>
+          <tr><td>框架超步检查点</td><td>MS Agent Framework superstep 检查点</td><td>按 superstep 粒度恢复</td><td>粒度由框架定义，跨框架不可迁移</td></tr>
+          <tr><td>线程快照</td><td>LangGraph</td><td>从<strong>被中断节点的开头</strong>恢复（含 pending writes）</td><td><strong>节点必须幂等</strong>；且需显式 <code>durability="sync"</code>、resume 传 <code>None</code>，否则空列表会覆盖检查点</td></tr>
+        </tbody>
+      </table>
+      横评那句判据值得单独记下：<strong>“The 2026 dividing line is what happens when a two-hour agent run dies at minute 90.”</strong><br />为什么重要：同一个“resume”按钮，背后可能是重放、可能是位点采纳、可能是节点重跑——<strong>你对幂等性的义务完全不同</strong>。</li>
+
+    <li><strong>存的是什么：checkpoint ≠ memory，也 ≠ durable execution</strong>。三句话把边界钉死：<strong>checkpoint ≠ memory</strong>（memory 帮 agent 回答下一个问题；checkpoint 说的是当前任务哪几步已完成）；<strong>session ≠ durable execution</strong>（OpenAI Agents SDK 的 Session 是 memory continuity，不是持久化执行）；<strong>checkpoint ≠ durable execution</strong>（检查点保留的是控制状态，<strong>不是下游副作用的 exactly-once</strong>）。<br />为什么重要：把这三样混在一个“记忆库”里，就会得到最常见的生产事故——状态恢复了，但<strong>已经发出去的邮件又发了一遍</strong>。</li>
+
+    <li><strong>副作用被交付了几次：交付语义三分</strong>。
+      <table>
+        <thead><tr><th>语义</th><th>含义</th><th>代价不对称（为什么这一栏是承重的）</th></tr></thead>
+        <tbody>
+          <tr><td>at-least-once</td><td>至少一次，可能重复</td><td rowspan="3"><strong>模型调用重复，只是多花 token；退款重复，就是一次客户事故。</strong>同一份“至少一次”，落在不同副作用上是两个数量级的代价</td></tr>
+          <tr><td>at-most-once</td><td>至多一次，可能丢失</td></tr>
+          <tr><td>effectively-once</td><td>靠幂等键 + 版本检查<strong>凑出</strong>恰好一次的效果</td></tr>
+        </tbody>
+      </table>
+      必须同屏的裁决句：<strong>“True exactly-once delivery across a process and an external service is not generally possible.”</strong> ⇒ <strong>effectively-once 是上限，不是可选项</strong>；而并发恢复时还须做<strong>版本检查</strong>，防止两个恢复进程双写覆盖。<br />为什么重要：这条把 [[HumanInTheLoop]] 那句“resume 必须幂等”从口号升级成了<strong>可验收的判据</strong>。</li>
+
+    <li><strong>可靠性 ⊥ 质量：跑得完 ≠ 跑得好</strong>。这是本层与评测的分界线，此前一直被混记：<br /><strong>“A run can finish reliably and still give a poor answer. It can also give an excellent answer once and fail to survive the next deploy. Both problems need measuring.”</strong><br />⇒ <strong>持久化执行（可靠性）与 evals（质量）是两个正交轴</strong>，不能互为替代指标。一个 agent 可以次次跑完却每次答错，也可以精彩一次却活不过下一次发版。</li>
+
+    <li><strong>成本侧：检查点该多久打一次</strong>。此前所有讨论都停在“谁有哪种恢复语义”，2026-10 才第一次出现把这层开销显式计费的工作：<strong>LAM（Language Model Agent Machine，arXiv:2610.02488）</strong>固定语义模型、只对 harness 级资源计费，在可靠性一类中给出<strong>紧的阶段局部采样界、不完美验证的精确成本，以及 Young–Daly 型检查点定律与闭式最优验证间隔</strong>。<br />为什么重要：它把问题从“要不要打检查点”推进到“<strong>检查点与验证该多久做一次才对得起成本</strong>”——频繁打点烧算力，稀疏打点则每次崩溃损失更多重放。</li>
+  </ol>
+
+  <div class="mermaid-placeholder">运行时的最小骨架（伪代码：三对象 × 恢复语义 × 交付语义）
+
+# —— 三对象：谁是谁 ——
+Session = Durable Event Log     # 一等对象：可暂停 / 可 fork / 可被另一进程接管
+Harness = 无状态循环            # Brain = Model + Harness；Hands = Sandbox + Tools
+Sandbox = Hands                 # 在哪跑（隔离是另一页的事）
+
+# —— 四项关注点（可逐条验收）——
+durable runs       : run 有 id + 状态机；一个 agent 同时只允许一个活跃 run（争用 = 409 agent_busy）
+lifecycle controls : archive(可撤销挂起) / unarchive / delete(不可逆)；终态 run 不可取消(409)
+streaming          : SSE + Last-Event-ID 断线续传，而不是重来
+versioned APIs     : 版本协商，旧 run 不被新代码静默改语义
+
+# —— 恢复语义（四家不是同一个操作）——
+REPLAY_EVENT_HISTORY   # Temporal / Step Functions / Durable Functions ⇒ 编排代码必须确定性
+ADOPT_BY_CHECKPOINT    # DBOS 写 PostgreSQL，无独立服务
+JOURNAL_REPLAY         # Restate（轻量 server）
+STEP_MEMOIZATION       # Inngest
+RESUME_FROM_NODE_HEAD  # LangGraph ⇒ 节点必须幂等；durability="sync" 且 resume(None)
+
+# —— 交付语义 ——
+DELIVERY := AT_LEAST_ONCE | AT_MOST_ONCE | EFFECTIVELY_ONCE
+assert not EXACTLY_ONCE_ACROSS(process, external_service)   # 一般不可能
+
+def step(step_id, fn):
+    key = f"{run_id}:{step_id}"                 # 由 run + step 身份构成的稳定键
+    if committed(key): return read_result(key)  # 幂等：重放不再执行
+    with version_check(state):                  # 并发恢复防双写覆盖
+        r = fn()
+    commit(key, r)
+    return r
+
+# —— 三条边界 ——
+checkpoint != memory            # 当前任务哪几步已完成 ≠ 下次该怎么回答你
+checkpoint != durable_execution # 控制状态恢复 ≠ 副作用恰好一次
+reliability ⟂ quality           # 跑得完 ≠ 跑得好，两者都要测
+</div>
+
+  <p class="warn"><strong>必须与结论一起读的证据等级：</strong>① 《Deep Agent Runtime》页是<strong>二手汇编</strong>——它引了 LangChain / Cursor / Anthropic / Vercel 的原话，但未见原文页，逐字引用前请回一手；② <strong>LAM（arXiv:2610.02488）</strong>本材料仅用到其<strong>摘要级</strong>结论，正文未逐页复核；③ <strong>Pi Durable</strong> 为<strong>厂商自报且自陈实验性</strong>（MIT，2026-10-01），其社区热度（Hacker News 逾 1,500 点）是热度不是验证；④ <strong>MXC 虽已 GA</strong>（Windows 11，2026-10-07），但微软自己的开源仓库保留警告：当前 SDK 生成的策略在某些地方过于宽松，<strong>任何 MXC profile 都还不应被当作安全边界</strong> ⇒ 本层的既有口径「session ≠ durable execution」旁边，应并列写上第二条「<strong>已 GA ≠ 已是边界</strong>」。</p>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <div class="scenario">
+    <h3>场景 1 · 两小时任务在第 90 分钟被 kill</h3>
+    <p><span class="label">背景：</span>一个迁移任务跑了 90 分钟，进程被 OOM killer 杀掉；重开后 agent 从零开始，把已经做完的 180 个文件又做了一遍，其中三个是不可逆的写操作。</p>
+    <p><span class="label">如何应用：</span>先问<strong>恢复语义</strong>而不是“有没有断点”：若走事件重放，编排代码必须是确定性的（随机数、时间戳、字典序都要进事件而非现场取）；若走 LangGraph 式节点恢复，每个节点必须幂等，且显式打开 <code>durability="sync"</code>。所有对外副作用统一用 <code>run_id:step_id</code> 稳定键提交，重放时命中即跳过。</p>
+    <p><span class="label">结果：</span>崩溃从“重跑一遍并祈祷”变成“从第 181 个文件继续，且已提交的三笔写操作不会被重复提交”。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 2 · 一次人工审批要等三天</h3>
+    <p><span class="label">背景：</span>agent 在一个不可逆的付款动作前停下等人批；审批在 72 小时后才回来——此时最初那个进程早已不存在。</p>
+    <p><span class="label">如何应用：</span>这正是 [[HumanInTheLoop]] 反向指认本层的原因：该页要求 “pause must be persisted / resume idempotent”，而实现方在本层——检查点必须<strong>连同待批请求本身</strong>一起保存，并在恢复后重发。生命周期上要区分 <strong>archive（可撤销挂起）</strong> 与 <strong>delete（不可逆）</strong>；停在外部信号上应当是<strong>不耗算力</strong>的。</p>
+    <p><span class="label">结果：</span>“暂停三天”从不可能变成配置项；而归档与删除的语义差异，直接决定了误操作能不能挽回。</p>
+  </div>
+  <div class="scenario">
+    <h3>场景 3 · 恢复之后，客户收到了两笔退款</h3>
+    <p><span class="label">背景：</span>状态恢复得很干净，但退款这一步在崩溃前已经提交、恢复后又跑了一次——因为它是外部服务的副作用，不在检查点的管辖范围内。</p>
+    <p><span class="label">如何应用：</span>把交付语义显式写进代码：<strong>at-least-once / at-most-once / effectively-once</strong> 三选一，并接受“<strong>跨进程与服务的真正 exactly-once 一般不可能</strong>” ⇒ 用幂等键 + 版本检查<strong>凑出</strong> effectively-once；并发恢复路径上必须做版本检查防双写覆盖。</p>
+    <p><span class="label">结果：</span>判据落地为一句可检查的规则：<strong>模型调用重复只是多花 token，退款重复就是一次客户事故</strong>——代价不对称决定了哪些步骤必须做幂等、哪些可以偷懒。</p>
+  </div>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>5.1 不是什么</h3>
+  <ul>
+    <li><strong>不是 checkpoint（检查点）</strong>：检查点保留的是<strong>控制状态</strong>，不是下游副作用的 exactly-once。恢复成功且副作用重复执行一次，是本层最典型的事故形态。</li>
+    <li><strong>不是 memory（记忆）</strong>：<strong>checkpoint ≠ memory</strong>。memory 帮 agent 回答下一个问题，checkpoint 说的是当前任务哪几步已完成。两者的写入时机、生命周期、失效判据全都不同。</li>
+    <li><strong>不是 session（会话）</strong>：<strong>session ≠ durable execution</strong>。OpenAI Agents SDK 的 Session 是 memory continuity，不是持久化执行。会话可见不等于崩溃可恢复。</li>
+    <li><strong>不是 harness（外壳）</strong>：上下层关系。harness 是跑循环的那个壳，runtime 是壳下面那一层——LangChain 的原话是“造要 harness，<strong>部署</strong>要 runtime”。</li>
+    <li><strong>不是 evals（评测）</strong>：<strong>跑得完 ≠ 跑得好</strong>。一次运行可以可靠地跑完却给出糟糕答案，也可以给出一次精彩答案却活不过下一次部署——<strong>两者都要测，是两个正交轴</strong>。</li>
+    <li><strong>不是沙箱</strong>：本层管“状态能不能恢复”，沙箱管“做了也只碰得到这么多”。一个是时间维度的韧性，一个是空间维度的隔离。</li>
+  </ul>
+  <h3>5.2 常见误解</h3>
+  <ul>
+    <li>「框架默认就是持久化的」——实机崩溃对照的结论是 <strong>none of them holds by default</strong>：LangGraph 需显式 <code>durability="sync"</code> 且 resume 传 <code>None</code>，否则空列表会<strong>覆盖</strong>检查点。</li>
+    <li>「exactly-once 可以买到」——<strong>跨进程与外部服务的真正 exactly-once 一般不可能</strong>；能做到的是靠幂等键与版本检查凑出的 <strong>effectively-once</strong>。</li>
+    <li>「有了持久化就等于可靠」——可靠性与质量正交；跑得完的系统同样可以稳定地给出错误答案。</li>
+    <li>「resume 就是 resume」——四家是四个不同的操作（重放 / 位点采纳 / 超步检查点 / 节点快照），对幂等性的要求完全不同。</li>
+    <li>「已 GA 的产品就是安全边界」——MXC 官方警告其 SDK 生成的策略在某些地方过于宽松；<strong>已 GA ≠ 已是边界</strong>。</li>
+  </ul>
+  <h3>5.3 适用与不适用</h3>
+  <table>
+    <thead><tr><th>值得上持久化执行这一整套</th><th>不必上这套复杂度</th></tr></thead>
+    <tbody>
+      <tr><td>单任务时长超过一次进程寿命（分钟级→天级）</td><td>秒级、一次调用完成的问答</td></tr>
+      <tr><td>存在不可逆副作用（付款 / 发信 / 下单）</td><td>纯只读、重跑无害</td></tr>
+      <tr><td>中间要等人审批，且等待跨越进程生命周期</td><td>全程无人介入、同步返回</td></tr>
+      <tr><td>崩溃重跑的代价高于维护检查点的代价</td><td>重跑成本低于一次存储写入</td></tr>
+      <tr><td>需要多客户端 / 多实例接管同一 run</td><td>单进程、单客户端</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>6 · 来源链接</h2>
+  <ul class="sources">
+    <li>[verified] <a href="https://agentpatterns.ai/agent-design/deep-agent-runtime/">《Deep Agent Runtime: The Layer Beneath the Harness》</a> —— 四项关注点（durable runs / lifecycle controls / streaming primitives / versioned APIs）；LangChain（Runkle &amp; Trivedy，2026-04-20）「the runtime is everything underneath」；Cursor Cloud Agents API（2026-04-29）run-scoped、<code>409 agent_busy</code> / <code>409 run_not_cancellable</code>、archive vs delete；Anthropic「Any Harness instance can pick up any Session」；Vercel（2026-08-27）反方立场（应属于编程语言）<strong>［二手汇编，逐字引用前回一手］</strong></li>
+    <li>[verified] <a href="https://agentflow.10xscale.ai/docs/glossary/what-is-durable-execution">What Is Durable Execution</a> —— 交付语义三分；「True exactly-once delivery across a process and an external service is not generally possible」；代价不对称与并发恢复的版本检查</li>
+    <li>[verified] <a href="https://dev.to/snikidev/the-layers-of-an-ai-agent-product-844">The Layers of an AI Agent Product</a> —— 「checkpoint ≠ memory」；「A run can finish reliably and still give a poor answer…」</li>
+    <li>[verified] <a href="https://clawpk.net/articles/1606-earendil-pi-durable-checkpoint-long-running-agent-runtime.html">Pi Durable 长时 agent 运行时（中文长文）</a> —— 社区热度（Hacker News 逾 1,500 点）与非幂等后果（重复发邮件 / 重复下单）</li>
+    <li>[verified] <a href="https://changegamer.ai/resources/durable-execution-for-agents">Durable Execution for Agents（供应商中立参考）</a> —— 四形态中立分类；「OpenAI Agents SDK 的 Session 是 memory continuity, not durable execution」；恢复须重放 ⇒ 编排函数必须确定性</li>
+    <li>[verified] <a href="https://www.passions.com/139984418/durable-execution-for-ai-agents-langgraph-dbos-inngest-and-temporal-compared">LangGraph / DBOS / Inngest / Temporal 实机崩溃对照</a> —— 真 SIGKILL；四家都活下来但 <strong>none of them holds by default</strong></li>
+    <li>[verified] <a href="https://seed.hyper.media/hm/z6Mkpb42xebXipqcSxAbfta5ADFyU99FF9NdCQcAcrfKtT1z/research/agentic-systems/recovery-semantics-comparison">Recovery Semantics Comparison（Seed Hypermedia）</a> —— 首次出现的中立多运行时恢复语义对比</li>
+    <li>[verified] <a href="https://arxiv.org/abs/2610.02488v2">arXiv:2610.02488《Harnessing LLMs as Agents: What Does It Cost?》（LAM）</a> —— 可靠性一类：紧的阶段局部采样界、不完美验证的精确成本、Young–Daly 型检查点定律与闭式最优验证间隔<strong>［本材料仅用摘要级结论］</strong></li>
+    <li>[verified] <a href="https://blog.bokvi.com/blog/pi-durable-agent-harness">Pi 1.0 + Pi Durable</a> —— 2026-10-01，MIT，实验性；每步先落 checkpoint，工具仅在声明 <code>replay: safe</code> 时重跑</li>
+    <li>[verified] <a href="https://reveneau.com/ainews/digitalocean-managed-agents-public-preview-harness-runtime-action-gateway-16000-tools">DigitalOcean Managed Agents 公开预览</a> —— 会话 pause / resume / checkpoint / fork，auto-pause 计费</li>
+    <li>[verified] <a href="https://www.aiexpert.news/en/ticker/langchain-launches-managed-deep-agents-in-public-beta-with-durable-execution-san">LangChain Managed Deep Agents 公测</a> —— 一条命令交付 durable execution + persistence + sandbox + streaming + evals</li>
+    <li>[verified] <a href="https://www.ability.ai/blog/ai-agent-durability-async-human">异步人工介入的持久化</a> —— 审批跨越进程生命周期时的落点</li>
+  </ul>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway">持久化执行管的不是“模型聪不聪明”，而是<strong>“这场已经跑了 90 分钟的长跑，在一次没人安排的 kill 之后还剩什么”</strong>——要回答它，得分清三件事：存的是检查点、记忆还是事件日志；resume 在你的框架里是重放、位点采纳还是节点重跑；以及那个不可逆的副作用，究竟被交付了几次。而最后一问必须与评测分栏：<strong>跑得完不等于跑得好，两者都要测。</strong></p>
+</section>
+
+<footer>由 concept-explainer Skill 自动生成 · 2026-10-11 · 台账 09-23「持久化执行 / 智能体运行时」行（⭐，积压 18 天，🎯 首要处置对象）成文 · <strong>草稿待人工核查，未写入 learning-materials/</strong></footer>
+
+</div>
+</body>
+</html>
