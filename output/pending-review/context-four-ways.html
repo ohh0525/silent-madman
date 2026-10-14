@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：上下文的两根轴——延续挂在什么上面 × 历史留多少（Two Carriers × Four Ways of Context）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #2f6b63;
+    --accent-soft: #e6efed;
+    --line: #e5e2dc;
+    --code-bg: #f1f4f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; color: var(--ink); }
+  p, li { font-size: 15px; }
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--accent-soft); color: var(--accent); }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .warn {
+    background: #fdf6ec;
+    border: 1px solid #ecd9b5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  .takeaway {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+  ol li { margin-bottom: 10px; }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 上下文工程（两条轴 × 四条路 · 无损外存 · 主动回看 · 想法盆地 · 显式信念状态）</span>
+  <h1>上下文的两根轴：延续挂在什么上面 × 历史留多少</h1>
+  <p class="subtitle">Two Carriers × Four Ways of Context —— 此前所有讨论都在同一根轴上选位置；2026-10 的两篇论文换的是另一根轴 · 草稿 2026-10-14 · 落 <code>output/pending-review/</code></p>
+</header>
+
+<p class="warn"><strong>必须与结论一起读的证据等级（第一屏）：</strong>① <strong>CarryOn（arXiv:2610.18784）</strong>与 <strong>PoS（arXiv:2610.01415）</strong>本材料仅用到<strong>摘要级</strong>结论，PDF 未逐页打开；CarryOn 的 arXiv 页<strong>未列机构隶属</strong>；PoS「4 基准 × 3 基础模型 = 12 组全面领先」目前是经<strong>中文科技媒体转述</strong>读到的，<strong>未核对论文自身表格</strong>。② <strong>Fork-and-Flush</strong>：arXiv 页<strong>未列机构隶属、未挂代码仓库</strong>，数字经 The Decoder 等媒体转述；<strong>+66.0% 是归一化均分的相对提升，不是绝对分数</strong>；任务类型是<strong>优化 / 研究型（autoresearch）</strong>，不是通用工具调用 agent。③ <strong>VISTA / Mem++</strong>：OrgMemBench 是<strong>合成组织</strong>，作者自陈不能证明真实组织同样成立；VISTA 作者自陈<strong>不能排除公开游戏进入模型训练数据</strong>，且性能仍高度依赖后端模型已有能力。④ <strong>DSV-Mem / EMBER-Bench</strong> 是<strong>基准论文</strong>——只证难度，不证方案。⑤ 本页是<strong>草稿</strong>，落在 <code>output/pending-review/</code>，<strong>未写入 <code>learning-materials/</code></strong>（受 README 人工核查承诺约束）。</p>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">上下文治理有两根<strong>彼此正交</strong>的轴。<strong>轴 A = 历史留多少</strong>（四条路：① 物理上限 · ② 有损压缩 · ③ 无损外存 + 主动回看 · ④ 主动重置）；<strong>轴 B = 延续挂在什么上面</strong>（两种载体：一段<strong>被加工过的历史</strong> vs 一个<strong>可复用的任务对象</strong>）。2026 年之前的讨论几乎全部在轴 A 上选位置；2026-10-13 的两篇论文，一篇换的是<strong>轴 B</strong>（CarryOn），一篇补的是轴 A 与轴 B 都没覆盖的一格——<strong>「推进了没有」</strong>（PoS）。</p>
+  <p>为什么要写成「×」而不是「+」：轴 B 的每一种载体，都可以挂在轴 A 的任一条路上（压缩后的历史是载体、重建出的进度叙述也是载体）。两根轴交叉后，原本看似互斥的「压缩 vs 无损外存」之争，暴露出它们共享同一个<strong>未被言明的载体前提</strong>——这正是 CarryOn 的落点。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释：大家都在选位置，没人问挂在什么上面</h2>
+  <p>把一次长任务想象成让一位助手做一份需要几百步的事。第二天开工时，他手上能有的东西大致四类：<strong>装不下的口袋</strong>（上下文窗口）、<strong>越抄越薄的笔记</strong>（压缩）、<strong>一整柜原始资料随时翻</strong>（无损外存 + 主动回看）、以及<strong>把笔记撕了重新开始</strong>（主动重置）。这四样就是轴 A 的四条路，行业过去两年几乎全部的工程讨论，都在这四样之间做取舍。</p>
+  <p>但有个更前面的问题一直没人问：<strong>他每天开工时，先看的是什么？</strong>是看那本笔记（一段被加工过的过去），还是看一张写着「还剩哪几件事、每件事的证据在哪」的清单（一个可复用的任务对象）？这是轴 B。它是个<strong>前提</strong>：不管你笔记抄得多薄或多全，只要你把「昨天做到哪」完全寄托在笔记上，你就同时继承了笔记的两个缺陷——<strong>抄得越薄越失真</strong>、<strong>存得越全越倾向已有路径</strong>（锚定效应）。</p>
+  <p>CarryOn 的价值就在这一句：它<strong>明确不以「压缩后的历史」也不以「重建出的进度叙述」为延续的主要依据</strong>，而把延续组织在<strong>可复用的任务对象（continuation carriers）</strong>上。它不是轴 A 的第五条路，而是<strong>路 ② 与路 ③ 共同的载体前提</strong>——这是它能同时对两条既有路构成边界主张的原因。</p>
+  <p>还有第三格，两根轴都没盖住：<strong>推进了没有。</strong>「还剩多少空间」可以靠 token 数回答，「延续挂在哪」可以靠载体回答，但「从昨天到今天，任务状态到底前进了没有、还差什么」——此前没有一种表示专门管它。PoS 补的就是这一格。</p>
+</section>
+
+<section>
+  <h2>3 · 轴 A：上下文的四条路（每条标注「它解决哪条失效轴、解决不了哪条」）</h2>
+  <table>
+    <thead>
+      <tr><th>路</th><th>解决哪条失效轴</th><th>解决不了哪条</th><th>代表工作与关键数字</th><th>现有落点</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>① 物理上限</strong></td>
+        <td>「装不下」</td>
+        <td>「装得下也用不好」</td>
+        <td>[[ContextWindow]]。<strong>反证来自 VISTA</strong>：把上下文从 200K 拉到 780K，分数反而 <strong>99 → 93.9</strong>——只多烧 token，不涨分</td>
+        <td><code>concepts/ContextWindow.md</code></td>
+      </tr>
+      <tr>
+        <td><strong>② 有损压缩</strong></td>
+        <td>「装不下 + 除陈旧」</td>
+        <td>精度损失；<strong>且不解除想法盆地</strong></td>
+        <td>[[Compaction]]。<strong>承重的否定式事实</strong>：Fork-and-Flush 明写——即使 agent <strong>定期压缩对话历史</strong>，想法盆地依然存在</td>
+        <td><code>concepts/Compaction.md</code></td>
+      </tr>
+      <tr>
+        <td><strong>③ 无损外存 + 主动回看</strong></td>
+        <td>「信息永久保留、模型按需取回」</td>
+        <td><strong>锚定效应</strong>——存得越多，回看越倾向已有路径</td>
+        <td><strong>VISTA</strong>（arXiv:2610.02200，2026-10-01；Han / Hu / Qiu / Wu / He）：ARC-AGI-3 上 Claude Opus 5.0 的 RHAE <strong>40.68 → 100.00</strong>，25 个公开游戏全通关，动作数比首次人类少 <strong>57.4%</strong>；消融：纯文本 13.33 → 换图 47.32 → 加简单外壳 65.82 → 加两份笔记 70.05 → <strong>加无损视觉记忆与主动回看 94.10</strong> → 加精确读像素 99.00；token 每局 71.9M（文本）→ 30.7M（图像）。<strong>Mem++</strong>（arXiv:2610.02002，2026-10-01）：「shifting from <strong>write-time distillation</strong> to <strong>read-time selection</strong>」，整篇存下文档 + 日期 + 作者，<strong>写入时不调用生成式模型</strong>，保留旧版本（OrgMemBench 超最强基线 <strong>8.0–13.1</strong> 分）</td>
+        <td>09-24「上下文卸载 / 文件系统即上下文层」是其文本版</td>
+      </tr>
+      <tr>
+        <td><strong>④ 主动重置</strong></td>
+        <td>「多样性锁死」</td>
+        <td>必须<strong>丢弃已积累的对话</strong>；目前只在优化 / 研究型任务上有证据</td>
+        <td><strong>Fork-and-Flush</strong>（Microsoft Research，2026-10-12）：同一任务 8 次独立跑分落在 <strong>68.3 到 100.0</strong>，加大算力<strong>也不收敛</strong>；单次运行的解几乎总停留在一小块区域内 = <strong>idea basin（想法盆地）</strong>。方法 = 分叉成 K 个分支，<strong>每分支继承工作区（代码 / 文件 / 已存结果）但清空对话上下文</strong>。等算力下归一化均分 <strong>0.78 vs 单次 0.47（+66.0%）vs best-of-4 0.54（+44.4%）</strong>；归一化标准差 <strong>0.26 → 0.16</strong>；13 项中 12 项取得最高均分；只清空不分叉（11 项）0.45 → 0.55（约 +22%）</td>
+        <td>无 <code>concepts/ContextReset.md</code>（本总纲即其推进对象）</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="warn"><strong>两条失效轴不是同一条，别混着记：</strong>[[ContextRot]] 写的是<strong>精度随长度下降</strong>；想法盆地写的是<strong>多样性随长度被锁死</strong>。压缩能治前者，<strong>治不了后者</strong>；重置能治后者，代价是丢掉对话。</p>
+</section>
+
+<section>
+  <h2>4 · 轴 B：两种载体（这是 2026-10 才被命名的一根轴）</h2>
+  <table>
+    <thead>
+      <tr><th>载体</th><th>延续的依据</th><th>代表工作</th><th>它明确否定什么</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>载体甲 · 历史</strong></td>
+        <td>一段<strong>被加工过的过去</strong>：压缩后的历史（对应路 ②）或重建出的进度叙述（对应路 ③）</td>
+        <td>[[Compaction]] / VISTA / Mem++</td>
+        <td>——（它是被否定的一方）</td>
+      </tr>
+      <tr>
+        <td><strong>载体乙 · 任务对象</strong></td>
+        <td>一个<strong>可复用的任务对象</strong>：CarryOn 的 <strong>continuation carriers</strong>。<strong>跨折叠维护</strong> carrier 记录，只按<strong>绑定证据与环境检查就地修订受影响的记录</strong>，原样带走不受影响的记录</td>
+        <td><strong>CarryOn</strong>（arXiv:2610.18784，2026-10-13）：<strong>OSWorld 2.0 +5.8%</strong> / <strong>BrowseComp-Plus +7.0%</strong>，总 token <strong>−51.9% / −22.9%</strong></td>
+        <td><strong>明写不以「压缩后的历史」也不以「重建出的进度叙述」为延续的主要依据</strong> ⇒ 对路 ② 与路 ③ <strong>同时</strong>构成边界主张</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>CarryOn 自己点出的核心难题值得单独记：<strong>周边历史被「退休」之后，这个可复用基础凭什么仍然有效？</strong>它的解法是——不重建叙述，而是<strong>就地修订</strong>：只改那些被证据与环境检查判定为受影响的记录。</p>
+</section>
+
+<section>
+  <h2>5 · 两根轴之外的第三格：推进了没有（PoS）</h2>
+  <p><strong>PoS</strong>（《Beyond Memory: Harnessing Long-Horizon Agents with Explicit Belief States》，arXiv:2610.01415；南开大学 + 阿里云 + 清华大学；代码 <code>github.com/luoyu100/PoS</code>）做的是一件此前没人做的事：把<strong>智能体自己当前的理解</strong>变成一个被显式表示、并且带溯源的对象。</p>
+  <ul>
+    <li><strong>表示什么：</strong>与任务相关的世界被组织成<strong>实体 / 状态 / 关系</strong>，而状态与关系各自携带<strong>来源、置信度与可用支持证据</strong>（杯子是否热、微波炉是否关闭、杯子在哪、由谁拿着）。</li>
+    <li><strong>还差什么，分两类：</strong><strong>信息缺口 Epistemic Gap</strong>（还需<strong>弄清楚</strong>的事）与 <strong>达成缺口 Achievement Gap</strong>（还需<strong>靠行动改变</strong>的事）。这个二分是它能给出「下一步该做什么」的前提。</li>
+    <li><strong>闭环：</strong>从识别<strong>已经卡住（Belief Trapping）</strong>到决定<strong>怎样恢复进展</strong>，构成完整回路——而「识别卡住」本身，就是此前所有上下文治理都没有的能力。</li>
+    <li><strong>规模：</strong>4 个基准 × 3 个基础模型 = <strong>12 组设置</strong>（⚠️ 该结果目前经中文科技媒体转述，未核对论文表格）。</li>
+  </ul>
+  <p class="takeaway"><strong>对本知识网最硬的一条影响：</strong>[[Provenance]] 的对象<strong>第一次从「取进来的事实」扩到「智能体自己形成的理解」</strong>。此前所有溯源纪律管的都是「这句话有没有打开过来源」，PoS 问的是「你<strong>现在相信</strong>的这件事，它的证据与置信度在哪」——这是同一条纪律往内走了一层。</p>
+</section>
+
+<section>
+  <h2>6 · 边界辨析（与既有概念的接缝）</h2>
+  <table>
+    <thead><tr><th>对照对象</th><th>它的主张</th><th>本页的边界</th></tr></thead>
+    <tbody>
+      <tr><td>[[Compaction]]</td><td>把历史<strong>说得少一点</strong></td><td>压缩 = 说得少一点；<strong>重置 = 什么都不说</strong>；CarryOn = <strong>根本不以历史为载体</strong>。三者不是同一维度的三个选项</td></tr>
+      <tr><td>[[ContextRot]]</td><td><strong>精度</strong>随长度下降</td><td>还有第二条失效轴：<strong>多样性随长度被锁死</strong>。现有页只写了前者</td></tr>
+      <tr><td>[[ProgressiveDisclosure]]</td><td>按需加载</td><td>三个决定权方向：<strong>推给模型 / 模型拉取 / 全部丢掉</strong>——路 ④ 是第三种</td></tr>
+      <tr><td>[[MultiAgent]]</td><td>并行提速</td><td>并行还有第二个机理：<strong>共享长上下文会侵蚀方案多样性</strong>，Fork-and-Flush 让「独立性」的价值第一次有量化来源</td></tr>
+      <tr><td>09-23「持久化执行」</td><td>状态能不能恢复</td><td>再次印证 <strong>checkpoint ≠ memory</strong>：<strong>工作区继承 ≠ 对话继承</strong></td></tr>
+      <tr><td>10-06「压缩时机是学出来的 / AutoCompact」</td><td>压缩<strong>时机</strong>可学</td><td>对象不同：<strong>可再生的环境观测</strong> vs <strong>不可再生的推理状态</strong>——引用时必须同句给出对象</td></tr>
+      <tr><td>[[LongTermMemory]]</td><td>跨<strong>会话</strong>的语义事实</td><td>carrier 记的是跨<strong>折叠</strong>的<strong>任务进度</strong>，不是语义事实</td></tr>
+      <tr><td>[[Provenance]]</td><td>管<strong>取进来的事实</strong>的来源与置信</td><td>PoS 管<strong>智能体自己形成的理解</strong>的来源与置信</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>7 · 可直接引用的判据句</h2>
+  <ul>
+    <li><strong>「工作区承载进度，对话承载偏见。」</strong>——Fork-and-Flush（这句话同时解释了为什么「继承工作区但清空对话」是有效的组合）</li>
+    <li><strong>「shifting from write-time distillation to read-time selection」</strong>——Mem++ 原文</li>
+    <li><strong>写入时蒸馏会在问题被提出之前就固定了可回答的内容</strong>——Mem++ 的判据句</li>
+    <li><strong>不以「压缩后的历史」也不以「重建出的进度叙述」为延续的主要依据</strong>——CarryOn（对路 ②③ 的共同边界主张）</li>
+    <li><strong>上下文 200K → 780K，分数 99 → 93.9</strong>——VISTA（「加大窗口」不是解法的最硬反证）</li>
+  </ul>
+</section>
+
+<section>
+  <h2>8 · 你会怎么用它</h2>
+  <ol>
+    <li><strong>先定轴 B，再选轴 A。</strong>先回答「明天开工先看什么」——是看压缩后的历史，还是看一份可复用的任务对象清单；再回答「历史留多少」。顺序反了，就会在压缩率上反复调参而看不到真正的瓶颈。</li>
+    <li><strong>别把「加大窗口」当解法。</strong>VISTA 的 200K → 780K 是最干净的对照证据：容量涨了 3.9 倍，分数反而掉了 5.1 分。</li>
+    <li><strong>压缩不是重置。</strong>周期压缩不解除想法盆地；如果你的任务卡在「每次都在同一个局部最优附近」，需要的是路 ④（分叉并清空对话），而不是更激进的压缩。</li>
+    <li><strong>把「还差什么」显式化，并分成两类。</strong>Epistemic Gap（要去查）与 Achievement Gap（要去做）分开之后，才有「识别已卡住」这回事——这是目前唯一能回答「推进了没有」的表示。</li>
+    <li><strong>给溯源纪律补一层。</strong>不仅「这句话有没有来源」，还要问「我<strong>现在相信</strong>的这件事，证据与置信度在哪」。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>9 · 来源（均为 WebSearch 真实返回 [verified]）</h2>
+  <ol>
+    <li><strong>CarryOn</strong> —— <code>https://arxiv.org/abs/2610.18784</code>（2026-10-13 提交；OSWorld +5.8% / BrowseComp-Plus +7.0% / token −51.9%、−22.9%）</li>
+    <li><strong>PoS</strong> —— <code>https://arxiv.org/abs/2610.01415</code>；项目页 <code>https://luoyu100.github.io/projects/progression-of-states/project/</code>；代码 <code>https://github.com/luoyu100/PoS</code></li>
+    <li>PoS 中文报道（12 组设置等数字的转述来源）—— <code>https://news.qq.com/rain/a/20261014A05PUP00</code> · <code>https://www.163.com/dy/article/L96NUN8205568W0A.html</code></li>
+    <li><strong>VISTA</strong> —— <code>https://arxiv.org/abs/2610.02200v1</code>（2026-10-01；RHAE 40.68 → 100.00、57.4% 更少动作；作者自陈不能排除公开游戏进入训练数据）</li>
+    <li>VISTA 消融与窗口反证（65.82 / 70.05 / 94.10 / 99.00；200K → 780K 使分数 99 → 93.9；GPT-5.6 Sol 98.27；320B 开源模型 1.89 → 66.93）—— <code>https://dev.to/hiroki-ii-ai/ai-daily-digest-october-5-2026-vista-aces-arc-agi-3-jetbrains-air-ade-amazon-blocks-muse-fef</code> · <code>https://www.toutiao.com/article/7692248215043588618</code></li>
+    <li><strong>Mem++</strong> —— <code>https://arxiv.org/abs/2610.02002</code>；评测代码 <code>https://github.com/AIDAChip-Inc/mem-plus-plus</code>；第三方评述 <code>https://www.govkm.com/articles/preserve-before-you-derive</code></li>
+    <li><strong>Fork-and-Flush</strong> —— <code>https://the-decoder.com/clearing-chat-history-helps-ai-agents-find-better-solutions/</code> · <code>https://www.explainx.ai/blog/fork-and-flush-idea-basins-autoresearch-agents-microsoft-2026</code> · <code>https://www.splitfeed.ai/story/microsoft-finds-clearing-chat-history-boosts-ai-agent-performance-66-percent</code> · <code>https://www.aiandtech.news/article/clearing-chat-history-helps-ai-research-agents-find-better-solutions</code></li>
+    <li><strong>DSV-Mem</strong>（arXiv:2610.08102，最强基线 &lt;45%）与 <strong>EMBER-Bench</strong>（arXiv:2610.05013，16 模型最高 61.2% vs 人类 98.3%）—— 2026-10-06 检索所得，<strong>本页未重新检索</strong>，两者均为基准论文（只证难度，不证方案）</li>
+  </ol>
+</section>
+
+<footer>
+草稿 · <code>output/pending-review/context-four-ways.html</code> · 生成于 2026-10-14 · 受 README 人工核查承诺约束，<strong>未写入 <code>learning-materials/</code></strong>
+</footer>
+
+</div>
+</body>
+</html>
