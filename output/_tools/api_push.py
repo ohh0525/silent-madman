@@ -19,6 +19,11 @@ goes stale the moment that happens — every later push then dies with
 The token is read from ~/.git-credentials inside this process and never printed.
 State is checkpointed after every commit, so a failure mid-way is resumable by
 simply re-running the script.
+
+This script is the ONLY pusher for this repo. After a successful (or already
+up-to-date) run it realigns the local branch onto the pushed remote commit, so
+`git status` stays clean instead of showing a phantom "ahead/behind" caused by
+the replayed commit shas.
 """
 from __future__ import annotations
 
@@ -151,6 +156,33 @@ def commit_meta(sha: str) -> dict:
     }
 
 
+def align_local_to_remote(remote_head: str) -> None:
+    """把本地 BRANCH（以及 origin/BRANCH）指向刚刚推送成功的那次 commit。
+
+    走 API 重建 commit 对象，所以远端 sha 与本地 sha 天然不同（tree 一致）。
+    若不对齐，本地分支会永远停在旧 sha 上：`git status` 报出假的
+    "ahead/behind"，还会诱使人手动跑一次 `git push` —— 那正是本脚本要消灭的
+    分叉。对齐之后只有一个推送方（本脚本）、一个事实来源（远端）。
+    """
+    git("update-ref", f"refs/remotes/origin/{BRANCH}", remote_head)
+
+    on_branch = subprocess.run(
+        ["git", "symbolic-ref", "--quiet", "--short", "HEAD"],
+        cwd=REPO_DIR, capture_output=True)
+    if on_branch.returncode != 0:
+        print(f"  当前处于 detached HEAD，仅更新 origin/{BRANCH}（本地 HEAD 未动）")
+        return
+
+    cur = on_branch.stdout.decode().strip()
+    if cur != BRANCH:
+        print(f"  当前在分支 {cur}，仅更新 origin/{BRANCH}（未改动 {cur}）")
+        return
+
+    # 两侧内容一致（tree 相同），--keep 不会改动工作区，同时保住未提交的修改。
+    git("reset", "--keep", remote_head)
+    print(f"  已把本地 {BRANCH} 对齐到远端 {remote_head[:8]}，git status 从此保持干净")
+
+
 # --------------------------------------------------------------------------- #
 # main
 # --------------------------------------------------------------------------- #
@@ -167,7 +199,8 @@ def main() -> int:
     if remote_tree == local_tree:
         print(f"远端 {BRANCH} 内容已与本地 HEAD 相同，无需推送。")
         print(f"  远端 commit {remote_head[:8]} / 本地 {local_head[:8]}"
-              f"（两边的 commit sha 天然不同，以 tree 为准）")
+              f"（内容一致，仅 sha 不同，以 tree 为准）")
+        align_local_to_remote(remote_head)  # 顺手把这类"同内容不同 sha"的分叉抹平
         return 0
 
     # Every commit on the remote was minted by this script, so its sha almost
@@ -258,6 +291,8 @@ def main() -> int:
     # Commit shas never match (the message's trailing newline is stripped when
     # it is replayed through the API), so the tree is the only real check.
     print(f"内容完全一致    = {remote_tree == local_tree}")
+    if remote_tree == local_tree:
+        align_local_to_remote(head_remote)
     return 0
 
 
