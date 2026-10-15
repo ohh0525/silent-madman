@@ -11,7 +11,9 @@
 >
 > **记忆治理（2026-10-06 · 已入库 2026-10-09）**：[memory-lifecycle.html](./learning-materials/memory-lifecycle.html) —— 对应文末「扩展六 · 记忆治理」一节（用户指令「结清 5 条」授权同日一次结清 5 条积压行）。
 >
-> **运行时层的下层 + 训练侧（2026-10-11 · ⚠️ 草稿待核查，未入库）**：[durable-execution.html](./output/pending-review/durable-execution.html) —— 对应文末「扩展七 · 持久化执行」一节；[agent-training-loop.html](./output/pending-review/agent-training-loop.html) —— 对应文末「扩展八 · 训练—部署错配」一节（由 10-11 ⭐ 新行与 09-23「自进化智能体」行合并成篇）。**两者均落在 `output/pending-review/` 而非 `learning-materials/`**，因 README「人工核查承诺」要求入库前经本人逐条核查；核查通过后移入 `learning-materials/` 再走 `raw/` + 摄取。
+> **运行时层的下层 + 训练侧（2026-10-11 · ⚠️ 草稿待核查，未入库）**：[durable-execution.html](./output/pending-review/durable-execution.html) —— 对应文末「扩展七 · 持久化执行」一节；[agent-training-loop.html](./output/pending-review/agent-training-loop.html) —— 对应文末「扩展八 · 训练—部署错配」一节（由 10-11 ⭐ 新行与 09-23「自进化智能体」行合并成篇）。**2026-10-15 补充**：`agent-training-loop.html` 新增**第 4 章「同一对象的第二问：外壳的贡献是可测量的」**（并入 10-15 候选「外壳贡献的可测量化」：Learn2Play Bench 等——**骨干冻结、只换外壳，Max 可移动 7–17 分**），把训练—部署错配从「**外壳一致吗**」扩展到「**外壳占多少**」。
+>
+> **评测侧（2026-10-15 · ⚠️ 草稿待核查，未入库）**：[agent-observability.html](./output/pending-review/agent-observability.html) —— 对应文末「扩展九 · 可观测性与评测」一节（由台账 10-08「智能体可观测性与评测」⭐ 与 09-17「智能体评测 / Agent Evals」两行合并成篇）。**同样落在 `output/pending-review/`**，理由同上。
 >
 > **相关图谱（另一领域）**：Python 教学概念组 —— [Python 第 1 课 · 上手四概念的关系图](./concept-group/python-lesson1-starter/关系图.md)、[Python 第 1 课 · 下半场四概念的关系图](./concept-group/python-lesson1-second-half/关系图.md)。两组与本图谱（AI Agent 领域）分属不同知识网，故独立成篇、仅互为索引，不合并进同一张图。
 
@@ -708,3 +710,74 @@ flowchart TB
 > 现在补最后一句：**我们花了很多力气描述这位职员的桌子、工牌、签字、办公室和断电预案——却从没问过一件事：我们训练他的时候，用的是不是同一间办公室。如果不是，他学得越好，错得越深。**
 
 **🔴 必须同屏：** 这一格的第一份硬证据（Agent Lightning v1.0，微软亚洲研究院 2026-10-07/08 开源）是**单模型（Qwen3.5-9B）、单基准（SWE-bench Verified，Pass@1 41.8% → 56.4%）、微软自报、v1.0 自称 early-stage**，且约 6,000 条样本的可比性未说明；它修的是**训练侧错配**，**不解决部署后的漂移**。证明的是「方向可行」，不是「方案可用」。
+
+---
+
+## 扩展九：评测侧 —— 跑完了，然后呢？
+
+> 本节对应的材料 `agent-observability.html` **生成于 2026-10-15，仍为草稿**：[output/pending-review/agent-observability.html](./output/pending-review/agent-observability.html)。
+> ⚠️ 同样未写入 `learning-materials/`。本篇由台账两条合并：10-08「智能体可观测性与评测」⭐ 行 + 09-17「智能体评测 / Agent Evals」行。
+
+前面八份材料回答的都是**推理侧怎么跑、以及怎么训练**的问题。这一份问的是跑完之后的三句：
+
+> **发生了什么？做得好不好？——以及第三个：这个「做得好」的判定本身可信吗？**
+
+这是本图谱的**第七条扫描线**（前六条：横轴时间 / 纵轴层级 / 动词盘点 / 资源定价 / 生命周期·作用域 / 训练—部署一致性）。**直接诱因**是：**Cluster E 三条验收标准同时押在一个不存在的页上** —— `[[HumanInTheLoop]]` 要测 escape rate、`[[MultiAgent]]` 说验证器是前提、`[[AgentSandbox]]` 的动机证据是入侵解剖，而提供「看得见」的那一页不存在（命中 10-07 立的优先级判据）。
+
+```mermaid
+flowchart TB
+    subgraph A["章 A · 记录层：发生了什么"]
+        direction TB
+        SP["span 树：create_agent / invoke_agent /<br/>plan / invoke_workflow / execute_tool"] --> AT["gen_ai.request.model ≠<br/>gen_ai.response.model<br/>（服务端回退时两者不同）"]
+        AT --> TK["gen_ai.usage.input/output_tokens"]
+        TK --> X1["❌ 「对不对」约定不覆盖<br/>⇒ 每家后端自建模"]
+    end
+
+    subgraph B["章 B · 语义层：能读出什么"]
+        direction TB
+        TR["Transect：observability envelope<br/>随 transcript 长度收窄"] --> FC["evaluation-family configuration<br/>任务语境 / 行为词表 与裁判模型分离"]
+    end
+
+    subgraph C["章 C · 判官层：多少钱"]
+        direction TB
+        OUT["外部全量重读"] -->|"$10,000 量级"| EXP["太贵"]
+        OUT2["外部便宜模型逐步检查"] -->|"$233 量级"| EXP
+        IN["内部激活探针，仅报警时升级"] -->|"$51 量级 · 复用前向传播"| OK["可行"]
+    end
+
+    subgraph D["章 D · 元一层：这个判可信吗"]
+        direction TB
+        D1["D1 能力：重跑 grading code 能否复现"] --> V["四查核"]
+        D2["D2 奖励黑客：答案真算出来的还是抄的"] --> V
+        D3["D3 欺骗：完成声明 vs 实际发生"] --> V
+        D4["D4 稳定性：5 次重跑是否同分数带"] --> V
+        V --> R["仅 22.6% 的 pass 四项全过<br/>（95% CI 15.0–32.6，n=84）"]
+    end
+
+    A --> B --> C --> D
+    HR["外壳（扩展三）+ 本篇第 4 章"] -.->|"更前置的混淆变量：<br/>换外壳 Max 移动 7–18 分"| W["任何评测报告必须<br/>连同外壳一起报告"]
+
+    classDef good fill:#e7efef,stroke:#476b70,color:#1f2328
+    classDef bad fill:#f7ebe8,stroke:#9c3d2e,color:#1f2328
+    classDef old fill:#e9f1ec,stroke:#3d6b4f,color:#1f2328
+    class SP,AT,TK,TR,FC,V good
+    class X1,EXP,R bad
+    class HR,W old
+```
+
+**四层的分工一句话记住：** **trace 答「发生了什么」，eval 答「做得好不好」，trust layer 答「这条 pass 该不该被相信」。** 没有第一层，第二层无从算起；没有第三层（元一层），你不知道第二层算出来的分数能不能拿去做决策。
+
+**四条边界（这是本页最容易混淆的地方）：**
+
+| 辨析 | 含义 |
+|---|---|
+| **有标准 ≠ 标准稳定** | OTel GenAI **全部标注 Development、zero tagged releases**（无法 pin 版本，只能 pin commit / snapshot），属性名跨版本被重命名；且 **2026-06-12（v1.42.0）gen_ai.\* 已整体迁出主仓**。标准方原话：「约定标准化的是**调用长什么样**，不是**判断得好不好**」。 |
+| **看得见 ≠ 读得懂** | observability envelope（评测者能可靠推断 agent 行为的范围）**随运行长度收窄**，不是定值 ⇒ 长周期任务要在设计阶段规划 evaluation-family configuration。 |
+| **机制 vs 见证** | `[[AgentHarness]]` 跑循环，本页记录并评判那个循环；治理管「**状态怎么变**」，可观测管「**这次运行到底发生了什么**」——**前者是策略，后者是证据**。 |
+| **分数的溯源是溯源的第三对象** | `[[Provenance]]` / `[[CitationLock]]` / `[[Abstention]]` 的对象都是**模型说的话**；可直接追溯到执行的**对象**则是「**系统实际做的事**」；本页再往前扩到「**一个分数**」。 |
+
+**与「一句话总结」的接续：**
+
+> 现在补最后一句：**我们花了很多力气描述这位职员的桌子、工牌、签字、办公室、断电预案，也终于问过了「训练他的是不是同一间办公室」——却从没坐下来看过他一天的录像。**桌子是他定的，录像才是他做的。
+
+**🔴 必须同屏：** Goodfire 的 $51 / $233 / $10,000、94%、8.7%、<2% **全部为厂商自报且三档是同一家的报价**，且其成本优势的前提是**能拿到权重与激活**（闭源 API 上做不了）；arXiv:2610.07274 与 2610.02066 均为**预印本**，前者**仅在单一基准（ALE）上验证**、每配置 13–20 条 pass、代码待录用后释放；AgentRx 存在**公开口径冲突**（115 条 vs 170 条）、+75% 为作者自报；New Relic AI Evaluation **无定价、无框架清单、无裁判准确率**。⇒ 22.6% 的意思是「**多数通过记录至少未过一项查核**」，**不是**对 agent 的排名。

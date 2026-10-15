@@ -136,9 +136,9 @@
 <div class="wrap">
 
 <header class="cover">
-  <span class="tag">概念学习 · 训练—部署一致性（Harnessed Agentic RL / 环境错配 / 自进化智能体）</span>
+  <span class="tag">概念学习 · 训练—部署一致性 + 外壳贡献份额（Harnessed Agentic RL / 环境错配 / 自进化智能体 / 模型冻结换外壳）</span>
   <h1>训练—部署错配：你优化的那个 agent，是部署的那个吗？</h1>
-  <p class="subtitle">Train–Deploy Mismatch &amp; Harnessed Agentic RL —— 重写版 vs 部署版逐项对照 × 被抽掉的约束清单 × 代理层怎么接 · 生成时间 2026-10-11</p>
+  <p class="subtitle">Train–Deploy Mismatch &amp; Harnessed Agentic RL —— 重写版 vs 部署版逐项对照 × 被抽掉的约束清单 × 代理层怎么接 · <strong>并入第 4 章：同一对象的第二问——外壳的贡献是可测量的</strong> · 生成时间 2026-10-11，第 4 章并入 2026-10-15</p>
 </header>
 
 <section>
@@ -221,7 +221,54 @@ assert optimize_target is deploy_target, "TRAIN–DEPLOY MISMATCH"
 </section>
 
 <section>
-  <h2>4 · 应用场景</h2>
+  <h2>4 · 同一对象的第二问：外壳的贡献是可测量的</h2>
+  <p>至此本篇问的一直是「<strong>优化对象 == 部署对象吗</strong>」。把它翻过来会得到第二个问题：<strong>既然 harness 是策略的一部分，那它的贡献到底有多大？</strong>「外壳很重要」此前一直是本知识网里的一句<strong>断言</strong>——<code>[[AgentHarness]]</code> 断言了 <code>Agent = Model + Harness</code> 并列出四项职责，却<strong>从来没有一个把两者分开的数</strong>。2026-10 出现了第一组把它变成<strong>测量</strong>的控制变量证据。</p>
+
+  <p><strong>Learn2Play Bench</strong>（arXiv:2610.08215，v1 2026-10-06 / v2 2026-10-08，NUS，Yibo Li / Bryan Hooi 等；项目页 <code>liushiliushi.github.io/learn2play-bench-website/</code>）做的正是那个缺的控制变量实验：<strong>20 个规则全新或反直觉的文字游戏</strong>（现有基准的病是规则写在说明里或早已进预训练语料，分不清「现场学会」还是「背过答案」），<strong>9 骨干 × 6 种经验留存方法 × 2 次外壳替换</strong>，外加人类对照（每游戏 <strong>21–30</strong> 名大学生）。</p>
+
+  <table>
+    <thead><tr><th>发现</th><th>读数</th><th>该怎么读</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>换外壳 = 大幅位移</strong></td>
+        <td>Claude Code + Opus 5 Max <strong>81.8</strong> 对 OpenCode <strong>74.5</strong>；Codex + GPT-5.6-SOL <strong>74.3</strong> 对 <strong>57.0</strong>；且 OpenCode + Kimi K3 <strong>每轮输入 token 少 56%</strong> 而 Max 更高</td>
+        <td><strong>骨干冻结、只换框架 ⇒ Max 移动 7–17 分。</strong>这就是「模型的分」里属于外壳的那一块——<strong>分数从来不是可与外壳剥离的读数</strong></td>
+      </tr>
+      <tr>
+        <td><strong>保留原始胜过蒸馏——但随骨干反转</strong></td>
+        <td>Kimi K3 下 Memory（原始历史）<strong>四项指标全领先</strong>（Max 63.3 / EvoTest 62.4 / Naive 54.7）；Opus 5 下排序<strong>反转</strong>（EvoTest Max 66.1 对 Memory 60.9）</td>
+        <td><strong>孰优依骨干而定，不是普适结论。</strong>⇒ 「哪种载体赢」是模型的属性，不是一条规则</td>
+      </tr>
+      <tr>
+        <td><strong>得分最高者 ≠ 学得最快者</strong></td>
+        <td>OpenCode + Opus 5 领先 Max <strong>74.5</strong> / Mean <strong>53.8</strong>；而 Qwen 3.8 Max 在 Learning Gain <strong>+25.2</strong> / Learning Slope <strong>+6.30</strong> 领先</td>
+        <td>「会做」与「学得快」是<strong>两条轴</strong>；只排行 Max 会看不到后者</td>
+      </tr>
+      <tr>
+        <td><strong>教科书式失败：蒸馏把单次观察硬化成永久规则</strong></td>
+        <td>某次 GemForge 运行中，<strong>EvoTest 把一次失败的融合写成了一条「禁止某种组合」的 prompt 规则——而那种组合它从来没试过</strong></td>
+        <td>与本篇第 3 章呼应：<strong>失真不只发生在「重写一遍」那一步，也发生在「把经验写成规则」这一步</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>人机差距（同一组实验的对照）：</strong>顶尖人类峰值 <strong>84.3</strong> 仍高于 agent；人类<strong>重复动作更少</strong>（相似度 <strong>0.54</strong> vs <strong>0.66</strong>）、受挫后<strong>刷新个人最佳更频繁</strong>（<strong>33%</strong> vs <strong>22%</strong>）。⇒ 「学得更快」这件事上，差距并不只在分数。</p>
+
+  <h3>同一周的旁证集群：The harness keeps beating the model</h3>
+  <p>2026-10-14 的一份汇编把三条同向结果并到了一起（⚠️ 见下方warning，全部二手）：</p>
+  <ul>
+    <li><strong>LongHarness</strong>（arXiv 2610.13075）—— 冻结模型 + 显式存下证据与未决结论，<strong>GLM-5.3-Flash 精确匹配 4.4% → 61.1%</strong>；同一外壳比 Claude Code 高 <strong>12.1</strong> 分、比 Codex 高 <strong>18.9</strong> 分。</li>
+    <li><strong>Memento 3</strong>（arXiv 2610.11794）—— 只有回放能复现<strong>每一条</strong>已观测转移时才保留该版规则书；通关全部 <strong>25</strong> 个公开 ARC-AGI-3 关卡，动作数为人类的 <strong>44%</strong>。</li>
+    <li><strong>Evo²</strong>（arXiv 2610.13025，Google DeepMind）—— 外壳与权重<strong>协同进化</strong>；SWE-bench Verified <strong>48.3%</strong> / Polyglot <strong>82.1%</strong>，基线 41.0% / 62.6%。</li>
+  </ul>
+
+  <p class="takeaway"><strong>对本章最硬的三条推论：</strong>① 给「<strong>harness 是策略的一部分，不是外挂</strong>」补上了数量级——不是「有影响」，是<strong>能差到 17 分</strong>。② 给第 3 章那句审计问句补了<strong>反向形式</strong>：错配问「<strong>外壳一致吗</strong>」（训练侧），本条问「<strong>外壳占多少</strong>」（部署侧）——<strong>同一个对象的两问</strong>。③ 溢出到评测：<strong>同一个骨干换一套外壳就能移动 7–18 分 ⇒ 任何评测报告都必须连同外壳一起报告，否则分数不可比。</strong></p>
+
+  <p class="warn"><strong>必须与 7–17 分一起读的三条副作用约束：</strong>① 上述<strong>细粒度数字经二手精读转述，未逐页核对论文表格</strong>（仅 arXiv 摘要为一手）；② 「<strong>保留原始胜过蒸馏</strong>」这一条<strong>随骨干反转</strong>，它给的是「结论依赖骨干」这个形状，<strong>不是一条可照抄的规则</strong>；③ <strong>LongHarness / Memento 3 / Evo² 三条佐证全部来自二手汇编</strong>，所列 arXiv 编号<strong>未逐一打开核对</strong>。</p>
+</section>
+
+<section>
+  <h2>5 · 应用场景</h2>
   <div class="scenario">
     <h3>场景 1 · 编码 agent 训完了，一上线就崩</h3>
     <p><span class="label">背景：</span>团队用 RL 把编码 agent 在离线环境里训到指标很好，换进生产 harness 后表现明显下滑，复盘结论写的是「模型泛化能力不足」。</p>
@@ -240,27 +287,37 @@ assert optimize_target is deploy_target, "TRAIN–DEPLOY MISMATCH"
     <p><span class="label">如何应用：</span>把埋点同时算成<strong>训练数据采集层</strong>：代理层记录的正是 trace，两者共用同一份基础设施。缺了 logprob，未来做策略梯度就没有可用的数据；缺了工具返回原文，观测空间就还原不出来。</p>
     <p><span class="label">结果：</span>可观测从成本项变成<strong>双用途资产</strong>——这也解释了为什么“遥测即训练 substrate”是本库两条线索的接缝，而不是巧合。</p>
   </div>
+  <div class="scenario">
+    <h3>场景 4 · 没换模型，评测分数却动了 —— 谁的锅？</h3>
+    <p><span class="label">背景：</span>团队升级了一版执行框架（同样的模型、同样的评测集），分数掉了 5 分。复盘第一轮写的是「模型表现波动」。</p>
+    <p><span class="label">如何应用：</span>先看这个位移是不是第 4 章测到的量级——<strong>骨干冻结、只换外壳，Max 可移动 7–17 分</strong>（⚠️ 数字经二手转述，见该章警告）。在归给模型之前，先把「外壳版本」当成和「模型版本」同级的变量列出来。</p>
+    <p><span class="label">结果：</span>「谁的锅」从模型挪回<strong>报告口径</strong>：<strong>评测报告必须把外壳版本一起锁定并报告</strong>，否则两次结果根本不可比 ⇒ 这条直接影响可观测与评测那一整个分支的可信度。</p>
+  </div>
 </section>
 
 <section>
-  <h2>5 · 边界辨析</h2>
-  <h3>5.1 不是什么</h3>
+  <h2>6 · 边界辨析</h2>
+  <h3>6.1 不是什么</h3>
   <ul>
     <li><strong>不是 reward hacking</strong>：reward hacking 是环境对、目标错；本条是目标对、<strong>环境被换了</strong>。修法方向相反——一个改奖励，一个改回路。</li>
     <li><strong>不是上下文工程</strong>：上下文工程回答「每一步往窗口里放什么」；本条回答「<strong>你优化时看到的那个窗口，是不是部署时的那个窗口</strong>」。前者是取舍方法，后者是<strong>一致性前提</strong>。</li>
     <li><strong>不是 [[Compaction]] 的重复</strong>：压缩长度的差异只是<strong>被抽掉的约束之一</strong>。但这一条把上下文治理的性质改了——它从「工程细节」升级为「<strong>训练正确性前提</strong>」。</li>
     <li><strong>不是持久化执行</strong>：那一层管「长跑能不能活过崩溃」（时间维度），本条管「训练与部署是不是同一个世界」（<strong>一致性维度</strong>）。两者族不同，不合并。</li>
     <li><strong>不是评测</strong>：评测测「跑得好不好」，本条问「<strong>你在优化的那个东西存不存在于生产里</strong>」。评测做得再扎实，也无法发现环境错配。</li>
+    <li><strong>不是第 4 章的重复 —— 而是它的反面</strong>：训练—部署错配问「<strong>外壳一致吗</strong>」（训练侧一致性），第 4 章问「<strong>外壳占多少</strong>」（部署侧贡献份额）。<strong>同一个对象的两问</strong>，共用一篇。</li>
+    <li><strong>不是可观测性与评测本身</strong>：那条问「<strong>分数怎么来的、可信吗</strong>」；第 4 章给了它一个<strong>更前置的混淆变量</strong>——同一个模型换一套外壳就能移动 7–18 分 ⇒ <strong>评测若不连同外壳报告，分数不可比</strong>。两者接缝在「<strong>报告口径</strong>」，不在机制。</li>
   </ul>
-  <h3>5.2 常见误解</h3>
+  <h3>6.2 常见误解</h3>
   <ul>
     <li>「只要奖励设计得好就行」——奖励再好也救不了<strong>被换掉的环境</strong>；这是环境错配与 reward hacking 最关键的分野。</li>
     <li>「重写一遍是为了跑得快，逻辑一样就行」——被砍掉的那些「非核心逻辑」<strong>恰恰定义了动作空间与观测空间</strong>；它们不是装饰。</li>
     <li>「harness 是外挂，训练只管模型」——<strong>「harness 是策略的一部分，不是外挂」</strong>。控制不在模型里，训练就不能只喂模型。</li>
     <li>「+14.6 pp 说明这条路已经通了」——单模型、单基准、自报、early-stage、样本可比性未说明；它证明<strong>方向可行</strong>，不证明<strong>方案可用</strong>。</li>
     <li>「解决了训练错配，部署后就稳了」——它<strong>不解决部署后的漂移</strong>；环境上线之后继续变化，是另一个独立问题。</li>
+    <li>「换框架只是工程偏好，不影响能力」——<strong>骨干冻结、只换外壳，Max 位移 7–17 分</strong>。这句话可以退役了（⚠️ 前提见第 4 章警告：数字经二手转述、且随骨干反转）。</li>
+    <li>「既然外壳是混淆变量，把所有人都固定在同一套外壳上评测就行」——<strong>固定外壳能让报告可比，但代价是这套评测从此只能叫「评测某个特定组合」</strong>；而真实部署里外壳是会变的。</li>
   </ul>
-  <h3>5.3 适用与不适用</h3>
+  <h3>6.3 适用与不适用</h3>
   <table>
     <thead><tr><th>值得先做训练—部署一致性审计</th><th>可以先不做</th></tr></thead>
     <tbody>
@@ -274,21 +331,25 @@ assert optimize_target is deploy_target, "TRAIN–DEPLOY MISMATCH"
 </section>
 
 <section>
-  <h2>6 · 来源链接</h2>
+  <h2>7 · 来源链接</h2>
   <ul class="sources">
     <li>[verified] <a href="https://aiproducthub.cn/newsflash/microsoft-agent-lightning-v1-lightweight-agentic-rl">微软 Agent Lightning v1.0 发布</a> —— 微软亚洲研究院 2026-10-08 开源（~3,500 行），Harnessed Agentic RL 范式；Qwen3.5-9B + 约 6,000 条样本，SWE-bench Verified Pass@1 <strong>41.8% → 56.4%</strong></li>
     <li>[verified] <a href="http://roboticlifestyle.com/article/agent-lightning-trains-agents-through-their-real-harnesses-185427-689">Agent Lightning Trains Agents Through Their Real Harnesses</a> —— 英文一手：OpenAI 兼容代理插在 harness 与模型之间，<strong>harness 不改一行代码</strong>；三部件 = API 网关 / Rollout 控制器 / 定制训练器（基于 verl）；Collocated Async RL ≈ 同步 RL 的 <strong>2 倍</strong>、用卡更少</li>
     <li>[verified] <a href="https://www.lumevalley.com/article-10848.html">Agent Lightning 中文解读</a> —— 本页最锋利的两句可引原文出处：<strong>「harness 是策略的一部分，不是外挂」</strong>；<strong>「这不算是 reward hacking，更准确的叫法是环境错配。而错配的代价，通常被记在『模型泛化不行』的账上。」</strong></li>
     <li>[verified] <a href="https://toolnavs.com/zh/article/2386-agent-lightning-1-0-kai-yuan-3-5-0-0-xing-dai-ma-xun-lian-zhen-shi-zhi-neng-ti">Agent Lightning 1.0 开源（约 3,500 行）</a> —— 2026-10-07 开源；传统框架（verl / AReaL / slime）需接管交互循环 ⇒ <strong>每换一个 agent 重写一次</strong>；原生 K8s 任务批量运行</li>
+    <li><strong>［第 4 章来源］</strong>[verified] <a href="https://arxiv.org/abs/2610.08215v2">Learn2Play Bench</a> —— arXiv:2610.08215，v1 2026-10-06 / v2 2026-10-08，NUS（Yibo Li / Bryan Hooi 等）；项目页 <code>liushiliushi.github.io/learn2play-bench-website/</code>；<strong>本页仅用到摘要级</strong>结论</li>
+    <li>[verified] <a href="https://ai-pulse-lab.com/papers/2610.08215.html">Learn2Play Bench 中文论文解读</a> —— 二手解读</li>
+    <li>[verified] <a href="https://www.llmwatch.com/p/papers-you-should-know-about-689">细粒度读数与 failure anecdote</a> —— 二手精读；🔴 <strong>未逐页核对论文表格</strong>，第 4 章全部细粒度数字（81.8 / 74.5 / 74.3 / 57.0 / 63.3 / 62.4 / 54.7 / 66.1 / 60.9 / 25.2 / 6.30 等）均出自此处，须降级引用</li>
+    <li>[verified] <a href="https://bayesiansapien.github.io/cere-bro/agentic-systems/2026-10-14-harness-cluster-and-agent-scale">「外壳集群」汇编（2026-10-14）</a> —— LongHarness（arXiv 2610.13075）/ Memento 3（arXiv 2610.11794）/ Evo²（arXiv 2610.13025）；🔴 <strong>二手汇编全部</strong>，所列 arXiv 编号未逐一打开核对</li>
   </ul>
 </section>
 
 <section>
-  <h2>7 · 一句话回顾</h2>
-  <p class="takeaway">每次开始训练之前，先问一句：<strong>「我们优化的那个对象，和被部署的那个对象，是同一个吗？」</strong>——为了接入训练框架而重写的那个 agent，已经被抽掉了超时兜底、脏数据清洗、prompt 拼接顺序和压缩长度，而正是这些「工程细节」定义了动作空间与观测空间。所以<strong>harness 是策略的一部分，不是外挂</strong>；训得好、上线崩的账单，不该记在「模型泛化不行」头上。</p>
+  <h2>8 · 一句话回顾</h2>
+  <p class="takeaway">每次开始训练之前，先问一句：<strong>「我们优化的那个对象，和被部署的那个对象，是同一个吗？」</strong>——为了接入训练框架而重写的那个 agent，已经被抽掉了超时兜底、脏数据清洗、prompt 拼接顺序和压缩长度，而正是这些「工程细节」定义了动作空间与观测空间。所以<strong>harness 是策略的一部分，不是外挂</strong>；训得好、上线崩的账单，不该记在「模型泛化不行」头上。<br /><br />而这一个问题还配着反向的第二个：<strong>「外壳到底占多少？」</strong>——2026-10 的测量给出了此前只有断言的答案：<strong>骨干冻结、只换外壳，Max 可移动 7–17 分</strong>。⇒ 由此落到一条可以直接执行的纪律：<strong>任何评测报告都必须连同外壳版本一起报告；不报外壳的分数不可比。</strong>（⚠️ 该测量数字经二手转述，「保留原始胜过蒸馏」随骨干反转，旁证集群全部二手。）</p>
 </section>
 
-<footer>由 concept-explainer Skill 自动生成 · 2026-10-11 · 台账 10-11「训练—部署错配」⭐ 新行与 09-23「自进化智能体」行合并成文 · <strong>草稿待人工核查，未写入 learning-materials/</strong></footer>
+<footer>由 concept-explainer Skill 自动生成 · 2026-10-11 · 台账 10-11「训练—部署错配」⭐ 新行与 09-23「自进化智能体」行合并成文 · <strong>2026-10-15 并入候选「外壳贡献的可测量化」（Learn2Play 等）为第 4 章</strong> · <strong>草稿待人工核查，未写入 learning-materials/</strong></footer>
 
 </div>
 </body>

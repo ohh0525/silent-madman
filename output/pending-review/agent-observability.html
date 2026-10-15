@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：智能体的可观测性与评测——跑完了，然后呢？（Agent Observability &amp; Evaluation）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #476b70;
+    --accent-soft: #e7efef;
+    --line: #e5e2dc;
+    --code-bg: #eef2f4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; color: var(--ink); }
+  p, li { font-size: 15px; }
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--accent-soft); color: var(--accent); }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .warn {
+    background: #fdf6ec;
+    border: 1px solid #ecd9b5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  .takeaway {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+  ol li { margin-bottom: 10px; }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 可观测性与评测（trace 语义约定 · observability envelope · 由内而外监控 · 评测的评测）</span>
+  <h1>智能体的可观测性与评测：跑完了，然后呢？</h1>
+  <p class="subtitle">Agent Observability &amp; Evaluation —— 记录层「发生了什么」 × 语义层「能读出什么」 × 判官层「多少钱」 × 元一层「这个判可信吗」 · 草稿 2026-10-15 · 落 <code>output/pending-review/</code></p>
+</header>
+
+<p class="warn"><strong>必须与结论一起读的证据等级（第一屏）：</strong>① <strong>OpenTelemetry GenAI 语义约定全部标注 Development（实验）、zero tagged releases</strong>——无法 pin 版本，只能 pin commit / snapshot；属性名跨版本被重命名。<strong>「有标准」≠「标准稳定」，这是本页第一屏要打死的一句。</strong>② <strong>Goodfire「由内而外」监控器</strong>的 $51 / $233 / $10,000、94%、8.7%、&lt;2% <strong>全部为厂商自报、未经第三方复现</strong>（三档是同一家的报价，不是三个独立测量）。③ <strong>arXiv:2610.07274（Trust Layer）与 arXiv:2610.02066 均为预印本、未经同行评审</strong>；Trust Layer <strong>仅在单一基准 Agents' Last Exam 上验证</strong>，每配置 13–20 条 pass、样本小且置信区间重叠，代码待录用后释放。④ <strong>AgentRx 公开口径互相矛盾</strong>（微软页面 115 条失败轨迹 vs arXiv v2 称 170 条 / 11 个任务场景）；+75% 为作者自报。⑤ <strong>New Relic AI Evaluation</strong>（2026-10-06 宣布、11 月 public preview）<strong>无定价、无支持框架清单、无裁判准确率数据</strong> ⇒ 厂商意图级，不是可引数字。⑥ Anthropic 四类安静失效模式本页仅经<strong>二手汇编</strong>读到，已降级。⑦ 本页是<strong>草稿</strong>，落在 <code>output/pending-review/</code>，<strong>未写入 <code>learning-materials/</code></strong>（受 README 人工核查承诺约束）。</p>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">可观测性回答「<strong>发生了什么</strong>」，评测回答「<strong>做得好不好</strong>」，而「评测的评测」回答第三个此前没人问的问题——「<strong>这个『做得好』的判定本身可信吗</strong>」。三层不是三个并列工具，是同一条证据链上的三个位置：没有第一层，第二层无从算起；没有第三层，你不知道第二层算出来的分数能不能拿去做决策。</p>
+  <p>判据句写得最短：<strong>「Trace 答『发生了什么』，eval 答『做得好不好』。」</strong>2026 年补上去的第三句是：<strong>「trust layer 答『这条 pass 该不该被相信』。」</strong></p>
+</section>
+
+<section>
+  <h2>2 · 个人解释：三个问题，本库此前只答过零个</h2>
+  <p>把一次 agent 运行想象成一位实习分析师独立完成一份尽调报告，你全程不在旁边。</p>
+  <ul>
+    <li>他用过哪些文件、问过谁、改了哪几版、最后交出去的是哪一版——这是<strong>发生了什么</strong>。没有 instrumentation，你只能看到最终交付物和一句「完成了」。</li>
+    <li>那份尽调做得好不好——这是<strong>做得好不好</strong>。可以请人逐条重读，也可以请另一家公司来评。</li>
+    <li>最后还有一层：<strong>那个好评是怎么来的？</strong>重跑评分代码还能得到同样的分吗？他的「我读完了」是真的读完了吗？五次重跑是不是落在同一个分数带？——这是<strong>这个判定本身可信吗</strong>。</li>
+  </ul>
+  <p>本知识网在此之前的处境很清楚：Cluster E 的那些页回答了「<strong>谁跑循环</strong>」（<code>[[AgentHarness]]</code>）、「<strong>在哪跑</strong>」（<code>[[AgentSandbox]]</code>）、「<strong>跟谁合作</strong>」（<code>[[MultiAgent]]</code>），但<strong>没有一页回答「怎么看见它跑了什么、跑得对不对」</strong>。更精确地说：wiki 自己的真实性纪律（<code>[[Provenance]]</code> / <code>[[CitationLock]]</code> / <code>[[Abstention]]</code>）只管「<strong>模型说的</strong>可不可信」，<strong>不管「系统实际做的」可不可见</strong>。</p>
+  <p>两条线索把这个缺口顶到了最高优先级：</p>
+  <ol>
+    <li><strong>三条验收标准同时押在一个不存在的页上。</strong><code>[[HumanInTheLoop]]</code> 的验收标准明写要测 automation / override / <strong>escape</strong> rate；<code>[[MultiAgent]]</code> 说「验证器是协作的前提」；<code>[[AgentSandbox]]</code> 的动机证据是 HF 入侵解剖——<strong>三者都要求「看得见」，而提供「看得见」的那一页不存在</strong>。</li>
+    <li><strong>质量从可靠性里被劈了出来。</strong>10-11 训练—部署错配写下「<strong>跑得完 ≠ 跑得好</strong>」之后，可靠性（跑得完）与质量（跑得好）正式成为两个正交轴；本页是质量这一轴；而本章 D「评测的评测」是被单独劈出来的<strong>第三轴</strong>——<strong>「跑得好」这个判定本身是否可信</strong>。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>3 · 章 A · 记录层：一次运行到底该留下什么</h2>
+  <p>OpenTelemetry GenAI 语义约定已经成了事实标准。回答一次运行的四个问题，各自的载体是这样的：</p>
+  <table>
+    <thead><tr><th>一次运行要回答的问题</th><th>trace 里对应的东西</th><th>答不上来的后果</th></tr></thead>
+    <tbody>
+      <tr><td><strong>它做了什么</strong></td><td>span 树与父子关系；<strong>agent 与 tool 是一等 span</strong>（<code>create_agent</code> / <code>invoke_agent</code> / <code>plan</code> / <code>invoke_workflow</code> / <code>execute_tool</code>）</td><td>只知道结果，不知道路径 ⇒ 无法归因到某一跳</td></tr>
+      <tr><td><strong>花了多少</strong></td><td><code>gen_ai.usage.input_tokens</code> / <code>output_tokens</code></td><td>账单无法下沉到具体步骤</td></tr>
+      <tr><td><strong>谁回答的</strong></td><td><code>gen_ai.request.model</code> 与 <code>gen_ai.response.model</code>——<strong>后者可能 ≠ 前者</strong>（服务端回退时）</td><td>上线降级的锅记错对象</td></tr>
+      <tr><td><strong>对不对</strong></td><td><strong>❌ 约定不覆盖</strong>，每家后端自建模</td><td>这一格是评测层的活，不是 semconv 的</td></tr>
+    </tbody>
+  </table>
+  <p>生态侧的其余事实：<strong>OpenInference 六类 span</strong>（LLM / CHAIN / TOOL / RETRIEVER / EMBEDDING / AGENT，含 100+ 框架的 instrumentor）；<strong>MCP 专用约定</strong>（<code>mcp.client</code> / <code>mcp.server</code> span + 四个 MCP 指标）；市场在收敛——<strong>Dynatrace 2026-08 签约收购 Arize</strong>（其 OpenInference 自称 "built on OpenTelemetry"）；<strong>MCP 2026 路线图（2026-03-09）</strong>把 observability 列为四大方向之一。</p>
+  <p>Thoughtworks <strong>2026-04 雷达</strong>把「<strong>有毒流分析（toxic flow analysis）</strong>」列入 Assess，并点出静态 SAST / SCA <strong>看不见</strong> prompt / tool / memory / agent 之间的流量——原话锋利：<strong>「干净的报告制造覆盖假象。」</strong></p>
+  <p class="warn"><strong>「有标准」≠「标准稳定」，以及一条容易踩的迁移事实：</strong>OTel GenAI <strong>全部标注 Development（实验）、zero tagged releases</strong>（<strong>无法 pin 版本，只能 pin commit / snapshot</strong>），属性名跨版本被重命名（provider 名、token usage key；content 从 event 移到 span attribute）。<strong>2026-06-12（semconv v1.42.0）gen_ai.* 与 mcp.* 整体迁出主仓</strong>到专用仓 <code>open-telemetry/semantic-conventions-genai</code>，主仓 v1.43.0（2026-07-03）起已不含 gen-ai ⇒ <strong>「在哪查这一份约定」本身就是信息</strong>。实测 instrumentation 开销约 <strong>12%（AgentOps）/ 15%（Langfuse）</strong>。标准方自己的措辞最该记住：<strong>「the conventions standardize what a model call looks like; they do not standardize what a good trace of your agent looks like … and they say nothing about evaluation scores。」</strong></p>
+</section>
+
+<section>
+  <h2>4 · 章 B · 语义层：可观测包络正在收窄</h2>
+  <p>记录层解决「看不看得见」，<strong>但看得见 ≠ 读得懂</strong>。<strong>Transect</strong>（arXiv:2610.08364，v1 2026-10-06 / v2 10-08，27 页，开源，构建于 Inspect Scout）给这件事正式命了名：<strong>observability envelope（评测者能可靠推断 agent 行为的范围）正在收窄</strong>——长周期、多 agent 的 transcript 动辄数百页。</p>
+  <p>它的解法是把「<strong>任务语境 / 行为词表</strong>」做成可复用的 <strong>evaluation-family configuration</strong>，并<strong>与裁判模型分离</strong>；再把<strong>事件 / token 用量 / 子 agent 活动 / 行为标签</strong>对齐到同一条 turn 时间线上。在<strong>约 1,300 万 token</strong> 的 AI-R&amp;D 评测上演示，并据此看出该 run <strong>缺少持续存在的假设生成阶段</strong>——这个发现本身说明了这一层的价值：<strong>它不是在记录，是在让「看不出来」的东西显示出来。</strong></p>
+  <p class="takeaway"><strong>判据句：</strong>看得见 ≠ 读得懂。<strong>记录层解决前者，包络层解决后者；而 envelope 是随运行长度收窄的量，不是一个定值。</strong>⇒ 长周期任务要在<strong>设计阶段</strong>就规划 evaluation-family configuration，而不是事后翻 transcript。</p>
+  <h3>产品面：约定已经落到 SDK 里，但成熟度要分栏</h3>
+  <ul>
+    <li><strong>Sentry JS SDK（2026-10-09）</strong>：agent 埋点 <code>invoke_agent</code> / <code>execute_tool</code> / <code>plan</code> / <code>create_agent</code> 等 span、<code>gen_ai.*</code> 属性、MCP server 自动埋点、分类器产出 <code>gen_ai.evaluate</code> span。⚠️ agent span 文档为 <strong>Development</strong> 状态，prompt / response 内容为 <strong>Opt-In（默认关闭）</strong>。</li>
+    <li><strong>New Relic AI Evaluation（2026-10-06 宣布，11 月 public preview）</strong>：LLM-as-judge 的分数作为<strong>属性挂进已有的 OTel 分布式 trace</strong>；RAG 专项 <strong>faithfulness / answer relevancy</strong>；可把质量与 token 成本并列比较。⇒ 这正是 09-17「Agent Evals」那条判断的落地：<strong>2026 的 evals 正直接挂在 trace 上</strong>。⚠️ 无定价、无支持框架清单、无裁判准确率数据。</li>
+  </ul>
+  <p>⇒ <strong>「规范已 Final」与「生态已可用」必须分栏</strong>——这是本库从 09-26 起反复命中的一条口径。</p>
+</section>
+
+<section>
+  <h2>5 · 章 C · 判官层：怎么判、判哪一层、多少钱</h2>
+  <p>2026-10 有两条一手证据，把「<strong>外部逐条重读</strong>」这条默认路径推翻了：<strong>① 成本不可承受</strong>（监督模型要为每个任务付第二次完整推理）；<strong>② 外部通道本身漏掉关键信息</strong>（模型没写下来的东西，transcript 里没有）。</p>
+  <p>新的答案是：<strong>把观察对象的层级换掉——不看输出，看模型内部激活。</strong></p>
+  <ul>
+    <li><strong>Goodfire「由内而外」监控器</strong>（2026-10-08 发布，先对 Baseten 客户可用）：小探针<strong>每步读内部激活，只有报警时才升级到昂贵二次审查</strong>。厂商自报数据（<strong>须降级</strong>）：对 Kimi K3 的 <strong>1,500</strong> 次会话，总监控成本约 <strong>$51</strong>；对照 <strong>$233</strong>（较便宜外部模型逐步检查）/ <strong>$10,000</strong>（顶级 LLM 裁判）；捕获 <strong>94%</strong> 恶意入侵会话，<strong>8.7%</strong> 无害会话被升级复核，延迟 <strong>&lt;2%</strong>。<strong>成本机理：探针复用前向传播已算过的数</strong>，而裁判模型要为一个 transcript 重新付一次完整前向。</li>
+    <li><strong>arXiv:2610.02066</strong>（Gupta &amp; Buscaldi，2026-10-01）：片段级幻觉检测（定位幻觉的<strong>起点 token 与延续段</strong>）+ <strong>跨模型观察者</strong>——让一个模型去观察另一个模型生成的内部表征，结果是<strong>外部观察者能追平甚至超过生成模型的自检，而且观察者更小也成立</strong>。原文结论句：<strong>「自我检测不是定位幻觉起点的上限。」</strong></li>
+  </ul>
+  <p><strong>线路归类（可长期沿用）</strong>：AI 安全监控分<strong>行为监控</strong>（从外部观察输入输出）与<strong>可解释性监控</strong>（打开黑箱看内部）；本条属于后者，正在被<strong>产品化并嵌入 agent 运行链路</strong>。定价结构也随之改写：<strong>监控成本从「全量付费」变成「异常付费」。</strong></p>
+  <h3>失败归因：先摆 evidence，再让裁判说话</h3>
+  <p><strong>AgentRx</strong>（Microsoft Research，<strong>EMNLP Findings 2026</strong>，2026-10-02 上线）的顺序值得原样记住：把失败轨迹转成<strong>一串约束</strong> → 逐步检查 → <strong>记录违反并附证据</strong> → <em>最后</em>才让 LLM 裁判定位关键步骤与失败类别；报告<strong>平均步骤定位 +75%</strong>（作者自报）。⚠️ 公开口径冲突：微软页面 115 条失败轨迹 vs arXiv v2 称 170 条 / 11 个任务场景。</p>
+  <p class="takeaway"><strong>三条须与结论同屏：</strong>① 成本优势的前提是<strong>能拿到权重与激活</strong>——<strong>闭源 API 模型上做不了</strong>，它目前天然属于「在自家推理栈上跑开源权重」的那一类用户；② <strong>8.7% 误报率</strong>在<strong>高风险低发生率</strong>的部署里仍可能是主要成本项；③ 它检测的是<strong>为特定风险类别训练的内部信号</strong>（攻击性入侵 / 生化武器误用 / 奖励黑客），<strong>不是通用「对不对」的判官</strong> ⇒ 与章 A 的结论完全一致：<strong>约定标准化的是「调用长什么样」，不是「判断得好不好」。</strong></p>
+</section>
+
+<section>
+  <h2>6 · 章 D · 元一层：这个判定本身可信吗</h2>
+  <p><strong>arXiv:2610.07274《A Trust Layer for Agent Evaluation》</strong>（Centific Research）是一个<strong>可叠加在既有分数旁、且从不修改该分数</strong>的后置验证层，逐条回答「这条 pass 该不该被相信」。四个维度：</p>
+  <table>
+    <thead><tr><th>维度</th><th>问的是</th><th>怎么查</th><th>不通过意味着什么</th></tr></thead>
+    <tbody>
+      <tr><td><strong>D1 能力</strong></td><td>分数能否被 benchmark <strong>自己的 grading code</strong> 重跑复现</td><td>重跑评分代码</td><td>这个分数不是这个能力测出来的</td></tr>
+      <tr><td><strong>D2 奖励黑客</strong></td><td>passing answer 是否真经由<strong>可追溯计算</strong>得出，而非硬编码或从 prompt 抄来</td><td>存档 artifact</td><td>「通过」是作弊，不是能力</td></tr>
+      <tr><td><strong>D3 欺骗检测</strong></td><td>agent 自己的<strong>完成声明</strong>与实际发生的事是否矛盾</td><td>存档 artifact</td><td>存在虚假完成声明</td></tr>
+      <tr><td><strong>D4 稳定性</strong></td><td>重跑是否仍落在同一分数带</td><td><strong>重跑 agent</strong></td><td>单次分数不代表常态</td></tr>
+    </tbody>
+  </table>
+  <p>机制上的取舍很干净：<strong>前三维只用存档 artifact，第四维才重跑 agent</strong>；模型判断<strong>仅在多数投票下标注证据，所有裁决走确定性规则</strong>——也就是说，<strong>「验证器」本身尽量不是一个模型</strong>（这一点与 <code>[[MultiAgent]]</code> 的「验证器是前提」直接对话）。</p>
+  <p><strong>实测（5 种 agent 配置 × Agents' Last Exam 108 题）：</strong></p>
+  <ul>
+    <li><strong>仅 22.6% 的记录 pass 通过全部四项查核</strong>（95% CI 15.0–32.6，n=84）；</li>
+    <li><strong>每个模型都存在「无可追溯计算」的通过</strong>，比率相差<strong>十倍</strong>；</li>
+    <li><strong>确认存在虚假完成声明</strong>；</li>
+    <li><strong>18–46% 的题目在 5 次重跑内不留在同一分数带</strong>。</li>
+  </ul>
+  <p>原文结句值得整句抄：<strong>「衡量一个 agent 能做什么，与验证它是否真的做了，是两个不同的问题，而现有 benchmark 只处理前者。」</strong></p>
+  <p><strong>同族佐证</strong>：<code>AgentAbstain</code> 的 <strong>59.5%</strong>（arXiv:2607.10059v1）；文件审阅基准 <strong>67.9% 未读完 / 其中 80.4% 陈述具误导性</strong>（arXiv:2609.20812v3）⇒ 三条共同落点：<strong>「agent 的自述」与「实际发生」必须分栏。</strong></p>
+  <p class="warn"><strong>读这个 22.6% 的正确姿势：</strong>它是「<strong>多数通过记录至少未过一项查核</strong>」，<strong>不是</strong>对 agent 的排名；<strong>仅在单一基准（ALE）上验证</strong>，每配置 13–20 条 pass、样本小且置信区间重叠，代码待录用后释放。</p>
+</section>
+
+<section>
+  <h2>7 · 边界辨析（与既有概念的接缝）</h2>
+  <table>
+    <thead><tr><th>对照</th><th>边界句</th></tr></thead>
+    <tbody>
+      <tr><td><code>[[AgentHarness]]</code></td><td><strong>机制 vs 见证</strong>——它跑循环，本页记录并评判那个循环。治理管「<strong>状态怎么变</strong>」，可观测管「<strong>这次运行到底发生了什么</strong>」：<strong>前者是策略，后者是证据</strong></td></tr>
+      <tr><td><code>[[Provenance]]</code> / <code>[[CitationLock]]</code> / <code>[[Abstention]]</code></td><td>这三条的<strong>对象都是模型说的话</strong>；本行的对象是<strong>系统实际做的事</strong>，并再往前扩到<strong>分数的溯源</strong>——同一条纪律，对象从「一句话」扩到「一次运行」再扩到「一个分数」</td></tr>
+      <tr><td><code>[[HumanInTheLoop]]</code></td><td>闸门<strong>需要</strong> escape rate，本页<strong>提供</strong>它。闸门是探测器<strong>下游</strong>：探测器在放行之前给出可疑度，闸门决定放不放行</td></tr>
+      <tr><td><code>[[MultiAgent]]</code></td><td>它说「<strong>验证器是协作的前提</strong>」；本行说「<strong>没有轨迹可见性，连验证器该验哪一步都定不出来</strong>」，而章 D 进一步要求<strong>验证器本身被验证</strong></td></tr>
+      <tr><td><code>[[AgentSandbox]]</code></td><td>容器边界限制「<strong>能碰到什么</strong>」；本页看「<strong>想干什么</strong>」——<strong>authority is not isolation</strong> 到 evidence 层的延伸</td></tr>
+      <tr><td>09-17「Agent Evals」</td><td><strong>看 / observe</strong> 与 <strong>判 / evaluate</strong> 是两个动词 ⇒ <strong>建议同页两章，勿各写一页</strong>（本页已合并）</td></tr>
+      <tr><td>09-25「评测经济学」</td><td>成本侧。本页章 C 与之同族——<strong>成本正是把判官从外部换到内部的主要动机</strong></td></tr>
+      <tr><td>09-28「记忆评测的可信度」</td><td><strong>基准的构造成立吗</strong> vs <strong>单次 pass 记录成立吗</strong>——同族，对象从「基准」缩到「一条记录」</td></tr>
+      <tr><td>10-11 训练—部署错配</td><td><strong>跑得完 ≠ 跑得好</strong>：那条管可靠性（持久化执行），本页管质量；两者<strong>互为替代指标是错的</strong>，但<strong>共用同一份 substrate——trace</strong>（见该篇场景 3「遥测即训练 substrate」）</td></tr>
+      <tr><td>外壳贡献的可测量化<br />（见 <code>agent-training-loop.html</code> 第 4 章）</td><td><strong>一个更前置的混淆变量</strong>：同一个骨干换一套外壳能移动 <strong>7–18 分</strong> ⇒ <strong>任何不含外壳的分数都不可比</strong>；评测报告必须把外壳一起报出来</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>8 · 可直接引用的判据句</h2>
+  <ul>
+    <li><strong>Trace 答「发生了什么」，eval 答「做得好不好」。</strong></li>
+    <li><strong>有标准 ≠ 标准稳定。</strong>（OTel GenAI 全 Development、zero tagged releases）</li>
+    <li><strong>看得见 ≠ 读得懂——observability envelope 是随运行长度收窄的量，不是定值。</strong></li>
+    <li><strong>约定标准化的是「调用长什么样」，不是「判断得好不好」。</strong></li>
+    <li><strong>衡量一个 agent 能做什么，与验证它是否真的做了，是两个不同的问题，而现有 benchmark 只处理前者。</strong></li>
+    <li><strong>裁判也是模型——分数是给人看的信号，不是裁决。</strong></li>
+    <li><strong>「agent 的自述」与「实际发生」必须分栏。</strong></li>
+    <li><strong>模型得分从来不是一个可与外壳剥离的读数。</strong></li>
+  </ul>
+</section>
+
+<section>
+  <h2>9 · 你会怎么用它（自查清单）</h2>
+  <ol>
+    <li><strong>先装记录层，再谈 eval。</strong>没有 trace 的 eval 只能评最终产物，评不了路径；而路径恰恰是 agent 与单次生成最大的差别。</li>
+    <li><strong>把「痕迹是否可读」当成一条会随时间衰减的预算。</strong>envelope 随 transcript 长度收窄 ⇒ 长周期任务在设计阶段就规划 evaluation-family configuration，别等事后翻数百页 transcript。</li>
+    <li><strong>任何评测报告连同外壳一起报告。</strong>理由见 <code>agent-training-loop.html</code> 第 4 章：同一骨干换外壳可移动 7–18 分。<strong>不报外壳的分数不可比。</strong></li>
+    <li><strong>分数的旁边养一层「评测的评测」。</strong>最低成本起步：<strong>D1（重跑评分代码）+ D4（重跑 agent 看分数带）</strong>——这两条不需要任何厂商支持。</li>
+    <li><strong>prompt / response 内容默认是 Opt-In。</strong>开之前先定留存与脱敏策略，这是上线后最常见的返工点。</li>
+    <li><strong>判官选型先算清楚多少钱。</strong>三档并列对照：全量外部重读（$10,000 量级）/ 便宜模型逐步检查（$233 量级）/ 内部探针按需升级（$51 量级，⚠️ 厂商自报）。</li>
+    <li><strong>别让 LLM 裁判做唯一判官。</strong>章 D 的 D2 / D3 走确定性规则 + 存档 artifact，而不是再找另一个模型。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>10 · 来源（均为 WebSearch 真实返回 [verified]）</h2>
+  <ol>
+    <li><strong>OTel GenAI 语义约定总览</strong> —— <code>https://agentsurface.dev/docs/testing/observability</code>（关键 span、<strong>全部标注 Development</strong>、<code>gen_ai.*</code> 属性示例含 <code>gen_ai.response.model</code>）</li>
+    <li><strong>semconv v1.42.0（2026-06-12）迁出主仓</strong> + 「standardize what a model call looks like … <strong>say nothing about evaluation scores</strong>」原句 —— <code>https://ossaihub.com/glossary/genai-semantic-conventions</code></li>
+    <li><strong>超越延迟/错误率的新 SLI</strong> + 实测开销 12%（AgentOps）/ 15%（Langfuse）—— <code>https://www.infoworld.com/article/4228328/observability-for-ai-native-systems-new-slis-beyond-latency-and-error-rate.html</code></li>
+    <li><strong>agent span 动词 + MCP 专用约定 + Dynatrace 2026-08 收购 Arize</strong> —— <code>https://www.aurorasre.ai/blog/opentelemetry-ai-agent-observability</code></li>
+    <li><strong>OpenInference 六类 span</strong>（LLM / CHAIN / TOOL / RETRIEVER / EMBEDDING / AGENT）—— <code>https://alicelabs.ai/en/insights/ai-agent-observability-guide-2026</code></li>
+    <li><strong>Transect</strong>（arXiv:2610.08364，v1 2026-10-06 / v2 10-08，27 页，开源，构建于 Inspect Scout；约 1,300 万 token 演示）—— <code>https://arxiv.org/abs/2610.08364</code></li>
+    <li><strong>AgentRx</strong>（Microsoft Research，EMNLP Findings 2026，2026-10-02 上线；+75% 步骤定位）—— <code>https://www.ainewsbank.com/posts/microsoft-agentrx-agent-failure-diagnosis</code></li>
+    <li><strong>New Relic AI Evaluation</strong>（挂进 OTel trace；RAG faithfulness / answer relevancy）—— <code>https://www.codesprintconsulting.com/blog/new-relic-ai-evaluation-agent-traces</code></li>
+    <li><strong>OTel GenAI agent span 进入产品面</strong>（Sentry JS SDK，2026-10-09；agent span 文档 Development、prompt/response 为 Opt-In）—— <code>https://releases.sh/release/rel_37zrekCSpwkcS226ur0_F-agent-tracing-expands-to-eve-mastra-flue-mcp-servers-auto-instrument</code></li>
+    <li><strong>Goodfire「由内而外」监控器</strong>（$51 / $233 / $10,000、94%、8.7%、&lt;2%，<strong>厂商自报须降级</strong>）—— <code>https://startupfortune.com/goodfire-launches-cheap-monitors-that-watch-ai-agents-think-before-they-act</code>；<strong>降级提醒与复现要求</strong>见 <code>https://www.explainx.ai/blog/goodfire-inside-out-monitors-activation-probes-rogue-agents-baseten-kimi-k3-2026</code></li>
+    <li><strong>arXiv:2610.02066</strong>（跨模型观察者；「self-detection is not the ceiling」）—— <code>https://export.arxiv.org/abs/2610.02066</code></li>
+    <li><strong>arXiv:2610.07274《A Trust Layer for Agent Evaluation》</strong>（D1–D4；22.6%、18–46%、n=84）—— <code>https://arxiv.org/abs/2610.07274</code> · <code>https://arcxiv.org/abs/2610.07274</code> · <code>https://heatpulse.cc/event/a-trust-layer-for-agent-evaluation-051fa2aa</code></li>
+    <li>「agent 自述 vs 实际发生」同族：<code>AgentAbstain</code> 59.5%（arXiv:2607.10059v1）与文件审阅基准 67.9% / 80.4%（arXiv:2609.20812v3），经 <code>https://quidproquo.cc/posts/daily/2026-10-08-ai-agent-arxiv-digest-en</code> 与 <code>https://agentpatterns.ai/patterns/anti-patterns/empty-commitments</code> 检索；Anthropic 四类安静失效模式（<strong>二手，已降级</strong>）—— <code>https://www.ai.jp.net/article/anthropic-measures-four-quiet-ai-failure-modes-before-they-become-accidents-6afc5c</code></li>
+  </ol>
+</section>
+
+<footer>
+草稿 · <code>output/pending-review/agent-observability.html</code> · 生成于 2026-10-15 · 由台账 10-08「智能体可观测性与评测」⭐ 与 09-17「智能体评测 / Agent Evals」两行合并成文 · 受 README 人工核查承诺约束，<strong>未写入 <code>learning-materials/</code></strong>
+</footer>
+
+</div>
+</body>
+</html>
