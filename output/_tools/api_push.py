@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import pathlib
 import re
 import subprocess
@@ -156,30 +157,54 @@ def commit_meta(sha: str) -> dict:
     }
 
 
+HTTPS_REMOTE = f"https://github.com/{OWNER_REPO}.git"
+
+
 def align_local_to_remote(remote_head: str) -> None:
-    """把本地 BRANCH（以及 origin/BRANCH）指向刚刚推送成功的那次 commit。
+    """把本地 BRANCH（以及 origin/BRANCH）对齐到刚推上去的那次 commit。
 
-    走 API 重建 commit 对象，所以远端 sha 与本地 sha 天然不同（tree 一致）。
-    若不对齐，本地分支会永远停在旧 sha 上：`git status` 报出假的
-    "ahead/behind"，还会诱使人手动跑一次 `git push` —— 那正是本脚本要消灭的
-    分叉。对齐之后只有一个推送方（本脚本）、一个事实来源（远端）。
+    走 API 重建出来的 commit 只长在远端，本地对象库里没有它，所以不能直接
+    update-ref（git 会以 "nonexistent object" 拒绝）——必须先把对象取回来。
+    取回走 HTTPS，因为本机的 SSH 22 常年被拒、git 协议也时通时断；
+    凭据由已修好的 store 助手提供。
+
+    取不回来（git 传输被阻断）时只提示、绝不报错：推送本身已经成功，
+    下次网络可用时再跑一次本脚本就会自动抹平 —— 那时这条提前返回路径
+    同样会执行对齐。
     """
-    git("update-ref", f"refs/remotes/origin/{BRANCH}", remote_head)
+    ref = f"refs/remotes/origin/{BRANCH}"
+    env = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+    try:
+        subprocess.run(["git", "fetch", "--no-tags", HTTPS_REMOTE, f"{BRANCH}:{ref}"],
+                       cwd=REPO_DIR, capture_output=True, env=env, timeout=90)
+    except subprocess.TimeoutExpired:
+        pass
 
-    on_branch = subprocess.run(
-        ["git", "symbolic-ref", "--quiet", "--short", "HEAD"],
-        cwd=REPO_DIR, capture_output=True)
+    fetched = None
+    got = subprocess.run(["git", "rev-parse", "--verify", "--quiet", ref],
+                         cwd=REPO_DIR, capture_output=True)
+    if got.returncode == 0:
+        fetched = got.stdout.decode().strip()
+
+    if fetched != remote_head:
+        print(f"  提示：本地对象库还没有远端 commit {remote_head[:8]}"
+              f"（git 传输当前不可用），本次跳过本地对齐。")
+        print(f"        推送本身已成功；网络恢复后重跑本脚本会自动抹平这个分叉。")
+        return
+
+    on_branch = subprocess.run(["git", "symbolic-ref", "--quiet", "--short", "HEAD"],
+                               cwd=REPO_DIR, capture_output=True)
     if on_branch.returncode != 0:
-        print(f"  当前处于 detached HEAD，仅更新 origin/{BRANCH}（本地 HEAD 未动）")
+        print(f"  远端对象已取回，origin/{BRANCH} 已更新（detached HEAD，未动本地分支）")
         return
 
     cur = on_branch.stdout.decode().strip()
     if cur != BRANCH:
-        print(f"  当前在分支 {cur}，仅更新 origin/{BRANCH}（未改动 {cur}）")
+        print(f"  远端对象已取回，origin/{BRANCH} 已更新（当前在 {cur}，未动该分支）")
         return
 
-    # 两侧内容一致（tree 相同），--keep 不会改动工作区，同时保住未提交的修改。
-    git("reset", "--keep", remote_head)
+    # 两侧 tree 相同，--keep 不会改动工作区，同时保住未提交的修改。
+    git("reset", "--keep", ref)
     print(f"  已把本地 {BRANCH} 对齐到远端 {remote_head[:8]}，git status 从此保持干净")
 
 
