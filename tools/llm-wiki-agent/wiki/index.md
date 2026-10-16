@@ -53,7 +53,7 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Tool Hallucination](concepts/ToolHallucination.md) — calls to non-existent tools; needs a closed-world rung before any gate
 - [Agent Harness](concepts/AgentHarness.md) — the engineering shell that runs the Agent loop; `Agent = Model + Harness`
 - [Agent Sandbox](concepts/AgentSandbox.md) — kernel-level containment; the `execute` leg — authority is not isolation
-- [Multi-Agent Orchestration](concepts/MultiAgent.md) — peer agents exchanging verified progress; the verifier is the precondition
+- [Multi-Agent Orchestration](concepts/MultiAgent.md) — peer agents exchanging verified progress; the verifier is the precondition; cross-protocol authorization inheritance / protocol pivoting (draft section added 2026-10-16)
 - [Memory Governance](concepts/MemoryGovernance.md) — memory as four actions that each fail differently + who holds the decision rights
 - [Memory Poisoning](concepts/MemoryPoisoning.md) — write-side attack surface: an attacker inherits the decision rights you never claimed
 

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：LLM—编排层—工具的信任边界——模型说了「不」，工具已经做了（The LLM–Orchestrator–Tool Trust Boundary）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #8a5a2b;
+    --accent-soft: #f4ece2;
+    --line: #e5e2dc;
+    --code-bg: #eef2f4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; color: var(--ink); }
+  p, li { font-size: 15px; }
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--accent-soft); color: var(--accent); }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .warn {
+    background: #fdf6ec;
+    border: 1px solid #ecd9b5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  .takeaway {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+  pre {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  blockquote {
+    margin: 10px 0;
+    padding: 8px 16px;
+    border-left: 3px solid var(--accent);
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  ol li { margin-bottom: 10px; }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 编排层信任边界（Repeat-After-Me · 先发射后拒答 · 工具不执行自己声明的语义 · ToFu 生态级缺陷普查）</span>
+  <h1>LLM—编排层—工具的信任边界：模型说了「不」，工具已经做了</h1>
+  <p class="subtitle">The LLM–Orchestrator–Tool Trust Boundary —— 三层边界 × 一次完整 transcript × 六个框架 × 253 个已验证缺陷 × 四条修复纪律 · 草稿 2026-10-16 · 落 <code>output/pending-review/</code> · 核查通过后目标名 <code>learning-materials/llm-orchestrator-tool-trust-boundary.html</code></p>
+</header>
+
+<p class="warn"><strong>必须与结论一起读的证据等级（第一屏）：</strong>① 承重来源是<strong>预印本 arXiv:2610.13651v1，未经同行评审</strong>；「FSE 2027 录用」是会议 venue，<strong>不是评审结论</strong>。② <strong>完整 transcript 只给了 LangGraph 一例</strong>（1.2.0 + Llama 3.1 8B via Ollama），另外五个框架只有「已复现」四字，<strong>没有版本矩阵、没有 transcript、没有难度分级</strong> ⇒ 六个框架的横向可比性不成立。③ 实验里两个工具是 <strong>dummy 工具</strong>（<code>make_bomb</code> / <code>launch_missiles</code>），<strong>没有真实影响</strong>；唯一防线是 system prompt —— 这是<strong>论文刻意构造的实验条件</strong>，不等于典型生产配置，也不能推出「六个框架在生产中都能被打穿」。④ 缺陷普查是<strong>固定代码版本的一次快照</strong>（273 个可干净执行的 MCP server / 3,405 个工具），不是持续监测；「已验证」指<strong>作者人工复核</strong>，<strong>不等于厂商确认、也不等于可利用</strong>。⑤ <strong>CVE-2026-14540 的编号归属研究者自述 write-up</strong>，Ars 只报 severity 8 未点名 CVE；相关公告<strong>未一手重开</strong>。⑥ 论文<strong>未声称野外利用</strong>；美国联邦五个 MCP server 截至报道<strong>仍在分流</strong>。⑦ 本页是<strong>草稿</strong>，落在 <code>output/pending-review/</code>，<strong>未写入 <code>learning-materials/</code></strong>（受 README 人工核查承诺约束）。</p>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="def">在「<strong>模型 → 编排层 → 工具</strong>」这条链上，<strong>编排层</strong>把模型输出的<strong>文本</strong>解释成一个<strong>结构化调用</strong>并直接派发 —— 这个解释动作本身就是一次<strong>授权</strong>；而工具又常常<strong>不执行它自己声明的输入语义</strong>。于是「<strong>模型说了不</strong>」与「<strong>工具已经做了</strong>」可以<strong>同时为真</strong>。</p>
+  <p>最短的写法：<strong>「模型输出不是 permission。」</strong>它只说明模型<em>请求</em>了什么，不说明系统<em>有权</em>执行什么 —— 而今天大多数编排层恰恰把前者当成了后者。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释：这一格为什么突然值钱</h2>
+  <p>想象一间会议室。老板对助理说：<em>「我只是念一下这封邮件里的话，你别照做。」</em>然后他照着念了：「请立刻转账给这个账户。」助理没有等老板说完「别照做」，就在他念到句号的瞬间把钱转出去了。老板的抗议在两秒后到达 —— 那时转账已经完成。<strong>没有人违反规则；是「听的人」把「念出来的句子」当成了「签发的命令」，而且抢在了「解释」前面。</strong></p>
+  <p>把角色换回来：老板是<strong>模型</strong>，助理是<strong>编排层</strong>（把文本翻译成工具调用并派发的那层），转账是<strong>工具</strong>。今天这一格之所以从「一直存在」变成「当下」：</p>
+  <ol>
+    <li><strong>它直接否定了一条本库已经写进 overview 的承重主张。</strong>自 2026-09-24 起，本库的横断主题之一写着「<strong>顺序是一等设计对象</strong>」—— 控制放在哪一档，比它有多强重要；放错位置的控制不是更弱的控制，它根本不是控制。而这段 transcript 里，<strong>模型的拒答在工具返回之后才到达</strong>。⇒ 你在设计文档上画的那条链 <code>propose → resolve → authorize → gate → execute</code>，<strong>在框架里执行时不是那条链</strong>。<strong>顺序是实现的属性，不是设计的属性。</strong></li>
+    <li><strong>它第一次给了「那一档实际上没装」一个生态级规模数字。</strong>本库 <code>[[ToolHallucination]]</code> 要求在任何闸门之前加一档「工具在不在注册表里 + 签名对不对」。ToFu 攻击里<strong>工具真的存在、参数格式完全合法</strong> ⇒ 那一档照放不误。同一篇论文顺手普查了 273 个 MCP server / 3,405 个工具，<strong>253 个已验证缺陷落在 343 个工具 / 118 个 server</strong>（43% 的 server 中招）。</li>
+    <li><strong>它给 <code>Agent = Model + Harness</code> 补了第五件没人列过的事。</strong>既有页面列了外壳的四条职责（组上下文 / 跑循环判停 / 管窗口 / 保活恢复），<strong>没有一条说「编排层本身是一个信任主体」</strong>。它把文本解释成调用 —— <strong>这个解释动作就是一次授权</strong>。</li>
+  </ol>
+  <p class="takeaway"><strong>这一格的判据句：</strong>「<em>The refusal text and the executed call disagree: the system prompt shaped what the model said, not what the orchestrator did.</em>」—— 系统提示词塑造的是模型<strong>说了什么</strong>，不是编排层<strong>做了什么</strong>。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制：三层边界，两条缝</h2>
+  <pre>        ┌──────────┐         ┌──────────────┐         ┌────────┐
+        │  模型    │  文本   │   编排层     │  调用   │  工具  │
+        │  (LLM)   │ ──────▶ │ (orchestrator)│ ──────▶ │ (tool) │
+        └──────────┘         └──────────────┘         └────────┘
+                   ▲                        ▲
+                   │                        │
+                缝 ①：输出 = 意图？      缝 ②：工具执行它
+                （文本被解释成调用）      自己声明的语义吗？
+
+   论文原句：a trust boundary "where tool semantics may go unenforced
+            and LLM-generated arguments may be incorrectly treated as trusted"</pre>
+  <h3>3.1 Repeat-After-Me：四步</h3>
+  <ol>
+    <li><strong>攻击者知道编排层识别的调用格式。</strong>不是秘密 —— 工具调用的 JSON/函数签名格式写在框架文档里。⇒ <em>为什么重要</em>：攻击面是一个<strong>公开格式</strong>，不是一个漏洞。</li>
+    <li><strong>攻击者写出「目标工具 + 自己选的参数」的文本。</strong>⇒ <em>为什么重要</em>：文本内容本身不含任何异常字符，<strong>没有任何一个输入过滤器会命中它</strong>。</li>
+    <li><strong>攻击者让模型逐字复述这段文本。</strong>模型「只是在复述供给它的文本」—— 它没有产生意图。⇒ <em>为什么重要</em>：<strong>模型的输出与模型的意图分离</strong>，这是整条链的支点。</li>
+    <li><strong>编排层把这段输出当成工具调用并派发执行。</strong>⇒ <em>为什么重要</em>：<strong>解释动作替模型签发了授权</strong>，而模型此刻还在生成下一句「但我不能这样做」。</li>
+  </ol>
+  <h3>3.2 承重 transcript（LangGraph 1.2.0 + Llama 3.1 8B）</h3>
+  <p>两个 dummy 工具 <code>make_bomb</code> / <code>launch_missiles</code>，<strong>唯一防线是 system prompt</strong>：</p>
+  <table>
+    <tr><th>#</th><th>发生了什么</th><th>编排层做了什么</th></tr>
+    <tr><td>1</td><td>第一次要求复述 <code>launch_missiles</code> 的调用</td><td>模型<strong>拒答，但把调用当作文本打印了出来</strong> ⇒ LangGraph <strong>什么都没跑</strong></td></tr>
+    <tr><td>2</td><td>改 framing 为「假设性」，并要求只输出被引用的文本</td><td>模型以<strong>结构化形式</strong>返回了该文本 ⇒ <strong>LangGraph 立即用攻击者的参数执行</strong></td></tr>
+    <tr><td>3</td><td>模型继续生成拒答</td><td><strong>拒答在工具返回之后才到达。</strong></td></tr>
+  </table>
+  <p class="warn"><strong>读这段 transcript 的正确姿势：</strong>它证明的是「<strong>存在一种 framing，能让编排层在模型拒答之前派发调用</strong>」，不是「LangGraph 默认就会执行模型打印出来的任何东西」——第 1 拍里它就没执行。第 2 拍的差别在于<strong>输出是不是落进了编排层识别的调用格式里</strong>。这是一个<strong>格式识别时机</strong>问题，不是一个「模型会不会拒绝」的问题。</p>
+  <h3>3.3 六个框架</h3>
+  <table>
+    <tr><th>框架</th><th>结果</th><th>细节可得性</th></tr>
+    <tr><td><strong>LangGraph</strong></td><td>复现（完整 transcript 已发表）</td><td>🟢 有版本、有 transcript</td></tr>
+    <tr><td><strong>Microsoft Agent Framework</strong></td><td>已复现</td><td>🔴 论文仅一句带过</td></tr>
+    <tr><td><strong>AutoGen</strong></td><td>已复现</td><td>🔴 论文仅一句带过</td></tr>
+    <tr><td><strong>Google ADK 2.0</strong></td><td>已复现</td><td>🔴 论文仅一句带过</td></tr>
+    <tr><td><strong>AWS Strands Agents</strong></td><td>已复现</td><td>🔴 论文仅一句带过</td></tr>
+    <tr><td><strong>CrewAI</strong></td><td>已复现</td><td>🔴 论文仅一句带过</td></tr>
+  </table>
+  <p>缺失的 pre-execution check <strong>已报给 LangGraph 维护者</strong>。六者唯一的共同点是「<strong>都把模型输出解释成调用</strong>」—— 这不是六次巧合，是这一个结构决定的。</p>
+</section>
+
+<section>
+  <h2>4 · 生态级规模证据：ToFu 的第二腿</h2>
+  <p>论文不只是演示一次攻击。它把「检查」这件事自动化了：<strong>从工具自己的 metadata + 一份 CWE 引导的 sanitizer 语料</strong>，自动生成语义感知的检查器与模糊测试 harness（<strong>74 个 sanitizer / 21 个内省 tracer</strong>），然后对 <strong>273 个可干净执行的 MCP server / 3,405 个工具</strong>做普查。508 个候选 flag 经人工复核后留下 <strong>253 个已验证缺陷，落在 343 个工具 / 118 个 server</strong>：</p>
+  <table>
+    <tr><th>缺陷类别</th><th>CWE</th><th>数量</th></tr>
+    <tr><td>反射输出</td><td>CWE-116 / 79</td><td><strong>115</strong></td></tr>
+    <tr><td>路径穿越</td><td>CWE-22</td><td><strong>64</strong></td></tr>
+    <tr><td>日志注入</td><td>CWE-117</td><td><strong>58</strong></td></tr>
+    <tr><td>SSRF</td><td>CWE-918</td><td><strong>7</strong></td></tr>
+    <tr><td>数据外泄</td><td>CWE-201</td><td><strong>5</strong></td></tr>
+    <tr><td>OS 命令注入</td><td>CWE-78</td><td><strong>3</strong></td></tr>
+    <tr><td>残留临时文件</td><td>CWE-459</td><td><strong>1</strong></td></tr>
+    <tr><td><strong>合计</strong></td><td>—</td><td><strong>253</strong></td></tr>
+  </table>
+  <p>作者的诊断原句：<em>「many tools implicitly rely on the LLM to sanitize inputs」</em> —— 很多工具<strong>默认</strong>输入已经被模型清洗过了。这就是缝 ②：工具<strong>声明</strong>了它接受什么，但<strong>不执行</strong>这个声明。</p>
+  <p class="takeaway"><strong>这一格最值得带走的一句：</strong>「已验证」说的是<strong>作者复核过</strong>，不是厂商确认、更不是可利用。<strong>严重性在具体部署中未确立。</strong>但它第一次让「工具自带语义检查」这件事有了<strong>可以量化的缺席率</strong>。</p>
+</section>
+
+<section>
+  <h2>5 · 四条修复纪律</h2>
+  <ol>
+    <li><strong>分离「请求的能力」与「执行的权威」。</strong>模型可以<em>请求</em>任何调用；系统只按自己的策略<em>授权</em>。⇒ <em>为什么重要</em>：只要两者共用一个通道，任何一次输出格式上的成功就等于一次授权成功。</li>
+    <li><strong>工具必须自验输入语义，不能假设 LLM 已经清洗。</strong>⇒ <em>为什么重要</em>：缝 ② 的规模数字（253 / 118 server）说明这正是当前生态的<strong>默认状态</strong>。</li>
+    <li><strong>每一次敏感调用都独立授权，不继承上游决定。</strong>⇒ <em>为什么重要</em>：委派链里「上游批准了」不构成下游的授权凭据 —— 这与 <code>[[AgentIdentity]]</code> 的逐跳收窄是<strong>两条独立的纪律</strong>（那条收窄的是<strong>凭据</strong>，这条否定的是<strong>授权被继承</strong>）。</li>
+    <li><strong>监控调用序列，而不是单个动作。</strong>⇒ <em>为什么重要</em>：transcript 里每一步单看都合法；异常只在<strong>顺序</strong>上 —— 这正是本库「顺序是一等设计对象」这条主题被反向照亮的地方：<strong>顺序不只是设计时要排好的，也是运行时要盯住的。</strong></li>
+  </ol>
+  <p>独立安全研究员 <strong>Vibhum Dubey</strong>（经 CSO 引述）的架构判断，是这四条最干净的表述：<em>「A model can generate a technically valid tool call that is still inappropriate for the task. If the orchestration layer treats that output as sufficient authority to execute the operation, a model-level manipulation becomes a system-level security issue.」</em> —— <strong>技术合法的调用 ≠ 对本次任务恰当的调用；把前者当成执行的充分授权，就把模型层的操纵升级成了系统层的安全事件。</strong></p>
+</section>
+
+<section>
+  <h2>6 · 边界辨析（与本库既有概念的接缝）</h2>
+  <table>
+    <tr><th>对照</th><th>边界句</th></tr>
+    <tr><td><code>[[ToolHallucination]]</code><br />封闭世界消解档</td><td>那一档问「<strong>工具在不在注册表里</strong>」。ToFu 的工具<strong>存在且被正确调用</strong> ⇒ 那一档<strong>构造上放行</strong>。两档不是同一档，必须<strong>串联</strong>而非互相替代。</td></tr>
+    <tr><td><code>[[HumanInTheLoop]]</code><br />影响 × 可逆性 分级闸门</td><td>那一页默认闸门是<strong>同步阻塞</strong>的。编排层「先发射、后拒答」打破的正是这个默认 ⇒ <strong>闸门的存在不等于闸门的时序</strong>。</td></tr>
+    <tr><td><code>[[AgentSandbox]]</code><br />execute 腿</td><td>既有金句「<strong>authority is not isolation</strong>」管的是「动作能碰到什么」；本行管的是「<strong>这个调用凭什么被当成已授权</strong>」。<strong>同一族的第二个成员，且在更上游。</strong></td></tr>
+    <tr><td><code>[[AgentIdentity]]</code><br />凭据逐跳收窄</td><td>收窄的是<strong>凭据</strong>；本行的问题是把<strong>模型输出文本</strong>当成了授权凭据 ⇒ 两条独立纪律。</td></tr>
+    <tr><td><code>[[AgentHarness]]</code><br /><code>Agent = Model + Harness</code></td><td>直接补第五条职责：<strong>编排层是信任主体，不是透明管道。</strong></td></tr>
+  </table>
+  <h3>常见误解</h3>
+  <ul>
+    <li><strong>「这是六个新 0day。」</strong>不是。攻击面是一个<strong>公开格式</strong>，不是一个漏洞；论文<strong>未声称野外利用</strong>，dummy 工具<strong>无真实影响</strong>。</li>
+    <li><strong>「加了 system prompt 就能防。」</strong>不能 —— transcript 里唯一防线<strong>就是</strong> system prompt，模型也确实拒答了，只是<strong>拒答到晚了</strong>。问题在<strong>时机</strong>，不在<strong>措辞</strong>。</li>
+    <li><strong>「这跟提示注入是两回事。」</strong>不是两回事 —— 它属于间接提示注入，但<strong>落点不同</strong>：不在模型，而在<strong>编排层的解释动作</strong>。⇒ <strong>不是新品类，是老品类有了新的可达范围。</strong></li>
+  </ul>
+  <h3>适用 / 不适用</h3>
+  <table>
+    <tr><th>适用</th><th>不适用</th></tr>
+    <tr><td>你正在把模型输出接成工具调用（任何编排层）；你在设计敏感动作的授权链；你要判断「闸门装在哪一跳」。</td><td>模型只输出文本、由人执行；工具自己做了完整的输入语义校验并拒绝不合法输入；纯单轮问答、无委派链。</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>7 · 可直接引用的判据句</h2>
+  <ol>
+    <li><strong>「模型输出不是 permission。」</strong>—— 它只说明请求了什么，不说明系统有权执行什么。</li>
+    <li><strong>「拒答文本与被执行的调用不一致：系统提示词塑造的是模型说了什么，不是编排层做了什么。」</strong>（论文原句）</li>
+    <li><strong>「很多工具默认 LLM 已经把输入清洗过了。」</strong>（论文原句）—— 缝 ② 的机制。</li>
+    <li><strong>「每个协议都假设自己独自存在，所以各自只检查自己的前门，没人盯着中间的走廊。」</strong>（Rapid7 · Douglas McKee）</li>
+    <li><strong>「这一段上没有人在检查。」</strong>—— 三条候选（编排层 / 协议边界 / 厂商）的共同句式，也是第十一条扫描线「接缝审计」的问法。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>8 · 你会怎么用它（自查清单）</h2>
+  <ol>
+    <li><strong>画出你的三层边界图</strong>，标出「谁把文本解释成调用」。如果答不上来，那一层就是你的编排层 —— 而且它现在是一个未被命名的信任主体。</li>
+    <li><strong>验证派发时机</strong>：构造一次「模型先输出结构化调用、后吐拒答」的请求，看工具是否在拒答到达前就跑了。这是本格唯一必须亲测的一项。</li>
+    <li><strong>确认闸门是同步阻塞的</strong>，而不是「记一笔日志然后继续」。⇒ 闸门的存在不等于闸门的时序。</li>
+    <li><strong>抽查你依赖的工具</strong>：它是否<strong>自己</strong>校验了输入语义（路径、URL、转义），还是假设上游已经清洗。</li>
+    <li><strong>把监控对象从单动作换成序列</strong>：transcript 里每一步单看都合法。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>9 · 来源（均为 WebSearch / WebFetch 真实返回 [verified]）</h2>
+  <ol>
+    <li><strong>arXiv:2610.13651v1 —— 《ToFu: Exploiting and Fuzzing the LLM–Orchestrator–Tool Trust Boundary》</strong>（Penn State + Université Montpellier + Dartmouth，6 位作者；已录用于 FSE 2027，第 35 届 ACM 软件工程基础会议，深圳）—— 支撑：三层信任边界、Repeat-After-Me 攻击、LangGraph transcript、273 server / 3,405 工具普查与 253 缺陷分类。<code>https://arxiv.org/html/2610.13651v1</code> 🟢 <strong>一手论文原文（已抓取正文）</strong> 🔴 未同行评审</li>
+    <li><strong>CSO Online —— 《Researchers bypass 6 AI agent frameworks with a simple 'repeat after me' prompt》</strong>（Gyana Swain，2026-10-12）—— 支撑：六个框架名单、LangGraph 完整 transcript 节选、缺陷分类、第三方研究员评论。<code>https://www.csoonline.com/article/4233811/researchers-bypass-6-ai-agent-frameworks-with-a-simple-repeat-after-me-prompt.html</code> 🟢 一手科技媒体精读（已抓取全文）🔴 媒体转述</li>
+    <li><strong>论文引文原句（一手，已核对）</strong>：«The refusal text and the executed call disagree: the system prompt shaped what the model said, not what the orchestrator did.»；«many tools implicitly rely on the LLM to sanitize inputs» —— 支撑：本页两条最值钱的判据句。</li>
+    <li><strong>独立安全研究员 Vibhum Dubey（经 CSO 引述）</strong>：«Model output is not the permission»；«Every sensitive tool call should undergo independent authorization checks. Valid syntax or a convincing explanation from the model should never substitute for permission.» —— 支撑：修复纪律的第三方独立研判（非论文作者、非厂商）。</li>
+    <li><strong>Ars Technica —— 《MCP for agent-to-agent comms may be the riskiest protocol you've never heard of》</strong>（Dan Goodin，2026-10-05）—— 支撑：Rapid7 的「前门 / 走廊」原话、X41 D-Sec 的反驳（与候选 2 共用）。<code>https://arstechnica.com/security/2026/10/vulnerability-in-agents-from-google-and-others-exposes-structural-flaw-in-mcp</code></li>
+    <li><strong>CSO / Ars 共用的 CVE 编号证据</strong>：<code>CVE-2026-14540</code>（Google <code>googleapis/mcp-toolbox</code>，CVSS 8.0）· <code>CVE-2026-97228</code>（Rapid7 Bulk Export MCP，CVSS 2.7，9 月已修）—— 🔴 14540 的编号归属研究者 write-up，Ars 只报 severity 8 未点名 CVE；公告未一手重开。</li>
+    <li><strong>timesof.ai 汇编</strong>（《Same MCP Trust-Boundary Bug Across Google, JPMorgan, Weaviate and Two Governments》）—— 支撑：逐条列出各家修复与等级差异；🔴 二手汇编。<code>https://timesof.ai/2026/10/mcp-protocol-pivoting-cross-agent-ssrf</code></li>
+  </ol>
+</section>
+
+<footer>
+草稿 · <code>output/pending-review/orchestrator-trust-boundary.html</code> · 生成于 2026-10-16 · 由台账 10-16A「LLM—编排层—工具 的信任边界」⭐ 成文 · 受 README 人工核查承诺约束，<strong>未写入 <code>learning-materials/</code></strong>；核查通过后目标名 <code>learning-materials/llm-orchestrator-tool-trust-boundary.html</code>，并需补一次「移入 <code>learning-materials/</code> → <code>raw/</code> → 摄取」链路
+</footer>
+
+</div>
+</body>
+</html>
