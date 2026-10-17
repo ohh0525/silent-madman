@@ -1,9 +1,9 @@
 ---
 title: "Memory Governance"
 type: concept
-tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy]
+tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation]
 sources: [memory-lifecycle, agent-memory-provenance]
-last_updated: 2026-10-09
+last_updated: 2026-10-17
 ---
 
 # Memory Governance
@@ -49,8 +49,32 @@ The middle row is why this is a *2026* page: the whole point of putting `DELETE`
 
 Bottom lines 1–3 govern *your own mistakes*; bottom line 4 governs *someone else's malice*. **The reliability discipline and the security discipline merge at the memory layer** — which is why [[MemoryPoisoning]] is a decider in the table above rather than a separate topic.
 
+> **Scope note — where the four bottom lines stop applying *(added 2026-10-17, ledger row 10-17A)*.** All four are written against a bank that is **enumerable**: auditable = *which entry changed*; rollbackable = *restore that entry*; permissioned = *who may write that entry*; signature-verified = *that entry's origin is signed*. **Remove enumerability and three of the four lose their conditions of statement** — only *signature-verified* survives, because signatures attach to the write, not to the entry. Concretely: **latent / soft-token memory** (see [[LongTermMemory]]「The third carrier」) stores state as learned vectors or merged weight updates with **no address** ⇒ you cannot audit *which* memory changed, roll back *that* memory, or grant permission *per* memory. **This is not a counterexample to the bottom lines; it is their boundary.** The design consequence is a new prior question, to be asked *before* the four: **is the thing being governed addressable at all — and if not, what replaces the audit?** A candidate replacement, currently untested: govern the **write event** (who/when/source, plus a pre-write and post-write behavioural diff) instead of the entry, since write events remain enumerable even when the stored state does not.
+
+## "Right answer" ≠ "right memory" — intrinsic vs extrinsic evaluation *(added 2026-10-17, ledger row 10-17B)*
+
+> **Draft annotation, pending ingest.** Two draft annotations below (this section and the open experiment) are **not yet backed by a source page in this wiki** — verified against live sources on 2026-10-17, recorded in `.workbuddy/memory/concept-radar/2026-10-17.md` (candidates 1–2; ledger rows **10-17A / 10-17B**). Remove this banner when the material is ingested and human-reviewed, and move the source slugs into the frontmatter `sources` field.
+
+**The instrument's own target.** This page's headline result — *gold-memory strong ⇒ full-pipeline collapse*, and [[DyadMem]]'s staged scores — is measured with **downstream QA accuracy** as the proxy for memory quality. **FEB-30** (`arXiv:2610.22209`, **2026-10-15**; Sebastian-Antonio Toma / Jean de Kernier / Mike Ply / Oliviu Matei; 14 pages; code and data at `github.com/amazon-science/feb-30-benchmark`) argues that proxy **conflates memory correctness with retrieval and generation quality** ⇒ **a right answer can mask a broken bank**, and **a wrong answer can convict a good one**.
+
+- **Method — a paradigm inversion.** Rather than labelling documents, it **generates documents backwards from known fact trajectories**, yielding **deterministic ground truth with no human annotation**: **30 fact-evolution trajectories × 6 diagnostic categories × 3 difficulty levels**. Each trajectory dictates how one fact should evolve **across multi-author artifacts** (documents / mail / conversation) ⇒ the memory store's **body can be opened and inspected after every single ingestion**.
+- **Results.** Intrinsic and extrinsic evaluation **diverge by 16 percentage points on average**; **44%** of trajectories exceed the meaningful-divergence threshold; of the four memory operations (create / update / reinforce / **supersede**) **only 20% are judged correct** — and that failure is **completely invisible to extrinsic evaluation**. Failure modes differ systematically by category and difficulty.
+- **Why this is a seam on *this* page and not a new topic.** FEB-30's operation taxonomy is nearly isomorphic to the four actions above (Capture / Update / Recall / QA) and to the trained-policy branch's **ADD · UPDATE · DELETE · NOOP** ⇒ **this is the first instrument that scores the operation layer directly**; everything before it had to infer the bank's state from the answer. It also sharpens `overview.md`'s open question ("Cluster F evidence is entirely author-reported; needs independent reproduction") into a harder form: **reproduce whether the ruler can see the failure, before reproducing the numbers.**
+
+**Boundaries.** vs [[DyadMem]] — that page supplies the **measurement skeleton** (Capture/Update/Recall + per-stage gold labels); this section critiques **the act of measuring itself**. vs ledger row 10-08「评测的评测」(`arXiv:2610.07274`, only **22.6%** of records pass four checks) — that row calibrates **the agent's score**; this row calibrates **the memory's operations**: the same metrology problem one layer down, **not a repeat page**. vs [[CitationLock]] — that page governs *what an answer may cite*; this governs *whether the object judged is the answer or the store's body*. vs ledger row 10-13「检索准入」— that row is the **read** side (semantically relevant ≠ usable now); this is the **write** side.
+
+⚠️ **Limits, must sit beside the conclusion:** demonstrated on a **single "representative" memory system**, **not a cross-system universal result**; 30 trajectories is a small scale; published days ago with **no independent replication**.
+
+### The open experiment these two rows define *(10-17A × 10-17B)*
+
+**One action, not two.** Point FEB-30's instrument — *fact evolution, with the store's body inspected after every ingestion* — at a **continuous / latent memory**. **No paper has done this**, and it is the place where compressed continuous storage is most likely to break on first principles: with no enumerable entries there is **no interface for "which older fact is being superseded"**, so `supersede` — the operation FEB-30 already finds correct only **20%** of the time in *addressable* stores — has nowhere to be performed at all.
+
+- **Predicted outcome (a hypothesis, not a result):** extrinsic scores stay competitive while intrinsic correctness collapses, i.e. the **16-point divergence widens** precisely where the numbers look best. That would make the divergence **a property of the carrier**, not of the system under test.
+- **Why it is worth doing here rather than anywhere else:** it is the only experiment that simultaneously tests this page's scope note (does governing **write events** replace governing entries?) and [[LongTermMemory]]'s load-bearing sentence (**you cannot cite a vector** — is that merely a citation problem, or also a *correctness* problem?).
+- **Minimum viable form:** take one FEB-30 trajectory set; run it through an addressable store (baseline) and a soft-token store (Memorilla-style or REMORY-style) at matched input budgets; score **both** intrinsically and extrinsically after each ingestion; report the divergence, not the leaderboard.
+
 ## Boundaries
-- **vs [[LongTermMemory]]** — that page is the **first half** of a memory's life (store it, split it by purpose, read it credibly); this page is the **second half** (update, forget, decide). Neither subsumes the other: you can have a perfectly sourced bank that is also a governance disaster.
+- **vs [[LongTermMemory]]** — that page is the **first half** of a memory's life (store it, split it by purpose, read it credibly); this page is the **second half** (update, forget, decide). Neither subsumes the other: you can have a perfectly sourced bank that is also a governance disaster. *(Its 2026-10-17 section「The third carrier」is this page's **applicability boundary**: non-addressable latent memory is where the four bottom lines below stop being statable.)*
 - **vs [[Compaction]]** — compaction is **inside** the window, per turn, lossy; governance is **outside** it, across sessions, offline, and does not participate in the current inference turn. Adjacent in one direction only: anything compaction drops that still matters should *land in long-term memory rather than evaporate*.
 - **vs [[Provenance]] / [[CitationLock]] / [[Abstention]]** — those are **entry and exit discipline** (writes carry origin; cite only what you opened; abstain without sourced evidence); this is the **whole lifecycle in between**. Not redundant: **a clean entry does not imply a clean lifecycle** — PMPA's payload arrives inside a benign document wearing legitimate provenance. (`ABSTAIN` on incomplete recall is this page *reusing* [[Abstention]], the way [[ContextEngineering]] reuses [[ProgressiveDisclosure]].)
 - **vs a bigger context window** — window is capacity; governance is structure and discipline. The counter-evidence is directional and specific: **Gold-Memory strong ⇒ Full-Pipeline collapse** means the bottleneck is the four actions, not the fit.

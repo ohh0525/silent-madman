@@ -1,9 +1,9 @@
 ---
 title: "Multi-Agent Orchestration"
 type: concept
-tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting]
+tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric]
 sources: [multi-agent]
-last_updated: 2026-10-16
+last_updated: 2026-10-17
 ---
 
 # Multi-Agent Orchestration (多智能体协作)
@@ -41,6 +41,24 @@ Multiple agents with **independent context windows** working on one goal: exchan
 **Family note:** "*authority is not isolation*" ([[AgentSandbox]], execution side) · "*model output is not the permission*" (orchestration side, 10-16A) · "*access is not authority*" (protocol side, this row) — **three members of one family, one layer apart each**; the shared sentence is **"nobody is checking this stretch."**
 
 ⚠️ **Evidence grade:** pattern-level, largely the researcher's own framing amplified by Ars Technica (Dan Goodin, **2026-10-05**); **CVE-2026-14540** is attributed to his self-published write-up (Ars reports severity 8 **without naming the CVE**); **advisories were not re-opened first-hand** here; federal findings are **unpatched / in triage, class-level only**; **every named bug is already fixed** — what is new is the cross-vendor *pattern*, not a zero-day. Presented at **MCPCon North America, 2026-10-23**.
+
+### The missing second half of this section — Substrate-Centric Coordination (ScaleMAS) *(added 2026-10-17, ledger row 10-17C)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-17 (recorded in `.workbuddy/memory/concept-radar/2026-10-17.md`, candidate 3; ledger row **10-17C**). Kept **inside this section on purpose** (yesterday proved the failure exists, today supplies its shape; splitting them would let the two halves of one page drift apart).
+
+**The gap this fills.** The section above establishes with CVE-grade evidence that **cross-agent contamination happens** — and offers **no proposal about shape**. ScaleMAS supplies the shape: **do not share a peer's output as context; make it a message that can be published, cited, retrieved by "relevance × citation count", and fetched by address.**
+
+1. **Three problems that grow with group size** (`arXiv:2610.16120`, submitted **2026-10-12**; Zhenting Qi (Harvard) with Zhuokai Zhao / Rulin Shao / Kerem Oktar / Zhiyuan Yao / Himabindu Lakkaraju / Wen-tau Yih / Ansong Ni / Bhargavi Paranjape / Yilun Du — **FAIR at Meta + Harvard**): **read burden** grows with the group (message passing hands every sender's output to the receiver; an orchestrator routes every sub-agent result into one context) · **useful signal is diluted by shared work of unknown quality** · **failure becomes normal** (fixed workflow or single orchestrator ⇒ losing one member breaks the run). Diagnosed as a product of **agent-centric design**.
+2. **The key judgement:** existing **blackboard-style** shared middle layers solve **only the third** of these (tolerance to agent failure). The first two remain — which is why "we already have a shared workspace" is not an answer.
+3. **The mechanism — three operations over a *linked* message store:** **publish** (optionally carrying **citations to the messages it depends on**) · **search** (top-*k*, ranked by **relevance × citation count** — the authors find the latter to be an effective quality proxy) · **fetch by address**. Two consequences do the work: a bounded *k* makes **each agent's read volume bounded at any group size**, and messages persist after their producer leaves ⇒ **the team tolerates mid-run loss**.
+4. **Results:** beats both **agent-centric** and **blackboard** baselines on four agentic tasks **at lower inference compute**, scaling to **128 agents**. The control is the number to remember: the orchestrator-style **AOrchestra loses more than half its score at only 20% agent drop-out**.
+
+**What this repairs on the wiki.**
+- **[[Provenance]] promoted from *after-the-fact audit* to *in-flight coordination*.** Citation count becomes a **ranking signal**, which is the runnable form of the prediction `overview.md` has carried since 2026-09-26 (that Provenance's object must expand from *a fact* to *the verification status of the conclusion you are treating as fact*).
+- **A second form of [[Abstention]]:** top-*k* bounded reading is **architectural forced abstention** — the agent never sees the rest — as distinct from abstention *after* judgement. The wiki previously had only the latter.
+- **The counterpart to the rows above:** 10-16B says *task content inherits upstream authority*; the countermeasure here is ***task content must arrive in citable form***. vs [[ContextEngineering]] — that page is bounded reading for a **single** principal; this is the **multi-principal** version.
+
+⚠️ **Author-stated limits:** inference-time only (agents were **not trained** to use the substrate); **128 is a compute ceiling, not an architectural one**; **prompt-sensitive** — it depends on agents writing retrievable rationales and subtask descriptions.
 
 ## Why It Matters
 - **It is the wiki's first "between agents" page.** All 39 prior pages and both connection diagrams describe a single agent; this page opens the space dimension the wiki had never covered.
