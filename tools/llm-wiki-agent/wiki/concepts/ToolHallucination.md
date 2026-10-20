@@ -3,7 +3,7 @@ title: "Tool Hallucination"
 type: concept
 tags: [tool-hallucination, closed-world, mcp, reliability]
 sources: [tool-hallucination]
-last_updated: 2026-09-24
+last_updated: 2026-10-20
 ---
 
 # Tool Hallucination (Closed-World Resolution)
@@ -22,6 +22,8 @@ An agent invoking a tool that **does not exist in the registry**, or passing arg
 - **Not permission gating, and not replaceable by it** — an upstream/downstream pair, not alternatives: `resolve()` **then** `policy.allows()`. Same ordering with respect to [[AgentIdentity]]: identity answers *may you*, the rung answers *does it exist*.
 - **Not a parse error** — malformed JSON is caught by a parser for the price of a retry; a **syntactically valid** call to a non-existent tool passes every format check. For an agent that can act, that is an **unbounded action**, not a formatting mistake.
 - **Not "a bigger model will fix it"** — measurement puts a **675B** model on par with a **7–8B** model here. Reading it as a capability problem leads to the wrong roadmap (keep buying scale) instead of the right one (add a fact-check layer).
+
+> **Scope note — what closed-world resolution does *not* buy you *(ledger row 10-19A; applied 2026-10-20)*.** This page's criterion is **does the tool exist**. TRACER (`arXiv:2610.19133`) holds the malicious payload fixed and varies only the vessel it arrives in: follow-up message **70%** → agent message **92%** → **tool output 95%** → retrieved context **96%**. A **real** tool returning the payload is a **95%** channel ⇒ **existence is not the variable.** Closed-world resolution still earns its place — it removes the non-existent fraction, which is exactly what this page was built to do — but it is **not sufficient** as an injection defence. **Record this as a boundary, not a counterexample:** the resolution rung never claimed to inspect payload *content*, only tool *existence*. (Same convention as the 2026-10-17 scope note on [[MemoryGovernance]]'s four bottom lines — the rule was not refuted; it stops being the whole answer.) ⚠️ The gradient figures are second-hand pending a check against arXiv figures 3 / 4 — see [[Provenance]]「Evidence's outer garment」for the full evidence grade.
 
 ## Why It Matters
 - It is the *factual premise* the rest of the actor-side stack silently assumes. Every downstream control — [[AgentIdentity]]'s authority check, [[HumanInTheLoop]]'s gate, least privilege, audit — is defined relative to a set of real tools. This page is what makes that set **closed and checkable**.

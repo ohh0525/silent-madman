@@ -264,3 +264,19 @@ grep "^## \[" wiki/log.md | tail -10
 ```
 
 Operations: `ingest`, `query`, `health`, `lint`, `graph`
+
+---
+
+## Scan-Line Register — external single source of truth
+
+The numbered **「扫描线 / scan-line」** questions used to find gaps in this wiki (audit / inventory questions such as *"whose state is this?"*, *"is it addressable?"*, *"does this verb actually work?"*) are **not** maintained inside this repo.
+
+**Canonical register:** `.workbuddy/memory/concept-radar/SCAN-LINES.md`
+
+Three rules, inherited from that file — obey them when touching anything under `wiki/`:
+
+1. **Numbers are append-only, never renumbered.** Even if a line's category or wording later looks wrong, do not re-sort; add a remark in the register instead.
+2. **New line ⇒ register first, cite afterwards.** Append the row in `SCAN-LINES.md` to obtain the number **before** citing it anywhere else.
+3. **When citing, write「第 N 条（见 `SCAN-LINES.md`）」and point at the file** — **never inline the full sequence** into a wiki page, `concept-relationship.md`, or a report. Restating the sequence locally is the documented root cause of the four divergent versions that existed before the register was created on 2026-10-18.
+
+> Rationale: each scan line was originally defined inside the day's narrative and then re-quoted from memory elsewhere. Narrative is append-only; quotation is restatement — so the two necessarily drift. The register separates **definition** from **citation**.

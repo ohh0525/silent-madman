@@ -1,9 +1,9 @@
 ---
 title: "Multi-Agent Orchestration"
 type: concept
-tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric]
+tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric, repair-gap]
 sources: [multi-agent]
-last_updated: 2026-10-17
+last_updated: 2026-10-20
 ---
 
 # Multi-Agent Orchestration (多智能体协作)
@@ -59,6 +59,31 @@ Multiple agents with **independent context windows** working on one goal: exchan
 - **The counterpart to the rows above:** 10-16B says *task content inherits upstream authority*; the countermeasure here is ***task content must arrive in citable form***. vs [[ContextEngineering]] — that page is bounded reading for a **single** principal; this is the **multi-principal** version.
 
 ⚠️ **Author-stated limits:** inference-time only (agents were **not trained** to use the substrate); **128 is a compute ceiling, not an architectural one**; **prompt-sensitive** — it depends on agents writing retrievable rationales and subtask descriptions.
+
+## Finding ≠ Fixing — the repair gap *(ledger row 10-19B; applied 2026-10-20)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-19 (recorded in `.workbuddy/memory/concept-radar/2026-10-19.md`, candidate 2). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**Every mechanism on this page is a detector.** The verifier predicate, cross-contamination, protocol pivoting, substrate-centric coordination — all four answer *"did something go wrong, and can we tell?"*. **Not one supplies the next verb.** Two 2026-10 instruments opened that gap explicitly.
+
+**CLASHarness** (`arXiv:2610.19128`, submitted **2026-10-13**; Yuxiang Lai et al.) — **600** multi-turn tasks × **15** frontier models in the computer-use domain; layered scenario planning plus an eight-step verification micro-pipeline; deterministic visual facts committed **before** rendering; the scorer compiled **from already-executed reference trajectories** ⇒ solvable by construction. Three findings:
+1. Weak models follow misleading information; strong models consult visual evidence.
+2. **Resolving conflict is far harder than detecting it** — agents *can* see the inconsistency, but **acting to correct system state significantly lowers task success**.
+3. Frontier models still fail **>58%** of **closing actions** — forgetting to release a shared lock, forgetting to hand off.
+
+- 🔴 **Why this bites this page specifically:** the wiki's standing advice — *verify a peer's output before inheriting it* — is, in that benchmark, **precisely the step that lowers the score.**
+- **The 58% is not a mechanism verb at all — it is protocol hygiene** (release the lock, hand off the task): a class for which this wiki has **no page and no line**.
+
+**ARIA** (`arXiv:2610.20780`, submitted **2026-10-14**; Bolin Shen / Yushun Dong; code `github.com/LabRAI/ARIA`) — the **first** large-scale dataset pairing failed trajectories with **execution-verified repairs** (**24,000+** trajectories → **3,953** pairs), retained only when **the repaired run passes and the unmodified control fails**; three-stage training (SFT → preference learning → policy optimisation). The resulting **7B** model reports **SOTA repair accuracy both during execution and post-hoc, beating zero-shot frontier models.**
+- ⇒ ARIA is a candidate repair apparatus for the gap 10-16A / ToFu exposed (*the model's refusal arrives after the tool has already returned*): it is explicitly about intervening **while execution is still in flight**.
+
+**Why this is the missing half of this page, not a new topic:** since 2026-09-26 this page has been entirely **discovery-side** (verifier as precondition; contamination as the new failure surface). This section is its second half — the same rationale as 10-17C: **splitting them across pages would let the two halves of one page drift.**
+
+**Boundaries.** vs **第十三条（见 `.workbuddy/memory/concept-radar/SCAN-LINES.md`）** — that line asks *does an existing verb actually work* (`DELETE` never measured; a technique works on half its objects); this row asks ***does the verb exist at all*** (repair was never written down). Parallel rows that must name each other, or they read as duplicates. vs **[[HumanInTheLoop]]** — that page is the wiki's **only** chain with a verb *after* detection (grade → gate → idempotent execution → audit); this row belongs **next to it**, and together they prove the wiki has had the "detect + follow-up action" shape all along — it simply implemented it in exactly one place. vs **[[MemoryGovernance]]** — the four actions are **memory**'s verb inventory; this is the **execution** side's missing one ⇒ the wiki did a verb inventory on memory and not on execution. vs 10-16A ToFu — ToFu is detection that fails to change execution; ARIA is a candidate fix for precisely that.
+
+⚠️ **Limits, must sit beside the conclusion.** CLASHarness is a **generative** benchmark limited to computer-use; "resolving is harder than detecting" holds **on that construction's distribution**. ARIA's numbers are **author-reported**; its generalisation claim is "frameworks and host models unseen in the training pipeline"; and "**7B beats frontier**" is a **repair-specific** claim, **not** a general-capability one. ARIA's preconditions (exposed execution traces + support for continuation replacement) are themselves **deployment constraints** — **none of [[AgentHarness]]'s four duties promises either.**
+
+**Structural recommendation (recorded here, not executed):** `overview.md`'s Cross-Cutting Themes should gain a line — *"this wiki's mechanism inventory is discovery-side; a repair-side inventory should be maintained in parallel."* Per the standing convention `overview.md` is revised **on ingest only**, so this awaits the next ingest or explicit authorisation.
 
 ## Why It Matters
 - **It is the wiki's first "between agents" page.** All 39 prior pages and both connection diagrams describe a single agent; this page opens the space dimension the wiki had never covered.
