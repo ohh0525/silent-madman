@@ -1,7 +1,7 @@
 ---
 title: "Multi-Agent Orchestration"
 type: concept
-tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric, repair-gap]
+tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric, repair-gap, latent-communication]
 sources: [multi-agent]
 last_updated: 2026-10-20
 ---
@@ -59,6 +59,21 @@ Multiple agents with **independent context windows** working on one goal: exchan
 - **The counterpart to the rows above:** 10-16B says *task content inherits upstream authority*; the countermeasure here is ***task content must arrive in citable form***. vs [[ContextEngineering]] — that page is bounded reading for a **single** principal; this is the **multi-principal** version.
 
 ⚠️ **Author-stated limits:** inference-time only (agents were **not trained** to use the substrate); **128 is a compute ceiling, not an architectural one**; **prompt-sensitive** — it depends on agents writing retrievable rationales and subtask descriptions.
+
+#### Scope note — the three operations presuppose a text wire *(ledger row 10-19C; not ⭐; applied 2026-10-20)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-19 (recorded in `.workbuddy/memory/concept-radar/2026-10-19.md`, candidate 3). Kept **inside this subsection on purpose**: this note states the *precondition* of the three operations above, so putting it anywhere else would let a mechanism and its precondition drift apart. Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**Publish (with citations) · search top-*k* by relevance × citation count · fetch by address — every one of the three presupposes that the message is text.** 2026-10 work on **latent inter-agent communication** puts a term on that presupposition rather than refuting anything above.
+
+- **Swarm Telepathy / SwaT** (`arXiv:2610.15095`; MIT CSAIL + MIT-IBM Watson AI Lab; Alabdulkareem / Tenison / Zhang / Zhu / Katz / Gutfreund) is described as the **first cross-family** KV-cache transfer method — prefill-free communication between multi-family multi-agent systems, both sender and receiver **frozen** (<50M training tokens, <1 GPU-day). With KV-cache compaction it reports a mean **40%** higher accuracy and **4×** faster wall clock **than text-to-text**, across **17** benchmarks / **12** LLMs / **6** families.
+- **CacheFuse** (training-free; linear interpolation of the upstream KV cache into the downstream model) reports up to **+8.6 percentage points** and **12.2×** TTFT over text-based inter-model communication.
+- **The argument landed here is the one 10-17 already made about the memory store.** 10-17's load-bearing sentence was **"you cannot cite a vector"**, written about where memory lives. Same argument, new location: the **wire** instead of the store. Let the channel become a KV cache and the three operations have **no object** — and [[Provenance]], promoted on 10-17 from after-the-fact audit to **in-flight coordination**, finds itself promoted onto a medium **that cannot carry a citation**; this page's own cross-contamination failure likewise loses the interface needed even to ask *who said this line*.
+- **The numbers also cut the other way** (the half worth keeping in view): if the channel described above really is the more faithful carrier, then the text channel's lossiness was doing unnoticed work. An auxiliary instruction placed **in the middle** of a long context is retained at **15.6%** in natural language vs **73.3%** via KV cache; under injected noise (10 irrelevant sentences) NL accuracy falls to **47%** vs KV **93%** (UIUC DREAM Lab, **Agent Primitives**).
+
+🔴 **Boundary, not finding — this is the strongest line in this note.** **None of these papers discusses provenance at all.** The inference that citations become unstatable on a continuous medium is **this wiki's own extrapolation, not a measured result**, and must be written as a boundary. Nothing above claims ScaleMAS is wrong; it says its precondition has a shelf life.
+
+⚠️ **Evidence grade.** SwaT's gains are measured against **text-to-text** communication, **not** against a strong text baseline with good summarisation; cross-family transfer is trained on **text-only** data and the vision-transfer result is a **demonstration**; CacheFuse's figures came through second-hand reporting. ⚠️ **The instruction-retention pair (15.6% / 73.3% / 47% / 93%) is the weakest-sourced number in this row** — the only return for it this round was an unrelated lifestyle-domain repost that traces back to UIUC DREAM Lab (corresponding author Haohan Wang). It is recorded as **an observation to chase, not a load-bearing citation**; replace it with a first-hand source before quoting these figures anywhere.
 
 ## Finding ≠ Fixing — the repair gap *(ledger row 10-19B; applied 2026-10-20)*
 
