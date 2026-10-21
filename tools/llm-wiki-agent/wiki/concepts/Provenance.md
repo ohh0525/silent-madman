@@ -1,9 +1,9 @@
 ---
 title: "Provenance"
 type: concept
-tags: [agent-memory, provenance, reliability, evidence-garment]
+tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point]
 sources: [agent-memory-provenance]
-last_updated: 2026-10-20
+last_updated: 2026-10-21
 ---
 
 # Provenance
@@ -44,6 +44,16 @@ The design constraint that every stored fact must carry its origin, timestamp, a
 - **Why it belongs on this page:** if the garment is the variable, then **provenance metadata is the garment's most legible component** — so this is the instrument that tests the sentence above rather than merely illustrating it.
 
 **Boundaries.** vs **[[MemoryPoisoning]] / MemForm** — MemForm is *content-clean* distortion (the attack sits in the **formation process**); this row is *content-dirty* with the **garment** as the variable. Content-side failure vs container-side failure; **record side by side, never as one page.** vs **10-16A ToFu** — same shape, and ToFu is the **earliest instance** of this variable (sequence is a property of the framework / success rate is a property of the garment). vs **第十四条（见 `.workbuddy/memory/concept-radar/SCAN-LINES.md`）** — this row is that line's originating instance; ToFu and 10-18C are its other two. vs **10-17B FEB-30 / 10-18A** — **not the same line**: those are the verb-efficacy line, this is the container line.
+
+## Provenance is a discipline; the check is an enforcement point *(added 2026-10-21, ledger row 10-21A)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-21 (recorded in `.workbuddy/memory/concept-radar/2026-10-21.md`, candidate 1; ledger row **10-21A**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**The boundary this page should state about itself.** This page, [[CitationLock]] and [[Abstention]] are **model-side reading discipline**: they say what the *model* should do with what it opened, and they are satisfied or violated by the model's behaviour. **ClawMMU** (`arXiv:2610.28093`) takes the **same object** — *where did this content come from* — and makes it a **harness-side enforcement point**: every representation of every memory carries **owner / scope / origins / authority**, and the harness checks those labels at **map · derive · reload · authorize** rather than asking the model to judge. ⇒ Same target, **different executor and different location** — the textbook instance of scan line 16 (see `SCAN-LINES.md`): this page governs by **discipline on the model**, that design governs by **a check at the access point**; they are complements, not duplicates.
+
+- **Why it still does not replace this page:** the verdict there depends **only on origin, never on content** — it does not tell you whether the sourced fact is true, current, or well-evidenced. Provenance's three questions (*what claim, which source, when observed or last verified*) are exactly the ones it does not ask.
+- **The prerequisite, and where it breaks:** those descriptors presuppose **stable page identities** (ClawMMU is built on ClawVM's addressable pages). On [[LongTermMemory]]'s third carrier — latent / soft-token memory — **there is no page to attach a descriptor to** (scan line 12; same applicability boundary as ledger row 10-17A).
+- 🔴 **Status:** **not implemented** — Appendix C states verbatim *“ClawMMU is not yet implemented”*; **no measured numbers** anywhere in the paper; **6-page non-archival workshop paper** (AgenticOS @ NeurIPS 2026), no peer review. ⇒ Cite as a shape, not as evidence. (Cross-reference [[HumanInTheLoop]]「The Gate Does Not Know Where Its Arguments Came From」and [[MemoryGovernance]]'s *Permissioned*.)
 
 ## See Also
 - [[agent-memory-provenance]] — primary source

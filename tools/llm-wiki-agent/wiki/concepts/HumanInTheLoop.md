@@ -1,7 +1,7 @@
 ---
 title: "Human-in-the-Loop"
 type: concept
-tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion]
+tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance]
 sources: [human-in-the-loop]
 last_updated: 2026-10-21
 ---
@@ -45,6 +45,30 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 **Boundary.** vs this page's gate — the gate asks **“does this action need a human?”** (a question about *an act*); this section asks **“is this directive still binding?”** (a question about *time*). Same page, the half-column that was missing. vs [[MemoryGovernance]]'s *Permissioned* — the same discipline (**read right ≠ write right**) applied to a different object: that one governs **who may write shared memory**, this one governs **who may write the instruction**. vs [[ContextEngineering]] — that page places content **within one turn**; this is **across planning cycles**, and it upgrades “always-resident” from a **size** problem to a **type + expiry** problem.
 
 **Why it lands on this page.** It is 🎯 ledger row 10-09「常驻上下文与指令预算」's first citable device: that row asks *what deserves a resident slot and how large the file should be*; this answers *what deserves a slot must also carry persistence semantics*.
+
+## 闸门不知道参数的出处 / The Gate Does Not Know Where Its Arguments Came From *(added 2026-10-21, ledger row 10-21A)*
+
+> **Draft annotation, pending ingest.** This section is **not yet backed by a source page in this wiki** — verified against live sources on 2026-10-21 (recorded in `.workbuddy/memory/concept-radar/2026-10-21.md`, candidate 1; ledger row **10-21A**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+> 🔴 **Read this first — the status of everything below.** **ClawMMU is not implemented.** Appendix C of the paper states verbatim: *“The ClawMMU row lists design properties, since ClawMMU is not yet implemented.”* ⇒ **the paper contains no measured numbers at all**; §5 lists only *planned* evaluations (ASR on AgentDojo / InjecAgent / sleeper memory poisoning, check latency, how often the owner must approve). Venue is the **AgenticOS Workshop @ NeurIPS 2026 (non-archival)**, 6 pp / 1 fig / 1 tab — **no peer review**. ⇒ **Cite this section as “what this cell could grow into”, never as evidence that it works.**
+
+**The gap, in the paper's own words.** Production harnesses (Claude Code, Codex) really do ask a human before high-risk tool calls — **but“these checks do not know where the arguments came from.”** The gate grades the *action*; it does not ask **what produced the values it is about to act on**. A single instruction hidden in a fetched web page therefore arrives at the prompt wearing the authority of a user instruction.
+
+- **The mechanism offered: a protection descriptor on every representation of every memory**, answering four questions — **owner** (who produced it) · **scope** (which tasks and sessions may use it) · **origins** (which pages it was derived from) · **authority** (what this content may justify, on an ordered ladder: **Evidence** lowest = tool output and web retrieval, *“read but never act on”* → middle rungs = user preferences, a teammate's instruction file → **Policy** highest = the user's own message).
+- **Four checks, at the four places content crosses a context boundary** — each one named after the classical memory-protection fault it stops:
+  | Check | Where | Fault stopped |
+  |---|---|---|
+  | **map** | as content enters context, the descriptor is dispatched by source | **address-space violation** |
+  | **derive** | as content is written to storage, labels attach by inheritance rules | **type confusion** (untrusted text becomes policy after summarisation) |
+  | **reload** | on retrieval or checkpoint restore, revocation counters are compared | **use-after-revoke** |
+  | **authorize** | at tool invocation, **each argument** is traced to content that is authorised and not revoked | **confused deputy** |
+- **The load-bearing rule: information may rise in authority, but authority never lifts itself.** Inheritance takes the **minimum** authority among inputs, and **the model itself counts as the lowest-authority input** ⇒ memory the model wrote for itself is **always Evidence**, and **only the owner can raise it**. One sentence retires the default this wiki never wrote down: *“the model wrote it ⇒ it is trustworthy.”*
+- **Why it holds even when the model is fooled:** the verdict depends **only on where the content came from, never on what it says** ⇒ memory attacks degrade into **classical protection faults**, caught by the harness. Named families stopped: **indirect prompt injection** · **sleeper memory poisoning** (stored now, fires weeks later) · **direct prompt injection** by another user of a shared agent.
+- **Source:** `arXiv:2610.28093`, submitted **2026-10-20 12:09:53 UTC**; Jinhao Hu / Bardia Mohammadi / Mofasshara Binte Rafique / Lars Henning Klein / Akhil Arora / Ashvin Goel / Laurent Bindschaedler (MPI-SWS · EPFL · Aarhus · Toronto).
+
+⚠️ **Everything that must sit beside it:** beyond *not implemented*, the authors state they do **not** guarantee that the model judges correctly, that derived memories are correct, or that readable content stays confidential; the **main residual risk is a mis-assigned security label** (tool-capability schemas need human review). Four items are listed as **open**: scaling that schema review · **where authority sits in multi-agent settings** · actions already taken before a revocation · auditing the widening of an approval's scope. ⇒ **Design, not result.**
+
+**Boundaries.** vs this page's gate — the gate asks **“does this action need a human?”**; `authorize` asks **“where did this argument come from?”** — the missing column, which is why it lands here. vs the section above (ledger row 10-20C) — that one is the **time** column (*is the directive still binding*); this one is the **source** column (*may this value be used at all*); both are halves this page lacked, and neither replaces the other. vs ledger row 10-20B — that row delivers the **measurement** (three-stage audit, 92 → 1 / 305 with per-line owner labels); this row delivers the **architecture** that makes owner a structural field and enforces it at four points ⇒ **record side by side, cross-reference, do not merge** (one is the instrument, the other is the apparatus it would validate). vs [[Provenance]] — provenance is **model-side reading discipline**; this is a **harness-side enforcement point** on the same object: same target, **different executor and different location** (scan line 16 — see `SCAN-LINES.md`). vs ledger row 10-17A — ClawMMU presupposes **stable page identities** (it is built on ClawVM's addressable pages), so on **latent / continuous memory there is nothing to attach a descriptor to** (scan line 12). vs ledger row 10-19A — that row swaps the **container** the payload arrives in; this row swaps the **basis of the verdict** (not *what it says* but *where it came from*); keep in separate columns.
 
 ## Why It Matters
 - It answers a property unique to acting agents: unlike a chatbot, a wrong action is frequently **not recoverable** — a sent email, an executed payment, a deleted record. Model error rates can be low and the damage still lands before anyone notices.
