@@ -9,7 +9,8 @@ import pandas as pd  # 导入 pandas 库，并起别名 pd
 import os            # 用来取当前脚本所在目录，保证 CSV 存到同目录下
 
 # 让"python pandas入门.py"和"在 VS Code 里点运行"两种情况都能找到同目录的文件
-HERE = os.path.dirname(os.path.abspath(__file__))
+# 交互环境（Jupyter / python -c）里没有 __file__，退回到当前工作目录，避免 NameError
+HERE = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else os.getcwd()
 CSV_PATH = os.path.join(HERE, "奶茶店周报.csv")
 
 
@@ -66,8 +67,9 @@ print(df[df["日期"].isin(["周六", "周日"])])
 print("\n====== 4. 新增计算列 ======")
 
 # 列和列之间可以直接做运算，结果赋给一个新列名就多出一列
-df["总销量"] = df["奶茶"] + df["果茶"]                 # 当天一共卖了多少杯
-df["营业额"] = (df["奶茶"] + df["果茶"]) * df["单价"]  # 当天一共收了多少钱
+# fill_value=0：某天某品类缺数据（NaN）时按 0 参与计算，不会让整行都变成 NaN
+df["总销量"] = df["奶茶"].add(df["果茶"], fill_value=0)  # 当天一共卖了多少杯
+df["营业额"] = df["总销量"] * df["单价"]                 # 复用总销量，避免重复相加一次
 
 print(df[["日期", "总销量", "营业额"]])
 
@@ -82,7 +84,13 @@ print(df.sort_values("营业额", ascending=False)[["日期", "营业额"]])
 
 print("\n一周合计：")
 print("总销量", df["总销量"].sum(), "杯；总营业额", df["营业额"].sum(), "元")
-print("卖得最好的一天：", df.loc[df["营业额"].idxmax(), "日期"])
+# idxmax() 返回"最大值所在行的索引标签"；用 at 取单元格，保证拿到的是单个标量
+# （loc 在索引有重复时会返回多行，打印出来就不是一天了）
+if not df.empty and df["营业额"].notna().any():
+    best_idx = df["营业额"].idxmax()   # 营业额最高的那一行的标签
+    print("卖得最好的一天：", df.at[best_idx, "日期"])
+else:
+    print("卖得最好的一天：暂无数据")   # 空表 / 整列都是空值时 idxmax 会报错，先兜住
 
 
 # ============================================================
@@ -92,12 +100,16 @@ print("\n====== 6. 存文件、读文件 ======")
 
 # index=False：不要把行号也存进去
 # encoding="utf-8-sig"：让 Excel / WPS 打开中文不乱码
-df.to_csv(CSV_PATH, index=False, encoding="utf-8-sig")
-print("已保存：", CSV_PATH)
+try:
+    df.to_csv(CSV_PATH, index=False, encoding="utf-8-sig")
+    print("已保存：", CSV_PATH)
 
-df2 = pd.read_csv(CSV_PATH, encoding="utf-8-sig")
-print("\n从 CSV 读回来的表格：")
-print(df2)
+    df2 = pd.read_csv(CSV_PATH, encoding="utf-8-sig")
+    print("\n从 CSV 读回来的表格：")
+    print(df2)
+except OSError as e:
+    # 常见原因：目录不可写，或 CSV 正被 Excel / WPS 打开占用
+    print("文件读写失败：", e)
 
 print("\n结论：DataFrame 会的东西，Excel 基本都会；")
 print("      但 pandas 用一行代码就能筛选、计算、汇总整张表。")
