@@ -1,9 +1,9 @@
 ---
 title: "Memory Poisoning"
 type: concept
-tags: [agent-memory, memory-poisoning, security, prompt-injection, persistent-corruption]
+tags: [agent-memory, memory-poisoning, security, prompt-injection, persistent-corruption, owner-attribution, exposure-behaviour-state]
 sources: [memory-lifecycle]
-last_updated: 2026-10-09
+last_updated: 2026-10-21
 ---
 
 # Memory Poisoning
@@ -32,6 +32,28 @@ This is also why [[Provenance]] alone does not close the hole: PMPA's payload ar
 - The **interim** posture is therefore detection and containment: treat the local session-history store (typically a client-side, often plaintext SQLite file) as a **security-sensitive file**, where **any write by a non-harness process is an unambiguous attack signal** — a package-install `postinstall` script touching it is the canonical case. Treat “session resume / rollback edits” as **untrusted input**.
 - **Record model choice as a security decision, not a default.** The material's pointed example: *a cheap model default is an unregistered security decision* — the attack's success rate varies by model and harness (Opus 5's guardrails held under Claude Code), but **the structural defect in history management was common to all four**.
 - **Egress behaviour monitoring detects this class better than tool approval does**, precisely because a hijacked agent's actions **look entirely legitimate** — from the inside it is doing permitted things for a reason it now believes.
+
+## Exposure ≠ Behaviour ≠ State — the ownership column *(added 2026-10-21, ledger row 10-20B)*
+
+> **Draft annotation, pending ingest.** This section is **not yet backed by a source page in this wiki** — verified against live sources on 2026-10-20 (recorded in `.workbuddy/memory/concept-radar/2026-10-20.md`, candidate 2; ledger row **10-20B**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**What the two mechanisms above never measured.** PMPA and Darktrace — and the formation-surface work on the neighbouring row (MemForm) — are entirely a **content** story: a malicious payload, a forged history, clean content arriving in a poisonous order. The audit behind this section changes the **object**: the retrieved content is **entirely legitimate**; what is wrong is **who it belongs to**. It also splits the single event this page has been calling “poisoned” into three stages:
+
+| Stage | Question | Measured |
+|---|---|---|
+| **暴露 / Exposure** | Did a foreign credential reach the prompt? | A memory bank mixing **763** cross-user historical logins returned **another user's** credential for **84.7%** of the required apps — **and the agent almost never acted on it** |
+| **行为 / Behaviour** | Did the agent actually use it? | Under stress (the user's own credential missing, a single foreign credential presented as if it were their own), **7 agents used it in 80–94% of runs** |
+| **状态 / State** | Did the victim's account really change? | In **up to 43%** of those runs the victim's account was modified, **sometimes passing the official checks** |
+
+⇒ **84.7% of exposure produces almost no behaviour; once behaviour appears, 43% lands on state.** A benchmark that reports exposure alone misreads the risk **in both directions** — it exaggerates when the agent ignores what it retrieved, and under-counts when it does not. Source: `arXiv:2610.25707` (submitted **2026-10-19 02:53 UTC**; Hau-Sing So et al., 6 authors; 19 pp / 14 figs / 12 tabs; AppWorld).
+
+- **The fix is per-line — and that is the finding.** Marking the owner **before or within each credential line** drops misuse from **92 / 305** paired runs to **1 / 305** (it still holds when usernames contain no personal name). ⇒ **attribution depends on there being a line.**
+- **Cost and fragility, beside the fix:** owner-bound annotations cost **3–5 successful tasks per model** even on *clean* memory; **writing the owner incorrectly roughly restores the abuse**; and **trailing owner tags plus appended safety instructions work on only some models**.
+- **The previous hop in the same cell.** **MemLeak** (`arXiv:2610.04195`) measures **leakage** only — **70–100%** non-adversarial leakage under same-team pooled retrieval, **90–100%** adversarially constructed top-k, end-to-end contamination **5.00/5** — and finds that of three architectural mitigations **only post-retrieval hard attribution gating** reliably restores the clean baseline (**1.00/5**, ≈**1.4 ms/query**). MemLeak stops at **exposure**; this section walks the two stages after it.
+
+**Boundaries.** vs the two mechanisms above — **not a fourth poisoning mechanism**: the payload is *correct*; the *owner* is wrong. It is the **归属 / ownership** column of this page, not another row of the content table. vs ledger row 10-13「检索准入 × 跨主体状态隔离」— that row names the **variables** (attribution ≠ permission; reasoning state split per principal); this section supplies the **instrument** and the counter-intuitive measurement (*high exposure ≠ high harm*); record side by side and cross-reference, do not merge. vs [[LongTermMemory]]「The third carrier」(ledger row 10-17A) — the fix here **requires enumerability**, so on a continuous carrier **there is no line to mark**: **an addressable defence fails on non-addressable memory** — the exact complement of ledger row 10-20A, which shows the same carrier performing **unscoped revision**.
+
+⚠️ **Limits:** the stress condition is **constructed** (own credential absent + one foreign credential presented as the user's own), not an estimate of real-world incidence; **84.7%** is one specific mixed store inside AppWorld; MemLeak self-reports **hand-written synthetic samples and small samples**, i.e. it demonstrates a **mechanism**, not a frequency; submitted **2026-10-19**, **no independent replication**.
 
 ## Boundaries
 - **vs [[ToolHallucination]]** — existence of the tool vs **integrity of the record**. A poisoned agent calls tools that really exist; the closed-world rung passes it.

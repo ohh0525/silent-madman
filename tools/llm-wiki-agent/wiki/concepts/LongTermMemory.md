@@ -1,9 +1,9 @@
 ---
 title: "Long-Term Memory"
 type: concept
-tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory]
+tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness]
 sources: [agent-memory-provenance, memory-lifecycle]
-last_updated: 2026-10-17
+last_updated: 2026-10-21
 ---
 
 # Long-Term Memory
@@ -50,6 +50,8 @@ This page describes only the **first half** of a memory's life — how to store 
 - **③ Cortex** — `arXiv:2610.20399`. Distils the context gain into **mergeable low-rank / FFN updates**: a 14B model retains **88.9%** of the context gain and **99.8%** of off-target performance after **50** consecutive edits.
 
 ⇒ The three members jointly cash out a sentence already in circulation: context has **three exits — delete it ([[Compaction]]) / index it (this page) / compile it into the weights (this section)**. The third exit had **no page in this wiki**.
+
+- **All three members above are scored on aggregate accuracy — and that ruler has now been shown to be blind per-decision** *(added 2026-10-21, ledger row 10-20A; draft annotation, pending ingest — same banner as this section)*. In latent / soft-token memory the learned prefix earns its gain mainly by **revising the model's default action**, and when that revision is **unscoped** it repairs errors while damaging **8–13%** of decisions that were already correct; the authors state it plainly: **“Overall accuracy metrics hide these losses.”** ⇒ Memorilla's **49.68**, REMORY's **5.2%** of input positions and Cortex's **88.9%** are all of the aggregate kind. **Not a refutation of the three members — a statement about what their ruler cannot see.** Full variable and its counterfactual (scoped revision ⇒ **5.6%**, with *more* errors repaired) sit in the open experiment in [[MemoryGovernance]].
 
 > **The load-bearing sentence: you cannot cite a vector.** Continuous memory has **no address**, so four wiki rules lose their *conditions of statement* at once — [[Provenance]] (must hang on **a record**) · [[CitationLock]] ("cite only what you actually opened" — there is no *opened*) · [[Abstention]] ("abstain when you didn't open it" — no object to abstain about) · [[MemoryGovernance]]'s four bottom lines (presuppose memory is enumerable — three of the four become unstatable). **The rules are not refuted; they stop being applicable** — which is harder to notice than being refuted.
 

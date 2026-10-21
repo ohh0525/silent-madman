@@ -44,18 +44,18 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Context Engineering](concepts/ContextEngineering.md) — discipline of curating the minimal high-signal token set
 - [Context Rot](concepts/ContextRot.md) — accuracy decline as context tokens grow
 - [Compaction](concepts/Compaction.md) — summarize-and-restart technique for long tasks
-- [Long-Term Memory](concepts/LongTermMemory.md) — out-of-window durable state across sessions; a third carrier (latent / soft-token memory) that is not addressable (draft section added 2026-10-17)
+- [Long-Term Memory](concepts/LongTermMemory.md) — out-of-window durable state across sessions; a third carrier (latent / soft-token memory) that is not addressable (draft section added 2026-10-17; + the third carrier is scored only on aggregate accuracy, which hides 8–13% per-decision revision loss, 2026-10-21)
 - [Provenance](concepts/Provenance.md) — every stored fact carries origin / time / evidence; the garment in which evidence is delivered is its own variable (draft section + cross-row open experiment added 2026-10-20)
 - [Citation Lock](concepts/CitationLock.md) — answer may cite only evidence actually opened
 - [Abstention](concepts/Abstention.md) — refuse to answer when no sourced evidence exists
 - [Agent Identity](concepts/AgentIdentity.md) — who acts, on whose behalf, and authority that only narrows per hop
-- [Human-in-the-Loop](concepts/HumanInTheLoop.md) — grade actions by impact × reversibility; read freely, keep writes human
+- [Human-in-the-Loop](concepts/HumanInTheLoop.md) — grade actions by impact × reversibility; read freely, keep writes human; + persistence of directives / authority erosion — does the directive still bind N planning cycles later (draft section added 2026-10-21)
 - [Tool Hallucination](concepts/ToolHallucination.md) — calls to non-existent tools; needs a closed-world rung before any gate; scope note: existence is not the injection variable (added 2026-10-20)
 - [Agent Harness](concepts/AgentHarness.md) — the engineering shell that runs the Agent loop; `Agent = Model + Harness`
 - [Agent Sandbox](concepts/AgentSandbox.md) — kernel-level containment; the `execute` leg — authority is not isolation
 - [Multi-Agent Orchestration](concepts/MultiAgent.md) — peer agents exchanging verified progress; the verifier is the precondition; cross-protocol authorization inheritance / protocol pivoting (draft section added 2026-10-16) + substrate-centric coordination, the missing shape for that failure (draft subsection added 2026-10-17) + its own scope note, the three operations presuppose a text wire (draft note added 2026-10-20) + Finding ≠ Fixing, the page is entirely discovery-side (draft section added 2026-10-20)
-- [Memory Governance](concepts/MemoryGovernance.md) — memory as four actions that each fail differently + who holds the decision rights; scope note on where the four bottom lines stop applying + intrinsic vs extrinsic evaluation and the open experiment it defines (draft sections added 2026-10-17)
-- [Memory Poisoning](concepts/MemoryPoisoning.md) — write-side attack surface: an attacker inherits the decision rights you never claimed
+- [Memory Governance](concepts/MemoryGovernance.md) — memory as four actions that each fail differently + who holds the decision rights; scope note on where the four bottom lines stop applying + intrinsic vs extrinsic evaluation and the open experiment it defines (draft sections added 2026-10-17; + scoped vs unscoped revision as the experiment's first half-leg and a Permissioned scope refinement, 2026-10-21)
+- [Memory Poisoning](concepts/MemoryPoisoning.md) — write-side attack surface: an attacker inherits the decision rights you never claimed; + exposure ≠ behaviour ≠ state — correct content belonging to the wrong principal (draft section added 2026-10-21)
 
 ## Syntheses
 - [Overview](overview.md) — living synthesis across all sources
