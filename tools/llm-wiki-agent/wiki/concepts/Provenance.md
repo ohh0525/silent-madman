@@ -1,9 +1,9 @@
 ---
 title: "Provenance"
 type: concept
-tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point]
+tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point, serialization]
 sources: [agent-memory-provenance]
-last_updated: 2026-10-21
+last_updated: 2026-10-22
 ---
 
 # Provenance
@@ -55,8 +55,23 @@ The design constraint that every stored fact must carry its origin, timestamp, a
 - **The prerequisite, and where it breaks:** those descriptors presuppose **stable page identities** (ClawMMU is built on ClawVM's addressable pages). On [[LongTermMemory]]'s third carrier — latent / soft-token memory — **there is no page to attach a descriptor to** (scan line 12; same applicability boundary as ledger row 10-17A).
 - 🔴 **Status:** **not implemented** — Appendix C states verbatim *“ClawMMU is not yet implemented”*; **no measured numbers** anywhere in the paper; **6-page non-archival workshop paper** (AgenticOS @ NeurIPS 2026), no peer review. ⇒ Cite as a shape, not as evidence. (Cross-reference [[HumanInTheLoop]]「The Gate Does Not Know Where Its Arguments Came From」and [[MemoryGovernance]]'s *Permissioned*.)
 
+## Serialization precedes the model *(ledger row 10-22A; applied 2026-10-22)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-10-22, recorded in `.workbuddy/memory/concept-radar/2026-10-22.md` (candidate 1). Remove this banner on ingest; move the slug into frontmatter `sources`.
+>
+> 🔴 **Preprint, not peer-reviewed; single institution (Pixee, a code-security vendor). The failure occurs only in flattening harnesses — the four role-typed harnesses measured 0%.**
+
+The section above draws this page's boundary by **executor**: a **discipline on the model** versus **a check at the access point**. **Compaction Laundering** (`arXiv:2610.29869`, submitted 2026-10-21) adds the column that ordering cannot express — **the failure had been attributed to the wrong executor**:
+
+> Prior work describes this failure as a **limitation of the model** (the model cannot reliably tell where content came from). In a flattening harness the origin is destroyed **before the model ever sees the text** ⇒ **"Susceptibility is therefore a property of the serialization strategy, not of the model."**
+
+- **Consequence for this page's boundary.** A discipline on the model and a check at the access point are both **downstream of serialization**. Where the harness flattens typed roles into unescaped inline labels, **there is no provenance left for either to act on** — the check has nothing to check, and the discipline is being asked to recover what code destroyed deterministically. ⇒ **No prompt-level defence can recover it**; the authors measured **77%** detection with a **code-level** origin check, at **2%** degradation of legitimate summary content (self-measured).
+- **Consequence for the governance-vs-window split.** This page and [[MemoryPoisoning]] sit on the "outside the window" side, [[Compaction]] on the "inside, per-turn" side. That split is **wrong at the joint**: compaction is where transient injection becomes durable memory — the step `overview.md` lists as an open item. The corrected statement is that **compaction is a governance boundary that happens to run inside the window, per turn.**
+- **Where this page's authority stops.** Provenance can only be preserved by something that exists **prior to** the model's input. Once the origin is gone, the honest verdict is not "the model failed to track it" but **"there was nothing left to track."**
+
 ## See Also
 - [[agent-memory-provenance]] — primary source
+- [[Compaction]] — the trust boundary this page's discipline sits downstream of (10-22A)
 - [[LongTermMemory]] — the store that carries provenance
 - [[CitationLock]] — the read-side companion
 - [[Abstention]] — what happens when provenance is absent

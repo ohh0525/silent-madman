@@ -1,9 +1,9 @@
 ---
 title: "Multi-Agent Orchestration"
 type: concept
-tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric, repair-gap, latent-communication]
+tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric, repair-gap, latent-communication, autonomous-vs-user-serving, setting-transfer]
 sources: [multi-agent]
-last_updated: 2026-10-20
+last_updated: 2026-10-22
 ---
 
 # Multi-Agent Orchestration (多智能体协作)
@@ -99,6 +99,31 @@ Multiple agents with **independent context windows** working on one goal: exchan
 ⚠️ **Limits, must sit beside the conclusion.** CLASHarness is a **generative** benchmark limited to computer-use; "resolving is harder than detecting" holds **on that construction's distribution**. ARIA's numbers are **author-reported**; its generalisation claim is "frameworks and host models unseen in the training pipeline"; and "**7B beats frontier**" is a **repair-specific** claim, **not** a general-capability one. ARIA's preconditions (exposed execution traces + support for continuation replacement) are themselves **deployment constraints** — **none of [[AgentHarness]]'s four duties promises either.**
 
 **Structural recommendation (recorded here, not executed):** `overview.md`'s Cross-Cutting Themes should gain a line — *"this wiki's mechanism inventory is discovery-side; a repair-side inventory should be maintained in parallel."* Per the standing convention `overview.md` is revised **on ingest only**, so this awaits the next ingest or explicit authorisation.
+
+## The second precondition: autonomous vs user-serving *(ledger row 10-22C; applied 2026-10-22)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-10-22, recorded in `.workbuddy/memory/concept-radar/2026-10-22.md` (candidate 3). Remove this banner on ingest; move the slug into frontmatter `sources`.
+>
+> 🔴 **Must travel with every citation of this section: preprint, not peer-reviewed — AND one of its own preregistered validity thresholds was NOT met and is flagged by the authors as a deviation: the MAS planner never saw the tool schema.** This is the most obvious avenue of attack on the result, and the authors' release of all materials makes that attack cheap. Cite the deviation in the first breath, not the footnote.
+
+**Why this is a second axis and not a contradiction.** Every result on this page — including the verifier precondition — comes from **autonomous** benchmarks with **no user in the loop**. *Does Multi-Agent Collaboration Pay When Agents Serve Users?* (`arXiv:2610.27655`, submitted **2026-10-20 05:13:13 UTC** — ⚠️ widely listed as Oct. 21 in secondary aggregators; the abs page is authoritative) asks the same question on a **dual-control** benchmark, where the user supplies information turn by turn and, in the telecom domain, also manipulates the shared environment. ⇒ **"Autonomous ↔ user-serving" is a precondition independent of "is there a verifier", and on this evidence it flips the sign.** This page's theme — *the boundary condition is the content* — acquires **two axes** for the first time.
+
+**Design.** τ²-bench dual-control; airline / retail / telecom; **6 models across 3 families** (4 / 2 in the main analysis); ≈**7,950** simulated conversations; **a per-episode completion-token ledger**; **preregistered with a public changelog**; trajectories, ledgers, prompts and code **all released**. ⇒ By this wiki's own standard ("vendor benchmarks are not citable"), this is the *citable* kind of evidence — which is exactly why it is filed as this page's **hardest counter-evidence** rather than as a caveat.
+
+| Result | Figure |
+|---|---|
+| Cells in which MAS showed a benefit | **none** |
+| Weighted mean across the 12 primary fitted cells | **−28 points** (95% CI **[−44, −12]**) |
+| Cells meeting the mechanical validity threshold | 13 — MAS behind in **12**, tied in **1** |
+| The 2 cells where the capability-saturation rule *predicted* MAS gains | MAS **lost 13 and 22 points** |
+| Budget cap removed | MAS **at best ties**, at **5.5×** median tokens |
+| Erroneous database writes | **not measurably reduced** — other failures were swapped for **budget exhaustion and inaction** |
+
+The authors' own verdict, verbatim: **"For agents that serve people, the SAS is the default; a multi-agent design must show compute-matched evidence from the setting itself."** ⇒ The burden of proof is relocated: **the default is the single agent, and the evidence must come from the deployment setting itself** — which is the same discipline this page already applies to the verifier, now applied to the setting.
+
+**Remaining limits that must travel with it:** the **slope is unresolved** — −0.41, 95% CI **[−1.51, +0.68]**, **crossing zero**, with model-by-domain effects dominating; **only one architecture** was tested (centralized MAS), so nothing here generalizes to decentralized designs; and the **single cell showing a gain** was the one nearest 45% **and used a second simulator**.
+
+**Pricing.** **5.5×** is a directly citable hard number for scan line 4 (resource pricing).
 
 ## Why It Matters
 - **It is the wiki's first "between agents" page.** All 39 prior pages and both connection diagrams describe a single agent; this page opens the space dimension the wiki had never covered.

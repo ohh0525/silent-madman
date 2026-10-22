@@ -1,9 +1,9 @@
 ---
 title: "Long-Term Memory"
 type: concept
-tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness]
+tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness, raw-history-vs-compression]
 sources: [agent-memory-provenance, memory-lifecycle]
-last_updated: 2026-10-21
+last_updated: 2026-10-22
 ---
 
 # Long-Term Memory
@@ -62,6 +62,12 @@ This page describes only the **first half** of a memory's life — how to store 
 - **vs [[MemoryGovernance]]** — that page governs a bank you can list; this section is the case where you cannot. See the scope note and the open experiment there.
 
 ⚠️ **Counter-evidence, must sit beside the numbers:** every figure is **author-reported**; Memorilla's mainline runs on a **single frozen `Qwen3-8B`** (cross-backbone generalisation unproven); and **none of these benchmarks track fact evolution** — which is precisely what the FEB-30 instrument measures, and where compressed continuous storage is most likely to fail. ⇒ **open experiment**, see [[MemoryGovernance]].
+
+## Scope note — raw history vs compressed memory *(ledger row 10-22B; applied 2026-10-22)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-10-20/21; recorded in `.workbuddy/memory/concept-radar/2026-10-22.md` (candidate 2). Remove this banner on ingest.
+
+The third carrier above asks **"what if memory is not addressable"**. This note records the **opposite-direction question — is addressable *compression* worth it at all?** MemDev-Bench (`arXiv:2610.27524`) reports that **handing over the raw history trajectory reduces step count significantly versus handing over a memory system**, because compressed memory **discards the process information the agent was actually reusing**; and that memory **makes otherwise-solvable tasks fail even when the retrieved history is relevant**. ⇒ This page's carriers are a **costed** choice, not a free upgrade. ⚠️ The single-conversation study in the same row (`arXiv:2610.29823`) is **n = 1** and is **not** evidence that memory is useless — only that its marginal benefit must be **re-priced** where the model can search for itself. Full argument under [[MemoryGovernance]]「The discarded column」; **the tension with [[Compaction]]'s 10-22A section (where discarding the original is what enables the attack) is deliberate and unresolved.**
 
 ## See Also
 - [[agent-memory-provenance]] — primary source (the reading discipline)

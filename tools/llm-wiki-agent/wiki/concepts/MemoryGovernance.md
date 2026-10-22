@@ -1,9 +1,9 @@
 ---
 title: "Memory Governance"
 type: concept
-tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation, scoped-revision, owner-attribution, protection-descriptor]
+tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation, scoped-revision, owner-attribution, protection-descriptor, discarded-column, memory-pricing]
 sources: [memory-lifecycle, agent-memory-provenance]
-last_updated: 2026-10-21
+last_updated: 2026-10-22
 ---
 
 # Memory Governance
@@ -83,6 +83,32 @@ A **third** annotation was appended *inside* the open experiment below on 2026-1
   - **New variable for this page: 修订是否有作用域 — scoped vs unscoped revision.** The counterfactual is not “do not revise” but “**revise with a scope**”: conditioning the encoder on **the model's initial answer** and training it to correct errors **and** preserve correct decisions drops damaged correct decisions to **5.6%** on the authors' controlled ablation set, **while repairing more errors than any CE-trained prefix tested**. ⇒ the Update action above acquires a fourth property beyond *whether* it happened: **did it carry a scope?**
   - **Why this is a foothold and not yet a result for the experiment above:** FEB-30 shows **extrinsic** evaluation cannot see **intrinsic** operation failure in an *addressable* store; ScopeMem shows **aggregate** accuracy cannot see **per-decision** revision loss in a *continuous* one. Same sentence, second landing — which lets the experiment's hypothesis be stated harder: **if the aggregate score is a property of the *granularity*, then the extrinsic/intrinsic divergence should widen on the continuous carrier, and should widen precisely where the aggregate number looks best.** (The granularity question itself is scan line 15 — see `SCAN-LINES.md`.)
   - ⚠️ **Limits:** **5.6%** is on the authors' own controlled ablation set; **8–13%** is measured for **CE-trained prefixes**, not for latent memory in general; every result is GUI-agent tasks on a **single frozen `Qwen3-VL-8B`**; submitted **2026-10-19** with **no independent replication**; transfer to general agents is the authors' own stated loading claim.
+
+## The discarded column *(ledger row 10-22B; applied 2026-10-22 — ⚠️ weak evidence, deliberately down-weighted)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-10-20/21, recorded in `.workbuddy/memory/concept-radar/2026-10-22.md` (candidate 2). Remove this banner on ingest; move the slugs into frontmatter `sources`.
+>
+> 🔴 **Ruling recorded with this section: this row is filed as a BOUNDARY, not as a load-bearing conclusion.** The only number likely to be quoted from it (**99%**) is **n = 1** — one conversation, one run per cell, single author. **It must never be cited as "memory is useless."** The honest citation is: **"where the model can search for itself, the marginal benefit of designed memory needs to be re-priced."**
+
+**The gap.** This page's load-bearing claim is that the bottleneck is the **quality of the four actions** (Capture → Update → Recall → QA). Two same-week, independent papers arrive at a **different variable**: the bottleneck is **the model that writes the memory**, and **what the act of compression throws away**. The four actions have **no column for "the discarded thing"** — nothing here measures it.
+
+**Evidence 1 — MemDev-Bench** (`arXiv:2610.27524`, submitted 2026-10-20 02:39:26 UTC; 12 authors). **4,869** executable history tasks / **555** base tasks / **22** repositories / **4** languages, **annotated for relevance** (the increment over prior benchmarks).
+- **(i)** memory does help the tasks that fail without it, and the gain comes from **finer-grained localisation and editing**;
+- **(ii)** memory also **makes solvable tasks fail** — **even when the retrieved history is relevant**, amplified by irrelevant history ⇒ the cause is **the agent reusing memory without re-assessing whether it applies**;
+- **(iii)** **giving the raw history trajectory directly reduces step count significantly versus giving a memory system** ⇒ because **compressed memory tends to discard the process information the agent was actually reusing**.
+
+**(ii) is a failure mode the four actions do not contain** — not *"the memory is wrong"* but **"the memory is right and the context is wrong"** (a **Recall**-side failure).
+
+**Evidence 2 — MemoryTax** (`arXiv:2610.29823`, submitted 2026-10-21; Zedong Peng). ⚠️ **Directional support only.** One LoCoMo conversation (**419 turns / 152 questions**) × four memory methods (full context / BM25 / Mem0 / Zep) × three coding agents × three models, costed line by line. ⇒ *"Agent memory is a costly patch for a weak model"*: Mem0 beat full context **only on GPT-4o-mini**, and **building the index alone cost more than one entire round of full context**; and *"a ceiling, set by the model that writes it: a stronger reader does not recover what a weaker writer left out."*
+
+🔴 **Why it is down-weighted:** **n = 1** — *"a short empirical study, with one conversation and one run per cell"* (author's own words). The author further notes the lead comes partly from **figure captions only the agent could read**: after removing the **88** image-bearing questions, the leading agent and full context differ by **one answer**. ⇒ The 99% figure is not evidence about memory in general.
+
+**The pricing angle.** Mem0's index-build cost exceeding a full round of full context makes this the **first instrument able to put a price on scan line 4** since 2026-10-09 — the one thing this page's four actions never charged for.
+
+**Boundaries (do not merge these):**
+- **vs 10-21B (cache engineering)** — that row says *"rewriting text invalidates the downstream cache ⇒ context engineering reflexively manufactures its own cost"*; this row says *"compression discards process information ⇒ retaining the raw history is cheaper."* **Two opposite ends reaching the same verdict. Filed adjacently, mutually named, not merged.**
+- **vs [[LongTermMemory]]'s third carrier** — that row asks *"what if memory is not addressable"*; this one asks **"is addressable compression worth it at all"** — the opposite direction.
+- **vs [[Compaction]]'s 10-22A section** — that row shows a case where **discarding the original is exactly what enables the attack**. The two rows are **in tension, not agreement**: here retention is cheaper, there retention is safer. **Both are filed; neither is resolved.**
 
 ## Boundaries
 - **vs [[LongTermMemory]]** — that page is the **first half** of a memory's life (store it, split it by purpose, read it credibly); this page is the **second half** (update, forget, decide). Neither subsumes the other: you can have a perfectly sourced bank that is also a governance disaster. *(Its 2026-10-17 section「The third carrier」is this page's **applicability boundary**: non-addressable latent memory is where the four bottom lines below stop being statable.)*
