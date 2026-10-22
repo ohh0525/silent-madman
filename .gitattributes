@@ -2,3 +2,14 @@
 # The source of truth is the matching .md file; do NOT edit .lock.yml by hand.
 .github/workflows/*.lock.yml linguist-generated=true
 .github/workflows/*.lock.yml linguist-documentation=false
+
+# 二进制文件：禁止 git 做换行符规范化与文本 diff。
+# 起因：22.CS1100.pdf 前 8KB 内无 NUL 字节，被 git 误判为文本（diff 计为 3005 行新增），
+# 而该文件并非合法 UTF-8（position 10 的 0xe2 无法解码）—— 任何"按文本读取"的工具都可能
+# 在其上报错或写入损坏内容。标记为 binary 后 git 只存原始字节。
+# 注：本规则不改变已入库 blob（现有 PDF 已核验与本地逐字节一致，无需重新提交）。
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.ipynb.bak* binary
