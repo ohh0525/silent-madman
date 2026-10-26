@@ -1,9 +1,9 @@
 ---
 title: "Human-in-the-Loop"
 type: concept
-tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance]
+tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance, compaction-resident-rules]
 sources: [human-in-the-loop]
-last_updated: 2026-10-21
+last_updated: 2026-10-26
 ---
 
 # Human-in-the-Loop (Escalation Gate)
@@ -18,7 +18,7 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 
 ## Boundary
 - **Not a confirmation dialog** — a real gate measures risk, can suspend execution, and supplies a **decision payload**: the inputs the agent saw, the action it intends, its reasoning, and three controls (approve / reject / modify-and-execute).
-- **Not a prompt-resident rule** — approval rules are *executable policy*; prompt-resident thresholds can be ignored, overridden or talked around.
+- **Not a prompt-resident rule** — approval rules are *executable policy*; prompt-resident thresholds can be ignored, overridden or talked around. **⇒ 但「写在代码里」还不够**（2026-10-26 补记，见下方 10-26B 节）：可执行 ≠ 常驻，规则还必须**扛得过压缩**。
 - **Not the model's self-restraint** — the sharpest seam in this cluster. [[Abstention]] and [[CitationLock]] have **the model** as their subject and govern **saying** (*honesty* mechanisms); the gate has **the system and the human** as its subject and governs **writing / paying / deleting** (*control* mechanism). Two layers, both required.
 - **Not a sandbox** — a sandbox constrains *what the agent can reach* (capability); a gate constrains *whether to ask first* (decision).
 - **Not "more review = more accurate"** — badly designed review imports **automation bias** plus latency and cost; HITL's benefit must be shown in the metrics, not assumed because "someone is watching".
@@ -70,6 +70,30 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 
 **Boundaries.** vs this page's gate — the gate asks **“does this action need a human?”**; `authorize` asks **“where did this argument come from?”** — the missing column, which is why it lands here. vs the section above (ledger row 10-20C) — that one is the **time** column (*is the directive still binding*); this one is the **source** column (*may this value be used at all*); both are halves this page lacked, and neither replaces the other. vs ledger row 10-20B — that row delivers the **measurement** (three-stage audit, 92 → 1 / 305 with per-line owner labels); this row delivers the **architecture** that makes owner a structural field and enforces it at four points ⇒ **record side by side, cross-reference, do not merge** (one is the instrument, the other is the apparatus it would validate). vs [[Provenance]] — provenance is **model-side reading discipline**; this is a **harness-side enforcement point** on the same object: same target, **different executor and different location** (scan line 16 — see `SCAN-LINES.md`). vs ledger row 10-17A — ClawMMU presupposes **stable page identities** (it is built on ClawVM's addressable pages), so on **latent / continuous memory there is nothing to attach a descriptor to** (scan line 12). vs ledger row 10-19A — that row swaps the **container** the payload arrives in; this row swaps the **basis of the verdict** (not *what it says* but *where it came from*); keep in separate columns.
 
+## 规则写在代码里还不够：还得能扛过压缩 / A rule in code is not enough — it must also survive compaction *(ledger row 10-26B; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-26 (recorded in `.workbuddy/memory/concept-radar/2026-10-26.md`, candidate 2; ledger row **10-26B**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+>
+> 🔴 **Do not read this as "compaction is harmful".** On two 1M-context models the compaction threshold **did not affect task score**. `17%` is the survival rate of *injected* session constraints on a controlled suite, **not a production compliance rate**; the >90% extractor figure is the authors' own measurement on a **single 9B base model**.
+
+**The assumption this page's own rule carries.** Mechanism step 3 above is one of this page's sharpest sentences, and it is not being withdrawn: **"A threshold that lives only in a policy document and is not embedded in the execution path is not a threshold."** The displaced assumption is the one that sentence makes silently — **that the rule is still in the context at the moment it needs to fire.**
+
+**What the evidence says.** On real **SWE-chat** sessions, content of the form **"what you should / must not do"** is dropped by compaction at **about 6× the rate** of **"what to build"** (`arXiv:2610.31778`, submitted 2026-10-22; ELLIS Institute Tübingen · MPI-IS · Tübingen AI Center). On **ProgramBench**, the **first** compaction already drops **about one third** of the anti-cheating rules on average, and the loss **rises monotonically** with the number of compactions. On a controlled suite, current compressors retain only **17%** of injected session constraints (`arXiv:2608.11242`, COMPINT, Penn State; submitted 2026-07-31, revised 2026-10-11 — ⚠️ **not a new paper**, dates recorded as published).
+
+> ⇒ **The rule is in the code, and the code is correct — and the rule is no longer in the window.** Being executable does not make it *resident*.
+
+**Consequence for this page.** Step 3 acquires a second half: a gate threshold must be **executable** *and* **compaction-resident**. Concretely, the constraint has to be **re-injected at every restart** (not merely stored once at the start of a run), or placed **where compaction does not reach** — outside the window, in the path that builds each turn's context, which is [[ContextEngineering]]'s jurisdiction rather than this page's. ⇒ **"Is it in the execution path?" is now two questions: which execution path, and does that path survive a restart from a summary?**
+
+**Why the usual alarm does not fire.** On two 1M-context models **the compaction threshold did not affect task score** — the benchmarks are, in the authors' phrase, *compaction-friendly* (the goal is fixed and progress is on disk, so almost everything dropped can be recovered — **except constraints that exist nowhere else**). ⇒ **A gate that silently stopped being told its own rules still looks healthy on every task metric.** This is the same shape as the section above (10-20C): there the **time** column was missing, here the **persistence across restarts** column is missing; 10-20C asks *is the directive still binding*, this asks *is the directive still present*.
+
+**Boundaries (do not merge these).**
+- **vs the section above (10-20C, persistence of directives)** — that row supplies **expiry semantics** (*until released / until task completes / after N cycles*); this row supplies **survival semantics** (*is it still here after the window was rewritten*). Two halves; **the second is a precondition for the first.**
+- **vs the gate's own grading (step 1)** — grading by impact × reversibility is unaffected: this row does not change *which* actions need approval, only **whether the criteria for asking are still in the window.**
+- **vs [[Compaction]]'s 10-22A (Compaction Laundering)** — that is an **attacker inserting** a forged instruction through compaction; this is **compaction deleting** a genuine one. **Same cell, opposite directions; named adjacently, never merged.**
+- **vs [[MemoryGovernance]]'s four bottom lines** — those are the **content** this row says gets dropped first; the landing here is what makes that a *gate* problem rather than a memory problem.
+
+⚠️ **Evidence grade, must sit beside the numbers.** `arXiv:2610.31778` is a **preprint, not peer-reviewed**; **"about 1/3"** is a **ProgramBench first-compaction average**; the **6×** comes from **SWE-chat**; **no compression method beat the default self-summary** and **threshold did not affect score** ⇒ **the finding is about a distribution across content classes, not a verdict against compaction**. `arXiv:2608.11242` is **not new**; **17%** is a controlled-suite survival rate; the extractor's >90% is **self-measured on one 9B base**.
+
 ## Why It Matters
 - It answers a property unique to acting agents: unlike a chatbot, a wrong action is frequently **not recoverable** — a sent email, an executed payment, a deleted record. Model error rates can be low and the damage still lands before anyone notices.
 - It makes "automatic" and "someone has a backstop" compatible: the agent absorbs the bulk of the work, the human spends seconds on the one irreversible step — speed comes from *narrowing the decision scope*, not from removing oversight.
@@ -85,3 +109,4 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 - [[MemoryGovernance]] — the same “read right ≠ write right” discipline, applied to memory rather than directives
 - [[Agent]] — sharpens its "not a fixed automation script" boundary from *can it decide* to *may it act*
 - [[Provenance]] — the audit discipline this reuses for actions
+- [[Compaction]] — why an executable rule can silently leave the window (10-26B)

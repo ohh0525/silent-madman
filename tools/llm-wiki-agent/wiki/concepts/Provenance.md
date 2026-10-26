@@ -1,9 +1,9 @@
 ---
 title: "Provenance"
 type: concept
-tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point, serialization, provenance-reversibility, deletion-closure]
+tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point, serialization, provenance-reversibility, deletion-closure, invalidation-nonlocality, dependency-closure]
 sources: [agent-memory-provenance]
-last_updated: 2026-10-25
+last_updated: 2026-10-26
 ---
 
 # Provenance
@@ -98,9 +98,40 @@ The section above draws this page's boundary by **executor**: a **discipline on 
 
 ⚠️ **Evidence grade, must sit beside the numbers.** Secrets are **synthetic and constructed to be splittable**; models are **7B-class** ⇒ **99% must not be read as a production leakage rate**. "Provenance-aware closure eliminates recovery" was obtained **in a setting that had a positive control recovery** ⇒ it does **not** establish that a given deployment has that oracle. Preprint; **no independent replication**.
 
+## Invalidation is non-local, dependency is local — a record's truth expires where its metadata cannot see *(ledger row 10-26A; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-26 (recorded in `.workbuddy/memory/concept-radar/2026-10-26.md`, candidate 1; ledger row **10-26A**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+>
+> 🔴 **Preprint, not peer-reviewed. `62%` is measured on the authors' own synthetic world generator (Fallout); Tether's `0.3%` holds only when the dependency relation and the verdict are supplied in the same session — spread across sessions it degrades to 9.4–22.1%.**
+
+**The assumption this page has always carried.** Every section above treats a record's **truth** as a property *of that record*: it carries origin, time and evidence, and the fourth question (*what condition should replace or expire it*) is likewise asked **per record**. **None of it is refuted.** What is displaced is an inference none of it states: **that a record's expiry is a property of the record itself.** It is not — it is a property of **what the record depends on**, and that dependency appears nowhere in the record's own metadata.
+
+**Tether** (`arXiv:2610.25123`; Yiqi Wang · Jinqian Ju · Jiaqi Zhang · Zhangkai Wu · Yiqun Duan · Zequn Sun · Taotao Cai · Mingkai Zheng, 8 authors; cs.CL; v1 **2026-10-18 09:01:52 UTC**, v2 **2026-10-22**). A signing key is revoked; every verification verdict built on it ought to fall with it — **but the announcement names only the key**, and those downstream verdicts **never share a retrieval window with it**:
+
+> *"This non-locality of invalidation turns memory into a liability."*
+
+- In long simulated dialogues, an agent reading **atomic-fact memory** republished **62%** of the objects that should have been voided by an upstream invalidation — **and every one of those records was true at the moment it was written.** ⇒ **逐条审查全部通过；错的不是其中任何一条记录。**
+- **The device — Tether:** record, **at write time, the exact version each conclusion depends on**; **at read time withdraw the whole record** if anything supporting it has lapsed anywhere in the store. The agent reads the same fields as before — it simply does not see that one. ⇒ **0.3%**, using **37% fewer verification calls** than re-verifying everything.
+- Neighbours, for scale: **A-Mem / Graphiti** re-verify most candidates (**0.83–0.86** checks each) and still publish **9%**; **Mem0**, leaning harder on memory, publishes **42%**; *"clear every conclusion the moment anything lapses"* is equally safe but costs **32% more checks**.
+
+> ⇒ **A record can be perfectly sourced and perfectly current — and still be a live lie, because what it depended on died somewhere it never looks.**
+
+**Consequence for this page's own object.** The three questions (*what claim, which source, when observed or last verified*) and the fourth (*what should expire it*) are all **asked of one record at a time**. The unit this row says they must be asked of is **the record together with its dependency closure** — and that closure is not enumerable from the record itself, which is the shape this page already knows how to complain about (see「Provenance must be reversible」, where the missing direction was *forward*). ⇒ **This page now has two traversals and is missing a third: backward (*where from*) · forward (*what was derived*) · and now propagation (*what lapsed*).** Three different walks over the same graph; none substitutes for another.
+
+**Boundaries (do not merge these).**
+- **vs「Provenance must be reversible」(10-25B, this page)** — the **forward pointer** answers *what was derived from this source*; this row answers *a derived record must be withdrawn when an ancestor lapses*. **Pointer vs propagation**: the first is what deletion traverses, the second is what invalidation traverses. **Adjacent cells on one page; named, not merged.**
+- **vs ledger row 10-24A (AMV-Guard)** — **upstream / downstream, and they must be read in that order.** AMV-Guard prices *whether this premise deserves re-verification given what you are about to do*, and therefore **presupposes that an invalidation signal has already arrived**. This row shows that in the common shape — *the announcement names the key, not the verdicts* — **no signal arrives at all** ⇒ **first arrival, then pricing.** ⚠️ **10-24A has not been landed as a page revision** (it remains a ledger suggestion) ⇒ this cross-reference is **row-to-row** until it lands.
+- **vs ledger row 10-25B / [[MemoryGovernance]]'s `DELETE` closure** — that row **has an action** (`DELETE` was executed; ask whether the closure is complete). This row has **no action at all**: nothing was deleted, nothing was edited ⇒ ask *what propagates invalidation when there is no deletion event*. **Split columns.**
+- **vs ledger row 10-24B (governed-state corruption)** — that row's **control plane was modified**; here **nothing touched the control plane**. Split columns.
+- **vs [[Compaction]]** — compaction loses provenance by **destroying it before the model sees the text**; here provenance is intact and complete, and the verdict is wrong anyway.
+
+**Scan-line assignment.** An instance of **line 19 — composition audit** ("how many items does one verdict carry? if every item passes, does the conclusion they jointly entail also pass?"): **each record is true when written ⇒ per-record review passes 100%**, while the unit that should have been judged is *the conclusion plus its dependency closure*. Registered in `.workbuddy/memory/concept-radar/SCAN-LINES.md`. Its paired landing is [[MemoryGovernance]]「Update can be triggered upstream」, where the same row lands as an **action**.
+
+⚠️ **Evidence grade, must sit beside the numbers.** Preprint, **not peer-reviewed**; **Fallout is the authors' own synthetic world generator**; **0.3%** is conditional on **relations and verdicts being supplied in the same session** and degrades to **9.4–22.1%** when spread across sessions; the authors themselves state it degrades with **weaker writers** (who miss dependencies or miss invalidation events). **62% is a property of atomic-fact memory in that generator — not a production staleness rate.**
+
 ## See Also
 - [[agent-memory-provenance]] — primary source
-- [[MemoryGovernance]] — where the same row lands as an action (`DELETE` closure, 10-25B)
+- [[MemoryGovernance]] — where the same row lands as an action (`DELETE` closure, 10-25B; upstream-triggered `UPDATE`, 10-26A)
 - [[Compaction]] — the trust boundary this page's discipline sits downstream of (10-22A)
 - [[LongTermMemory]] — the store that carries provenance
 - [[CitationLock]] — the read-side companion

@@ -1,9 +1,9 @@
 ---
 title: "Memory Governance"
 type: concept
-tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation, scoped-revision, owner-attribution, protection-descriptor, discarded-column, memory-pricing, deletion-closure]
+tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation, scoped-revision, owner-attribution, protection-descriptor, discarded-column, memory-pricing, deletion-closure, upstream-invalidation, capture-feedback-loop]
 sources: [memory-lifecycle, agent-memory-provenance]
-last_updated: 2026-10-25
+last_updated: 2026-10-26
 ---
 
 # Memory Governance
@@ -21,6 +21,70 @@ Distinguish it from the two neighbours it is most often confused with: [[LongTer
 | **QA** | Answer from the evidence | Answer looks right while the bank underneath is broken |
 
 The reason to split them is diagnostic: an **end-to-end QA score stirs four different qualities together**. A correct answer can come out of a broken bank (lucky); a wrong answer tells you nothing about *which* stage to repair. [[DyadMem]] is the benchmark that makes the four stages separately measurable — and its headline result is a **measurement artefact, not a model ranking**: frontier models are strong **given gold memory**, and collapse once they must run the **full pipeline** themselves.
+
+## Update can be triggered upstream — nothing in the bank has to change *(ledger row 10-26A; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-26 (recorded in `.workbuddy/memory/concept-radar/2026-10-26.md`, candidate 1; ledger row **10-26A**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+>
+> 🔴 **Preprint, not peer-reviewed. `62%` is measured on the authors' own synthetic world generator (Fallout); Tether's `0.3%` holds only when the dependency relation and the verdict are supplied in the same session — spread across sessions it degrades to 9.4–22.1%.**
+
+**The trigger this page's four actions have never had.** Every row of the table above fires on **an event at the record**: Capture on something new, Update on a reconciliation with the bank, Recall on a selection, QA on an answer. ⇒ **the four actions share exactly one kind of trigger, and it is always "somebody did something to this memory."** **None of it is refuted.** What is displaced is that the table has no cell for an invalidation that **is not an action on a memory at all**.
+
+**Tether** (`arXiv:2610.25123`; Yiqi Wang et al., 8 authors; cs.CL; v1 **2026-10-18 09:01:52 UTC**, v2 **2026-10-22**). A signing key is revoked; the verdicts built on it should fall with it; **the announcement names only the key**, and those verdicts never share a retrieval window with it.
+
+- An agent reading **atomic-fact memory** republished **62%** of the objects that should have been voided upstream — **every one of those records true when written**, and **no memory was edited, deleted or touched** to produce that failure.
+- **Tether** records at write time the exact version each conclusion depends on, and withdraws the whole record at read time if anything supporting it has lapsed anywhere in the store ⇒ **0.3%**, with **37% fewer verification calls** than re-verifying everything.
+- For scale: **A-Mem / Graphiti 9%** (**0.83–0.86** checks per candidate); **Mem0 42%**; *"clear everything on any lapse"* equally safe at **+32% checks**.
+
+> ⇒ **`UPDATE` acquires a second trigger.** Not only *"somebody changed this memory"* but ***"something this memory depends on lapsed"*** — and the second trigger does not arrive as an event on a record, so a pipeline that only polls records cannot see it.
+
+**What this does to the table above.**
+- **Update** gains a trigger with a different provenance — a **dependency edge**, not a write. ⇒ the Update row's characteristic failure (*coexistence instead of supersession*) is now only **half** the column; the other half is **"there is still only one entry, and it should no longer be believed."**
+- **Recall** is where it becomes visible: the agent retrieves a record that is **locally perfect and globally void**.
+- **QA** is where it is scored as correct — which is exactly why the four-action split does not surface it: **no single stage is wrong.**
+- ⇒ **The prior question for the whole table:** is the dependency graph enumerable? If it is not, no trigger can be computed and `UPDATE` silently degrades to *"wait until somebody rewrites it."* (Same applicability shape as this page's scope note on enumerability, ledger row 10-17A — reached here from the **trigger** side rather than the audit side.)
+
+**Boundaries (do not merge these).**
+- **vs ledger row 10-25B (`DELETE` closure, this page)** — that row **has an action** and asks whether its closure is complete; this row has **no action**. Sequential questions: first *"was anything done?"*, then *"what propagates when nothing was done?"* ⇒ **split columns.**
+- **vs ledger row 10-24A (AMV-Guard)** — **upstream / downstream, read in that order.** AMV-Guard prices *whether this premise is worth re-verifying given your next action*, which **presupposes that an invalidation signal arrived**; this row shows that in the *announcement names the key* shape **nothing arrives** ⇒ **arrival first, pricing second.** ⚠️ **10-24A is still a ledger suggestion, not a landed section** ⇒ this cross-reference is **row-to-row** until it lands.
+- **vs the FAMA penalty above** — FAMA penalises reliance on **deleted or superseded** memories, i.e. it scores **the reader**; this row shows the **store** can be clean by every such score and still feed a voided conclusion. Complementary, and this one is the prior condition.
+- **vs ledger row 10-24B (governed-state corruption)** — that row's **control plane was modified**; here **nothing touched the control plane**.
+
+**Scan-line assignment / paired landing.** **Line 19 — composition audit** (see `SCAN-LINES.md`): per-record review passes, the closure fails. Its paired landing is [[Provenance]]「Invalidation is non-local, dependency is local」, which supplies the **traversal** this trigger has to follow.
+
+⚠️ **Evidence grade, must sit beside the numbers.** Preprint, **not peer-reviewed**; **Fallout is the authors' own synthetic world generator**; **0.3%** conditional on **same-session relations**, degrading to **9.4–22.1%** across sessions; authors self-report degradation with **weaker writers**. **62% is not a production staleness rate.**
+
+## Recall rewrites the input to Capture — the pipeline has no return edge *(ledger row 10-26C; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-26 (recorded in `.workbuddy/memory/concept-radar/2026-10-26.md`, candidate 3; ledger row **10-26C**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+>
+> 🔴 **Simulated users, not real ones; "leakage" is an inference-accuracy proxy, not a recorded leakage incident; the four support models are not named; the repair is one instruction whose robustness was never tested.**
+
+**The edge this page's pipeline does not have.** Capture → Update → Recall → QA is **one-way**: each stage consumes the previous one's output, and **no stage feeds an earlier one**. **None of it is refuted.** What is displaced is the assumption the diagram makes by drawing no arrow back: **that Capture's intake is produced by the world, not by the system's own Recall.**
+
+**Disclosure Begets Disclosure** (`arXiv:2610.28315`; Masahiro Kaneko · Hiromi Arai · Timothy Baldwin). Simulated users holding **24** personal attributes talk to a support agent **with vs without memory**, across sessions; attributes are inferred from the **full accumulated record**; **4 support models**:
+
+- memory raises reply **quality** and **empirical leakage** **at the same time**, and the gap **widens with each further session**;
+- **the mechanism is entirely non-adversarial** — a memory-conditioned reply brings an earlier value out as a **presupposition**, the user confirms it or does not correct it, and **the cue plus the agent's own guess become the recorded value** ⇒ the loop **reinforces itself**;
+- **the load-bearing measurement:** deleting the agent's mention of one attribute reduces its **later** leakage by **about twice** what a single-turn effect would predict ⇒ the damage lives **in the loop, not in the turn**;
+- **the user cannot walk out of it:** correcting a value **discloses** the attribute; refusing to discuss it pushes later predictions toward **more sensitive** values; an uncorrected wrong value **settles**.
+
+> ⇒ **Recall changes what Capture will next be given.** Nobody wrote anything, nobody attacked anything, the user was present throughout — and the store still ended up holding a value the system produced itself.
+
+**Consequence for the four actions.**
+- **Capture is not an independent stage.** Part of what it captures was generated by Recall ⇒ alongside *"the thing you changed last week never got written"* there is now ***"the thing that did get written was manufactured by an earlier read."***
+- ⇒ **The missing return edge is currently unowned.** Neither `UPDATE` nor `QA` asks *did this value come from the user, or from our own previous answer?* — so a write nobody authorised is still recorded as a fact with an owner.
+- **The repair lands on the reply side, not the storage side.** Instructing the agent **not to state or presuppose** user attributes returns leakage to **the no-memory level while keeping most of the quality gain**; filtering / anonymising *what the user said* or *what is stored* **gives up most of the gain** ⇒ **a measured payoff for the [[Abstention]] side of the house (不陈述), which is the first time that page's advice has a number attached to it.**
+
+**Boundaries (do not merge these).**
+- **vs [[MemoryPoisoning]]** — that is the **third decider**: *an attacker* writes. This row has **no attacker**; it is **"nobody decided, and it was recorded anyway."** ⇒ **Do not read it as a fourth decider**; read it as a **decider-less write**.
+- **vs ledger row 10-25A (Mosaic Effect)** — that is a **one-shot** event (the refusal itself carries the prohibited conclusion); this is a **cross-session accumulating loop**. This row **has a repair**; 10-25A's numbers are harder. Split columns.
+- **vs the FAMA / "failed to forget" machinery above** — that scores reliance on **deleted** content; here nothing was deleted, and the content is being **actively re-created**.
+- **Cross-reference 🎯 ledger row 10-09「常驻上下文与指令预算」** — the repair is exactly a claim about *what a resident context must not carry into a reply*, i.e. the question that row has been asking for **17 days**.
+
+**Scan-line assignment.** Reported as an instance of **line 15 — granularity audit** ("does this number survive a change of observation scale?"): measured **per turn** the loop is invisible; measured **per session** it is about **2×** larger. Recorded in `.workbuddy/memory/concept-radar/2026-10-26.md` §三 as **not** warranting a new scan line.
+
+⚠️ **Evidence grade, must sit beside the numbers.** **Simulated** users; leakage = **attribute-inference accuracy**, not a leakage event; **4 support models unnamed**; the repair is a **single instruction** with untested robustness; a **single protocol**; no independent replication.
 
 ## Forgetting is a capability, not a failure
 - **“Failed to forget” is now a deductible score.** Memora's **FAMA** = recall score − **stale-dependency penalty** (it explicitly penalises reliance on deleted or superseded memories). This turns *“the agent is quoting a superseded runbook as current”* from rhetoric into a number.

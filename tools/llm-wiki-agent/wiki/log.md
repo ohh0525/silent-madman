@@ -977,3 +977,49 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 `raw/` **未触碰**（只读扫描）· `learning-materials/` **未写入任何内容**（README「人工核查承诺」）· **零新建页、零删除、零结构性改动** · 五处修订**全部为草稿批注 `pending ingest`**，未入 `raw/`、未建 source 页 ⇒ **source slug 尚未写入 frontmatter**（沿用 10-17 / 10-21 先例）· `overview.md` 与 `concept-relationship.md` **未改动**（前者「synthesis 仅在 ingest 时修订」口径维持；后者第 1 项拍板未授权）。
 
 **Standing for the record:** nothing was ingested ⇒ `raw/` untouched; **no page was created and none deleted**; **nothing written to `learning-materials/`**. 修订后复跑：47 pages / 13 sources / dangling 0 · orphan 0 · frontmatter 0 · slug 73-73 · index↔disk 0 · raw uningested 0。 Ledger: 14 ✅ / **13** 🟡 / **56** ⏸ = **83**（三条 10-25 行由 ⏸ 转 🟡；合计不变）—— 因**页面修订已落、源页未摄取**，按既有口径记为 `🟡 材料已出待核查`。
+
+
+## [2026-10-26] update | Apply radar actions 2026-10-26 (10-26A / 10-26B / 10-26C) — five page revisions across four pages, zero new pages
+
+**本条目为 `wiki/log.md` 第 71 次操作**，与当日第 70 次 `lint` 同日（第二个维护动作）。
+
+> ⚠️ **计数口径第三次更正（本期如实记录；按追加惯例不改旧文）**：本期第 69 次 `lint` 条目内的更正 (a) 断言「10-25 条目本身是第 68 次、本期条目为第 69 次」，该断言**按「每天只有一个条目」计算**，而 **2026-10-25 实有两个条目**（`lint` + `update`）⇒ 链条整体差 1。按文件位置逐条重算（口径 `^## \[\d{4}-\d{2}-\d{2}\]`）：**截至 2026-10-24 共 67 条** ⇒ **[10-25] lint = 第 68 次** · **[10-25] update = 第 69 次**（该条目自称 68）· **[10-26] lint = 第 70 次**（该条目自称 69）· **本条目 = 第 71 次**。当前文件共 **71** 条带日期条目，与上列编号自洽。⇒ **三个旧自称（67 / 68 / 69）各少 1**，疑为同一处口径偏差的持续传染；**维护日 / 雷达期数不受影响**（按 `lint` 条目计，本期仍为 **35**）。旧条目不就地修改。
+**执行依据：用户当日指令「落成页面修订」**，对应 `.workbuddy/memory/concept-radar/2026-10-26.md` 第六节第 **2** 项 —— 该节原文为「建议落点已写在每条的建议下一步」，本条目即该项的**授权与执行记录**。
+
+> ⚠️ **同日并行运行告知（如实留痕）**：本条目提交前，`main` 已被**同日另一个运行**推进到 `c65b992`（`docs(graph): extend scan-line table in concept-relationship.md from 13 to 19 lines`，依据用户指令「**执行**」）。该运行已把第六节第 **1** 项（扫描线总表补第 14–19 条）执行完毕 —— **该项自 10-24 起连续三期结转，至此结清**。⇒ **本条目不重复该项**，也不改动 `concept-relationship.md`；本条目只执行第 2 项（页面修订）与第 3 项（计数口径）。
+
+### 落点（4 页 / 5 节，**零新建页、零删除**）
+
+| 台账行 | 页面 | 新增节 | 变量 | 评级 |
+|---|---|---|---|---|
+| **10-26A** | `concepts/Provenance.md` | 「Invalidation is non-local, dependency is local — a record's truth expires where its metadata cannot see」 | 本页四个问题（是什么 / 从哪来 / 何时观测 / 何时该作废）**全部逐条提问**；缺的是**依赖闭包**这一判定单位 | ⭐⭐ |
+| **10-26A** | `concepts/MemoryGovernance.md` | 「Update can be triggered upstream — nothing in the bank has to change」 | 四个动作**只有一种触发器**＝「有人动过这条记忆」；本行的失效**根本不是一个对记忆的动作** ⇒ `UPDATE` 需要**第二个触发器** | ⭐⭐ |
+| **10-26B** | `concepts/Compaction.md` | 「Compaction is not neutral — it drops constraints class-wise」 | 本页把压缩当**中性**技术（只丢「nuance」）；实际丢失**按内容类别有偏**，且偏向**治理类**内容 | ⭐⭐ |
+| **10-26B** | `concepts/HumanInTheLoop.md` | 「A rule in code is not enough — it must also survive compaction」 | 本页最锋利那句（不在执行路径里的阈值不是阈值）**默认规则还在窗口里**；压缩会把它吃掉而**任务分数不变** | ⭐⭐ |
+| **10-26C** | `concepts/MemoryGovernance.md` | 「Recall rewrites the input to Capture — the pipeline has no return edge」 | 四动作是**单向管线、没有回边**；本行是「**无人写入却依然被记录**」⇒ Capture 的输入流由 Recall 产出 | ⭐ |
+
+**承重数字（使 `log.md` 保持为耐久副本）**
+- **10-26A · Tether**（`arXiv:2610.25123`；Yiqi Wang 等 8 人；cs.CL；v1 **2026-10-18 09:01:52 UTC** / v2 **2026-10-22**）：签名密钥被吊销、建立其上的验证结论都该作废，但**公告只点名那把密钥**，那些下游判定**与它永远不共享同一个检索窗口** ⇒ *"This non-locality of invalidation turns memory into a liability."* 读**原子事实记忆**的 agent 发布 **62%** 本该失效的对象（**每条记录写下时都真**）；Tether **0.3%**，且比全量重验**少 37% 验证调用**；A-Mem / Graphiti **9%**（每候选 0.83–0.86 次重验）、Mem0 **42%**；「一有失效就全清」同样安全但**多花 32% 检查**。⚠️ **Fallout 是作者自建的合成世界生成器**；0.3% 的前提是「关系与判定在同一会话给出」，分散到不同会话退化为 **9.4–22.1%**。
+- **10-26B · 2610.31778**（ELLIS Tübingen · MPI-IS · Tübingen AI Center，提交 **2026-10-22 18:15:54 UTC**）：**SWE-chat 真实会话**中「**该怎么做 / 不该做什么**」被丢的速率是「**要造什么**」的 **约 6 倍**；**ProgramBench** 上**第一次压缩**即平均丢掉**约 1/3** 反作弊规则且**随压缩次数单调上升**；**两个 1M 模型上阈值不影响分数**、**无方法胜过默认自摘要**。判据：*benchmarks are compaction-friendly* —— **唯独别处不存在的约束找不回来**。对照件 **2608.11242（COMPINT，Penn State，提交 2026-07-31 / 修订 2026-10-11 —— 非新论文）**：SC 存活 **17%**，不压缩时合规率也仅 **59.2–70.7%**，**Qwen3.5-9B** 的 SC-aware extractor 达 **95.6 / 95.1 / 90.3%**。
+- **10-26C · Disclosure Begets Disclosure**（`arXiv:2610.28315`；Kaneko / Arai / Baldwin）：**24** 个属性的模拟用户 × 跨 **4** 个 support 模型，记忆**同时**抬高回复质量与实证泄露且**差距随会话越拉越大**；删掉 agent 对某属性的提及，其**后续泄露的下降约为单轮效应所预测的两倍** ⇒ **损伤在回路里，不在那一轮里**。修复在**回复侧**：指示 agent **不陈述 / 不预设**属性 ⇒ 泄露回到**无记忆水平**而**保住大部分质量收益**；过滤 / 匿名化**会放弃大部分收益**。
+
+### 边界（五节均已写入，防日后被合并）
+- **10-26A 两节是同一行的两半**：`Provenance.md` 提供**遍历**（失效沿依赖图传播），`MemoryGovernance.md` 提供**动作**（`UPDATE` 的第二个触发器）；故意分置两页。
+- **10-26A vs 10-24A（AMV-Guard）** —— **上下游，必须按此顺序读**：AMV-Guard 的 VOI 门控**预设失效信号已经到达**，本行证明「公告只点名密钥」的常见形态下**根本没有信号到达** ⇒ **先有到达，才有定价**。🔴 **10-24A 至今仍是台账建议、未落成页面修订**（全文检索 `wiki/` 无「AMV」）⇒ 该互指**暂以台账行对台账行的形式书写**，待其落地后再改为节对节。
+- **10-26A vs 10-25B（删除闭包）** —— 分栏：那条**有一个 DELETE 动作**，本行**没有任何动作**；与 **10-24B** 亦分栏（控制面被改 vs 控制面没动）。
+- **10-26B 两节是同一行的两个落点**：`Compaction.md` 记**机制**（类别偏好），`HumanInTheLoop.md` 记**后果**（「规则写在代码里」这条告诫的默认前提被推翻）。
+- **10-26B vs 10-22A（Compaction Laundering）** —— **同一格的两个相反方向**：那条**攻击者往压缩里塞东西**，本行**压缩自己把东西丢掉**（无攻击者）⇒ **并列互指、勿合并**。与 **10-21B**（缓存层代价）分层、与 **[[ContextRot]]**（注意力轴 vs 选择轴）分栏。
+- **10-26C vs [[MemoryPoisoning]]** —— 那条是**攻击者**写的，本行**没有攻击者** ⇒ **勿读作「第四个决定者」**，它是「**无人决定却依然发生**」。与 **10-25A（马赛克效应）**分栏（一次性 vs 跨会话累积；本行有修复，10-25A 数字更硬）。
+- **扫描线归属**：10-26A → **第十九条（合成审计）**；10-26B、10-26C → **第十五条（粒度审计）**。按当日报告 §三的判定，**本期不立第二十条**。
+
+### 复跑结果（修订后）
+`tools/health.py`：47 页 · Empty/Stub **0** ✅ · Index Sync **0** ✅ · Log Coverage **0** ✅。
+`tools/daily_lint.py`：悬空 `[[wikilink]]` **0** ✅（**连续第十七日**）· 孤立页 **0** ✅ · frontmatter **0 issues** ✅ · `sources` slug **13/13 有效**、**73** 条引用全部解析 ✅ · `index.md` ↔ 磁盘 **0 divergence** ✅ · `raw/` 未摄取 **0** ✅。
+**wiki 规模未变**：**13 源 / 47 内容页 / 49 个 `.md`** ⇒ 纯追加修订、**零新建页、零新链接目标**（新增 `[[…]]` 全部指向既有页）。
+四页 `last_updated` → **2026-10-26**；tags 各增（**invalidation-nonlocality** · **dependency-closure** · **upstream-invalidation** · **capture-feedback-loop** · **class-biased-loss** · **compaction-resident-rules**）；`wiki/index.md` **4 行描述同步**（沿用 10-17 首次确立的惯例）。
+
+### 计数口径：按第六节第 3 项固定为「严格横幅」
+本期修订前实测 **24 处 / 11 个文件**（严格横幅口径），修订后 **29 处 / 11 个文件** ⇒ **+5 处 / +0 文件**，与新增 5 节**一一对应**（`Provenance` 4→5 · `MemoryGovernance` 3→5 · `Compaction` 2→3 · `HumanInTheLoop` 2→3），**此增量可复核**。⇒ **自本期起该口径固定为「严格横幅」**（行首 `> **Draft annotation, pending ingest.`）；旧记录「25 处 / 10 个文件」与任何口径都不吻合，**按惯例不就地修改**，仅在当日报告与此处留痕。
+
+### 硬约束复核
+`raw/` **未触碰**（只读扫描）· `learning-materials/` **未写入任何内容**（README「人工核查承诺」）· **零新建页、零删除、零结构性改动** · 五处修订**全部为草稿批注 `pending ingest`**，未入 `raw/`、未建 source 页 ⇒ **source slug 尚未写入 frontmatter**（沿用 10-17 / 10-21 / 10-25 先例）· `wiki/overview.md` **未改动**（「synthesis 仅在 ingest 时修订」口径维持）· **`concept-relationship.md` 本条目未触碰**（其第 14–19 条已由同日 `c65b992` 补齐，见上方并行运行告知）。
