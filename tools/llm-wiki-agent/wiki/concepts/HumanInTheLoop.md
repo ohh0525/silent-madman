@@ -1,7 +1,7 @@
 ---
 title: "Human-in-the-Loop"
 type: concept
-tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance, compaction-resident-rules]
+tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance, compaction-resident-rules, premise-layer-grading, reversibility-supply, promise-feasibility]
 sources: [human-in-the-loop]
 last_updated: 2026-10-26
 ---
@@ -94,6 +94,63 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 
 ⚠️ **Evidence grade, must sit beside the numbers.** `arXiv:2610.31778` is a **preprint, not peer-reviewed**; **"about 1/3"** is a **ProgramBench first-compaction average**; the **6×** comes from **SWE-chat**; **no compression method beat the default self-summary** and **threshold did not affect score** ⇒ **the finding is about a distribution across content classes, not a verdict against compaction**. `arXiv:2608.11242` is **not new**; **17%** is a controlled-suite survival rate; the extractor's >90% is **self-measured on one 9B base**.
 
+## 分级尺装错了层 —— impact × reversibility 也得作用在前提上 / The grading scale is mounted one layer too high *(ledger row 10-24A; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-24 and re-verified 2026-10-26 (`.workbuddy/memory/concept-radar/2026-10-24.md`, candidate 1; ledger row **10-24A**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+>
+> 🔴 **Preprint. The 100% / 0% pair is measured *relative to a static policy given the same inputs* — not an absolute safety claim.**
+
+**The assumption this page has always carried.** Step 1 of the gate grades a proposed action by **impact × reversibility**, and the page then applies that scale to **the final step** — the one the human is asked to approve. **None of that is refuted.** What is displaced is a placement the page never examined: **the scale is mounted one layer too high.** An action also rests on **premises** (a remembered address, a stored preference, a prior state), and those are never graded at all.
+
+**AMV-Guard** (`arXiv:2610.31446`, submitted **2026-10-22 15:43:50 UTC**; Yiqi Wang et al.; cs.MA; **22 pages / 5 figures / 12 tables**): *"whether an entry must be re-checked before acting is not a property of the entry: the same remembered address can be used unchecked for a routine shipment but should be re-confirmed before a valuable one."* Formulated as a **sequential stopping problem** — a verification is worth its cost **only if it can change what the agent does next** ⇒ raising the consequence magnitude moves **the same premise** through **proceed → verify → direct abstention**. On ToolSandbox vs a static policy with identical inputs: verification cost **−33.9%** (−42.3% / −58.9% across three backbones), **100%** safe-proceed recall, **0%** Gate harmful, Proceed coverage **38.83% → 44.17%**; AppWorld gate-core transfer **−21.3%** at a small cost in safe-proceed recall and task success.
+
+⇒ **Consequence for this page.** The gate already owns the right ruler — **consequence magnitude**. It just applies it to the wrong object. ⇒ **Grade the premises with the same scale**: the same remembered address is a free premise for a routine shipment and an expensive one for a valuable one, and *that* is what decides whether the human is asked. ⇒ **The abstention branch is priced, not defaulted**: past a consequence level even a confirming check cannot license execution, so refusing *without* checking is the rational terminal decision.
+
+**Boundaries (do not merge these).**
+- **vs 10-21A (the gate does not know where its arguments came from)** — that row is about the **source** of an argument (provenance); this row is about its **consequence** (pricing). Two different missing columns on the same gate; **split, do not merge.**
+- **vs 10-26B (a rule must also survive compaction)** — that row asks whether the **criteria are still in the window**; this row asks whether the criteria are **applied to the right layer**. Survival first, placement second.
+- **vs 10-24C (below)** — that row asks **who supplies reversibility**; this row asks **where consequence is measured**. Sequential: measure, then supply.
+- **vs [[Abstention]]** — the same row's output-side landing (abstention as a priced regime, not a binary); **vs [[MemoryGovernance]]** — the Recall-side cost model (`RECALL` is a budget decision).
+
+## 可逆性是假设，不是实现 —— 它由谁提供 / Reversibility is a supposition, not an implementation *(ledger row 10-24C; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-24 and re-verified 2026-10-26 (`.workbuddy/memory/concept-radar/2026-10-24.md`, candidate 3; ledger row **10-24C**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+**The question no page asked.** This page grades by **impact × reversibility**; [[MemoryGovernance]]'s second governance bottom line is *rollbackable*; [[overview]] writes "idempotent execution". **None of them asks who supplies reversibility.** The gate *assumes* the attribute exists and then grades with it. That is a supposition, not an implementation.
+
+**RegretBench** (`arXiv:2610.28934`, submitted **2026-10-20 21:13:31 UTC**; Xu Li, Simon Yu, Minzhou Pan, Yiyou Sun, Zhaorun Chen, Bo Li, Weiyan Shi — Northeastern / UC Berkeley / UChicago / UIUC; cs.AI + cs.SE): **205** executable tasks built from **real regret moments** self-reported on X / GitHub / Stack Overflow — cases where users explicitly regretted not preserving state they later needed. Across **6** frontier models: agents complete **86.1%** of tasks on average, yet back up before those moments in only **15.2%** ⇒ *"task completion ability does not imply backup awareness."*
+
+**BackUpper** — a **harness plug-in backup layer** that checks **every tool call** and preserves affected state **before** modification (rule-based strategies for common operations + a lightweight subagent for complex cases; the rule table expands with subagent decisions over time): covers **every** regret-moment action, restores states at **92.2%** average similarity to the original, costs **$0.014 per task**, uses **7× fewer tokens** than a main-agent self-backup baseline; with user-stated preferences it narrows scope and matches human annotations at **84.5% F1**.
+
+⇒ **Consequence for this page.** Reversibility is **not** a property the gate discovers; it is a **harness duty that must be built**, and it is cheap ($0.014/task) — far cheaper than asking the model to remember to do it. ⇒ **A gate that grades by reversibility while nobody implements reversibility is grading against an attribute that does not exist.**
+
+**Boundaries (do not merge these).**
+- **vs [[MemoryGovernance]]'s *rollbackable*** — that is **memory** rollback; this is **tool side-effect** rollback. **Split columns.**
+- **vs [[AgentSandbox]]** — the two halves of the **same `execute` leg**: the sandbox bounds *what can be touched*, the backup layer guarantees *what was touched can be restored*. **Adjacent, named to each other, never merged.** (Landing filed there 2026-10-26.)
+- **vs 10-24A (above)** — that row **measures** consequence; this row **supplies** reversibility. Sequential.
+- **vs 10-19B「Finding ≠ Fixing」** — this row is that gap's **second** answer: a detector-adjacent failure with a cheap, harness-resident repair.
+
+⚠️ **Evidence grade.** Tasks come from **self-reported** regret moments (selection bias); **single protocol**; **92.2% similarity ≠ 100% restore**; the **84.5% F1** is conditional on **users having stated preferences**. Preprint, no independent replication.
+
+## 承诺也是闸门对象 —— 而且它不需要轨迹就能判定 / A promise is a gate object — and it is decidable without a trajectory *(ledger row 10-09E; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-10-09 and re-verified 2026-10-26 (`.workbuddy/memory/concept-radar/2026-10-09.md`, §3.3; ledger row **10-09E**). Remove this banner on ingest.
+
+**The gap this fills in one line.** [[ToolHallucination]] governs *does the tool exist*; ledger row 09-23 governs *can state be recovered*; [[Abstention]] governs *should it decline* — **nothing governs「这句话所承诺的动作，在当前部署里根本没有人能执行」**. And the gate here is defined over **actions that already happened**; a promise is an action that **has not** ⇒ **a promise is a gate object too**, one turn earlier than this page usually looks.
+
+**Empty Commitments** (`arXiv:2610.01045`; Jiaqi Tang / Lan Wei / Bingyu Shen / Boyang Li; cs.AI + cs.CL; v1 4 pages / 3 tables, **v2 adds the controlled benchmark**):
+
+> **Definition:** *a promise of action after the current turn that nothing in the agent's tools or runtime can carry out.* Verbatim: *"Unlike a broken promise, its emptiness is decided by the agent's configuration at the moment of speaking, so it can be detected from a single turn, before deployment or at run time."*
+
+- **Affordance set** Φ = tools **+ four persistence properties** — whether it can *act after the turn*, *schedule future actions*, *keep memory across sessions*, *delegate to third parties*. A commitment is **felicitous** iff some execution path under Φ performs it; otherwise **empty**.
+- **Three failure types** — **capability** (no affordance performs it; "I'll email you the summary" with no email tool) · **temporal** (it falls at a time when the agent is not running and cannot schedule; "I'll remind you tomorrow") · **agentive** (a third party must act and the agent cannot delegate).
+- **Anchoring** — when an enabling tool exists, the commitment is **anchored** only if the agent **calls it in the same turn**; otherwise **unanchored**. ⇒ **Adding a scheduler is not a fix; it trades one defect for a quieter one** (keepable, yet kept only if `create_reminder` actually fires).
+- **Numbers** — **293** follow-up requests × **5** setups (each adding one persistence affordance; all tools **mocked**): four open-weight **8–14B** models fail on **45.9%** of responses when no tool exists and nothing is stated; a frontier model fails on **4.4%**, but reaches that by **deferring and asking**, not by using the tools it has ⇒ **promises made without the enabling call remain in every model**. **Telling the model its runtime** (the cheapest fix) cuts open-weight failures **nearly in half** where nothing is doable and **changes nothing** where a scheduler exists; a **directive capability card** removes most failures at the largest cost in **over-refusal**. Checker validated against **400** human labels.
+
+⇒ **Why it belongs on this page:** it is **pre-deployment decidable** — this wiki's first defect class that can be judged from **configuration + one turn**, with no trajectory. ⚠️ **It is a decidability finding, not a prevalence finding**: **45.9% / 4.4% come from one controlled benchmark with mocked tools and are not an online incidence rate.** ⚠️ **v1 reported no rates at all** — the frequency numbers appear only in v2's controlled benchmark.
+
+**Boundaries.** vs [[ToolHallucination]] (**one-shot tool existence** vs **cross-turn feasibility** — the full landing is a section on that page) · vs [[Abstention]] (**该不该拒答** vs **答应得对不对**, and this row names the trade-off: a fix that makes the model refuse everything is not a fix — over-refusal is the cost side) · vs 10-24A (that row **prices** premises; this row judges **whether a promised action is performable at all**).
+
 ## Why It Matters
 - It answers a property unique to acting agents: unlike a chatbot, a wrong action is frequently **not recoverable** — a sent email, an executed payment, a deleted record. Model error rates can be low and the damage still lands before anyone notices.
 - It makes "automatic" and "someone has a backstop" compatible: the agent absorbs the bulk of the work, the human spends seconds on the one irreversible step — speed comes from *narrowing the decision scope*, not from removing oversight.
@@ -110,3 +167,6 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 - [[Agent]] — sharpens its "not a fixed automation script" boundary from *can it decide* to *may it act*
 - [[Provenance]] — the audit discipline this reuses for actions
 - [[Compaction]] — why an executable rule can silently leave the window (10-26B)
+- [[AgentSandbox]] — the other half of the `execute` leg: containment vs restorability (10-24C)
+- [[ToolHallucination]] — existence vs cross-turn feasibility of what is promised (10-09E)
+- [[Abstention]] — abstention as a priced regime, not a binary (10-24A)

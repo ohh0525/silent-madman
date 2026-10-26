@@ -1,9 +1,9 @@
 ---
 title: "Long-Term Memory"
 type: concept
-tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness, raw-history-vs-compression]
+tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness, raw-history-vs-compression, retrieved-vs-operative]
 sources: [agent-memory-provenance, memory-lifecycle]
-last_updated: 2026-10-22
+last_updated: 2026-10-26
 ---
 
 # Long-Term Memory
@@ -68,6 +68,16 @@ This page describes only the **first half** of a memory's life — how to store 
 > **Draft annotation, pending ingest.** Verified against live sources on 2026-10-20/21; recorded in `.workbuddy/memory/concept-radar/2026-10-22.md` (candidate 2). Remove this banner on ingest.
 
 The third carrier above asks **"what if memory is not addressable"**. This note records the **opposite-direction question — is addressable *compression* worth it at all?** MemDev-Bench (`arXiv:2610.27524`) reports that **handing over the raw history trajectory reduces step count significantly versus handing over a memory system**, because compressed memory **discards the process information the agent was actually reusing**; and that memory **makes otherwise-solvable tasks fail even when the retrieved history is relevant**. ⇒ This page's carriers are a **costed** choice, not a free upgrade. ⚠️ The single-conversation study in the same row (`arXiv:2610.29823`) is **n = 1** and is **not** evidence that memory is useless — only that its marginal benefit must be **re-priced** where the model can search for itself. Full argument under [[MemoryGovernance]]「The discarded column」; **the tension with [[Compaction]]'s 10-22A section (where discarding the original is what enables the attack) is deliberate and unresolved.**
+
+## Retrieved ≠ operative — the projection is a second object *(ledger row 10-24B; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-10-24 and re-verified 2026-10-26; recorded in `.workbuddy/memory/concept-radar/2026-10-24.md` (candidate 2). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+Everything on this page — the three parallel stores, the intent gate, the source router, the three concurrent agentic searches — describes **how a record is retrieved**. It has always silently equated that with **how a record takes effect**. Those are two objects.
+
+**Governance-state corruption** (`arXiv:2610.30698`, submitted **2026-10-22**; Bowen Liu et al.; cs.AI + cs.SE; **13 pages**): faults that **alter which retained records enter model-visible context while stored content and tasks remain fixed** ⇒ *"An LLM agent can retrieve a memory correctly yet use it incorrectly after its validity state changes."* Across **6** providers and **731** benchmark-grounded bases (**2,080** matched fault pairs), corruption changes the **operative projection** in **96.25%** of pairs; oracle-backed enforcement restores it in **100%**. On a deterministically selected **non-probability** panel (**298 / 300** triplets resolved, **238** distinct bases), clean − corrupted is **40.54 pp** in LongMemEval binary correctness (95% CI **[30.32, 50.71]**) and **30.60 points** in rescaled Memora **FAMA** (**[23.31, 37.69]**); both also show recovery.
+
+⇒ **This page's retrieval description is necessary but not sufficient**: correctness of the pipeline above is a statement about *a record*, while what the model actually sees is *a projection*. The full argument and the「fourth column」framing sit in [[MemoryGovernance]]「The fourth column of memory failure」. ⚠️ **13-page preprint**; panel **non-probability** and faults **author-injected**; recovery is **oracle-backed** ⇒ *repairable under an ideal enforcer* is not *repairable in your system*; the **−27.55 / +27.51** full-cohort numbers are self-described **descriptive proxies** and must not be quoted as effects.
 
 ## See Also
 - [[agent-memory-provenance]] — primary source (the reading discipline)

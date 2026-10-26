@@ -1023,3 +1023,46 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 
 ### 硬约束复核
 `raw/` **未触碰**（只读扫描）· `learning-materials/` **未写入任何内容**（README「人工核查承诺」）· **零新建页、零删除、零结构性改动** · 五处修订**全部为草稿批注 `pending ingest`**，未入 `raw/`、未建 source 页 ⇒ **source slug 尚未写入 frontmatter**（沿用 10-17 / 10-21 / 10-25 先例）· `wiki/overview.md` **未改动**（「synthesis 仅在 ingest 时修订」口径维持）· **`concept-relationship.md` 本条目未触碰**（其第 14–19 条已由同日 `c65b992` 补齐，见上方并行运行告知）。
+
+
+## [2026-10-26] update | Land the five outstanding ledger rows — 10-24A / 10-24B / 10-24C / 10-09 / 10-09E: twelve page revisions across nine pages, zero new pages
+
+**本条目为 `wiki/log.md` 第 72 次操作**，同日第三个维护动作（第 70 次 lint · 第 71 次 update 之后）。
+**执行依据：用户当日指令「还有没有没做的，有就全做了」** —— 盘点确认五行为「已推荐、从未落地」：10-24 报告曾对 10-24A/B/C 给出「是，优先 / 是 / 是」倾向但从未执行；10-09「常驻上下文与指令预算」⭐ 与 10-09E「空承诺」⭐ 为 🎯 最老未落地（连续十期占位）。
+
+### 落点（9 页 / 12 节，零新建页、零删除）
+
+| 台账行 | 页面 | 新增节 |
+|---|---|---|
+| **10-24A** | `concepts/Abstention.md` | 「Abstention is not binary — it is a budget decision priced by what happens next」（proceed → verify → direct abstention 三区间） |
+| **10-24A** | `concepts/MemoryGovernance.md` | 「Recall has no cost model — verification effort is priced by the action, not by the record」（`RECALL` 是预算决策，不是读取） |
+| **10-24A** | `concepts/HumanInTheLoop.md` | 「分级尺装错了层 —— impact × reversibility 也得作用在前提上」（grading scale mounted one layer too high） |
+| **10-24B** | `concepts/MemoryGovernance.md` | 「The fourth column of memory failure — the selection layer / control plane」（取回 ≠ 生效；operative projection） |
+| **10-24B** | `concepts/LongTermMemory.md` | 「Retrieved ≠ operative — the projection is a second object」 |
+| **10-24C** | `concepts/HumanInTheLoop.md` | 「可逆性是假设，不是实现 —— 它由谁提供」（Reversibility is a supposition, not an implementation） |
+| **10-24C** | `concepts/AgentHarness.md` | 「The duty the four omit — make the action reversible before it happens」（备份层 = 第五职责） |
+| **10-24C** | `concepts/AgentSandbox.md` | 「Containment ≠ restorability」（限制能碰什么 vs 保证碰坏能还原） |
+| **10-09** ⭐ | `concepts/ProgressiveDisclosure.md` | 「按需加载的前提是它会加载 —— 常驻与按需的分配规则」（100% vs 53% 对照表） |
+| **10-09** ⭐ | `concepts/ContextEngineering.md` | 「The resident budget — the tokens this page never prices」（capacitated assortment） |
+| **10-09E** ⭐ | `concepts/ToolHallucination.md` | 「跨轮次的可行性核验」（registry 答「存在吗」，affordance set 答「轮次之后还有谁能执行」） |
+| **10-09E** ⭐ | `concepts/HumanInTheLoop.md` | 「承诺也是闸门对象 —— 而且它不需要轨迹就能判定」（部署前可判定） |
+
+**来源复核（全部 WebSearch 真实返回，2026-10-26）**：`arXiv:2610.31446`（AMV-Guard）· `arXiv:2610.30698`（治理态损坏）· `arXiv:2610.28934`（RegretBench / BackUpper）· `arXiv:2610.11007`（capacitated assortment）· `arXiv:2610.01045`（Empty Commitments，v1→v2）· `arXiv:2602.11988`（Evaluating AGENTS.md）+ Vercel agent evals（100% / 53% / 79% / 56%）。**本次复核新增的承重事实**：AMV-Guard 的安全性**被其前提提取器上界**（OOD 层 critical-premise recall **92.45–95.91%**、Gate-harmful 最高 **15.19%**——论文自陈，⚠️ 数字出自二手概述页，成文引用前须回 PDF 表格核对）；核验成本降幅**跨三个骨干为 −33.9% / −42.3% / −58.9%**；常驻文件在 **1,867** 个仓库中**生命周期内翻倍以上、越老越少删**；上下文文件**额外步骤 +2.45–3.92**；删掉仓库文档后 LLM 生成上下文反升 **+2.7%** ⇒ 病根是**冗余**；Empty Commitments **v1 无任何比率数字**，45.9% / 4.4% 仅出现于 v2 的受控基准。
+
+### 三处互指升级（row-to-row → section-to-section）
+同日早前运行在 `Provenance.md` / `MemoryGovernance.md` 写下的两处「10-24A 仍是台账建议、未落成页面修订」与一处「10-24B 未落地」注记，随本次落地**全部改为节对节互指**（只追加 ✅ 升级注记，不改原句结论）。
+
+### 复跑结果（修订后）
+`tools/health.py`：47 页 · Empty/Stub **0** ✅ · Index Sync **0** ✅ · Log Coverage **0** ✅。
+`tools/daily_lint.py`：悬空 **0** ✅（**连续第十七日**）· 孤立页 **0** ✅ · frontmatter **0** ✅ · slug **73/73** ✅ · index ↔ 磁盘 **0 divergence** ✅ · `raw/` 未摄取 **0** ✅。
+**wiki 规模未变**（13 源 / 47 内容页 / 49 个 `.md`）⇒ 零新建页、零新链接目标（新增 `[[…]]` 全部指向既有页）。
+九页 `last_updated` → **2026-10-26**；tags 各增（**action-conditioned-verification · threshold-ownership · selection-layer · control-plane · retrieved-vs-operative · premise-layer-grading · reversibility-supply · promise-feasibility · backup-layer · restorability · cross-turn-feasibility · affordance-set · always-loaded-context · instruction-budget · loading-probability · resident-budget · capacitated-assortment**）；`wiki/index.md` **9 行描述同步**。
+
+### 计数（严格横幅口径，沿用同日早前固定）
+**29 处 / 11 文件 → 41 处 / 14 文件**（**+12 / +3**，与新增 12 节一一对应；新携带横幅的文件：`ProgressiveDisclosure` · `ContextEngineering` · `ToolHallucination`）。
+
+### 硬约束复核
+`raw/` 未触碰 · `learning-materials/` 未写入（README「人工核查承诺」）· 零新建页、零删除 · 十二处修订全部为 `pending ingest` 草稿批注（slug 未入 frontmatter，沿用先例）· `overview.md` 未改动 · `concept-relationship.md` 未触碰 · 推送走 `output/_tools/api_push.py`，未使用 `git push`；未读取 / 打印 / 回显任何 token 明文。
+
+### 留痕（未执行、留给你拍板）
+同日 10-09 另两行（**LAM 资源理论**、**Inside-Out Monitoring**）**未落地**——其建议动作是结构性合并（「与 09-25 合并考虑」「与 10-08 候选 1 + 09-17 合并成一页」），按「结构性改动只建议不擅执行」口径保留 ⏸。🎯「最老未落地」自 10-09 ⭐ / 10-09E 结清后**移交给下一行**（见当日报告）。

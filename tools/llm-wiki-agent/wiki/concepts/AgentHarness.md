@@ -1,9 +1,9 @@
 ---
 title: "Agent Harness"
 type: concept
-tags: [agent-harness, runtime, orchestration, durability, subagents, harness-plurality, inheritance, routing]
+tags: [agent-harness, runtime, orchestration, durability, subagents, harness-plurality, inheritance, routing, backup-layer, reversibility-supply]
 sources: [agent-harness]
-last_updated: 2026-10-22
+last_updated: 2026-10-26
 ---
 
 # Agent Harness (智能体外壳)
@@ -59,6 +59,26 @@ Four duties per loop; miss any one and the agent degrades from "works" to "demo"
 **Why it is not the same row as 10-15C.** That row asks **"how much does the harness contribute"** (backbone frozen, harness swapped; Max moves 7–17 points). This one asks **"should the harness be plural."** ⇒ **Separate columns; must not be merged.** Same for **[[MultiAgent]]**: that is **multiple runtime instances cooperating**; this is **one executor with several selectable harness classes** — *parallelism vs polymorphism*.
 
 🔴 **Boundaries:** 15.79% is a self-reported **"up to"** (an upper bound); all three benchmarks are **long-horizon agentic** tasks — short tasks and multi-turn dialogue are uncovered; **the cost of training the hierarchy and the routing lessons is not counted**; no independent reproduction.
+
+## The duty the four omit — make the action reversible before it happens *(ledger row 10-24C; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-24 and re-verified 2026-10-26 (`.workbuddy/memory/concept-radar/2026-10-24.md`, candidate 3; ledger row **10-24C**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+**What the four duties do not promise.** Read them as a guarantee list: ① the window gets assembled, ② the loop stops, ③ the window is governed when full, ④ the **harness** survives crashes and schedules subagents. ⇒ **Every one of them is about the harness continuing. None is about the world the harness changed being restorable.** Duty ④ is *the process's* resilience; it says nothing about *the user's state*.
+
+**RegretBench** (`arXiv:2610.28934`, submitted **2026-10-20**; Xu Li et al. — Northeastern / UC Berkeley / UChicago / UIUC): **205** executable tasks grounded in real self-reported regret moments. Across **6** frontier models, agents complete **86.1%** of tasks on average yet back up before those moments in only **15.2%** ⇒ *"task completion ability does not imply backup awareness."*
+
+**BackUpper** — a **plug-in backup layer at exactly this layer**: it checks **every tool call** and preserves affected state **before** modification (rule-based strategies + a lightweight subagent; the rule table expands with subagent decisions). Covers **every** regret-moment action, restores at **92.2%** average similarity, **$0.014/task**, **7× fewer tokens** than main-agent self-backup; with user-stated preferences it matches human annotations at **84.5% F1**.
+
+⇒ **Consequence.** Reversibility is a **harness duty**, it is **cheap**, and it **cannot be delegated to the model** — the same models that complete 86.1% of tasks back up 15.2% of the time. ⇒ **Backup belongs next to duty ④, but as a distinct duty: ④ keeps the harness alive; this keeps the user's prior state recoverable.**
+
+**Boundaries (do not merge these).**
+- **vs duty ④ (resilience & scale)** — resilience is **the process surviving a crash**; backup is **the world surviving an action**. Split them.
+- **vs [[AgentSandbox]]** — the sandbox bounds **what can be touched** (containment); backup guarantees **what was touched can be restored**. **Two halves of one `execute` leg; adjacent, never merged.** (Landing filed there 2026-10-26.)
+- **vs [[HumanInTheLoop]]** — the gate **grades by** impact × reversibility; this duty **supplies** the reversibility. Without it, the gate is grading against an attribute nobody implemented.
+- **vs [[Compaction]] / duty ③** — compaction decides **what leaves the window**; backup decides **what is preserved before the world changes**. Different objects.
+
+⚠️ **Evidence grade.** Preprint, no independent replication; **single protocol**; tasks are **self-reported** regret moments (selection bias); **92.2% similarity ≠ 100% restore**; **84.5% F1** is conditional on **users having stated preferences**.
 
 ## See Also
 - [[agent-harness]] — source

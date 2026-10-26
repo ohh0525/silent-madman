@@ -1,7 +1,7 @@
 ---
 title: "Memory Governance"
 type: concept
-tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation, scoped-revision, owner-attribution, protection-descriptor, discarded-column, memory-pricing, deletion-closure, upstream-invalidation, capture-feedback-loop]
+tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation, scoped-revision, owner-attribution, protection-descriptor, discarded-column, memory-pricing, deletion-closure, upstream-invalidation, capture-feedback-loop, action-conditioned-verification, selection-layer, control-plane]
 sources: [memory-lifecycle, agent-memory-provenance]
 last_updated: 2026-10-26
 ---
@@ -46,13 +46,64 @@ The reason to split them is diagnostic: an **end-to-end QA score stirs four diff
 
 **Boundaries (do not merge these).**
 - **vs ledger row 10-25B (`DELETE` closure, this page)** — that row **has an action** and asks whether its closure is complete; this row has **no action**. Sequential questions: first *"was anything done?"*, then *"what propagates when nothing was done?"* ⇒ **split columns.**
-- **vs ledger row 10-24A (AMV-Guard)** — **upstream / downstream, read in that order.** AMV-Guard prices *whether this premise is worth re-verifying given your next action*, which **presupposes that an invalidation signal arrived**; this row shows that in the *announcement names the key* shape **nothing arrives** ⇒ **arrival first, pricing second.** ⚠️ **10-24A is still a ledger suggestion, not a landed section** ⇒ this cross-reference is **row-to-row** until it lands.
+- **vs ledger row 10-24A (AMV-Guard)** — **upstream / downstream, read in that order.** AMV-Guard prices *whether this premise is worth re-verifying given your next action*, which **presupposes that an invalidation signal arrived**; this row shows that in the *announcement names the key* shape **nothing arrives** ⇒ **arrival first, pricing second.** ✅ **10-24A landed 2026-10-26** — as the next section on this page (the Recall-side cost model) and as a section on [[Abstention]] ⇒ this cross-reference is now **section-to-section**, no longer row-to-row.
 - **vs the FAMA penalty above** — FAMA penalises reliance on **deleted or superseded** memories, i.e. it scores **the reader**; this row shows the **store** can be clean by every such score and still feed a voided conclusion. Complementary, and this one is the prior condition.
 - **vs ledger row 10-24B (governed-state corruption)** — that row's **control plane was modified**; here **nothing touched the control plane**.
 
 **Scan-line assignment / paired landing.** **Line 19 — composition audit** (see `SCAN-LINES.md`): per-record review passes, the closure fails. Its paired landing is [[Provenance]]「Invalidation is non-local, dependency is local」, which supplies the **traversal** this trigger has to follow.
 
 ⚠️ **Evidence grade, must sit beside the numbers.** Preprint, **not peer-reviewed**; **Fallout is the authors' own synthetic world generator**; **0.3%** conditional on **same-session relations**, degrading to **9.4–22.1%** across sessions; authors self-report degradation with **weaker writers**. **62% is not a production staleness rate.**
+
+## Recall has no cost model — verification effort is priced by the action, not by the record *(ledger row 10-24A; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-24 and re-verified 2026-10-26 (`.workbuddy/memory/concept-radar/2026-10-24.md`, candidate 1; ledger row **10-24A**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+**The missing column on this page.** The four actions above each carry a *criterion* — what to capture, when to update, what to recall, when to delete. **None of them carries a price.** In particular **`RECALL` is treated as free-but-binary**: either the record clears the bar and is used, or it does not and is not. The variable this page has never had is **how much verification a recall is worth**, and that quantity is not a property of the record.
+
+**Action-conditioned verification** (`arXiv:2610.31446`, submitted **2026-10-22**; Yiqi Wang et al.; cs.MA): *"whether an entry must be re-checked before acting is not a property of the entry: the same remembered address can be used unchecked for a routine shipment but should be re-confirmed before a valuable one."* Formally a **sequential stopping problem** — a verification is worth its cost **only if it can change what the agent does next**; raising the consequence magnitude moves the **same record** through **proceed → verify → direct abstention**. On ToolSandbox, relative to a static policy with identical inputs: verification cost **−33.9%** (−42.3% / −58.9% across three backbones) while keeping **100%** safe-proceed recall and **0%** Gate harmful, Proceed coverage **38.83% → 44.17%**; AppWorld gate-core transfer **−21.3%** at a small cost in safe-proceed recall and task success.
+
+⇒ **Consequence for the four actions.** `RECALL` needs a **second output** besides "the record": **a priced decision about whether that record is good enough for *this* action.** ⇒ **`RECALL` is not a read; it is a budget decision.** And the abstention branch is *priced*, not *defaulted* — direct abstention is the rational terminal decision when the verifier's own failure rate makes a confirming observation insufficient.
+
+**Boundaries (do not merge these).**
+- **vs the 10-26A section above** — **upstream / downstream, read in that order.** 10-26A establishes whether an invalidation signal **arrives at all**; this row prices what to do **once it does**. Arrival first, pricing second.
+- **vs 10-22B「The discarded column」** — that row prices **whether to keep a memory at all** (is the compressed artefact worth its cost); this row prices **whether to re-verify a memory you already decided to keep**. Different verbs; split columns.
+- **vs 10-25B (`DELETE` closure)** — that row asks whether a deletion was **complete**; here nothing is deleted.
+- **vs 10-24B (below)** — that row is **which records reach the model at all** (the selection layer); this row is **how much to spend checking the one that did**. Sequential: selection first, then pricing.
+- **vs [[Abstention]]** — the same row's **output-side** landing: abstention as a priced regime rather than a binary. This page's `ABSTAIN` is an action over the bank; that page's is a terminal decision about an external act.
+
+⚠️ **Evidence grade.** Preprint, no peer review, no independent replication; main results on **ToolSandbox**; AppWorld is a **partial transfer**; **100% / 0% are relative to a static policy with identical inputs, not absolute safety**; the gate's safety is **upper-bounded by its premise extractor** (the paper states the counterfactual filter cannot recover a premise never proposed). Full evidence grade is filed on [[Abstention]].
+
+## The fourth column of memory failure — the selection layer / control plane *(ledger row 10-24B; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-24 and re-verified 2026-10-26 (`.workbuddy/memory/concept-radar/2026-10-24.md`, candidate 2; ledger row **10-24B**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+>
+> 🔴 **13-page preprint. The panel is non-probability, the faults are author-injected, and recovery uses an oracle ⇒ "it can be repaired" ≠ "your system has that oracle."**
+
+**What this page had, and what it did not.** Memory failure in this wiki already had three columns — **content** ([[Provenance]] / [[CitationLock]]: is the record itself sound), **action** (the four actions above: was the right thing done to it), **ownership** (ledger row 10-20B: does it belong to the right principal). **All three inspect the record that came back.** None inspects **which records were selected to take effect at all**. That is the fourth column, and it is not a variation on the other three.
+
+**Governance-state corruption** (`arXiv:2610.30698`, submitted **2026-10-22 04:13:09 UTC**; Bowen Liu / Youting Wang / Bonan Shen / Dingyan Shang; cs.AI + cs.SE; **13 pages / 1 figure / 10 tables**).
+
+> **Fault definition:** faults that **alter which retained records enter model-visible context, while stored content and tasks remain fixed**. Verbatim: *"An LLM agent can retrieve a memory correctly yet use it incorrectly after its validity state changes."*
+
+| Layer | Result |
+|---|---|
+| **Scale** | **6** providers · **731** benchmark-grounded bases · **2,080** matched fault pairs |
+| **Offline control plane** | corruption changes the **operative projection** in **96.25%** of pairs; **oracle-backed enforcement restores it in 100%** |
+| **Downstream** | a deterministically selected, **non-probability** LongMemEval / Memora panel resolves **298 / 300** matched triplets (**238** distinct bases) |
+| **Clean − corrupted** | LongMemEval binary correctness **40.54 pp** (95% base-cluster CI **[30.32, 50.71]**) · rescaled Memora **FAMA 30.60 points** (**[23.31, 37.69]**) — **both also show recovery** |
+| **Parity control** | OAKS Novel native option parity holds for all **6,714** resolved outputs |
+| 🔴 **Not load-bearing** | full-cohort frozen-scorer effects (**−27.55 / +27.51** points) are **descriptive proxies**, explicitly *not* validated native semantic population effects |
+
+⇒ **Consequence for this page.** The four actions govern **records**; governance state governs **the projection** — the subset that is operative this turn. A bank can be perfectly governed record-by-record and still present the wrong set. ⇒ **"取回" (retrieved) ≠ "生效" (operative).** This is the **second instance of scan line 13 (verb-efficacy audit) on `RECALL`** — the first was 10-18A's `DELETE` — and, notably, **this wiki's own instruments** (FAMA, LongMemEval, already cited on this page) are what measured it: **the first time this wiki has been measured by its own ruler into a failure its four actions cannot see.**
+
+**Boundaries (do not merge these).**
+- **vs 10-20B (ownership column)** — that column asks *whose* it is; this one asks *which ones are live*. Different variables; **split columns, do not merge.**
+- **vs 10-25B (`DELETE` closure)** — **mirror images**: 10-25B is *"source gone, the derived subset still in effect"*; this row is *"content all present, the subset selected to take effect was swapped."* Both live; name each other.
+- **vs 10-26A (above)** — in that row **nothing touched the control plane**; here **the control plane itself was modified.**
+- **vs 10-24A (above)** — **selection first, then pricing**: this row decides *which records reach the model*; that one decides *how much to spend checking the one that did.*
+- **vs [[LongTermMemory]]** — the "取回 ≠ 生效" landing is filed there as a scope note, since that page owns the retrieval description.
+
+⚠️ **Evidence grade, must sit beside the numbers.** **13-page preprint**, no peer review, no independent replication. The downstream panel is **non-probability and deterministically selected** ⇒ the 40.54 pp / 30.60 figures are **contrasts on a chosen sample, not population effects**. Faults are **author-injected**. Recovery is **oracle-backed** ⇒ it demonstrates *repairability under an ideal enforcer*, not availability in a deployed system. The **−27.55 / +27.51** full-cohort numbers are self-described **descriptive proxies** and must not be quoted as effects.
 
 ## Recall rewrites the input to Capture — the pipeline has no return edge *(ledger row 10-26C; applied 2026-10-26)*
 
@@ -142,7 +193,7 @@ Bottom lines 1–3 govern *your own mistakes*; bottom line 4 governs *someone el
 
 **Boundaries (do not merge these).**
 - **vs ledger row 10-18A (Bemula / MemCut)** — that row asks **"was the deletion request executed at all?"** (end-to-end ≤1.5%; 39–76% residue after removing the direct-disclosure sentence) ⇒ **scan line 13**. This row **grants that execution succeeded** and asks about derivations ⇒ **scan line 19**. **Sequential questions; never one.**
-- **vs ledger row 10-24B (governed-state corruption)** — **mirror images**: 10-24B is *"content all present, the subset selected to take effect was swapped"*; this row is *"source gone, the derived subset still in effect."*
+- **vs ledger row 10-24B (governed-state corruption)** — **mirror images**: 10-24B is *"content all present, the subset selected to take effect was swapped"*; this row is *"source gone, the derived subset still in effect."* ✅ **10-24B landed 2026-10-26** as「the fourth column」on this page ⇒ now **section-to-section**.
 - **vs the "Failed to forget" penalty above** — FAMA penalises reliance on **deleted or superseded** memories, i.e. it scores the *reader*; this row shows the *store* can be clean by that score and still leak. Complementary, and this one is the prior condition.
 
 ⚠️ **Evidence grade, must sit beside the numbers.** Synthetic secrets **constructed to be splittable**; **7B-class** models ⇒ **99% must not be read as a production leakage rate**. Provenance-aware closure was measured **in a setting that had a positive control recovery** ⇒ it does not establish that a given deployment has that oracle. Preprint; **no independent replication**. *One methodological note travels with the whole row:* **the response interface is part of the measurement system** — a deletion audit reporting clean may be measuring its own parser.
