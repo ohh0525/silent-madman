@@ -1,9 +1,9 @@
 ---
 title: "Provenance"
 type: concept
-tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point, serialization]
+tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point, serialization, provenance-reversibility, deletion-closure]
 sources: [agent-memory-provenance]
-last_updated: 2026-10-22
+last_updated: 2026-10-25
 ---
 
 # Provenance
@@ -69,8 +69,38 @@ The section above draws this page's boundary by **executor**: a **discipline on 
 - **Consequence for the governance-vs-window split.** This page and [[MemoryPoisoning]] sit on the "outside the window" side, [[Compaction]] on the "inside, per-turn" side. That split is **wrong at the joint**: compaction is where transient injection becomes durable memory — the step `overview.md` lists as an open item. The corrected statement is that **compaction is a governance boundary that happens to run inside the window, per turn.**
 - **Where this page's authority stops.** Provenance can only be preserved by something that exists **prior to** the model's input. Once the origin is gone, the honest verdict is not "the model failed to track it" but **"there was nothing left to track."**
 
+## Provenance must be reversible — the backward pointer is only half of it *(ledger row 10-25B; applied 2026-10-25)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-25 (recorded in `.workbuddy/memory/concept-radar/2026-10-25.md`, candidate 2; ledger row **10-25B**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+>
+> 🔴 **The 62–99% reconstruction rate is measured on secrets *constructed to be splittable*, on 7B-class models. It is not a production leakage rate.**
+
+**The direction this page has never had.** Everything above — and every section of this page — defines provenance as a **backward** pointer: each stored fact carries *which source produced it*, *when*, *with what evidence*. Descendant ⇒ ancestor. **None of it is refuted.** What is missing is the **forward** direction: **given this source, what has been derived from it?** This page has never had that cell, and it is not optional — it is what "delete the source" has to traverse.
+
+**AfterDeleteBench** (`arXiv:2610.31366`; Ehsan Saleh / Roozbeh Nahavandi / Sama Salarian / Raef Bassily / Andrew Perrault; **25 pp / 7 figs / 12 tabs**; cs.CR + cs.CL + cs.LG). For each synthetic secret the design compares an agent **exposed and then deleted** against a **paired never-exposed control** ⇒ recovery is attributable to the original exposure rather than to guessing.
+
+- Main setting: a **single query** recovered the deleted secret in roughly **two-thirds** of cases from **Qwen2.5-7B-Instruct**; the never-exposed control recovered **zero**.
+- 🔴 **The load-bearing result: no verbatim copy needs to survive.** When the complete secret string is already gone and only **separately stored components** remain — with the **combination rule public** — exact reconstruction succeeds **62–99%** across **Qwen / Mistral / Phi-3**.
+- **Two repairs, and the difference between them is the point:**
+  - **provenance-aware closure** (delete the derived records together with the source) ⇒ **eliminates the observed recovery**;
+  - **exact-literal write filter** (block verbatim re-insertion) ⇒ blocks re-insertion but **does not erase information already present in the system**.
+- *Methodological note worth keeping:* **the response interface is part of the measurement system** — format / parser mismatches cause a reply that **does** contain the target information to be scored as a failure. ⇒ A deletion audit that reports clean may be measuring its own parser.
+
+> ⇒ **Provenance must be reversible.** A backward pointer alone lets a system swear that every record carries its origin while being unable to answer the only question deletion asks.
+
+**Consequence for this page's own object.** The three questions above (*what claim, which source, when observed or last verified*) are all **ancestor-facing**. The fourth question this page should own is **descendant-facing**: **what does this source currently license, and what has been derived from it?** Without it, "this fact carries provenance" and "this fact can be erased" are compatible statements — and the second is false.
+
+**Boundaries (do not merge these).**
+- **vs [[MemoryGovernance]]'s half of this row** — that page supplies the **action** (`DELETE` needs closure semantics); this page supplies the **pointer** the action has to traverse. Two halves of one row, filed separately on purpose.
+- **vs ledger row 10-18A (Bemula / MemCut)** — that row asks **"was the deletion request executed at all?"** (end-to-end ≤1.5%; 39–76% residue after removing the direct disclosure sentence). This row **grants that the source record really was deleted** and asks about **derivations**. ⇒ **scan line 13 vs scan line 19**: ask them in that order, never as one question.
+- **vs ledger row 10-24B (governed-state corruption)** — **mirror images**: 10-24B is *"the content is all present, but the subset selected to take effect was swapped"*; this row is *"the source is gone, but the derived subset is still in effect."*
+- **vs [[Compaction]]** — compaction loses provenance by **destroying it before the model sees the text**; here provenance is intact and **complete**, and the secret survives anyway. A serialization fix does not address this row.
+
+⚠️ **Evidence grade, must sit beside the numbers.** Secrets are **synthetic and constructed to be splittable**; models are **7B-class** ⇒ **99% must not be read as a production leakage rate**. "Provenance-aware closure eliminates recovery" was obtained **in a setting that had a positive control recovery** ⇒ it does **not** establish that a given deployment has that oracle. Preprint; **no independent replication**.
+
 ## See Also
 - [[agent-memory-provenance]] — primary source
+- [[MemoryGovernance]] — where the same row lands as an action (`DELETE` closure, 10-25B)
 - [[Compaction]] — the trust boundary this page's discipline sits downstream of (10-22A)
 - [[LongTermMemory]] — the store that carries provenance
 - [[CitationLock]] — the read-side companion

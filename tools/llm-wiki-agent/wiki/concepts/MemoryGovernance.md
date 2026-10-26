@@ -1,9 +1,9 @@
 ---
 title: "Memory Governance"
 type: concept
-tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation, scoped-revision, owner-attribution, protection-descriptor, discarded-column, memory-pricing]
+tags: [agent-memory, memory-governance, memory-lifecycle, forgetting, learned-policy, intrinsic-evaluation, scoped-revision, owner-attribution, protection-descriptor, discarded-column, memory-pricing, deletion-closure]
 sources: [memory-lifecycle, agent-memory-provenance]
-last_updated: 2026-10-22
+last_updated: 2026-10-25
 ---
 
 # Memory Governance
@@ -56,6 +56,32 @@ Bottom lines 1–3 govern *your own mistakes*; bottom line 4 governs *someone el
 > **The mechanism bottom line 3 has been missing *(added 2026-10-21, ledger row 10-21A; draft annotation, pending ingest — see the banner above)*.** Until now *Permissioned* has been a **principle**. **ClawMMU** (`arXiv:2610.28093`, submitted **2026-10-20 12:09:53 UTC**; MPI-SWS · EPFL · Aarhus · Toronto) makes it four **structural fields carried by every representation of every memory** — **owner** (who produced it) · **scope** (which tasks and sessions may use it) · **origins** (which pages it was derived from) · **authority** (what it may justify, on an ordered ladder: **Evidence** lowest = tool output / web retrieval, *read but never act on* → user preferences / a teammate's instruction file → **Policy** highest = the user's own message) — plus an inheritance rule that is the load-bearing sentence: **take the minimum authority among inputs, and count the model itself as the lowest-authority input** ⇒ **a memory the model wrote for itself is always Evidence, and only its owner can raise it**. Checking is enforced where content crosses a boundary, four times: **map** (entering context) · **derive** (being written to storage) · **reload** (being retrieved or restored) · **authorize** (driving a tool call, per argument).
 > - **Consequence for this page:** *Permissioned* stops being “manage write rights like database permissions” and becomes “**every memory carries who-may-do-what, and the harness re-checks it every time it crosses a boundary**”. Two further notes for the bottom lines above: **(a)** bottom line 4 *signature-verified* is **not sufficient by itself** — `reload` needs a **revocation counter** to catch use-after-revoke; **(b)** the verdict depends **only on where content came from, not on what it says**, which is why the claim is that the attack is caught **even when the model is fooled**.
 > - 🔴 **Status — design, not result:** Appendix C states verbatim *“ClawMMU is not yet implemented”*; the paper carries **no measured numbers** (§5 lists planned evaluations only), is a **6-page non-archival workshop paper** (AgenticOS @ NeurIPS 2026), and leaves **four open items**: scaling human review of capability schemas · where authority sits under multi-agent · actions already taken before a revocation · auditing approval-scope widening. ⇒ **Record as the shape this cell could take, never as evidence that it works.** (Cross-reference [[HumanInTheLoop]]「The Gate Does Not Know Where Its Arguments Came From」, and [[Provenance]].)
+
+## Deletion is not closed at the record layer — `DELETE` needs closure semantics *(ledger row 10-25B; applied 2026-10-25)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-25 (recorded in `.workbuddy/memory/concept-radar/2026-10-25.md`, candidate 2; ledger row **10-25B**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+>
+> 🔴 **62–99% is measured on secrets constructed to be splittable, on 7B-class models. It is not a production leakage rate.**
+
+**The clean failure this page's `DELETE` currently permits.** The four-action table above grades `DELETE` at the **record layer**: was the entry removed? **AfterDeleteBench** (`arXiv:2610.31366`; 25 pp / 7 figs / 12 tabs; cs.CR + cs.CL + cs.LG) shows that grading is compatible with total failure. Each synthetic secret is tested on an agent **exposed and then deleted** against a **paired never-exposed control**:
+
+- **one query** recovered the deleted secret in roughly **two-thirds** of cases from **Qwen2.5-7B-Instruct**; the never-exposed control recovered **zero** ⇒ the recovery is attributable to the exposure, not to guessing;
+- **no verbatim copy needs to survive** — with the full secret string already gone and only **separately stored components** remaining, the **combination rule public**, exact reconstruction succeeds **62–99%** across **Qwen / Mistral / Phi-3**.
+
+> ⇒ **`DELETE` can be judged "correctly executed" — the record is genuinely gone — while the secret remains 100% reconstructible.** The four-action model has no column in which that failure is visible.
+
+**What this does to the four bottom lines above.** Bottom line 1 **Auditable** is currently written as *"every write / supersede / delete traceable like a git commit (who, when, on which source)"* — i.e. it audits **the record that changed**. A deletion can satisfy that sentence completely and still leave the content fully recoverable from what it produced. ⇒ **Auditable must additionally require that the derivation relation be enumerable**: for any deleted record, the system must be able to list **what was derived from it**, and those descendants must be inside the same closure. Without that, `auditable` certifies the ledger and not the erasure.
+
+- ⇒ **`DELETE` acquires a second success criterion.** Not only *"the record is gone"* but ***"nothing derived from it still licenses the same conclusion"*** — closure semantics, not record semantics.
+- **The two candidate repairs, and why only one is a repair.** **Provenance-aware closure** (delete derived records together with the source) **eliminates the observed recovery**. An **exact-literal write filter** (block verbatim re-insertion) blocks re-insertion but **does not erase information already present in the system** ⇒ it is a **containment**, not a deletion, and must never be recorded as one.
+- **Where the pointer has to come from.** Closure traversal needs a **forward** provenance pointer (source ⇒ descendants). [[Provenance]] has only the **backward** one (descendant ⇒ ancestor) — see that page's「Provenance must be reversible」section, filed as the other half of this row.
+
+**Boundaries (do not merge these).**
+- **vs ledger row 10-18A (Bemula / MemCut)** — that row asks **"was the deletion request executed at all?"** (end-to-end ≤1.5%; 39–76% residue after removing the direct-disclosure sentence) ⇒ **scan line 13**. This row **grants that execution succeeded** and asks about derivations ⇒ **scan line 19**. **Sequential questions; never one.**
+- **vs ledger row 10-24B (governed-state corruption)** — **mirror images**: 10-24B is *"content all present, the subset selected to take effect was swapped"*; this row is *"source gone, the derived subset still in effect."*
+- **vs the "Failed to forget" penalty above** — FAMA penalises reliance on **deleted or superseded** memories, i.e. it scores the *reader*; this row shows the *store* can be clean by that score and still leak. Complementary, and this one is the prior condition.
+
+⚠️ **Evidence grade, must sit beside the numbers.** Synthetic secrets **constructed to be splittable**; **7B-class** models ⇒ **99% must not be read as a production leakage rate**. Provenance-aware closure was measured **in a setting that had a positive control recovery** ⇒ it does not establish that a given deployment has that oracle. Preprint; **no independent replication**. *One methodological note travels with the whole row:* **the response interface is part of the measurement system** — a deletion audit reporting clean may be measuring its own parser.
 
 ## "Right answer" ≠ "right memory" — intrinsic vs extrinsic evaluation *(added 2026-10-17, ledger row 10-17B)*
 

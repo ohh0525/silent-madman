@@ -1,9 +1,9 @@
 ---
 title: "Multi-Agent Orchestration"
 type: concept
-tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric, repair-gap, latent-communication, autonomous-vs-user-serving, setting-transfer]
+tags: [multi-agent, test-time-communication, orchestration, verifier, cross-contamination, protocol-pivoting, substrate-centric, repair-gap, repair-pricing, latent-communication, autonomous-vs-user-serving, setting-transfer]
 sources: [multi-agent]
-last_updated: 2026-10-22
+last_updated: 2026-10-25
 ---
 
 # Multi-Agent Orchestration (多智能体协作)
@@ -12,7 +12,7 @@ Multiple agents with **independent context windows** working on one goal: exchan
 
 ## Mechanism (per [[multi-agent]])
 - **The exchange object is verified progress, not messages** — k agents, same goal, same compute budget, no preset roles, no central orchestrator; a shared workspace holds partial results, failure paths and code. *The gain comes entirely from building on confirmed breakthroughs and not re-walking confirmed dead ends — not from workflow design.*
-- **The verifier is the precondition of the gain.** Only when "who actually progressed" can be judged cheaply does "build on others' progress" work. On LP85, 64 independent attempts all failed while team@5 solved 65% — progress was verifiable. *This turns "should we go multi-agent" from taste into a predicate: first ask whether the task has a verifier.*
+- **The verifier is the precondition of the gain.** Only when "who actually progressed" can be judged cheaply does "build on others' progress" work. On LP85, 64 independent attempts all failed while team@5 solved 65% — progress was verifiable. *This turns "should we go multi-agent" from taste into a predicate: first ask whether the task has a verifier.* *(2026-10-25: the predicate now has a **second** question — not only "is there a verifier" but **"can what it flags be repaired, and is that repair worth the call"**; see the「What a flag must earn」section below.)*
 - **The counter-result ships with the result.** ARC-AGI-3: team@3 = best@13, team@5 = best@33 (≈4.3× / 6.6× equivalent compute); polyomino packing team@3 SOTA 0.945; MNIST 4-agent classifier 1,957 bytes @ 99.4%. But the paper's own abstract: the method "**fails without verifier or low compute**". *Cite the gain together with its boundary condition, or you are quoting a conditional result as a panacea.*
 - **New failure surface: cross-contamination (互相污染).** One agent's unverified conclusion gets inherited by peers as a premise — a failure mode absent from the single-agent world, landing on [[Provenance]]'s extension line: team trust must cover the **verification status of peers' conclusions**, not just fact origin. *(2026-10-16: the authorization-inheritance variant of this failure now carries CVE-grade cross-vendor evidence — see the section below.)*
 
@@ -97,6 +97,33 @@ Multiple agents with **independent context windows** working on one goal: exchan
 **Boundaries.** vs **第十三条（见 `.workbuddy/memory/concept-radar/SCAN-LINES.md`）** — that line asks *does an existing verb actually work* (`DELETE` never measured; a technique works on half its objects); this row asks ***does the verb exist at all*** (repair was never written down). Parallel rows that must name each other, or they read as duplicates. vs **[[HumanInTheLoop]]** — that page is the wiki's **only** chain with a verb *after* detection (grade → gate → idempotent execution → audit); this row belongs **next to it**, and together they prove the wiki has had the "detect + follow-up action" shape all along — it simply implemented it in exactly one place. vs **[[MemoryGovernance]]** — the four actions are **memory**'s verb inventory; this is the **execution** side's missing one ⇒ the wiki did a verb inventory on memory and not on execution. vs 10-16A ToFu — ToFu is detection that fails to change execution; ARIA is a candidate fix for precisely that.
 
 ⚠️ **Limits, must sit beside the conclusion.** CLASHarness is a **generative** benchmark limited to computer-use; "resolving is harder than detecting" holds **on that construction's distribution**. ARIA's numbers are **author-reported**; its generalisation claim is "frameworks and host models unseen in the training pipeline"; and "**7B beats frontier**" is a **repair-specific** claim, **not** a general-capability one. ARIA's preconditions (exposed execution traces + support for continuation replacement) are themselves **deployment constraints** — **none of [[AgentHarness]]'s four duties promises either.**
+
+### What a flag must earn before it costs you a retry *(ledger row 10-25C; applied 2026-10-25 — ⚠️ weakest evidence on this page, deliberately down-weighted)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-25 (recorded in `.workbuddy/memory/concept-radar/2026-10-25.md`, candidate 3; ledger row **10-25C**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+>
+> 🔴 **This section is filed for its *shape*, not its numbers. Single author · single model (a frozen `LLaMA-2-7B-chat`) · single dataset (GSM8K arithmetic word problems). Do not extrapolate any figure here to frontier coding or tool-using agents.**
+
+**What 10-19B named and never priced.** The section above established that this page is entirely **discovery-side** and that no mechanism supplies the next verb. But *"finding ≠ fixing"* is a **slogan** until it is a number: it says repair is missing, not **whether a given repair is worth paying for**. **Detection Is Not Enough** (`arXiv:2610.30200`, submitted **2026-10-21 08:25:41 UTC**; **single author** Vaidehi Hegde; 17 pp / 8 figs / 9 tabs; cs.SE + cs.AI) supplies the missing instrument — **a payment condition, not another maxim**:
+
+> **"A flag earns its retry only when detector precision exceeds `D / (R + D)`"** — where `D` is the rate at which a retry **damages** a correct trace and `R` the rate at which it **repairs** a wrong one.
+
+- **Why the three reference-free substitutes each fail differently:** self-evaluation **degrades the very answer it is meant to protect**; sampling consistency measures **stability, not correctness**; perturbation studies use human-written templates that **smuggle in the expected answer** (they test **the model**, not the trace).
+- **The AUROC ceiling is structural, not tuning.** With a frozen `LLaMA-2-7B-chat` on GSM8K, checking a trace against itself tops out at **AUROC 0.741** — because **two-thirds of wrong traces contain no incorrect equation at all**: they **executed a wrong plan correctly**. On wrong-plan failures the detector flags incorrect traces **less often than correct ones**.
+- **The probe:** of **1,319** problems, **937** (71.0%) admitted a valid perturbation; of the **847** with a parseable first trace, the supported ones were correct **60.6%** of the time against a **31.6%** base rate — but the probe also **disconfirmed 45.5% of correct traces**.
+- 🔴 **The result the payment condition exists to state:** `R` here is low enough that **even a perfect detector**, under the same budget, is estimated to recover only **66 of the 1,319** problems ⇒ ***"Repair, not detection, is the open problem."***
+
+**What this adds to this page's precondition.** The verifier predicate above asks *"can progress be judged cheaply?"* — a question about **detection**. The condition here is about the **next step**: a verifier whose flag **cannot be repaired, or whose repair fails `D/(R+D)`, has done nothing but spend a call**. ⇒ **"Is there a verifier?" is necessary but no longer sufficient; the second question is whether its flag clears the bar.**
+
+**Why it bites the rest of the wiki, not just this page.** The same condition applies wherever this wiki wrote a detector and stopped: [[ToolHallucination]]'s closed-world resolution (what follows "this tool does not exist"?), [[MemoryGovernance]]'s four actions (**each is a detector unless paired with a repair**), [[CitationLock]] (who supplies the passage that was refused?), and [[Provenance]]/**[[Abstention]]** on the reading side.
+
+**Boundaries (do not merge these).**
+- **vs 10-19B (this section's parent)** — that row **names** the gap (and records CLASHarness's "resolving conflict is far harder than detecting it"); this row **prices** it. **Mutually named, never merged.**
+- **vs ledger row 10-24C (RegretBench / BackUpper)** — that row is **ex-ante** (back up before acting); this one is **ex-post** (roll back / retry after the flag). **The two halves of one stretch; file adjacently.**
+- **vs 10-25A / 10-25B** — those two share **scan line 19** (is the verdict's unit an item or a batch). This row's variable is different — *is there a second verb after the detector, and what does it cost* ⇒ **three parallel rows, not one.**
+- **vs ARIA above** — ARIA is a **candidate repair apparatus**; this row is the **test any candidate must pass** before it is worth deploying.
+
+⚠️ **Down-weighting reasons, must sit beside every citation:** **single author**; **single, non-frontier model** (`LLaMA-2-7B-chat`, 2023-generation, 7B); **single dataset** (GSM8K, pure arithmetic word problems) ⇒ **no extrapolation to frontier coding / tool agents**; no peer review; and — the authors' own negative result — **none of the strategies tried produced a statistically significant accuracy improvement.** Cite the **shape** (repair conditions are the bottleneck; a class of wrong plans carries no false equation), **not the numbers**.
 
 **Structural recommendation (recorded here, not executed):** `overview.md`'s Cross-Cutting Themes should gain a line — *"this wiki's mechanism inventory is discovery-side; a repair-side inventory should be maintained in parallel."* Per the standing convention `overview.md` is revised **on ingest only**, so this awaits the next ingest or explicit authorisation.
 
