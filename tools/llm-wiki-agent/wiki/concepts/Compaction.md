@@ -1,7 +1,7 @@
 ---
 title: "Compaction"
 type: concept
-tags: [context-engineering, long-horizon, anthropic, trust-boundary, serialization, cache-invalidation, class-biased-loss]
+tags: [context-engineering, long-horizon, anthropic, trust-boundary, serialization, cache-invalidation, class-biased-loss, recompute-vs-store]
 sources: [context-engineering]
 last_updated: 2026-10-26
 ---
@@ -92,6 +92,19 @@ Its two verbs act on **reachability, not content**: **`drop`** (exclude a select
 
 ⚠️ **Evidence grade, must sit beside the numbers.** `arXiv:2610.31778` is a **preprint, not peer-reviewed**; **"about 1/3"** is the **average on ProgramBench at the first compaction**; the **6×** comes from **SWE-chat**; **no method beat the default self-summary** and **threshold did not affect score** on the two 1M models ⇒ **the finding is about a distribution, not a verdict against compaction**. `arXiv:2608.11242` is **not a new paper**; **17%** is a controlled-suite survival rate; the extractor's >90% is **self-measured on one 9B base**.
 
+## The lower bound the recompute-vs-store trade-off was missing *(ledger row 10-09 candidate 2; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified 2026-10-09（abstract-level）and re-verified 2026-10-26 against the paper text（`.workbuddy/memory/concept-radar/2026-10-09.md`, candidate 2）. Remove this banner on ingest; move the slug into frontmatter `sources`.
+>
+> 🔴 **A provable asymptotic bound, not a tuning rule** — it says *when storing pays in the limit*, not what any specific summarizer should do.
+
+This page's three techniques（compaction / structured notes / sub-agents）are all instances of one trade-off: **recompute from the window, or store outside and re-inject?** — and the page has never had a criterion for when storing pays. **LAM**（`arXiv:2610.02488`, Georgia Tech + Etude AI）supplies the lower-bound version: bit-reversal DAGs with context capacity **C** and persistent-memory capacity **S** require **Θ(n²/(C+S)+n)** model calls — *quantifying when stored intermediate state avoids repeated semantic computation* ⇒ **storing intermediate state is not an optimization; past a threshold it is the only asymptotically viable option.**
+
+**Boundaries (do not merge).**
+- **vs the scope note above（10-21B, cache cost）** — that is what compaction costs **beneath the text**（re-prefill）; this is what *failing to store* costs **in model calls**. Different ledgers.
+- **vs [[MemoryGovernance]]'s 10-22B** — that argues retaining the original is cheaper from a **correctness** angle; this bounds it from a **call-count** angle. Convergent, not identical.
+- **vs the sections above（10-22A / 10-26B）** — those are about *what compaction destroys*（origin / constraints）; this is about *when to compact into storage at all*. The full four-resource theory lives on [[AgentHarness]]（same ledger row, split landing by design）.
+
 ## See Also
 - [[context-engineering]] — primary source
 - [[ContextEngineering]] — parent discipline
@@ -101,3 +114,4 @@ Its two verbs act on **reachability, not content**: **`drop`** (exclude a select
 - [[MemoryPoisoning]] — the write-side surface this row connects to
 - [[MemoryGovernance]] — the opposite conclusion about retaining the original (10-22B)
 - [[HumanInTheLoop]] — where the class bias bites: the rules the gate depends on are the class compaction drops first (10-26B)
+- [[AgentHarness]] — its LAM section (10-09-2) holds the full four-resource theory this page's new section draws one bound from

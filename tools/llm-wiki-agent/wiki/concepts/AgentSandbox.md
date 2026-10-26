@@ -49,3 +49,4 @@ A hard boundary around the agent's execution that **the agent itself cannot alte
 - [[AgentHarness]] — the orchestration layer that plugs into a sandbox as its execution environment
 - [[Agent]] — whose action-side chain this page completes at `execute`
 - [[OpenAI]] — hosted-sandbox defaults as the cautionary default-values case
+- [[AgentObservability]] — container boundary vs internal signal: what can be touched vs what it intends (added 2026-10-26)

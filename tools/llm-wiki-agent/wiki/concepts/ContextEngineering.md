@@ -1,7 +1,7 @@
 ---
 title: "Context Engineering"
 type: concept
-tags: [context-engineering, anthropic, prompt-engineering, cache-engineering, kv-cache, reachability, resident-budget, capacitated-assortment]
+tags: [context-engineering, anthropic, prompt-engineering, cache-engineering, kv-cache, reachability, resident-budget, capacitated-assortment, re-sent-context]
 sources: [context-engineering]
 last_updated: 2026-10-26
 ---
@@ -57,6 +57,8 @@ The discipline of deciding, at every inference step, which tokens to place into 
 - Empirically **irrelevant rules drawn from real context files reduce compliance**; across **1,867** repositories such files **more than double over their lifetime** while **deletions become rarer with age** — curation pressure is one-directional in practice.
 
 **The cost column is measured, not assumed** — **Evaluating AGENTS.md** (`arXiv:2602.11988`, ETH Zürich + LogicStar.ai, MemAgents @ ICLR 2026 Oral; **re-verified 2026-10-26**): over **60,000** repositories ship such files; on AGENTbench (138 instances / 12 niche Python repos / 5,694 real PRs) context files overall **do not raise success while pushing inference cost above 20%** — LLM-generated **−2~−3%**, human-written **+4%** with **+2.45–3.92 extra steps**; the recommended **"repository overview" section is specifically called out as ineffective**; removing repo docs flipped LLM-generated context to **+2.7%** ⇒ **redundancy, not presence, is the disease.**
+
+**Cost cross-check（ledger row 09-25, merged here 2026-10-26）— the re-sent context is the biggest single line of the invoice.** Stanford Digital Economy Lab（*Agentic AI Cost Attribution*）attributes **~62% of agent inference bills to re-sent context** — the system prompt, tool definitions and state transmitted with every call; agentic tasks consume **5–30×** the tokens of a chat query（Gartner, 2026-03）; prompt caching can cut the re-sent share by **up to 90%**, but only while the prefix stays byte-stable. *（Re-verified 2026-10-26 via multiple independent secondary sources; the original report was not opened — 62% keeps its second-hand marking at one remove.）* ⇒ **The resident file is not merely re-read — it is the single biggest line of the bill, and this page's verbs are the only levers on it.** The observation/judgement side of the same invoice（judge pricing, evaluation tax）is filed as Chapter E of [[AgentObservability]]; the provable lower bounds on the whole bill live on [[AgentHarness]]'s LAM section — three columns of one invoice, split by page.
 
 ⇒ **Consequence for this page.** The resident file is **not** part of the window's working set — it is a **capacity-planned, upper-bounded, non-monotone budget** that this page's verbs (layer / fetch / trim) never touch. ⇒ **A new verb is missing: *curate* — select under capacity, with an evidence bar for additions and a censored-feedback-aware policy for deletions.** The allocation rule (what earns the resident slot vs the on-demand slot) is filed as a section on [[ProgressiveDisclosure]].
 

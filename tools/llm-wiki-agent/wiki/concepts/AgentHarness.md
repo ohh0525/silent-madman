@@ -1,7 +1,7 @@
 ---
 title: "Agent Harness"
 type: concept
-tags: [agent-harness, runtime, orchestration, durability, subagents, harness-plurality, inheritance, routing, backup-layer, reversibility-supply]
+tags: [agent-harness, runtime, orchestration, durability, subagents, harness-plurality, inheritance, routing, backup-layer, reversibility-supply, resource-theory, lam, checkpoint-law, recompute-vs-store]
 sources: [agent-harness]
 last_updated: 2026-10-26
 ---
@@ -80,6 +80,30 @@ Four duties per loop; miss any one and the agent degrades from "works" to "demo"
 
 ⚠️ **Evidence grade.** Preprint, no independent replication; **single protocol**; tasks are **self-reported** regret moments (selection bias); **92.2% similarity ≠ 100% restore**; **84.5% F1** is conditional on **users having stated preferences**.
 
+## The harness has a bill — four metered resources *(ledger row 10-09 candidate 2; applied 2026-10-26)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified 2026-10-09（abstract-level）and **re-verified 2026-10-26 against the paper's abstract and full text**（`.workbuddy/memory/concept-radar/2026-10-09.md`, candidate 2）. Remove this banner on ingest; move the slug into frontmatter `sources`.
+>
+> 🔴 **This is a theory of provable lower bounds, not a bill you can copy.** LAM yields asymptotic lower bounds and the *shape* of optimal trade-offs（when storing state pays, how long the verification interval should be）— it is **not** a measured invoice for any specific framework, and its reliability results are built on an abstract「imperfect verification」model. Do not read its theorems as quantitative predictions about any product.
+
+**What the four duties have always assumed.** ① assemble, ② loop, ③ govern, ④ survive — this page describes **what the harness does**, and so does the rest of this wiki（[[Compaction]] how to save, [[LongTermMemory]] where to store）— **all of it treats these mechanisms as free line items outside「model capability」.** **LAM, the Language Model Agent Machine**（`arXiv:2610.02488`, v1 2026-10-01; Zelin Zhao / Xinyu Guo / Jingyuan Zhang / Yuxuan Zhang / Yongxin Chen — **Georgia Tech + Etude AI**）is the first work to **hold the semantic model fixed and explicitly charge harness-level resources**:
+
+| metered resource | result | what it prices |
+|---|---|---|
+| **Communication** | LAM execution is instancewise equivalent to **red–blue pebbling** under simultaneous call–transfer budgets ⇒ classical I/O lower bounds transfer to **context↔memory traffic** | the traffic between [[LLMContext]] and [[LongTermMemory]] has a floor |
+| **Access** | memory interfaces induce asymptotic separations — a **Θ(n) gap** between random and non-speculative sequential access on pointer chasing | the **interface**, not the amount, changes complexity |
+| **Recomputation** | bit-reversal DAGs require **Θ(n²/(C+S)+n)** model calls with context capacity C and persistent-memory capacity S | **when stored intermediate state beats recomputing it** — the lower-bound justification [[Compaction]]'s techniques never had（landing filed there） |
+| **Reliability** | tight stage-local sampling bounds, **exact costs of imperfect verification**, a **Young–Daly-type checkpoint law** with a **closed-form optimal verification interval** | checkpointing and verification intervals are optimal-control objects, not heuristics |
+
+**Held-out evidence worth one line**（chained MATH, GPT-6 Astra, depth-16 chains）: **dependency-only prompts + an accept/reject verifier achieved 70/70 all-correct chains vs 65/70 for full-history replay** — paying for less traffic and more verification beat paying for more traffic.
+
+**Boundaries (do not merge these).**
+- **vs the four duties** — the duties are a **responsibility list**; this section is their **cost function**. Both live on this page by design.
+- **vs [[Compaction]]** — that page is one saving technique; this is the lower-bound theory for *all* such techniques. A one-line landing is filed there; must not be re-merged here.
+- **vs [[LLMContext]] / [[LongTermMemory]]** — those are the two storage media; this prices **the traffic between them**.
+- **vs ledger row 09-23（durable execution, not yet landed）** — LAM supplies its **acceptance theory**（checkpoint law + closed-form optimal verification interval）; row-to-row until 09-23 lands.
+- **vs [[AgentObservability]] Chapter E（evaluation economics）** — **厂商账单侧 vs 可证下界侧**: that chapter reads the invoice after the run; this bounds it before the run. Cross-named, not merged.
+
 ## See Also
 - [[agent-harness]] — source
 - [[Agent]] — the loop semantics this shell implements (runtime axis added there)
@@ -92,3 +116,4 @@ Four duties per loop; miss any one and the agent degrades from "works" to "demo"
 - [[AgentSandbox]] — the execution environment the harness plugs into (added 2026-09-26)
 - [[MultiAgent]] — subagent scheduling (duty ④) productised; the team-vs-single trade-off has its own page (added 2026-09-26)
 - [[OpenAI]] · [[Anthropic]] — the two vendors simultaneously productising this layer
+- [[AgentObservability]] — the witness of the loop this page runs; its cost chapter reads the invoice this section bounds (added 2026-10-26)

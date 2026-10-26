@@ -1066,3 +1066,37 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 
 ### 留痕（未执行、留给你拍板）
 同日 10-09 另两行（**LAM 资源理论**、**Inside-Out Monitoring**）**未落地**——其建议动作是结构性合并（「与 09-25 合并考虑」「与 10-08 候选 1 + 09-17 合并成一页」），按「结构性改动只建议不擅执行」口径保留 ⏸。🎯「最老未落地」自 10-09 ⭐ / 10-09E 结清后**移交给下一行**（见当日报告）。
+
+
+## [2026-10-26] update | Structural merge authorized — create concepts/AgentObservability.md (four ledger rows into one page) and land LAM as two revisions + one cost cross-check
+
+**本条目为 `wiki/log.md` 第 73 次操作**，同日第四个维护动作（第 70 lint · 第 71 update · 第 72 update 之后）。
+**执行依据：用户当日指令「那就结构性合并」** —— 授权上一条目（第 72 次）留痕的两件结构性事项：10-09 候选 3「Inside-Out Monitoring」的建议动作（与 10-08 候选 1 + 09-17 合并成一页）与 10-09 候选 2「LAM 资源理论」的「与 09-25 合并考虑」。这是本库 wiki **首次新建概念页**（此前所有落地均为修订既有页）。
+
+### 一、结构性合并：`concepts/AgentObservability.md`（新页，四行并一页）
+
+| 台账行 | 在新页中担任 | 备注 |
+|---|---|---|
+| **10-08 智能体可观测性与评测 ⭐**（🟡） | Chapter A 记录层（OTel GenAI / OpenInference）+ Chapter B 语义层（Transect）+ Chapter C 判官层 | 该行 2026-10-15 已产出材料草稿 `output/pending-review/agent-observability.html`，本次为该材料**首次进入 wiki** |
+| **09-17 智能体评测 / Agent Evals**（⏸ 留痕行） | Chapter B 产品面（evals 挂 trace：New Relic）+ Chapter D 元层 | 10-15 起为留痕行；本次其内容落地 wiki |
+| **10-09 候选 3 Inside-Out Monitoring**（⏸） | Chapter C 判官层（Goodfire 探针 / 2610.02066 跨模型观察者 / AgentRx 失败归因） | 该行建议动作即「三处并为一页」，本次执行 |
+| **09-25 评测经济学**（⏸） | Chapter E 成本章（评测税 / 判官定价 / 观测缺口 85%/8%） | 该行备注自 09-25 起即建议「作为 Evals 的成本章，不单独成文」 |
+
+页面结构 = **记录层（发生了什么）→ 语义层（observability envelope 收窄）→ 判官层（怎么判、判哪层、多少钱）→ 元层（这个判可信吗）→ 成本章（多少钱）**，另含「三层同一证据链」定义、8 条边界、7 条判据句。**前matter `sources: []`**（pending ingest；全页一横幅）。三处反向链接已建（`HumanInTheLoop` escape-rate 信号源 · `AgentSandbox` 容器边界 vs 内部信号 · `AgentHarness` 机制 vs 见证）。
+
+### 二、LAM 落地（10-09 候选 2，三处分置）
+
+- **`concepts/AgentHarness.md`** +「The harness has a bill — four metered resources」：**LAM**（`arXiv:2610.02488`, v1 2026-10-01；Zelin Zhao 等 5 人，**Georgia Tech + Etude AI**——本次复核纠正了台账未记的机构归属）固定语义模型、显式对 harness 资源计费：**通信**（与红蓝卵石博弈逐实例等价 ⇒ 经典 I/O 下界转移到上下文↔记忆流量）· **访问**（指针追逐上随机 vs 非推测顺序访问 **Θ(n)** 差距）· **重算**（位反转 DAG 需 **Θ(n²/(C+S)+n)** 次模型调用）· **可靠性**（**Young–Daly 型检查点定律 + 闭式最优验证间隔 + 不完美验证的精确成本**）。**本次复核新增承重数字**：留出链式 MATH（GPT-6 Astra，深度 16）上「依赖传递 + 接受/拒绝验证器」**70/70** 全对 vs 全历史重放 **65/70**。边界：职责清单 vs 代价函数 · vs [[Compaction]]（一个技巧 vs 全部技巧的下界）· vs [[LLMContext]]/[[LongTermMemory]]（两个介质 vs 介质间流量）· vs 09-23 持久化执行（提供验收理论，行对行）· vs 新页 Chapter E（厂商账单侧 vs 可证下界侧）。🔴 **可证下界，不是可照搬的省钱方案**；可靠性结论建立在「不完美验证」抽象模型上。
+- **`concepts/Compaction.md`** +「The lower bound the recompute-vs-store trade-off was missing」：只落 **Θ(n²/(C+S)+n)** 这一条（本页自己的问题：何时该存），四资源理论留在 AgentHarness，**分置两页是有意的**。
+- **`concepts/ContextEngineering.md`** 的 10-09 节内 +「Cost cross-check（09-25 并入）」：**Stanford Digital Economy Lab：约 62% 智能体推理账单来自重发上下文**；5–30× token（Gartner 2026-03）；提示缓存最多省 90%（前提前缀逐字节稳定）。该段并入**既有横幅之下**（不加新横幅）。⚠️ 62% 本次经多个独立二手来源交叉复核、**原报告未打开**，保留「距一手一档」标记。
+
+### 三、复跑结果（修订后）
+`tools/health.py`：48 页 · Empty/Stub **0** ✅ · Index Sync **0** ✅ · Log Coverage **0** ✅。
+`tools/daily_lint.py`：悬空 **0** ✅（连续第十七日）· 孤立页 **0** ✅（新页三处反向链接 + index 收录）· frontmatter **0** ✅（新页 `sources: []` 合规）· slug **73/73** ✅（空 sources 跳过，引用数不变）· index ↔ 磁盘 **0 divergence** ✅ · `raw/` 未摄取 **0** ✅。
+**wiki 规模变化**：13 源 / **47 → 48 内容页** / **49 → 50 个 `.md`** —— 本库 wiki **首次因落地新增页面**。严格横幅批注 **41 处 / 14 文件 → 44 处 / 15 文件**（**+3 / +1**，与 AgentHarness · Compaction 两个新节 + 新页全页横幅一一对应；ContextEngineering 的并入段落在既有横幅下，不计数）。
+
+### 四、台账状态流转
+**10-08（🟡 不变，内容已进 wiki）· 09-17 Agent Evals · 09-25 评测经济学 · 10-09 LAM · 10-09 Inside-Out：⏸ → 🟡** ⇒ 全表 **14 ✅ / 25 🟡 / 47 ⏸ = 86**（合计不变）。上一期报告「需你拍板」两件至此全部结清。
+
+### 五、硬约束复核
+`raw/` 未触碰 · `learning-materials/` 未写入（README「人工核查承诺」）· **唯一新建文件为 `concepts/AgentObservability.md`**（wiki 内、pending ingest 草稿页，非 learning-materials）· `overview.md` 未改动（「synthesis 仅在 ingest 时修订」）· `concept-relationship.md` 未触碰 · 来源全部当日 WebSearch 真实返回（2610.02488 / Goodfire(TechCrunch 一手) / 2610.07274 / 2610.08364(归属纠正为 UK AI Security Institute + Meridian Labs) / Stanford 62%(多来源交叉)）；Transect 与 2610.02066 的 10-15 草稿来源清单仍有效 · 推送走 `output/_tools/api_push.py`，未使用 `git push`；未读取 / 打印 / 回显任何 token 明文。

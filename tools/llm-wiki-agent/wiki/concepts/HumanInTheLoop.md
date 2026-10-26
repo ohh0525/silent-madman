@@ -170,3 +170,4 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 - [[AgentSandbox]] — the other half of the `execute` leg: containment vs restorability (10-24C)
 - [[ToolHallucination]] — existence vs cross-turn feasibility of what is promised (10-09E)
 - [[Abstention]] — abstention as a priced regime, not a binary (10-24A)
+- [[AgentObservability]] — the escape-rate signal source this page's acceptance criteria require (page created 2026-10-26)
