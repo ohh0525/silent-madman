@@ -1100,3 +1100,58 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 
 ### 五、硬约束复核
 `raw/` 未触碰 · `learning-materials/` 未写入（README「人工核查承诺」）· **唯一新建文件为 `concepts/AgentObservability.md`**（wiki 内、pending ingest 草稿页，非 learning-materials）· `overview.md` 未改动（「synthesis 仅在 ingest 时修订」）· `concept-relationship.md` 未触碰 · 来源全部当日 WebSearch 真实返回（2610.02488 / Goodfire(TechCrunch 一手) / 2610.07274 / 2610.08364(归属纠正为 UK AI Security Institute + Meridian Labs) / Stanford 62%(多来源交叉)）；Transect 与 2610.02066 的 10-15 草稿来源清单仍有效 · 推送走 `output/_tools/api_push.py`，未使用 `git push`；未读取 / 打印 / 回显任何 token 明文。
+
+## [2026-10-27] lint | Daily maintenance — six lint dimensions clean; wiki size unchanged (13 sources / 48 content pages / 50 .md); one cross-day count error found in overview.md
+
+**本条目为 `wiki/log.md` 第 74 次操作**，当日第一个维护动作。
+
+### 一、六维 lint 结果（全绿）
+
+| 维度 | 结果 |
+|---|---|
+| A. 悬空 `[[wikilink]]` | **0** ✅ —— 连续第十八个零悬空日 |
+| B. 孤立页（0 inbound） | **0** ✅ —— 最小入链 Top5 最低仍为 1（`entities/SourceScore.md` · `sources/agent-sandbox.md` · `sources/mcp-2026-07-28.md` · `sources/multi-agent.md`），未越阈值 |
+| C. frontmatter 完整性 | **0** ✅ —— `index.md` / `log.md` 按设计无 frontmatter；`overview.md` 的 `tags: []` 计为通过 |
+| D. frontmatter sources slug | **73 / 73** ✅ —— 无效 0，引用总数与上一期持平 |
+| E. index.md ↔ 磁盘 | **0 divergence** ✅ —— 双向一致 |
+| F. `raw/` 未摄取 | **0** ✅ —— 13 个文件，只读扫描，未做任何修改 |
+
+`tools/health.py`：48 内容页 / 50 `.md` · Empty/Stub **0** · Index Sync **0** · Log Coverage **0**，三项全 ✅。
+
+### 二、本期发现：一处跨日计数误差（属旧记录转述，非本期新增）
+
+`overview.md` 顶部「As of」段称「**25 draft annotations**」。当日脚本按两种口径实测：
+
+| 口径 | 实测 | 与「25」比对 |
+|---|---|---|
+| 严格横幅（行首 `> **Draft annotation, pending ingest.`） | **44 处 / 15 文件** | 不吻合 |
+| 含行内回指 | 85 处 / 19 文件 | 不吻合 |
+
+两个口径都与 25 不符 ⇒ 判定为**旧记录转述误差**。旁证：本期 wiki 规模与上一期完全持平（13 源 / 48 内容页 / 50 `.md`），**零新增页**，故不存在本期新增批注的可能。
+
+### 三、硬约束
+
+`raw/` 只读未改 · `learning-materials/` 未写入 · 未删除任何文件 · 未使用 `git push`。
+
+## [2026-10-27] update | Correct the draft-annotation count in overview.md's "As of" note — append-only; synthesis and last_updated untouched
+
+**本条目为 `wiki/log.md` 第 75 次操作**，同日第二个维护动作（第 74 次 lint 之后）。
+
+### 一、只追加，不改旧文
+
+在 `overview.md` 顶部「As of」段**之下**追加一行更正，明确：
+
+1. 原「25 draft annotations」经严格横幅口径实测为 **44 处 / 15 文件**，与含行内回指口径（85 / 19）**均不吻合**，确认为旧记录转述误差；
+2. **自本期起以严格横幅口径 = 44 / 15 为准**（该口径于 2026-10-26 固定，**本期首次跨日复核通过**：44/15 与 2026-10-26 记录完全一致）；
+3. **synthesis 正文与 `last_updated` 均未改动** —— 遵循 2026-10-22 裁定「synthesis 仅在 ingest 时修订」，`last_updated` 继续留在 2026-10-09。
+
+### 二、留结构性建议两条（未执行，留待拍板）
+
+1. **`overview.md` 顶部计数应改为脚本生成**，而非手写数字 —— 本期误差的根因是「人工转述一个可被脚本精确统计的量」。
+2. **`entities/SourceScore.md` 等 4 页入链数 = 1** —— 尚不构成孤立页，但已是最低档，建议下次 ingest 顺带补反向链接。
+
+按约定「结构性大改动只在报告里提出建议、不擅自执行」，本期**未执行**以上两项。
+
+### 三、硬约束
+
+`raw/` 只读未改 · `learning-materials/` 未写入 · 未删除任何文件 · `overview.md` 仅追加未改写 · 未使用 `git push`。
