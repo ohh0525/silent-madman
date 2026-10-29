@@ -1155,3 +1155,71 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 ### 三、硬约束
 
 `raw/` 只读未改 · `learning-materials/` 未写入 · 未删除任何文件 · `overview.md` 仅追加未改写 · 未使用 `git push`。
+
+## [2026-10-29] lint | Daily maintenance — six lint dimensions clean; wiki size unchanged (13 sources / 48 content pages / 50 .md); strict-banner draft count 44/15 confirmed for the second consecutive day
+
+**本条目为 `wiki/log.md` 第 76 次操作**，当日第一个维护动作。
+
+> ⚠️ **日历说明（如实记录）**：**2026-10-28 无维护运行**（无当日报告、无 daily log、无 `log.md` 条目，`git log` 末条仍为 10-27 的 `d04a8ad`）⇒ 这是继 **2026-10-23** 之后的**第二个空窗日**。因此本节所有「连续 N 日」一律**按运行计**，不再按日历日计（10-27 记录为「连续第十八个零悬空日」，本期为**连续第十九个零悬空运行**）。
+
+### 一、六维 lint 结果（全绿，与 10-27 逐项一致）
+
+| 维度 | 结果 |
+|---|---|
+| A. 悬空 `[[wikilink]]` | **0** ✅ —— 连续第十九个零悬空**运行** |
+| B. 孤立页（0 inbound） | **0** ✅ —— 最小入链 Top5 最低仍为 **1**（`entities/SourceScore.md` · `sources/agent-sandbox.md` · `sources/mcp-2026-07-28.md` · `sources/multi-agent.md`），与 10-27 完全相同，未越阈值 |
+| C. frontmatter 完整性 | **0** ✅ —— `index.md` / `log.md` 按设计无 frontmatter；`overview.md` 的 `tags: []` 计为通过 |
+| D. frontmatter sources slug | **73 / 73** ✅ —— 无效 0，引用总数与 10-26、10-27 持平 |
+| E. index.md ↔ 磁盘 | **0 divergence** ✅ —— 双向一致 |
+| F. `raw/` 未摄取 | **0** ✅ —— 13 个文件（12 HTML + 1 MD），只读扫描，未做任何修改 |
+
+- `tools/health.py`：**48 内容页 / 50 `.md`** · Empty/Stub **0** · Index Sync **0** · Log Coverage **0**，三项全 ✅。
+- **wiki 规模与 10-27 完全持平**（13 源 / 48 内容页 / 50 `.md`）⇒ 连续第二个零新增页的纯维护日。
+
+### 二、跨日复核：严格横幅口径 44 / 15 第二次通过 ✅
+
+按 10-27 锁定的**严格横幅口径**（行首 `> **Draft annotation, pending ingest.`）重算：**44 处 / 15 个文件**，与 10-27 记录**完全一致** ⇒ 该口径**第二次跨日复核通过**，可继续作为基准。
+
+### 三、同期发现：次级口径不是稳定量（依扫描范围而变）
+
+10-27 条目记「含行内回指口径 = **85 处 / 19 个文件**」。本期按不同**扫描范围**重算该次级口径：
+
+| 扫描范围 | `pending ingest` 出现数 / 文件数 |
+|---|---|
+| 全 `wiki/`（含 `log.md` / `overview.md` / `index.md`） | **86 / 19** |
+| 仅内容页 `sources/` + `concepts/` + `entities/` | **50 / 16** |
+| 仅内容页，按 `Draft annotation` 计 | **44 / 15**（＝严格横幅口径） |
+
+⇒ 10-27 记的 **85** 与本期全库口径 **86** 相差 1，且**范围一变数字就跳** ⇒ **该次级口径不是一个可引用的稳定量**，其差异来自「是否把叙述文件（`log.md` 等）里的转述计入」。**建议（结构性，未执行）**：无论采用哪种口径，都必须先在脚本里**固定扫描范围**，否则会重演 10-26 → 10-27 → 10-29 的三次计数更正。
+
+### 四、硬约束
+
+`raw/` 只读未改（13 文件，最新 mtime 仍 2026-10-09）· `learning-materials/` 未写入 · 未删除任何文件 · 未摄取任何新材料 · 未使用 `git push`。
+
+## [2026-10-29] update | Append a scope caveat for the draft-annotation count in overview.md — append-only; synthesis and last_updated untouched
+
+**本条目为 `wiki/log.md` 第 77 次操作**，同日第二个维护动作（第 76 次 lint 之后）。
+
+### 一、只追加，不改旧文
+
+在 `overview.md` 顶部「As of」段、10-27 那条更正**之下**再追加一行，明确三件事：
+
+1. **严格横幅口径 44 / 15 本期第二次跨日复核通过**（与 10-27 完全一致）；
+2. 10-27 记的**次级口径「85 / 19」不是稳定量** —— 本期实测依扫描范围为 **86 / 19**（全 `wiki/`）或 **50 / 16**（仅内容页）⇒ **该口径今后不再引用**；
+3. **synthesis 正文与 `last_updated` 均未改动** —— 遵循 2026-10-22 裁定「synthesis 仅在 ingest 时修订」，`last_updated` 继续留在 2026-10-09。
+
+### 二、overview 的 synthesis 是否过时 —— 本期判定：不改
+
+按阶段一步骤 5 检视：本页 `last_updated` 仍为 **2026-10-09**，而 10-09 之后有 **44 处待摄取草稿批注**。依 2026-10-22 裁定（**synthesis 仅在 ingest 时修订**；本页 `sources:` 字段只能列**已摄取**的 slug，把未审核草稿折进 synthesis 会把未核实材料放到全库被引用最多的一页后面），**本期不更新 synthesis**，继续以页顶「As of」声明 + 逐页草稿批注承载增量。
+
+### 三、留结构性建议三条（未执行，留待拍板）
+
+1. **`overview.md` 顶部计数应改为脚本生成，并固定扫描范围**（自 10-27 结转，**仍未执行**）—— 三次计数更正的根因都是「人工转述一个可被脚本精确统计、但范围未定义的量」。
+2. **`entities/SourceScore.md` 等 4 页入链数 = 1**（自 10-27 结转，**仍未执行**）—— 尚不构成孤立页，但已是最低档，建议下次 ingest 顺带补反向链接。
+3. **`daily_lint.py` 未覆盖「次级口径」** —— 建议把「严格横幅 44 / 15」写入脚本的一条断言，使每日自动复核，而不是靠人工 grep。
+
+按约定「结构性大改动只在报告里提出建议、不擅自执行」，本期**未执行**以上三项。
+
+### 四、硬约束
+
+`raw/` 只读未改 · `learning-materials/` 未写入 · 未删除任何文件 · `overview.md` 仅追加未改写 · 未使用 `git push`。
