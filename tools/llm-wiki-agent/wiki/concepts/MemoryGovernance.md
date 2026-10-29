@@ -274,3 +274,4 @@ A **third** annotation was appended *inside* the open experiment below on 2026-1
 - [[DyadMem]] — the staged benchmark · [[LongMemEval]] — the end-to-end generation it corrects
 - [[MemGPT]] · [[AgentZeroMemory]] · [[Zep]] — the systems whose next question is governance
 - [[AgentSandbox]] — containment bounds what the agent can touch; governance bounds what it will remember
+- [[RAG]] — 治理收益的零点：四动作值不值，先在朴素 RAG 上记账（benefit / tax / 净值）(added 2026-10-29)

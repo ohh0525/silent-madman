@@ -185,6 +185,25 @@ for x in un_ingested:
 if not un_ingested:
     print("  ✅ 0 —— raw/ 只读扫描,未做任何修改")
 
+print("\n=== G. 草稿批注计数断言(固定范围,自动化跨日复核) ===")
+# 2026-10-29 新增。该计数在 10-26 / 10-27 / 10-29 被人工转述三次、三个不同数字,
+# 根因是「扫描范围从未定义」。口径已写死进 tools/annotation_count.py:
+#   范围 = wiki/{sources,concepts,entities}(排除 index/log/overview 等叙述文件)
+#   口径 = 行首严格横幅 "> **Draft annotation, pending ingest."
+# 基线存 tools/annotation_baseline.json。有意新增批注后运行 --update-baseline。
+_g_ok = True
+try:
+    import subprocess
+    _r = subprocess.run(
+        [sys.executable, str(ROOT / "tools" / "annotation_count.py"), "--check"],
+        capture_output=True, text=True, encoding="utf-8",
+    )
+    print(_r.stdout.strip() or _r.stderr.strip())
+    _g_ok = _r.returncode == 0
+except Exception as e:  # 计数失败不应阻塞其余六维
+    print(f"  ⚠ 计数器不可用: {e}")
+    _g_ok = None
+
 print("\n=== 汇总 ===")
 print(f"内容页(含 overview): {len([r for r in pages_fm if r not in structural])}")
 print(f"总 .md 文件: {len(pages)}")

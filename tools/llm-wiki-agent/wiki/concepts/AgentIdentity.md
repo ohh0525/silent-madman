@@ -56,5 +56,5 @@ The verifiable claim an agent makes about **who it is, on whose behalf it acts, 
 - [[agent-identity]] — source
 - [[Agent]] — the entity being identified
 - [[HumanInTheLoop]] · [[ToolHallucination]] — the other two actor-side pages
-- [[MCP]] — the concrete authorization profile
+- [[MCP]] — the concrete authorization profile（其规范一手来源见 [[mcp-2026-07-28]]）
 - [[Provenance]] · [[Abstention]] · [[CitationLock]] — the entity-side cluster this pairs with

@@ -66,10 +66,39 @@ The discipline of deciding, at every inference step, which tokens to place into 
 
 ⚠️ **Evidence grade.** The assortment results are **theoretical bounds plus compliance experiments**, not a deployed-curation trial; AGENTbench is **Python-only, 4 agents**, does **not separate** rule types, and found **no length–effect relationship** in tested ranges ⇒ **"keep it under N lines" is vendor advice, not an empirical result.** IFScale / vendor-eval figures recorded 2026-10-09 are **not re-verified this session**.
 
+## The half-life of the always-loaded file — the budget answers「留多少」, not「还对不对」*(ledger row 10-29B; applied 2026-10-29)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-29 (`.workbuddy/memory/concept-radar/2026-10-29.md`, candidate 2; ledger row **10-29B**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+**What the section above leaves out.** The resident budget answers a **capacity** question — *how many tokens may the always-loaded file have, and which rules earn them*. It is silent about a second, orthogonal question: **do the rules that are already in there still describe the repository they point at?** The file is priced, capacity-planned, and non-monotone — and none of those properties say anything about **truth over time**.
+
+**OSTEON**（`arXiv:2610.31306`, submitted **2026-10-22 14:04:13 UTC**; Mohammad Mehdi Gholinejad, single author; cs.SE + cs.AI）puts a number on it, and the number is the reason this section exists:
+
+- **452** of the most-starred public GitHub repositories were scanned: **48.67%**（95% CI **44.1–53.3**）carry a root-level or `.github/` agent context file ⇒ the artifact this page's resident-budget section prices is now **half of the ecosystem**, not a niche pattern.
+- **In the median file that names repository paths, 9.5%–22% of those paths no longer resolve**（the spread is the two readings of "a reference"）. ⚠️ This is **paths that do not resolve**, *not* "22% of the file is wrong" — the file can be internally coherent and still point at a deleted module.
+- The argument's spine: **correctness rests on decisions and contracts that the code does not carry** · **knowledge decays** · once an agent outpaces its reviewers, **reading catches a shrinking share of changes built on stale knowledge**. A simple model: past a fixed review capacity, **escaping changes grow linearly with throughput while the fraction reading catches falls toward zero** ⇒ *governance can lower the slope, capability alone cannot.*
+- **OSTEON**'s four moves: a **governed knowledge repository of decisions and contracts** · every change **mechanically checked** against it · **the knowledge itself checked for decay at every session start** · planning gated, and sessions **record what they learn without writing rules**.
+
+⇒ **The verb this page is still missing is neither *curate* nor *trim* — it is *expire*.** The resident budget can be perfectly curated and still be **stale**; conversely a stale file is invisible to every capacity metric, because a dead path costs exactly as many tokens as a live one.
+
+**The other direction — the same file, failing by *contradiction* rather than by *decay*.** Drew Breunig's AGNTCon talk *Context Fails & Fixes*（write-up **2026-10-24**）adds the failure mode this page did not have: **context inertia** — *"models hyper-focus on a hypothesis, subtask, or goal in their context, and keep pursuing it after they should stop."* Three independent instances converge on the same fix: Anthropic's **Memento** harness clears the agent's context **every hour and a half**, keeping the environment and artifacts intact; Microsoft Research's **Fork-and-Flush** and UC Berkeley's *Scaling Discovery Requires Forgetting*（Shangyin Tan）do the same thing — **periodically wipe the context, keep what was produced in the environment**. Breunig's operational threshold is deliberately crude and deliberately quoted as a heuristic: *"Delete your context. I'm not joking. **Around 200,000 tokens is my warning point.**"* And his forward-looking claim, which is exactly this section's topic: *"As we focus more on memory, we also need to think about **strategic forgetting**. Over time, overly precise memories become conflicted and messy, and nobody has yet figured out how to handle this."*
+
+⇒ **OSTEON = the resident file goes stale; Breunig = the resident file goes contradictory.** Decay and conflict are **two different directions of the same half-life**, and neither is measurable on this page's capacity budget.
+
+**Boundaries (do not merge).**
+
+- **vs [[ContextRot]]** — rot is the **attention** axis (it fits, but attention degrades); this is the **truth** axis (it fits, it is attended to, and it is no longer true). ⚠️ **Different axes; a short stale file has no rot at all.**
+- **vs the resident-budget section above** — that section owns **how much and which**; this one owns **whether it still holds**. Same object, two questions.
+- **vs [[Compaction]] / 10-26B** — compaction **drops** things from the window (no attacker, class-biased loss); this section has **no compaction event at all** — the file simply accumulated references to a world that moved.
+- **vs [[Provenance]] / 10-26A（Tether）** — that pair handles **memory** whose supporting premise expired; this handles **instruction files** whose *pointers* expired. Same shape (*invalidation is not an action on the object*), different object ⇒ **cross-name, do not merge.**
+
+⚠️ **Evidence grade — and the honest part is unusual.** The author of OSTEON **states outright that no measured effect of OSTEON is reported**, marks the mechanism claims as **opinion**, the practice heuristics as **design rationale**, and lists **the questions that would falsify the thesis** ⇒ **this is a thesis / discipline paper, not an effect paper.** The 48.67% and 9.5%–22% figures are an **exploratory snapshot** by a **single author**; the 452 repos are the *most-starred*, i.e. **not a random sample**. The Breunig items are a **talk transcript** and a **practitioner heuristic**（200k tokens is his warning point, not a measured cliff）, and the three "forgetting" fixes are three self-reported engineering practices ⇒ **direction-grade only.**
+
 ## See Also
 - [[context-engineering]] — primary source
 - [[Compaction]] — its long-horizon technique (see its scope note for the cache cost of the same verbs)
 - [[ContextRot]] — the phenomenon it fights
 - [[LLMContext]] — the resource it manages
-- [[ProgressiveDisclosure]] & [[Skill]] — knowledge-loading instance of the same principle (see its 10-09 section for the resident-vs-on-demand allocation rule)
+- [[ProgressiveDisclosure]] & [[Skill]] — knowledge-loading instance of the same principle (see its 10-09 section for the resident-vs-on-demand allocation rule; and its 10-29B note on what the resident file must survive)
 - [[Provenance]] — retrieved memory is only as useful as it is trustworthy
+- [[RAG]] — the "do nothing to the raw history" baseline this page's verbs are measured against (added 2026-10-29)

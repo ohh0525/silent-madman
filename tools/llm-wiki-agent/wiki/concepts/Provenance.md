@@ -138,3 +138,6 @@ The section above draws this page's boundary by **executor**: a **discipline on 
 - [[Abstention]] — what happens when provenance is absent
 - [[ToolHallucination]] — carries the matching scope note: existence is not the variable
 - [[MemoryPoisoning]] — the content-side counterpart to this page's garment variable
+- [[MultiAgent]] — cross-contamination extends this page's object to the verification status of a peer's conclusion
+- [[multi-agent]] — that source page（上面那条只有概念页反链，这里补上源页入口）(added 2026-10-29)
+- [[RAG]] — 取用方式的基线；本页管「取回的可不可信」，那页管「取回值不值」(added 2026-10-29)

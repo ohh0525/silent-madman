@@ -88,3 +88,4 @@ Everything on this page — the three parallel stores, the intent gate, the sour
 - [[MemGPT]] · [[AgentZeroMemory]] · [[Zep]] — systems
 - [[ContextEngineering]] — writes/reads are context-engineering decisions
 - [[LLMContext]] — the bounded working set it complements
+- [[RAG]] — the control group: retrieve without processing anything, and the zero point that decides whether this page's machinery pays (added 2026-10-29)

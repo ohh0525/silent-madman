@@ -40,6 +40,7 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Token](concepts/Token.md) — sub-word unit for context accounting
 - [ReAct](concepts/ReAct.md) — Reason+Act prompting pattern used by Agents
 - [MCP](concepts/MCP.md) — Model Context Protocol; stateless as of the 2026-07-28 spec
+- [RAG (Retrieval-Augmented Generation)](concepts/RAG.md) — 朴素 RAG 作为「所有记忆方案必须打赢的基线」；memory benefit / memory tax / 净值三元组；两处失败轴（注意力 vs 真值）之外的第三方——取用值不值（2026-10-29 新建，pending ingest）
 - [Transformer](concepts/Transformer.md) — n²-cost architecture underlying LLMs
 - [Context Engineering](concepts/ContextEngineering.md) — discipline of curating the minimal high-signal token set; + the resident budget — the tokens this page never prices (capacitated assortment, 10-09, 2026-10-26); + the re-sent context is ~62% of the inference bill (09-25 cross-check, 2026-10-26)
 - [Context Rot](concepts/ContextRot.md) — accuracy decline as context tokens grow

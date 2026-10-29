@@ -51,6 +51,25 @@ Two 2026-10 first-hand results overturn the default path of「外部逐条重读
 
 Line classification（长期可用）: AI-safety monitoring splits into **behavioural monitoring**（external, inputs/outputs）and **interpretability monitoring**（inside the box）— the latter is now being **productised into the agent runtime**. Three caveats that travel with the numbers: the cost advantage **presupposes access to weights and activations**（not possible on closed APIs — currently for those running open weights on their own inference stack）; the **8.7% false-escalation rate** can dominate cost in high-risk / low-base-rate deployments; the internal signals are **trained for specific risk classes**（intrusion / CBRN misuse / reward hacking）— **not a general judge of「对不对」**, which is exactly Chapter A's conclusion: **the conventions standardize what a call looks like, not how well it is judged.**
 
+### C-bis · The judge has a preference of its own — the scoring function leans toward *using* memory *(ledger row 10-29C; applied 2026-10-29)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-29 (`.workbuddy/memory/concept-radar/2026-10-29.md`, candidate 3; ledger row **10-29C**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+**The question this page never asks.** All five chapters ask some form of **「测得准不准」**: is the record complete (A), is it readable (B), is the judge affordable and well-placed (C), can the verdict itself be trusted (D), what does it cost (E). **None asks whether the scoring function systematically prefers one kind of answer** — i.e. whether the judge, like the system it grades, has a prior.
+
+**Memory-Aware Reward Modeling**（`arXiv:2610.31272`, v1 **2026-10-22 13:43:33 UTC**; Yijiang River Dong 等 12 人, Cambridge / Stanford / TUM / Harvard / UT Austin）measures exactly that, and its **design** is what makes the number usable: **~1,000 pairwise judgments from 87 participants**, each judging **with their own real ChatGPT queries and their own exported memories**. The judge is therefore not answering *"which answer sounds better"* in the abstract — it is answering *"which answer do I prefer when my own memories are on the table."*
+
+- **Memory-conditioned responses are not consistently preferred** over responses generated without memory, and **in some cases users strongly prefer the version without memory.**
+- **Automatic evaluators agree with users only weakly**（prediction accuracy close to the majority baseline）**and select the memory-conditioned response substantially more often than users do.**
+- Their memory-aware reward model, trained on those human judgments, reaches **72.8%** preference-prediction accuracy, above the baselines.
+- The named failure family is **over-personalization** and its siblings: reusing an earlier stated preference in a request that does not warrant it. ⇒ **These are not memory-accuracy or retrieval failures.** The record is correct and retrieved correctly; **the error is in whether it should be used.**（This is why the row is filed here rather than on [[LongTermMemory]].）
+
+⇒ **Consequence for this chapter.** Chapter D verifies the **provenance of a verdict**（D1 competence · D2 reward hacking · D3 deception · D4 stability）. This adds a **sixth check of a different kind**: **does the judge share the graded system's own preference?** A judge that rewards *the presence of memory* will report a memory layer as beneficial **by construction**, which is the measurement-side mirror of what [[RAG]] records on the accounting side — **two independent measurements, same direction: more memory is systematically over-credited.**
+
+**Boundaries.** **vs 10-25C（Repair, Not Detection）** — that row prices a **detector's precision**（"a flag earns its retry only when precision exceeds D/(R+D)"）; this one is about a **scoring function's bias** ⇒ *one cannot detect, the other detects crookedly.* **vs ledger row 10-27C（SciValidityBench, ⏸ not yet landed）** — that row says *"correctly remembered ≠ eligible to influence this decision"*（**object** layer）; this one says *"the judge cannot tell the difference"*（**measurement** layer）⇒ **two halves of one segment, cross-name, do not merge.** **vs ledger row 10-26C（Disclosure Begets Disclosure）** — that is a **system-side loop**（recall rewrites capture's input）; this is a **measurement-side loop**（evaluation rewards memory use）⇒ different causal direction. **vs Chapter D** — D audits the verdict against saved artifacts; this audits the **preference encoded in the judge**.
+
+⚠️ **Evidence grade.** Preprint, not peer-reviewed; **87 participants** with **self-built memory profiles** is a small convenience sample; **72.8% is preference-prediction accuracy, not task accuracy**; the paper's own ask is to **change the optimization target**（from retrieval accuracy to user preference）, **not to remove memory** ⇒ **must not be read as「memory is useless」**.
+
 ## Chapter D · 元层 — is the verdict itself trustworthy
 
 **A Trust Layer for Agent Evaluation**（`arXiv:2610.07274`, Centific Research）is an **additive post-hoc layer that never modifies the recorded score**, answering per pass:「这条 pass 该不该被相信」. Four dimensions — **D1 competence**（can the benchmark's own grading code reproduce it）· **D2 reward hacking**（was the passing answer actually computed, not hard-coded or copied from the prompt）· **D3 deception**（does the agent's completion claim match what happened）· **D4 stability**（does a rerun stay in the same score band）. The first three use only saved artifacts; only D4 re-runs the agent; model judgments only label evidence under majority voting — **every verdict is a deterministic rule**（「验证器本身尽量不是一个模型」— direct dialogue with [[MultiAgent]]'s「验证器是前提」）. Measured on **5 agent configurations × 108 Agents' Last Exam tasks**: **only 22.6% of recorded passes clear all four checks**（95% CI 15.0–32.6, n=84）; **every model shows passes with no traceable computation**（rates spread **tenfold**）; **confirmed false completion claims**; **18–46% of tasks do not stay in one score band over five runs**. The closing sentence is quotable whole: *「衡量一个 agent 能做什么，与验证它是否真的做了，是两个不同的问题，而现有 benchmark 只处理前者。」* Sibling results — AgentAbstain **59.5%**（`arXiv:2607.10059v1`）, file-review benchmark **67.9% unread / 80.4% of statements misleading**（`arXiv:2609.20812v3`）— converge on the same filing rule: **「agent 的自述」与「实际发生」必须分栏.**
@@ -77,7 +96,7 @@ The judgement layer has a price structure, and the whole stack is taxed:
 - **vs [[AgentSandbox]]** — the container bounds **what can be touched**; this watches **what it intends** — `authority is not isolation` extended to the evidence layer（容器边界 vs 内部信号，互补且不同层）.
 - **vs ledger row 09-28（记忆评测的可信度）** — 「基准的构造成立吗」vs「单次 pass 记录成立吗」— same family, object narrowed from benchmark to one record（row-to-row）.
 - **vs [[MemoryGovernance]]** — governance governs **how state changes**; observability records **what this run actually did**: 前者是策略，后者是证据.
-- **内部各章不可互并** — 记录层（span/trace）· 语义层（envelope/行为词表）· 判官层（怎么判/多少钱）· 元层（判本身可信吗）· 成本章（多少钱）是**同一证据链的五个位置**；合并任何两层都会丢掉「上层以下层的存在为前提」这条结构.
+- **内部各章不可互并** — 记录层（span/trace）· 语义层（envelope/行为词表）· 判官层（怎么判/多少钱）· 元层（判本身可信吗）· 成本章（多少钱）是**同一证据链的五个位置**；合并任何两层都会丢掉「上层以下层的存在为前提」这条结构（C-bis 是**判官层内部的偏向检查**，不是第六层，故不破坏五层结构）。
 
 ## Judgement sentences (可直接引用的判据句)
 
@@ -98,3 +117,5 @@ The judgement layer has a price structure, and the whole stack is taxed:
 - [[Provenance]] / [[CitationLock]] / [[Abstention]] — the claims-truth discipline this page extends to runs and scores
 - [[ContextEngineering]] — the resident budget (62% re-sent context) is the other big line of the same invoice
 - [[LLMContext]] / [[Compaction]] — the resource being recorded and the technique whose losses must stay visible
+- [[RAG]] — 判分的基线对象：本页的 judge 层要给「记忆值不值」打分，而那件事的零点在 RAG（added 2026-10-29）
+- [[SourceScore]] — 第三方 agent 评级站点：trust layer 的产品形态之一；「评级」与「验证」是两件事（见 Chapter D）（added 2026-10-29）

@@ -52,5 +52,6 @@ A load-on-demand design pattern that fits arbitrarily many resources into a boun
 - [[Skill]] — primary use case
 - [[LLMContext]] — solves the bounded-context problem
 - [[Agent]] — typical consumer of progressive disclosure
-- [[ContextEngineering]] — progressive disclosure is an instance of this broader curation principle (see「The resident budget」there, 10-09)
+- [[ContextEngineering]] — progressive disclosure is an instance of this broader curation principle (see「The resident budget」there, 10-09; and「The half-life of the always-loaded file」there, 10-29B)
 - [[HumanInTheLoop]] — why the always-loaded file is the only compaction-immune position (10-26B × 10-09)
+- [[RAG]] — the opposite pole of the same trade-off: retrieve without processing anything, and let the baseline score the machinery (added 2026-10-29)

@@ -1,0 +1,7 @@
+{
+  "count": 47,
+  "files": 16,
+  "scope": "wiki/{sources,concepts,entities}",
+  "rule": "> **Draft annotation, pending ingest.",
+  "updated": "2026-10-29"
+}

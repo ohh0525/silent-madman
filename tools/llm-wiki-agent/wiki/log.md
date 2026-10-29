@@ -1223,3 +1223,51 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 ### 四、硬约束
 
 `raw/` 只读未改 · `learning-materials/` 未写入 · 未删除任何文件 · `overview.md` 仅追加未改写 · 未使用 `git push`。
+
+## [2026-10-29] update | Structural-fix landing — annotation count is now script-generated (new tool + lint dimension G); new page RAG.md; three ledger rows landed
+
+**本条目为 `wiki/log.md` 第 78 次操作**，同日第三个动作。触发：用户指令「**按你的建议来**」—— 即把本日报告「⚠️ 需你拍板（3 件）」与三条结构性建议**全部落地**。
+
+### 一、结构性建议一 ~ 三（全部执行，非仅建议）
+
+1. **新建 `tools/annotation_count.py`** —— 把该计数的**两件事写死在代码里**：范围 = `wiki/{sources,concepts,entities}`（**排除** `index.md` / `log.md` / `overview.md` 等叙述文件）；口径 = 行首严格横幅 `> **Draft annotation, pending ingest.`。附 `--check`（与基线比对，不一致 exit 1）与 `--update-baseline`。基线存 `tools/annotation_baseline.json`。
+2. **`tools/daily_lint.py` 新增维度 G** —— 自动调用上面的 `--check`，使跨日复核**不再依赖人工 grep**。维度 G 失败**不阻塞**其余六维。
+3. **`overview.md` 只追加一行**声明该计数自本期起由脚本生成（**synthesis 与 `last_updated` 仍未改动**）。
+
+⇒ **三次人工计数更正（10-26 → 10-27 → 10-29）的根因到此闭环。**
+
+### 二、三条雷达候选落地（1 新建页 + 3 处新增节）
+
+| 行 | 落点 | 动作 |
+|---|---|---|
+| **10-29A** Memory Tax | **`concepts/RAG.md`（新建）** | 本库**首次有 RAG 页**。benefit / tax / 净值框架 · 税的三源 · 边界六条 · 证据分级 · **对 09-17 开放项的精确分栏**（检索质量 ✅ / 选型与分块 ❌） |
+| **10-29B** OSTEON | `concepts/ContextEngineering.md` | 新增「The half-life of the always-loaded file」—— 把「留多少」（容量预算）与「还对不对」（真值半衰期）拆成两个问题 |
+| **10-29C** Judge bias | `concepts/AgentObservability.md` | Chapter C 内新增「**C-bis**」子节 —— **落点为子节而非新章**，以保住该页「同一证据链的五个位置」这条结构主张 |
+
+**互指网络**：`LongTermMemory` · `MemoryGovernance` · `Provenance` · `ContextEngineering` · `ProgressiveDisclosure` · `AgentObservability` 六页均补 `[[RAG]]` 反向链接；`index.md` 收录 `concepts/RAG.md`。
+
+### 三、结构性建议二（4 个低入链页反向链接）
+
+`entities/SourceScore.md`（← `AgentObservability`）· `sources/agent-sandbox.md`（← `AgentHarness`）· `sources/mcp-2026-07-28.md`（← `AgentIdentity`）· `sources/multi-agent.md`（← `Provenance`）⇒ **全库最小入链由 1 → 2**，孤立页仍为 0。
+
+### 四、落地后复核（七维全绿）
+
+| 维度 | 结果 |
+|---|---|
+| A 悬空 wikilink | **0** ✅ |
+| B 孤立页 | **0** ✅ · 最小入链 **2**（原为 1） |
+| C frontmatter | **0** ✅（新页 `RAG.md` 五字段齐全、`sources: []`） |
+| D sources slug | **73 / 73** ✅ |
+| E index ↔ 磁盘 | **0 divergence** ✅ |
+| F `raw/` 未摄取 | **0** ✅（13 文件，只读） |
+| **G 批注计数断言** | ✅ **47 处 / 16 文件** = 基线（原 44/15，+3 与 3 处新增节一一对应） |
+
+`tools/health.py`：**49 内容页 / 51 `.md`** · Empty/Stub **0** · Index Sync **0** · Log Coverage **0**，三项全 ✅。⇒ wiki **48 → 49 内容页 / 50 → 51 `.md`**。
+
+### 五、硬约束
+
+`raw/` 只读未改 · **`learning-materials/` 未写入**（三条候选仍只存在于 wiki 草稿与本日报告，受 README 人工核查承诺约束）· 未删除任何文件 · `concept-relationship.md` 未触碰 · `overview.md` **仅追加未改写、synthesis 与 `last_updated` 未动** · 未使用 `git push`。
+
+### 六、仍未结清
+
+**🎯 不指认** —— 10-26 登记的「已执行但状态未流转」口径差异本期仍未统一（10-09 / 10-09E 两行仍在 `⏸`，而其内容已于 10-26 落成页面修订）。在统一前，任何 🎯 指认都会落在错误的行上。
