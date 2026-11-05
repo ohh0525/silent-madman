@@ -1,9 +1,9 @@
 ---
 title: "Compaction"
 type: concept
-tags: [context-engineering, long-horizon, anthropic, trust-boundary, serialization, cache-invalidation, class-biased-loss, recompute-vs-store]
+tags: [context-engineering, long-horizon, anthropic, trust-boundary, serialization, cache-invalidation, class-biased-loss, recompute-vs-store, state-vs-log-filtering]
 sources: [context-engineering]
-last_updated: 2026-10-26
+last_updated: 2026-11-05
 ---
 
 # Compaction
@@ -105,6 +105,24 @@ This page's three techniques（compaction / structured notes / sub-agents）are 
 - **vs [[MemoryGovernance]]'s 10-22B** — that argues retaining the original is cheaper from a **correctness** angle; this bounds it from a **call-count** angle. Convergent, not identical.
 - **vs the sections above（10-22A / 10-26B）** — those are about *what compaction destroys*（origin / constraints）; this is about *when to compact into storage at all*. The full four-resource theory lives on [[AgentHarness]]（same ledger row, split landing by design）.
 
+## 压缩 vs 过滤 —— 保留最有信息量的文本，还是维护决策所依赖的状态 / Compression vs filtering *(ledger row 11-05B; applied 2026-11-05)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-11-05; recorded in `.workbuddy/memory/concept-radar/2026-11-05.md` (candidate 2; ledger row **11-05B**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+本页的机制问「预算之内保留**哪段文本**」。**Rate-Limited Filtering**（`arXiv:2611.02361`，Guo & Guo，v1 2026-11-02）换了一个问法：**下游决策到底依赖什么**——并给出答案：一个由**被跟踪键数**决定大小的**状态**，而不是文本。论文对文本压缩框架是明文批评的（"how to keep the most informative text… few ask what the downstream decision depends on"）。
+
+数字（访问控制日志场景：授权 / 撤销 / 复权 / 过期 / 变更窗口，成对样本 —— 两段历史仅差决定性事件的**次序或一个字段**，正确答案互换）：
+
+| 读法 | 8–16 事件 | 256 事件 |
+|---|---|---|
+| 7–32B 开源模型读**全量历史** | 72–86% | **48–55%**（14B 的 AUC 0.85 → 0.53，已不判别） |
+| 32B 推理模型读**当前状态** | — | **96–98%** |
+| 「模型逐行解析 + **显式规则**施加更新」的过滤器 | — | **80–89%**（胜过相关性检索、模型自持台账、StateMem 复现、Mem0） |
+
+三条硬结论：① **「显式状态反超长上下文」的门槛随读者增长**（120B 推理模型在 256/512 事件仍落后状态 4–7 分）——窗口变长不终结这个权衡，只是推迟它；② 乱序保留日志行 ⇒ 错误率**逼近 50% 且该上界可达**——压缩丢内容是慢泄漏，丢**次序**是快失败；③ 获胜配置把「解析」给模型、「施加更新」给显式规则——又是「控制不必放在模型里」的实例，而且这次是**测量出来的**而不是设计主张。
+
+**与本章其余各节的关系**：压缩与过滤都丢信息，分歧在**判据**（哪段文本最有信息量 vs 决策还需要哪些区分）；10-22A 的洗白攻击依赖「摘要后原文被丢弃」——过滤按设计丢弃原文，故 **provenance 必须挂在状态更新上，而不是幸存文本上**。⚠️ 单一基准族（访问控制策略）· 两位作者 · 预印本；但带预注册测试（读者模型预测过滤器精度平均误差 0.02）与第二域冻结复刻。
+
 ## See Also
 - [[context-engineering]] — primary source
 - [[ContextEngineering]] — parent discipline
@@ -115,3 +133,4 @@ This page's three techniques（compaction / structured notes / sub-agents）are 
 - [[MemoryGovernance]] — the opposite conclusion about retaining the original (10-22B)
 - [[HumanInTheLoop]] — where the class bias bites: the rules the gate depends on are the class compaction drops first (10-26B)
 - [[AgentHarness]] — its LAM section (10-09-2) holds the full four-resource theory this page's new section draws one bound from
+- [[LongTermMemory]] — the state-vs-text question is the same seam, seen from the durable side (11-05B, added 2026-11-05)

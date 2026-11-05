@@ -1,9 +1,9 @@
 ---
 title: "Long-Term Memory"
 type: concept
-tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness, raw-history-vs-compression, retrieved-vs-operative]
+tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness, raw-history-vs-compression, retrieved-vs-operative, prospective-memory]
 sources: [agent-memory-provenance, memory-lifecycle]
-last_updated: 2026-10-26
+last_updated: 2026-11-05
 ---
 
 # Long-Term Memory
@@ -79,6 +79,16 @@ Everything on this page — the three parallel stores, the intent gate, the sour
 
 ⇒ **This page's retrieval description is necessary but not sufficient**: correctness of the pipeline above is a statement about *a record*, while what the model actually sees is *a projection*. The full argument and the「fourth column」framing sit in [[MemoryGovernance]]「The fourth column of memory failure」. ⚠️ **13-page preprint**; panel **non-probability** and faults **author-injected**; recovery is **oracle-backed** ⇒ *repairable under an ideal enforcer* is not *repairable in your system*; the **−27.55 / +27.51** full-cohort numbers are self-described **descriptive proxies** and must not be quoted as effects.
 
+## Beyond retrospective — prospective memory *(ledger row 11-05A; applied 2026-11-05)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-11-05; recorded in `.workbuddy/memory/concept-radar/2026-11-05.md` (candidate 1; ledger row **11-05A**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+**The direction this page never pointed.** Everything above — three parallel stores, four governance actions, reading discipline — treats memory as **retrospective**: preserve and retrieve *past* information to inform the *current* decision. **Pro-Memory** (`arXiv:2611.05731`, Bei et al., UIUC + UIC + Stony Brook + Brookhaven, v1 2026-11-03) names the other direction: a proactive agent also needs **prospective memory** — retaining **future-directed intentions** (pending objectives + activation conditions + supporting evidence) and realizing them when opportunities arise, **without explicit requests**.
+
+The load-bearing split: **remembering the right intention does not guarantee acting at the right time** — a related observation may call for *waiting*, while a later cue makes the same intention actionable. The framework therefore separates **maintaining intentions** from **deciding when and how to realize them**, and updates intention states based on **actions actually issued or evidence of resolution**. A second independent team reached the same gap within two weeks (**ProMemAgent**, `arXiv:2610.27400`: sensory-context prospective memory, CPMBench 1,000 instances / 8 everyday categories, **+9.7 F1** over the strongest baseline) ⇒ this is a **forming cluster**, not an isolated claim.
+
+**Boundary.** vs the four actions of [[MemoryGovernance]]: Capture/Update/Recall/QA all operate on **the past**; prospective memory's objects are **not yet facts** — they are commitments whose activation conditions may never fire. vs [[HumanInTheLoop]]: the gate reviews actions the model proposes *now*; prospective memory decides **when a stored intention becomes actionable** — the realization, once proposed, must still pass the gate. Adjacent, not overlapping. ⚠️ Both papers are preprints; Pro-Memory's numbers are author-reported with scores outside the displayed abstract.
+
 ## See Also
 - [[agent-memory-provenance]] — primary source (the reading discipline)
 - [[memory-lifecycle]] — second source (lifecycle, forgetting, decision-rights)
@@ -89,3 +99,4 @@ Everything on this page — the three parallel stores, the intent gate, the sour
 - [[ContextEngineering]] — writes/reads are context-engineering decisions
 - [[LLMContext]] — the bounded working set it complements
 - [[RAG]] — the control group: retrieve without processing anything, and the zero point that decides whether this page's machinery pays (added 2026-10-29)
+- [[HumanInTheLoop]] — the gate a realized prospective intention must still pass (11-05A, added 2026-11-05)

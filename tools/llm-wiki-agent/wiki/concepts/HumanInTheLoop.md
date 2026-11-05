@@ -1,9 +1,9 @@
 ---
 title: "Human-in-the-Loop"
 type: concept
-tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance, compaction-resident-rules, premise-layer-grading, reversibility-supply, promise-feasibility]
+tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance, compaction-resident-rules, premise-layer-grading, reversibility-supply, promise-feasibility, prospective-memory-seam]
 sources: [human-in-the-loop]
-last_updated: 2026-10-26
+last_updated: 2026-11-05
 ---
 
 # Human-in-the-Loop (Escalation Gate)
@@ -151,6 +151,17 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 
 **Boundaries.** vs [[ToolHallucination]] (**one-shot tool existence** vs **cross-turn feasibility** — the full landing is a section on that page) · vs [[Abstention]] (**该不该拒答** vs **答应得对不对**, and this row names the trade-off: a fix that makes the model refuse everything is not a fix — over-refusal is the cost side) · vs 10-24A (that row **prices** premises; this row judges **whether a promised action is performable at all**).
 
+## 存着的意图何时变成可行动的 —— 前瞻记忆与闸门的接缝 / When a stored intention becomes actionable *(ledger row 11-05A; applied 2026-11-05)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-11-05; recorded in `.workbuddy/memory/concept-radar/2026-11-05.md` (candidate 1; ledger row **11-05A**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+本页闸的是「模型**现在**提出的动作」。**Pro-Memory**（`arXiv:2611.05731`，v1 2026-11-03）给闸门补了一类此前从未考虑的**动作来源**：一条存着的**未来指向意图**（pending objective + activation condition + supporting evidence），在合适机会出现时被兑现——**无需用户显式请求**。这给本页两条直接的后果：
+
+1. **闸门的输入里多了一层「机会识别」**：正确记起意图 ≠ 择时正确 —— 一个相关观察可能要求**等待**，更晚的线索才使同一意图可执行。意图兑现那一刻仍要过 impact × reversibility 的分级：**前瞻记忆供给「何时」，闸门供给「现在行不行」**——两个判据相接而不互替。
+2. **「限制不必要干预」是论文自己的验收指标**：对主动式 agent，过度干预之于意愿兑现，正如过度拒绝（10-31A）之于防御 —— 同一个「该动不动」的代价面，在本页的分级尺上应占一格。
+
+意图状态的更新依据是**实际发出的动作或已解决的证据**——这与 [[MemoryGovernance]] 的 UPDATE 动词同形，但对象是「尚未成立的承诺」而非「过去的事实」。⚠️ 预印本 · 数字作者自报（分数在摘要之外）；第二形态实例 ProMemAgent（`arXiv:2610.27400`，CPMBench +9.7 F1）两周内独立出现 ⇒ 簇正在成形。
+
 ## Why It Matters
 - It answers a property unique to acting agents: unlike a chatbot, a wrong action is frequently **not recoverable** — a sent email, an executed payment, a deleted record. Model error rates can be low and the damage still lands before anyone notices.
 - It makes "automatic" and "someone has a backstop" compatible: the agent absorbs the bulk of the work, the human spends seconds on the one irreversible step — speed comes from *narrowing the decision scope*, not from removing oversight.
@@ -171,3 +182,4 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 - [[ToolHallucination]] — existence vs cross-turn feasibility of what is promised (10-09E)
 - [[Abstention]] — abstention as a priced regime, not a binary (10-24A)
 - [[AgentObservability]] — the escape-rate signal source this page's acceptance criteria require (page created 2026-10-26)
+- [[LongTermMemory]] — the prospective-memory store whose realizations this seam gates (11-05A, added 2026-11-05)
