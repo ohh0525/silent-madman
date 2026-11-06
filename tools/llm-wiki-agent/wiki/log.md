@@ -1495,3 +1495,30 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 严格横幅 **47/16 → 50/16**（+3/+0），`tools/annotation_baseline.json` 同步更新（updated → 2026-11-05），维度 G 断言基线随之刷新；`overview.md` 顶部追加一行计数与裁定说明（**只追加**，synthesis 与 `last_updated` 未动）。
 
 **未触碰**：`raw/`（只读）· `learning-materials/`（README「人工核查承诺」）· `concept-relationship.md`。
+## [2026-11-06] lint | daily maintenance — 连续第七期零新增：七维 lint 全绿，维度 G 第七次跨日复核通过；概念雷达三条（"写入侧监督信号"轴 + "能力不可组合"轴）只登记未落地
+
+### 一、维护结果（`tools/health.py` + `tools/daily_lint.py`）
+
+| 维度 | 结果 | 判定 |
+|---|---|---|
+| **A** 悬空 `[[wikilink]]` | **0** | ✅ 全部解析 |
+| **B** 孤立页（0 inbound） | **0**（最小入链 **2**） | ✅ |
+| **C** frontmatter 完整性 | **0** | ✅ |
+| **D** `sources` slug 有效性 | **73 / 73** | ✅ |
+| **E** `index.md` ↔ 磁盘 | **0** divergence | ✅ 双向一致 |
+| **F** `raw/` 未摄取 | **0**（13 文件） | ✅ 只读扫描 |
+| **G** 草稿批注计数断言 | **50 处 / 16 文件 = 基线** | ✅ 第七次跨日复核通过 |
+
+`health.py` 三项 ✅。规模连续第七期持平：**13 源 / 49 内容页 / 51 `.md`**。**无 ingest** ⇒ 不触发 synthesis 修订（2026-10-22 裁定）。五类检查（a–e）全部通过，零修复维护日。开局 `ahead 2`（11-05 对齐降级遗留）按既定结论不手动干预。
+
+### 二、概念雷达三条（只登记未落地，全文见 `.workbuddy/memory/concept-radar/2026-11-06.md`）
+
+三条落在**两条新轴**上：**11-06A** 写入侧监督信号的自监督化 / Self-supervised write signal（簇：SUMONE `arXiv:2611.06445` 掩码重建自监督 + MEMOIR `arXiv:2611.07631` 用后回溯归因 + MEMENTO `arXiv:2611.00244` 事后笔记自举，三个独立团队一周内各答一版）⭐⭐⭐——共同拆掉的默认假设 =「压缩 / 写入质量的评估需要外部参照（参考摘要或下游任务结果）」；与 11-05B「压缩 vs 过滤」正交（那是决定论，这是监督信号来源论）。**11-06B** 能力的不可组合性 / Non-composition of task capability（DeliverBench，`arXiv:2611.03412`，11 项目 / 13 专家 / 150 子任务，最好系统终交付仅 65.0/100）⭐⭐⭐——「任务级能力不简单组合成交付」；错误跨子任务继承；审计项目 7 系统全部处理了评审意见、**仅 1 个保全了 traceability** ⇒ 与 `Provenance` / Cluster D traceability 衰减开放项同域。**11-06C** 协作智能 / Collaborative Intelligence（CIB，`arXiv:2611.02633`，240 任务 / 8 维 / 18 模型，隔离设计：只考模型有全信息时能独立做对的题）⭐⭐——同等能力的模型做队友差距达 11 分；frontier 模型顶得住不安全捷径、顶不住**人际压力**（冲突中最优成交仅 14%）；接手弱模型作弊过的任务时 97%→81%。备查：Reglos（`arXiv:2611.06049`，harness 自改补丁 + benchmark-gaming 筛查，接 10-29C）· THReD（`arXiv:2611.02484`，部署级 EHR agent 92.7% 首答 / 全部弃权咨询请求，10-31A 弃权轴的生产证据）。
+
+### 三、硬约束披露
+
+`raw/` 只读未改 · **`learning-materials/` 未写入**（受 README「人工核查承诺」约束）· 未删除任何文件 · `concept-relationship.md` 未触碰 · `overview.md` 未改动 · 未使用 `git push`。台账已按默认动作登记 3 行（`⏸ 已建议未动`）。
+
+### 四、结转与 🎯
+
+🎯 **续持 10-10「观察的时效性与再验证」⭐（27 天）**（承 11-05 重开指认；无人值守档位不执行处置）。待拍板事项无新增：synthesis 豁免已裁定为不豁免（11-05），11-06B 与 traceability 开放项的关系属「强化而非解决」，同 11-05B 口径处理。
