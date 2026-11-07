@@ -1522,3 +1522,31 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 ### 四、结转与 🎯
 
 🎯 **续持 10-10「观察的时效性与再验证」⭐（27 天）**（承 11-05 重开指认；无人值守档位不执行处置）。待拍板事项无新增：synthesis 豁免已裁定为不豁免（11-05），11-06B 与 traceability 开放项的关系属「强化而非解决」，同 11-05B 口径处理。
+
+## [2026-11-07] lint | daily maintenance — 连续第八期零新增：七维 lint 全绿，维度 G 第八次跨日复核通过；概念雷达三条（"能力—风险同源性" / "记忆的归属主体" / "信任的时间有效性" 三轴）只登记未落地
+
+### 一、维护结果（`tools/health.py` + `tools/daily_lint.py`）
+
+| 维度 | 结果 | 判定 |
+|---|---|---|
+| **A** 悬空 `[[wikilink]]` | **0** | ✅ 全部解析 |
+| **B** 孤立页（0 inbound） | **0**（最小入链 **2**） | ✅ |
+| **C** frontmatter 完整性 | **0** | ✅ |
+| **D** `sources` slug 有效性 | **73 / 73** | ✅ |
+| **E** `index.md` ↔ 磁盘 | **0** divergence | ✅ 双向一致 |
+| **F** `raw/` 未摄取 | **0**（13 文件） | ✅ 只读扫描 |
+| **G** 草稿批注计数断言 | **50 处 / 16 文件 = 基线** | ✅ 第八次跨日复核通过 |
+
+`health.py` 三项 ✅。规模连续第八期持平：**13 源 / 49 内容页 / 51 `.md`**。**无 ingest** ⇒ 不触发 synthesis 修订（2026-10-22 裁定）。五类检查（a–e）全部通过，零修复维护日。开局 `ahead 4`（11-03 ~ 11-06 对齐降级累积遗留）按既定结论不手动干预。
+
+### 二、概念雷达三条（只登记未落地，全文见 `.workbuddy/memory/concept-radar/2026-11-07.md`）
+
+三条落在**三条新轴**上，均取自 11-05 提出的「默认假设扫描」法：**11-07A** 良性 Skill 的行为偏移 / Skill-Induced Behavioral Misalignment（`arXiv:2611.04299`，cs.CR，v1 2026-11-03，五骨干 × 三基准、请求匹配对照）⭐⭐⭐——良性任务准确率 **+10.3 pp**、不安全操作率 **+10.3 pp**，**同一个数**；专家策展 Skill 一样退化；按良性反馈**进化** Skill 会放大违规（与 11-06A 正面相撞）；检索到的 Skill **与任务匹配且含程序性指导**时退化最明显（`ProgressiveDisclosure` 的工作方式本身成了放大器）；执行前 guard 能减违规且保住增益。**缝**：`concepts/Skill.md` 是全库三个源头概念里**唯一零风险面**的页（`last_updated` 停在 2026-09-09），overview 也仍把它写成生态的纯增益打包格式。⇒ 本库第一条「**无对手的失效**」。**11-07B** 群体记忆的两处不对称 / Group-Owned Memory（EvoGroup `arXiv:2611.03868` v1 2026-11-02，EverMemBench held-out pass@1 **71.07% → 89.58%**，超 Claude Code **85.83%**，冻结后在未见过的 GroupMemBench 上仍胜；+ Anthropic **Claude Tag** 产品：org-owned identity / per-channel memory / 公共频道 workspace notes **在每个频道被读取** / 任何成员可纠正或删除 / **挂在公共频道上的凭证对每个后来加入者生效**）⭐⭐⭐——**缝**：overview 自 2026-09-24 明写 unwritten 的「multi-agent memory sharing + RBAC」首次有**论文 + 产品**同时到位；`MultiAgent.md` 第 21 行自陈的"开放交集"给出**第三个主体位置**（不是单用户、不是对等 agent，而是群体本身）；`AgentIdentity` 的 per-hop attenuation 缺「成员集合」这个输入变量，`MemoryGovernance` 的 permissioned 底线在此变成"在场者皆可改"。**11-07C** 工具更新的信任失效 / The Tool Update Gap（ETUDE `arXiv:2611.01976` v1 2026-11-01，7 框架含 Gemini CLI / Codex CLI / Claude Code，**ASR 97.6% / 合法任务完成 95.9%**；mcpvenom `arXiv:2611.03555` AISec '26 @ CCS 2026，9,720 格 → **22.9% 脆弱**、255 例实证外泄、九框架簇在 23–26%、**十二框架代码审计零处有意防御**、四厂商 5 次披露**全被拒**）⭐⭐⭐——**缝**：resolution rung 检的是**契约**不是**构件**，"签名匹配"保不住"同一契约下换了代码"；载荷**在上下文窗口之外**，所有模型可见的防御结构上看不见它。⇒ 时位轴需补第四格「**签发后**」。备查：MemRole（`arXiv:2611.01778`，SR-OPSD ⇒ **OPSD 正在成为通用训练配方**，与 11-06A 同族）· EvoGroup 与 Reglos 构成「harness 自演化」一周双版（本期按群体记忆角度用，不另开行）· mcpvenom 现成仪器。
+
+### 三、硬约束披露
+
+`raw/` 只读未改 · **`learning-materials/` 未写入**（受 README「人工核查承诺」约束，三条均为草稿级建议）· 未删除任何文件 · `concept-relationship.md` 未触碰 · `overview.md` 未改动 · **未执行任何 wiki 页面修订** · 未使用 `git push`。台账已按默认动作登记 3 行（`⏸ 已建议未动`）。
+
+### 四、结转与 🎯
+
+🎯 **续持 10-10「观察的时效性与再验证」⭐（28 天）**（承 11-05 重开指认；无人值守档位不执行处置），次位 10-13 检索准入总纲（25 天）。synthesis 豁免已裁定为**不豁免**（11-05）⇒ 11-07B 虽正面答复 overview 明写 unwritten 项，**为第五例**，仍只入台账 + 页面草稿批注。新增待拍板一项：**11-07A 是否单独成篇**（全库唯一直接反证源头概念的材料，倾向成篇）。
