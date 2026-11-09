@@ -1,9 +1,9 @@
 ---
 title: "Human-in-the-Loop"
 type: concept
-tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance, compaction-resident-rules, premise-layer-grading, reversibility-supply, promise-feasibility, prospective-memory-seam]
+tags: [human-in-the-loop, approval-gate, escalation, control, persistence-of-directives, authority-erosion, argument-provenance, compaction-resident-rules, premise-layer-grading, reversibility-supply, promise-feasibility, prospective-memory-seam, review-budget]
 sources: [human-in-the-loop]
-last_updated: 2026-11-05
+last_updated: 2026-11-09
 ---
 
 # Human-in-the-Loop (Escalation Gate)
@@ -162,6 +162,26 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 
 意图状态的更新依据是**实际发出的动作或已解决的证据**——这与 [[MemoryGovernance]] 的 UPDATE 动词同形，但对象是「尚未成立的承诺」而非「过去的事实」。⚠️ 预印本 · 数字作者自报（分数在摘要之外）；第二形态实例 ProMemAgent（`arXiv:2610.27400`，CPMBench +9.7 F1）两周内独立出现 ⇒ 簇正在成形。
 
+## 提问是审查预算的一次支出 / A question is a withdrawal from the review budget *(ledger row 11-08C; applied 2026-11-09)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-11-08; recorded in `.workbuddy/memory/concept-radar/2026-11-08.md` (candidate 3; ledger row **11-08C**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+**The premise this page's gate has always carried.** Every mechanism above assumes **a human who is asked will examine**: the gate supplies the decision payload, the human supplies the scrutiny. *Is That Clear?* (`arXiv:2611.01087`, submitted **2026-10-31 16:23 UTC**; Chengbo Zheng + 3; cs.HC; controlled experiment, **N=180**, six everyday decision scenarios) measures what actually happens to that scrutiny when the assistant asks **clarifying questions (CQs)**:
+
+- Perceived understanding and satisfaction **rise** — and time spent reviewing and evaluating responses **falls**, with **more responses accepted unchanged, including erroneous ones**.
+- The loss is **directional, not uniform**: within the CQ condition, violations **adjacent to the question** (in the very sub-decisions the CQs addressed) were accepted **more often** than non-adjacent ones. The question spends the review budget **exactly where it points** — "I already answered that" becomes the blind spot.
+- The paper's own boundary: consumer-decision setting, **not agent actions in a business**; no change in general trust; the measure is **review behaviour, not incident rate** ⇒ the citable claim is "questions reduce review effort and concentrate the loss at the questioned sub-decision", **never** "questions cause more accidents".
+
+⇒ **Consequence for this page.** Step 4 already measures **automation rate / override rate / review latency**; the missing sibling is the **unchanged-approval rate per checkpoint**. A checkpoint approved almost without modification is not evidence of safety — it is evidence the reviewer has stopped reading, **and the gate itself may have spent the attention that was supposed to review it**. This is the half-answer to the question row 11-07A's draft left open — *is the gate sufficient, not merely correctly placed*: sufficiency cannot be read off the gate's rules alone; it must also count **how many confirmations the workflow demanded of the human**.
+
+**Boundaries (do not merge).**
+- **vs 10-31A (abstention & over-refusal)** — that row prices the **model's** over-caution; this prices the **human's** under-scrutiny. The gate sits between them and pays both ways.
+- **vs [[Abstention]]** — abstention is visible *absence*; a question is visible *busyness*. Both transfer risk, but the question transfers it without looking like a transfer.
+- **vs [[AgentIdentity]] / attenuation** — the attenuation model assumes "asked ⇒ judged". This is the counter-example: being asked can make the human judge **less**.
+- Same-direction external signals (**vendor-grade, signals not facts**): Microsoft AI Red Team names **bypass of HITL controls via consent fatigue** the most consistently exploited failure mode in its practice; Anthropic self-reports users accepting **93%** of manual permission prompts (no published methodology).
+
+⚠️ **Evidence grade.** Single experiment, N=180, consumer scenarios; violations were **planted by design** — the study measures review behaviour under controlled violations, not long-run escape rates.
+
 ## Why It Matters
 - It answers a property unique to acting agents: unlike a chatbot, a wrong action is frequently **not recoverable** — a sent email, an executed payment, a deleted record. Model error rates can be low and the damage still lands before anyone notices.
 - It makes "automatic" and "someone has a backstop" compatible: the agent absorbs the bulk of the work, the human spends seconds on the one irreversible step — speed comes from *narrowing the decision scope*, not from removing oversight.
@@ -183,3 +203,4 @@ Grading an agent's actions by **impact × reversibility** and inserting an audit
 - [[Abstention]] — abstention as a priced regime, not a binary (10-24A)
 - [[AgentObservability]] — the escape-rate signal source this page's acceptance criteria require (page created 2026-10-26)
 - [[LongTermMemory]] — the prospective-memory store whose realizations this seam gates (11-05A, added 2026-11-05)
+- [[Abstention]] — abstention is visible absence, a question is visible busyness; both transfer risk, only one looks like a transfer (11-08C, added 2026-11-09)

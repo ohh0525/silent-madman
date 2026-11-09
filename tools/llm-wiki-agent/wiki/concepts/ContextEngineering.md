@@ -1,9 +1,9 @@
 ---
 title: "Context Engineering"
 type: concept
-tags: [context-engineering, anthropic, prompt-engineering, cache-engineering, kv-cache, reachability, resident-budget, capacitated-assortment, re-sent-context]
+tags: [context-engineering, anthropic, prompt-engineering, cache-engineering, kv-cache, reachability, resident-budget, capacitated-assortment, re-sent-context, marginal-value]
 sources: [context-engineering]
-last_updated: 2026-10-26
+last_updated: 2026-11-09
 ---
 
 # Context Engineering
@@ -94,6 +94,29 @@ The discipline of deciding, at every inference step, which tokens to place into 
 
 ⚠️ **Evidence grade — and the honest part is unusual.** The author of OSTEON **states outright that no measured effect of OSTEON is reported**, marks the mechanism claims as **opinion**, the practice heuristics as **design rationale**, and lists **the questions that would falsify the thesis** ⇒ **this is a thesis / discipline paper, not an effect paper.** The 48.67% and 9.5%–22% figures are an **exploratory snapshot** by a **single author**; the 452 repos are the *most-starred*, i.e. **not a random sample**. The Breunig items are a **talk transcript** and a **practitioner heuristic**（200k tokens is his warning point, not a measured cliff）, and the three "forgetting" fixes are three self-reported engineering practices ⇒ **direction-grade only.**
 
+## 组件的边际价值取决于已在上下文里的东西 —— 完美前瞻的冗余 *(ledger row 11-08A; applied 2026-11-09)*
+
+> **Draft annotation, pending ingest.** Verified against live sources on 2026-11-08; recorded in `.workbuddy/memory/concept-radar/2026-11-08.md` (candidate 1; ledger row **11-08A**). Remove this banner on ingest; move the slug into frontmatter `sources`.
+
+**The assumption this page's assembly always carried.** Layer by lifespan, just-in-time retrieval, trim + re-inject — every mechanism here is justified by **what it adds**: this input raises accuracy, this reference saves tokens. None of them asks the marginal-value question: **given what is already in the window, how much does the next component add *on top*?** A component's standalone quality is measured with nothing else present; its deployed value is conditional on its neighbours.
+
+**The cleanest demonstration to date** (`arXiv:2611.04073`, submitted **2026-11-02 23:36 UTC**; Anh Nguyen / Tianyi Xu / Phat Tran / Harry Yu / Huazheng Wang / Stefan Lee, Oregon State; cs.LG; code `github.com/realjoenguyen/RAGPJ-official`): give a computer-use agent a world model — let it **rehearse the next screen before acting** — and, **with a task tutorial already in context, the gain is zero**. Not with a learned world model: with the **ground-truth future screenshot handed to it for free**:
+
+- OSWorld-Tutorial (250 MLLM-generated-tutorial tasks, Qwen3-VL-32B, 15 steps): policy-only **34.7** → tutorial + judge (RAG-PJ) **42.5** → + ground-truth visual rollout H=1/2/3: **42.0 / 42.4 / 41.8** — not forward, slightly back.
+- **The same drug, with the tutorial removed**: judge 43.8 → +ground-truth rollout **44.7 / 48.0** (15 steps, **+4.2 pp**); 47.4 → **46.8 / 50.6** (50 steps, +3.2 pp). The foresight was worth something — **the hole it filled was already being filled by the tutorial.**
+- ScienceBoard-Tutorial (169 tasks): RAG-PJ **40.2 / 48.3** vs + rollouts **39.1–42.4 / 49.1–49.9**; task-level tests **p = 0.62 / 0.97 / 0.32** — no significant difference.
+- The authors' own attribution: the bottleneck is **not rollout fidelity** (nothing beats ground truth) but **the judge's ability to reason over the predicted states and recognize task completion**. The material was delivered; it was not *used*.
+
+⇒ **Consequence for this page.** The "minimal high-signal token set" is not a property of any single component; it is a property of the **assembly**. Adding a component whose job overlaps an incumbent's produces redundancy that **no per-component eval will ever reveal — per-component evals are exactly where overlap is invisible**. The verbs this page owns (layer / fetch / trim) acquire a missing question: **before adding, ask what already covers this job.**
+
+**Boundaries (do not merge).**
+- **vs [[ContextRot]]** — rot says the window degrades attention; this says the window's **existing content can devalue the next candidate entrant** before attention even runs. Different axes.
+- **vs [[Compaction]]** — compaction removes what is *in* the window; this measures what existing content does to the **value of the next candidate entrant**. Subtraction vs pricing.
+- **vs the resident-budget section above** — that section prices the always-loaded file itself; this prices **additions against incumbents**. Budget vs marginal value.
+- **vs ledger row 11-06B (non-composition)** — that row is composition **loss** (capability added, delivery not); this is composition **redundancy** (capability added, credit already claimed). Two directions of the same sentence; mutually named, never merged.
+
+⚠️ **Evidence grade.** Single team, single benchmark family (OSWorld / ScienceBoard), two backbones; the 110 human-verified-tutorial tasks report separately from the 250 MLLM-generated ones — direction consistent but with smaller, sometimes negative deltas ⇒ the correct wording is "**unstable and within noise when the tutorial is present**", never "always worse". A secondary blog's headline pair (**51.7% → 51.6%**) is an **aggregate of a different configuration** — cite the per-table numbers, not the aggregate.
+
 ## See Also
 - [[context-engineering]] — primary source
 - [[Compaction]] — its long-horizon technique (see its scope note for the cache cost of the same verbs)
@@ -102,3 +125,4 @@ The discipline of deciding, at every inference step, which tokens to place into 
 - [[ProgressiveDisclosure]] & [[Skill]] — knowledge-loading instance of the same principle (see its 10-09 section for the resident-vs-on-demand allocation rule; and its 10-29B note on what the resident file must survive)
 - [[Provenance]] — retrieved memory is only as useful as it is trustworthy
 - [[RAG]] — the "do nothing to the raw history" baseline this page's verbs are measured against (added 2026-10-29)
+- [[ToolHallucination]] — the gate chain checks existence and signature; nothing checks that delivered foresight got *used* — the reading step this page's marginal-value section exposes as the bottleneck (11-08A, added 2026-11-09)

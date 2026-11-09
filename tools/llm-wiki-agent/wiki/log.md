@@ -1609,3 +1609,25 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 ### 四、结转与 🎯
 
 🎯 **续持 10-10「观察的时效性与再验证」⭐（30 天）**（承 11-05 重开指认；无人值守档位不执行处置），次位 10-13 检索准入总纲（27 天）。素材侧最老 `⏸` 仍为 09-17 RAG（53 天）。synthesis 豁免维持**不豁免**（11-05），本日无 ingest；11-09A 触碰 transient-injection 开放项但为**二手材料**，按口径只入台账 + 页面草稿批注（待落地）。新增待拍板：**是否立第 20 条扫描线「授权口径」**（11-07B 存储侧 + 11-09B 决策侧已成一对，倾向可立；与 11-08 遗留的「边际价值审计」若都立则顺延 20 / 21）——**未擅改 `SCAN-LINES.md`**。
+
+## [2026-11-09] 落地 | user-directed landing — 11-08B 成篇（contagious-pollution 草稿）+ 11-08A/C 草稿批注两节；批注基线 50/16 → 52/16
+
+> **并发说明**：本条与上一条「daily maintenance 2026-11-09」**同晚并行产生** —— 无人值守任务于 22:13:12 提交并推送（其七维快照取自**本批注落地之前**，故其记录为 50/16）；本条记录用户指令「按你的来」授权的落地动作，落地区间在其提交之后。**判读以本条为准。**
+
+### 一、落地清单（按 2026-11-08 报告的建议动作，全为既有页追加 + 新草稿，零删除）
+
+| 动作 | 对象 | 内容 |
+|---|---|---|
+| **成篇（11-08B 转 🟡）** | `output/pending-review/contagious-pollution.html`（33,484 B · 9 节 · 主题色 `#0f4c5c`，无撞色；生成器 `output/_tools/make_contagious_pollution.py`） | 「清洁工也会被污染 / Contagious Pollution」，源自 `arXiv:2611.00518v1`（cs.AI / cs.CL，2026-10-31）。**未写入 `learning-materials/`**（人工核查承诺），核查通过后目标名 `learning-materials/contagious-pollution.html`。核心：传染消融 **80/53/32 vs 40/11/8**（让读手看见 assistant 轮次，多格低于不干预 60/16/4）；「叮嘱忽略」不闭合差距 ⇒ **隔离只有一种实现层：不让它进入**；AO 在 tau2-bench 全线 0%；忠实摘要 340 份 0 次标错；Reset 洗得掉（97.6%）≠ 洗得准（真实内容保留 4.0%/0%），增益来自**重建规格**。⚠️ math 泄漏 47%、去泄漏后 −2.6 pp —— 站稳的数字是 code/database 的 +30.2/+26.0 pp |
+| **草稿批注 ×1（11-08A）** | `concepts/ContextEngineering.md` 新节「组件的边际价值取决于已在上下文里的东西——完美前瞻的冗余」 | `pending ingest` 横幅；`last_updated` → 2026-11-09、tags + `marginal-value`、See Also + `[[ToolHallucination]]`；`index.md` 行同步。要点：有教程时 ground-truth 前瞻增益为零（42.5 → 42.0/42.4/41.8），去掉教程后同一剂药 +4.2 pp ⇒ **逐组件评测结构上看不见重叠** |
+| **草稿批注 ×1（11-08C）** | `concepts/HumanInTheLoop.md` 新节「提问是审查预算的一次支出」 | `pending ingest` 横幅；`last_updated` → 2026-11-09、tags + `review-budget`、See Also + `[[Abstention]]`；`index.md` 行同步。要点：N=180 受控实验——提问使**相邻违规**比不相邻更易失守；缺失指标 = **逐检查点原样批准率**；正面接上 11-07A 草稿遗留的「闸门够不够」 |
+| **图谱接入** | `concept-relationship.md` | 顶部导航 +1 行（清洗侧）+ 新增 **「扩展十一 · 清洗侧的反面」**（Mermaid 五段图 / 五行对照表 / 四条边界表 / 接续「一句话总结」），并与扩展十写明**并列理由**（反证对象：资产 vs 动作） |
+
+### 二、计数与复核
+
+**批注基线 50/16 → 52/16**（`annotation_baseline.json` updated → 2026-11-09）。合并工作树七维 lint 复跑**全绿**（A–G：A 0 / B 0 / C 0 / D 73⁄73 / E 0⁄0 / F 0 / G 52=52），`health.py` 三项 ✅；规模仍为 13 源 / 49 内容页 / 51 `.md`。**扫描线第 20 条「边际价值审计」维持不立**（11-08 报告倾向，11-09 无人值守报告同口径维持；与 11-09 报告新提的「授权口径」若都获准则顺延 20/21，待用户拍板）。
+
+### 三、硬约束披露
+
+`raw/` 只读未改 · **`learning-materials/` 未写入**（contagious-pollution 为草稿级，受 README「人工核查承诺」）· 未删除任何文件 · `overview.md` 未改动（无 ingest）· **未使用 `git push`**。11-07A（skill-misalignment）与 11-08B（contagious-pollution）两份草稿**均待人工核查**。
+
