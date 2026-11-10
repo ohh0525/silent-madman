@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：写下来时是真的，取用时还真的吗（Observation Staleness & Re-validation）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #6a4b2f;
+    --accent-soft: #f0e9df;
+    --line: #e5e2dc;
+    --code-bg: #eef2f4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 16px 0 6px;
+    line-height: 1.3;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 8px; color: var(--ink); }
+  p, li { font-size: 15px; }
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--accent-soft); color: var(--accent); }
+  .def {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .warn {
+    background: #fdf6ec;
+    border: 1px solid #ecd9b5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  .takeaway {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+  pre {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  blockquote {
+    margin: 10px 0;
+    padding: 8px 16px;
+    border-left: 3px solid var(--accent);
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  ol li { margin-bottom: 10px; }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 观察的时效性与再验证（Observation Staleness &amp; Re-validation）· 台账主表 10-10 行的成篇选项</span>
+  <h1>写下来时是真的，取用时还真的吗</h1>
+  <p class="subtitle">它写进来时确实有来源、确实为真 —— 是<strong>世界在它背后动了</strong>。三份 2026-10 一手工作分别给出「链接回源」「恢复前校验」「保留命题成立的范围」三条修法；Concord 在构造条件下 token <strong>−46.4%</strong>，MemTrace 在 Codex CLI 下 DeepSWE pass@1 <strong>+21.2</strong> · 草稿 2026-11-10 · 落 <code>output/pending-review/</code> · 核查通过后目标名 <code>learning-materials/observation-staleness.html</code></p>
+  <div class="warn"><strong>草稿状态</strong>：受 README「人工核查承诺」约束，本页<strong>尚未入库</strong>，须由本人逐条对照来源核查后才能移入 <code>learning-materials/</code>。三份一手材料的<strong>摘要页</strong>已于 2026-11-10 经 WebFetch 逐条复核；<strong>正文表格未逐页打开</strong>，二手基准数字一律标注「未独立复现」。详见第 7 节。</div>
+</header>
+
+<section>
+  <h2>1 · 一句话定义，以及缝在哪</h2>
+  <p class="def">一条观察不会因为它被写下来时为真，就在被取用的那一刻仍然为真。<strong>「观察的时效性」问的不是「这条记录从哪来」，而是「这个来源现在还支不支持这句话」</strong> —— 它是记忆簇的<strong>读侧 / 现在时</strong>半张图。</p>
+  <p>这个知识库里已有的页，各自守着一段不同的因果：</p>
+  <table>
+    <tr><th>已有页</th><th>它管什么</th><th>它不管什么</th></tr>
+    <tr><td>[[Provenance]]</td><td><strong>入口</strong>：写进来时有没有来源</td><td>来源后来变没变</td></tr>
+    <tr><td>[[MemoryGovernance]]</td><td><strong>生命周期</strong>：谁有权增删改查</td><td>内容是否仍为真</td></tr>
+    <tr><td>[[ContextRot]]</td><td><strong>量</strong>：token 一多就糊</td><td>内容效度（量不大也会失效）</td></tr>
+    <tr><td>[[CitationLock]] / [[Abstention]]</td><td>引用要打开过 / 没证据要拒答</td><td><strong>打开过也可能已经过期</strong>；<strong>有证据但过期也要拒用</strong></td></tr>
+  </table>
+  <p>⇒ 四者合起来仍留着一格：<strong>一条携带合法来源、篇幅适中、被正确引用、也有权留在记忆里的内容，完全可能是过期的</strong>。这类失效没有攻击者 —— 与 [[MemoryPoisoning]] 的「有人写了假的」正好互补：<strong>那边是内容被污染，这边是内容没被污染，是世界变了</strong>。这也是本库「无对手失效」家族的第二个成员（第一个是 11-07A 的良性 Skill）。</p>
+</section>
+
+<section>
+  <h2>2 · 三份一手证据（2026-11-10 逐条复核 abs 页）</h2>
+  <table>
+    <tr><th>工作</th><th>它做了什么</th><th>可引用的数字</th></tr>
+    <tr><td><strong>Concord</strong><br><code>arXiv:2610.05281v2</code><br>Yingying Liu / Junzhou Fang / Chenxiong Qian；v1 2026-10-04，v2 2026-10-06；8 页 3 图 1 表；<strong>AgenticOS Workshop @ SOSP 2026</strong></td><td>把每条<strong>工具观察链接回它的可变来源</strong>，检测来源变化，并在<strong>复用之前</strong>按策略 <em>update / annotate / suppress</em> 陈旧上下文。构造 <strong>ConcordBench</strong>：先前读到的文件内容在后续编辑后变陈旧。</td><td>三个前沿模型在<strong>所测构造条件下</strong>答案全部与恢复后的工作区一致，recover count 追平 oracle；比最强<strong>非 oracle</strong> 基线少用 <strong>46.4% token</strong>。</td></tr>
+    <tr><td><strong>MemTrace</strong><br><code>arXiv:2610.04838v3</code><br>Hongming Xu + 7 人；v1 2026-10-04，v3 2026-10-10；20 页 7 图；代码 <code>github.com/Homy-Xu/MemTrace</code></td><td>历史存成<strong>不可变 Memory Traces</strong>，锚到文件 / 符号 / 测试，并用 <strong>Memory Trace Graph</strong> 记执行顺序与依赖；上下文受限时只留紧凑 <strong>Memory Anchors</strong>；<strong>恢复历史证据前先按当前仓库状态校验有效性</strong>，且只取下一步所需。</td><td>三个长程编码基准、同 backbone + harness 下全面超过所有完整评测基线：<strong>DeepSWE pass@1 +21.2</strong> · <strong>SWE-EVO Resolved Rate +4.4</strong> · <strong>SWE-Milestone Score +17.8</strong>（Codex CLI）。</td></tr>
+    <tr><td><strong>CASK / discourse ownership</strong><br><code>arXiv:2610.09008v1</code><br>Hongyu Gu / Xinchang Li；2026-10-06；20 页 2 图；<strong>NeurIPS 2026 Workshop LP4FM Poster</strong></td><td>命题的成立需要 <strong>discourse ownership</strong> —— 许可它成立的那个<strong>世界 / 分支 / 说话者</strong>。被否决的计划、被模拟的工具结果、转述的他人信念，若只留下句子本身，就会<strong>以事实身份回归</strong>。反直觉发现：模型内部本来就有因果有效的归属信号，是<strong>常规记忆接口在把推理转成记录时把它丢了</strong>；CASK 保留的是<strong>稳定关系</strong>而非内部坐标（等价表示未必保持同一坐标）。</td><td>受控长对话冲突与工具 agent 轨迹显示：改善记忆准入、阻止临时内容污染后续回答。<strong>摘要未给定量数字</strong>，不引用百分比。</td></tr>
+  </table>
+  <p>三条修法指向同一个动作，但落在不同时位：<strong>Concord 在「读之前」、MemTrace 在「恢复之前」、CASK 在「写下来的时候」</strong>。⇒ 时效性问题不是一个闸门能盖住的，它至少有三个可插入点。</p>
+</section>
+
+<section>
+  <h2>3 · 四种「还真的吗」失效形态</h2>
+  <ol>
+    <li><strong>源变了（source drift）</strong>：读过 <code>config.yaml</code>，用户随后改了它，模型仍按旧内容回答。<strong>来源合法、内容曾经为真</strong>，错的是时间。Concord 的直接对象。</li>
+    <li><strong>证据失效（evidence invalidation）</strong>：长程编码任务里，上一阶段的测试输出在仓库被跨文件修复后不再成立；恢复历史证据等于恢复一个已经不存在的世界。MemTrace 的直接对象。</li>
+    <li><strong>范围脱落（scope detachment）</strong>：「如果改用方案 B 会怎样」被压成「方案 B 可行」；被模拟的工具结果被当成真的跑过。记录既不假也不无关，只是<strong>脱离了它成立时的语境</strong>。CASK 的直接对象。</li>
+    <li><strong>隐式依赖（implicit reliance）</strong>：直接问「这条还有效吗」时模型大多能识别过期；但让它顺势用上这条事实时，识别率大幅下跌 <strong>[二手转述，未独立复现]</strong> ⇒ <strong>失效最容易在没人问的时候发生</strong>。</li>
+  </ol>
+  <blockquote>判据句：<strong>失效不是内容属性，是内容 × 取用时刻的属性。</strong> 所以「存的时候验一次」不够。</blockquote>
+</section>
+
+<section>
+  <h2>4 · 与已覆盖概念的边界辨析</h2>
+  <table>
+    <tr><th>对比</th><th>一句话划界</th></tr>
+    <tr><td>vs [[Provenance]]</td><td><strong>从哪来</strong> vs <strong>这个来源现在还支不支持这句话</strong>。来源合格是过去的成就，不是此刻的许可。</td></tr>
+    <tr><td>vs [[CitationLock]]</td><td>引用要<strong>打开过</strong> vs <strong>打开过也可能已经过期</strong> —— 打开是空间动作，再验证是时间动作。</td></tr>
+    <tr><td>vs [[ContextRot]]</td><td><strong>精度随长度下降</strong>（量） vs <strong>效度随世界变化下降</strong>（时间）。短上下文照样会过期。</td></tr>
+    <tr><td>vs [[Compaction]]</td><td>说得<strong>少一点</strong> vs 说得<strong>对不对</strong>。压缩保不住效度，甚至会把「何时成立」这层元数据压掉。</td></tr>
+    <tr><td>vs [[MemoryGovernance]]</td><td>谁有权<strong>增删改查</strong> vs 留下的内容<strong>是否仍为真</strong>。权限正确不蕴含内容正确。</td></tr>
+    <tr><td>vs [[MemoryPoisoning]]</td><td><strong>有人写了假的</strong>（有对手） vs <strong>没人写假，是世界变了</strong>（无对手）⇒ 检测式防御在本条上同样无处落脚：没有任何异常内容可检测。</td></tr>
+    <tr><td>vs [[Abstention]]</td><td><strong>没证据</strong>要拒答 vs <strong>有证据但已过期</strong>也要拒用 ⇒ [[Abstention]] 的对象第一次从「事实」扩到「事实的<strong>有效期</strong>」。</td></tr>
+    <tr><td>vs 09-23「持久化执行」</td><td><strong>状态能不能恢复</strong> vs <strong>恢复出来的证据还成不成立</strong>。checkpoint ≠ memory 的第二个版本。</td></tr>
+    <tr><td>vs 10-13「检索准入」</td><td><strong>语义 / 权限上能不能用在这里</strong> vs <strong>时间上还成不成立</strong>。两条不同的拒绝理由，需要两条不同的判据。</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>5 · 与库内三节草稿批注的呼应（2026-11-10 已落地）</h2>
+  <p>本行的<strong>低成本替代</strong>已在同日先落为三节 <code>pending ingest</code> 批注，成篇与它们不是重复，而是给它们补上共同的因果骨架：</p>
+  <table>
+    <tr><th>批注落点</th><th>那一节的一句话</th><th>本页哪节展开</th></tr>
+    <tr><td><code>concepts/Provenance.md</code></td><td>Source ≠ present validity（有来源 ≠ 此刻有效）</td><td>§1 / §4</td></tr>
+    <tr><td><code>concepts/ContextRot.md</code></td><td>Validity vs quantity（效度 ≠ 量）</td><td>§1 / §3</td></tr>
+    <tr><td><code>concepts/LongTermMemory.md</code></td><td>Re-validate before reuse（复用前再验证）</td><td>§2 / §6</td></tr>
+  </table>
+  <p>⇒ 读法：<strong>批注是三条边界声明，本页是它们共同回答的那个问题</strong>。三节都写「不是 X」，本页写「那到底是什么」。</p>
+</section>
+
+<section>
+  <h2>6 · 可抄走的工程规则</h2>
+  <ol>
+    <li><strong>验证挂在复用侧，不是写入侧。</strong> <code>validate before reuse</code> —— 存的时候为真只在存的时候有用；MemTrace 把它做成「恢复历史证据前的一道校验」，Concord 做成「复用陈旧上下文前的 update / annotate / suppress」。</li>
+    <li><strong>观察要链接回可变来源。</strong> 只存文本不存「它从哪个文件 / 哪个 commit / 哪次工具调用来」，就没有东西可以再验证。<strong>可失效性是一种需要被存下来的元数据。</strong></li>
+    <li><strong>缓存要有第四个动词。</strong> 除了 read / write / evict，还需要 <code>invalidate on external change</code> <strong>[二手归纳，未独立复现]</strong>；同理，目标要钉成<strong>可失效的</strong>，而不是不可变的。</li>
+    <li><strong>记录时保留范围。</strong> 把「谁在这个分支里说的、哪个世界许可它」一起写进记录；CASK 的结论是<strong>保留稳定关系而非内部坐标</strong>，因为等价表示未必共享坐标。</li>
+    <li><strong>别只测「问它知不知道过期」。</strong> 直接询问与隐式依赖的表现差距很大 <strong>[二手数字]</strong> ⇒ 评测必须把过期内容放进<strong>没人提醒</strong>的正常使用路径里。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>7 · 证据等级与限制（引用前先读）</h2>
+  <ul>
+    <li><strong>三份一手均只核到摘要页</strong>：2026-11-10 用 WebFetch 逐条复核了 arXiv abs 页的标题 / 作者 / 版本日期 / 学科 / 数字；<strong>Concord 的 1 张表、MemTrace 的 7 张图、CASK 的 2 张图未逐页打开</strong>。数字按摘要口径引用，不写成正文分表结论。</li>
+    <li><strong>Concord 的「全部一致」是构造条件</strong>：ConcordBench 由「先前观察到的文件内容在后续编辑后变陈旧」构造；<strong>46.4% 是相对最强非 oracle 基线的 token 减幅</strong>，不是线上发生率，也不是通用任务的收益。workshop 论文（8 页）。</li>
+    <li><strong>MemTrace 是单 harness 自报</strong>：三个数字均在 <strong>Codex CLI</strong> 下同 backbone 测得，未跨 harness / 跨模型家族复现；代码已公开但本页未跑过。</li>
+    <li><strong>CASK 摘要无定量数字</strong>：只写机制与定性结论；「改善记忆准入」是作者自述，不折算成百分比。workshop poster，非主会同行评审。</li>
+    <li><strong>STALE 基准与「直接问 92% / 隐式依赖 30%」等数字均为二手转述，未独立复现</strong>：见 §3 / §6 的显式标注，一律不作为承重证据。</li>
+    <li><strong>没有攻击者</strong>：本页全部结论不依赖对抗样本 ⇒ 检测式防御（找异常内容）在此结构上无效，只有<strong>位置型防御</strong>（在复用前设一道校验）能落地。这是与 11-07A 同族的推论，不是这三篇论文的实验。</li>
+  </ul>
+</section>
+
+<section>
+  <h2>8 · 来源（WebFetch 真实返回，标 [verified]）</h2>
+  <ol>
+    <li><a href="https://arxiv.org/abs/2610.05281">arXiv:2610.05281</a> —— <em>When Agent Context Goes Stale: Incoherence in Volatile Agent Context</em>（Concord / ConcordBench），Yingying Liu / Junzhou Fang / Chenxiong Qian，cs.AI + cs.OS，v1 2026-10-04、v2 2026-10-06，8 页 3 图 1 表，AgenticOS Workshop @ SOSP 2026 <strong>[verified]</strong></li>
+    <li><a href="https://arxiv.org/abs/2610.04838">arXiv:2610.04838</a> —— <em>MemTrace: State-Consistent Memory for Long-Horizon Coding Agents</em>，Hongming Xu / Le Zhou / ZhongHe Jin / Xiang Zhang / Bo Tang / Zhiyu Li / Xuanhe Zhou / Juncheng Zhang，cs.AI，v1 2026-10-04、v3 2026-10-10，20 页 7 图 <strong>[verified]</strong>；代码 <a href="https://github.com/Homy-Xu/MemTrace">github.com/Homy-Xu/MemTrace</a>（论文自陈，未逐文件核）<strong>[unverified]</strong></li>
+    <li><a href="https://arxiv.org/abs/2610.09008">arXiv:2610.09008</a> —— <em>Whose Memory Is It? Scope-Aware Commit Rules for Long-Term LLM Memory</em>（CASK / discourse ownership），Hongyu Gu / Xinchang Li，cs.AI，v1 2026-10-06，20 页 2 图，NeurIPS 2026 Workshop LP4FM Poster <strong>[verified]</strong></li>
+    <li>库内交叉引用（非外部来源）：台账主表 10-10 行 · 三节草稿批注（Provenance / ContextRot / LongTermMemory，2026-11-10）· 11-07A「无对手失效」· 10-13 检索准入总纲 —— 详见 <code>.workbuddy/memory/concept-radar/BACKLOG.md</code> 与 <code>wiki/log.md</code>。</li>
+  </ol>
+</section>
+
+<section>
+  <h2>9 · 一句话回顾</h2>
+  <p class="takeaway"><strong>写下来时是真的，不等于取用时还真的。</strong> 来源管的是过去，权限管的是人，量管的是篇幅 —— 没有一页管「世界在它背后动了」。修法不在存的那一步，而在<strong>复用之前再问一次</strong>：这条观察，现在还成立吗？</p>
+</section>
+
+<footer>概念学习草稿 · 2026-11-10 · 待本人逐条人工核查后入库 · 主题色 #6a4b2f</footer>
+
+</div>
+</body>
+</html>

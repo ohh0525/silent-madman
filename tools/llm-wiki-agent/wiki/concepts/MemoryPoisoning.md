@@ -1,7 +1,7 @@
 ---
 title: "Memory Poisoning"
 type: concept
-tags: [agent-memory, memory-poisoning, security, prompt-injection, persistent-corruption, owner-attribution, exposure-behaviour-state, self-voice-injection]
+tags: [agent-memory, memory-poisoning, security, prompt-injection, persistent-corruption, owner-attribution, exposure-behaviour-state, self-voice-injection, victim-centric-harm]
 sources: [memory-lifecycle]
 last_updated: 2026-11-10
 ---
@@ -70,6 +70,22 @@ This is also why [[Provenance]] alone does not close the hole: PMPA's payload ar
 **Boundaries.** vs the two mechanisms in the table above — those **write** (durable belief); this row never writes, it hijacks the turn. vs [[Provenance]]'s garment gradient (10-19A) — that row swaps the *vessel* of a fixed payload; this row swaps the *voice* (style imitation with no stable source signature, so the provenance anchor moves with the target model). vs 11-08B — no-adversary self-anchoring vs adversarial exploitation of the same trust.
 
 ⚠️ **Limits:** abstract-level citation (HTML tables not opened; "50%" is the upper-bound ASR, not a mean); **open-weight models only**, closed API models untested; 5-author team, **no independent replication**. The overview's open item ("no page for *transient* injection") now has **two sides of material**: field measurement (11-04A) and this, the adversarial half.
+
+## Who gets hurt after the payload is gone — victim-centric harm *(ledger row 11-10B; applied 2026-11-10)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-11-10 (recorded in `.workbuddy/memory/concept-radar/2026-11-10.md`, candidate 2; ledger row **11-10B**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**Attack success is not the same quantity as harm.** The metrics this page leans on — ASR, task success, retention — record neither **who is affected** nor **how a retained instruction translates into downstream harm during otherwise normal work**. **MemHarmBench** (`arXiv:2611.01700`, Zhihua Wang / Yunhao Feng / Yifeng Gao / Rui Pan / Baiheng Zhao / Zixing Chen / Xingjun Ma, cs.AI, v1 2026-11-01, 24 pp; benchmark released at `github.com/Kirito14IT/MemHarmBench`) proposes a victim-centric measurement:
+
+- **Three victim classes:** the **user**, the **workspace / project owner**, and **external stakeholders** — the same partition this page needs on the harm side that it already has on the ownership side (the 10-20B section above).
+- **The measurement sequence:** expose the agent to malicious instructions → test whether they are **retained in memory** → **remove the attack content** → start a **new session** with a legitimate task and the memory preserved → jointly evaluate (a) whether the attacker's intent is followed, (b) whether the legitimate task completes, (c) whether **observable execution anomalies** appear.
+- **The finding:** across multiple agent systems, cross-session attacks can be **behaviourally stealthy** — the agent often completes the task normally with **no detectable anomaly**, while still making critical decisions aligned with the attacker's intent.
+
+**Why it belongs on this page, not in a new one.** This page already models write authority and the **persistence step** that makes a transient injection durable. This row measures that step's **consequence**: what remains after the payload is gone, and whose account it lands in. It also closes a symmetry — the 11-09A section above is an attack **with** an adversary and a suppressed disclosure channel; this one is an attack with **no observable channel at all**. Together with 11-07A's *no-adversary, no-anomaly* failure, both defeat detection-style defence structurally.
+
+**Boundaries:** vs 11-04A (field measurement) — **how often it occurs in the wild** vs **how much retained content becomes downstream harm**. vs 11-07B (memory ownership) — *whose memory* (storage-side governance) vs *whose harm* (harm-side measurement), two ends of one axis. vs 11-09A — that payload is **transient** (rides the current reasoning stream); this one must **persist first** and act in a later session, adding a post-session time slot to the injection axis. vs 10-31A — the defender's ledger (cost of over-refusal) vs the attacker's ledger (harm attribution); both exceed "did the task succeed?".
+
+⚠️ **Limits:** abstract-level citation — the number of agent systems, their names and all per-dimension rates are in the unopened body; "behaviourally stealthy" is the authors' own phrasing and the anomaly-detection instrumentation is not described in the abstract. No incidence estimate. The benchmark is released but has not been run here.
 
 ## Boundaries
 - **vs [[ToolHallucination]]** — existence of the tool vs **integrity of the record**. A poisoned agent calls tools that really exist; the closed-world rung passes it.

@@ -1684,3 +1684,28 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 ### 三、结转
 
 三态 **17 ✅ / 28 🟡 / 51 ⏸ = 96**（10-10 ⏸→🟡）。**🎯 指认更新：新 🎯 = 10-13「检索准入 × 跨主体状态隔离」合并总纲（28 天）**；次位待下期重算。素材侧最老 ⏸ 仍为 09-17 RAG（54 天）。待人工核查草稿累计八份（skill-misalignment / contagious-pollution / authority-based-injection + 更早五份）。硬约束：未写 `learning-materials/` · `raw/` 未触碰 · 未删除文件 · 未用 `git push`。
+
+---
+
+## [2026-11-10] update | 第二轮收尾 — 11-10A/B 草稿批注 + 10-10 成篇选项结清（用户指令「现在还有什么没做的你都做了」）
+
+### 一、做什么 / 为什么
+
+21:06 无人值守条与 21:23 落地条之间、以及落地条自陈的「未执行 ② observation-staleness 成篇仍未做」，构成本日剩余的全部可自动完成项。本条把前者按报告既定的「最低成本动作」执行、把后者结清；**判读顺序：本条 > 21:23 落地条 > 21:06 无人值守条**，旧文按只追加惯例保留。
+
+### 二、落地明细（零新建 wiki 页、零删除）
+
+| 动作 | 对象 | 内容 |
+|---|---|---|
+| **草稿批注 ×1（11-10A）** | `concepts/Skill.md` 新节「Skills stop being hand-curated」 | ScienceCUA `2611.03238`（+7.23 / 总增益 +17.12 pp，演化与测试任务不相交）· Evolver `2611.07595`（83.13%→87.50%、token −24.24%，Claude Code + Codex）· EvoML `2611.04180` 三形态表；**验证门槛**是对 11-07A「良性资产无异常可检」的治理回应，但三篇都没测安全侧；边界 vs 11-09C（用户纠正）/ EvoGroup（harness）/ Anchor（记忆准入）。frontmatter `last_updated` 2026-09-09 → 2026-11-10、tags + `self-evolving-skills` |
+| **草稿批注 ×1（11-10B）** | `concepts/MemoryPoisoning.md` 新节「Who gets hurt after the payload is gone」 | MemHarmBench `2611.01700`：三类受害者（用户 / 工作区·项目所有者 / 外部利益相关方）+ 暴露→留存→**删攻击内容**→新会话合法任务的联合评估三问 + **行为隐身**；与 11-07B（归属）/ 11-09A（瞬时）/ 10-31A（弃权代价）的边界。tags + `victim-centric-harm` |
+| **成篇草稿（10-10 行）** | `output/pending-review/observation-staleness.html` | 9 节 · 18.4 KB · 主题色 `#6a4b2f`（无撞色）· 生成器 `output/_tools/make_observation_staleness.py`，复用既有 `<style>`。三份一手 abs 页当日 WebFetch 复核：Concord v2（46.4% 为对最强非 oracle 基线的 token 减幅、构造条件）、MemTrace v3（+21.2 / **+4.4 / +17.8**，Codex CLI）、CASK（摘要无定量，不折算）；二手 STALE 数字全标「未独立复现」。**未写 `learning-materials/`** |
+| **11-10C 维持只登记** | 台账 | 报告原建议即「先只入台账不动 wiki、待正文开放」；摘要级单团队、「墙」结论防御名单未开 ⇒ 按证据纪律不强行落批注 |
+
+### 三、计数与复核
+
+**批注基线 57/17 → 59/18**（Skill.md 首次带 `pending ingest` 横幅 ⇒ files +1；MemoryPoisoning.md 已有批注不计新文件），`annotation_baseline.json` 同步；`index.md` 两行描述同步；七维 lint 复跑**全绿**（A 0 / B 0 / C 0 / D 73⁄73 / E 0⁄0 / F 0 / G 59=59），`health.py` 三项 ✅。规模仍 13 源 / 49 内容页 / 51 `.md`。
+
+### 四、结转
+
+待人工核查草稿累计**九份**（新增 observation-staleness）；🎯 维持 **10-13 检索准入 × 跨主体状态隔离（28 天）**；第 21 条「边际价值审计」等第三例；图谱扩展十三**不加**（同一行同一命题，仅为对称会制造无意义 diff）。硬约束：`raw/` 只读未改 · `learning-materials/` 未写入 · 未删除文件 · **未使用 `git push`** · 两份 wiki 批注均为 `pending ingest` 草稿级。
