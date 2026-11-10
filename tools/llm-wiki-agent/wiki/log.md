@@ -1662,3 +1662,25 @@ Wiki 规模未变：**13 源 / 47 内容页 / 49 个 `.md`**。
 🎯 **续持 10-10「观察的时效性与再验证」⭐（31 天）**（承 11-05 重开指认；无人值守档位不执行处置），次位 10-13 检索准入总纲（28 天）。素材侧最老 `⏸` 仍为 09-17 RAG（54 天）。第 20 条扫描线两个候选（「边际价值审计」/「授权口径」）维持等拍板，本期无新例，未擅改 `SCAN-LINES.md`；两份成篇草稿（skill-misalignment / contagious-pollution）仍待人工核查。本期观察：**「验证门槛是良性资产风险面的唯一治理答案——而当前没有任何自演化系统测它」**（11-10A × 11-07A）。
 
 
+
+---
+
+## [2026-11-10] update | 第 20 条扫描线立线 + 11-09A/B/C 落地 + 🎯 10-10 低成本处置（用户指令「按你的来」）
+
+### 一、四项裁定（以「砚」的判断代拍板，可推翻）
+
+1. **立第 20 条扫描线「授权口径审计」**——11-07B（存储侧）+ 11-09B（决策侧）构成「授权」轴两端；登记于 `.workbuddy/memory/concept-radar/SCAN-LINES.md`（问句 / 简记 / 与第 16、18 条及 MemoryGovernance 第三底线的区分表 / 追溯性重归档）。「边际价值审计」维持不立（损耗 / 冗余仍两例），他日立线顺延第 21 条。
+2. **11-09B 成文**：`output/pending-review/authority-based-injection.html`（23.7 KB · 9 节 · 主题色 #1f3a5f 无撞色；生成器 `output/_tools/make_authority_injection.py`）。一手全文 arXiv:2611.07640v1 抓取后 Table 1/3/4 分表核验才写。`concept-relationship.md` 同步导航行 +「扩展十二 · 定义侧的反面」+ 附表投影补第 20 行。台账 11-09B 转 🟡 材料已出待核查。
+3. **🎯 10-10 低成本替代三节全落**：Provenance「Source ≠ present validity」· ContextRot「Validity vs quantity」· LongTermMemory「Re-validate before reuse」（三篇一手 2026-10-10 核验、2026-11-10 复核存活：Concord v2 / MemTrace v3 口径不变）。成篇选项保留。
+4. **批注基线 52/16 → 57/17**（ContextRot 首次带横幅），`tools/annotation_baseline.json` 同步，七维 lint 复跑全绿。
+
+### 二、落地明细（五节批注，全部 `pending ingest`，零新建页 / 零删除）
+
+- **11-09A → `concepts/MemoryPoisoning.md`**「The transient half has an adversary too」：思维链语态注入（arXiv:2611.08811）——载荷仿模型自己的推理语态，ASR 最高 50% 而标准用户语态从不成功；thinking tags 压制披露；11-08B「模型信自己」的武器化；transient-injection 开放项的对抗侧材料。
+- **11-09C → `concepts/LongTermMemory.md`**「Facts vs procedures」：forge_dc（arXiv:2611.08644）行为记忆 55%→95%、token 少 10×；RULE ≈ 自动生成 mini-Skill ⇒ 继承 11-07A 风险面；引用口径「单系统自报」。
+- **10-10 → 三页三节**（见裁定三）。
+- 四页 frontmatter（last_updated → 2026-11-10，tags 各 +1）、`wiki/index.md` 四行描述同步。
+
+### 三、结转
+
+三态 **17 ✅ / 28 🟡 / 51 ⏸ = 96**（10-10 ⏸→🟡）。**🎯 指认更新：新 🎯 = 10-13「检索准入 × 跨主体状态隔离」合并总纲（28 天）**；次位待下期重算。素材侧最老 ⏸ 仍为 09-17 RAG（54 天）。待人工核查草稿累计八份（skill-misalignment / contagious-pollution / authority-based-injection + 更早五份）。硬约束：未写 `learning-materials/` · `raw/` 未触碰 · 未删除文件 · 未用 `git push`。

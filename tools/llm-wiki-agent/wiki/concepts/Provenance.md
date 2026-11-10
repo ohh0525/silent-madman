@@ -1,9 +1,9 @@
 ---
 title: "Provenance"
 type: concept
-tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point, serialization, provenance-reversibility, deletion-closure, invalidation-nonlocality, dependency-closure]
+tags: [agent-memory, provenance, reliability, evidence-garment, enforcement-point, serialization, provenance-reversibility, deletion-closure, invalidation-nonlocality, dependency-closure, present-validity]
 sources: [agent-memory-provenance]
-last_updated: 2026-10-26
+last_updated: 2026-11-10
 ---
 
 # Provenance
@@ -128,6 +128,18 @@ The section above draws this page's boundary by **executor**: a **discipline on 
 **Scan-line assignment.** An instance of **line 19 — composition audit** ("how many items does one verdict carry? if every item passes, does the conclusion they jointly entail also pass?"): **each record is true when written ⇒ per-record review passes 100%**, while the unit that should have been judged is *the conclusion plus its dependency closure*. Registered in `.workbuddy/memory/concept-radar/SCAN-LINES.md`. Its paired landing is [[MemoryGovernance]]「Update can be triggered upstream」, where the same row lands as an **action**.
 
 ⚠️ **Evidence grade, must sit beside the numbers.** Preprint, **not peer-reviewed**; **Fallout is the authors' own synthetic world generator**; **0.3%** is conditional on **relations and verdicts being supplied in the same session** and degrades to **9.4–22.1%** when spread across sessions; the authors themselves state it degrades with **weaker writers** (who miss dependencies or miss invalidation events). **62% is a property of atomic-fact memory in that generator — not a production staleness rate.**
+
+## Source ≠ present validity — the read-time question this page never asked *(ledger row 10-10; applied 2026-11-10)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-10 (recorded in `.workbuddy/memory/concept-radar/2026-10-10.md`, candidate 19; ledger row **10-10**); abstract re-checked alive on 2026-11-10 (now v2 — claims unchanged). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**The inference every section above relies on.** This page's three questions (*what claim, which source, when observed or last verified*) — plus the fourth and fifth it has since acquired (*what was derived; what propagates when an ancestor lapses*) — are all asked **of records about records**. None of them is refuted. What none of them asks is the question the reuse moment actually poses: **is the source still in the state this record describes, *now*?** A record can be perfectly sourced, perfectly timestamped, carry a complete dependency closure — and describe a file that was edited five minutes ago.
+
+**Concord** (`arXiv:2610.05281`, Liu / Fang / Qian, **AgenticOS Workshop @ SOSP 2026**, v2 2026-10-06): the context-side instrument for exactly that question. It **links each tool observation to the mutable source it was derived from, detects source changes, and applies a configurable policy — update, annotate, or suppress — before the observation is reused**. On ConcordBench (observed file contents go stale after subsequent edits), all three evaluated frontier models produce answers consistent with the restored workspace state in every evaluated case, at **46.4% fewer tokens** than the strongest non-oracle baseline. The framework is runtime-agnostic; the read-time filter on this page ("drop expired / low-trust entries before they reach the window") gains a sibling it never had — one driven by **the world's state**, not by the record's metadata.
+
+- **Boundary.** vs「Invalidation is non-local」(10-26A, this page) — Tether withdraws a record when an **ancestor inside the store** lapses (in-store dependency closure); Concord re-checks against the **external source** the observation was derived from (world-facing drift). Propagation within the graph vs re-verification across the graph's boundary. Adjacent cells; named, not merged. vs the read-time filter in Mechanism above — that acts on **what the record says about itself**; this acts on **what the source says about itself now**. vs [[LongTermMemory]]'s「Re-validate before reuse」(same row, landed the same day) — that page holds the **memory-side duty and instruments** (MemTrace, CASK); this page holds the **observation→source link and the context-side instrument** (Concord). Two halves of one row, filed separately on purpose.
+
+⚠️ **Limits:** preprint / workshop paper; ConcordBench is the authors' constructed benchmark (file contents go stale by construction); "consistent in all evaluated cases" is under those constructed conditions, **not a field staleness rate**; no independent replication. Second-hand signal worth the banner but not the evidence chain: the **STALE** benchmark reports models retrieve updated facts **77%** of the time yet flag only **~3%** as "worth acting on", and identify staleness **92%** when asked directly but **30%** when the dependency is implicit — the gap between *knowing* and *noticing* is where this row lives.
 
 ## See Also
 - [[agent-memory-provenance]] — primary source

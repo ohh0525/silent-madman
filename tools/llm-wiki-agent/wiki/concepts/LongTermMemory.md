@@ -1,9 +1,9 @@
 ---
 title: "Long-Term Memory"
 type: concept
-tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness, raw-history-vs-compression, retrieved-vs-operative, prospective-memory]
+tags: [agent-memory, long-term-memory, memory-lifecycle, latent-memory, scoped-revision, aggregate-metric-blindness, raw-history-vs-compression, retrieved-vs-operative, prospective-memory, procedural-memory, revalidate-before-reuse]
 sources: [agent-memory-provenance, memory-lifecycle]
-last_updated: 2026-11-05
+last_updated: 2026-11-10
 ---
 
 # Long-Term Memory
@@ -88,6 +88,29 @@ Everything on this page — the three parallel stores, the intent gate, the sour
 The load-bearing split: **remembering the right intention does not guarantee acting at the right time** — a related observation may call for *waiting*, while a later cue makes the same intention actionable. The framework therefore separates **maintaining intentions** from **deciding when and how to realize them**, and updates intention states based on **actions actually issued or evidence of resolution**. A second independent team reached the same gap within two weeks (**ProMemAgent**, `arXiv:2610.27400`: sensory-context prospective memory, CPMBench 1,000 instances / 8 everyday categories, **+9.7 F1** over the strongest baseline) ⇒ this is a **forming cluster**, not an isolated claim.
 
 **Boundary.** vs the four actions of [[MemoryGovernance]]: Capture/Update/Recall/QA all operate on **the past**; prospective memory's objects are **not yet facts** — they are commitments whose activation conditions may never fire. vs [[HumanInTheLoop]]: the gate reviews actions the model proposes *now*; prospective memory decides **when a stored intention becomes actionable** — the realization, once proposed, must still pass the gate. Adjacent, not overlapping. ⚠️ Both papers are preprints; Pro-Memory's numbers are author-reported with scores outside the displayed abstract.
+
+## Facts vs procedures — memory for how to behave *(ledger row 11-09C; applied 2026-11-10)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-11-09 (recorded in `.workbuddy/memory/concept-radar/2026-11-09.md`, candidate 3; ledger row **11-09C**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**The type axis this page never had.** Everything above — three parallel stores, four governance actions, the carriers, the time direction — describes what memory holds for **facts**: preferences, entities, events, conversational history. **forge_dc** (`arXiv:2611.08644`, Vahdat / Vaezipoor, cs.AI, v1 2026-11-05, **NeurIPS 2026 Workshop PALM**) names the missing type: **procedural knowledge** — the user corrects the same mistake at the start of every conversation because nothing *behaves* differently afterwards. The system captures behavioural signals (human corrections + self-assessed tool-call failures), compiles them into **imperative RULE directives**, and injects them **at the decision points where they apply**: on DC-Bench (71 scenarios × 9 behavioural dimensions, built from real executed traces), compliance rises **55% → 95%** over naive retrieval while injecting **~10× fewer tokens per query**. The paper's own summary of the design space: **representation · activation · placement** — and *placement* is the load-bearing one: behavioural memory delivered globally reads as noise; delivered at the decision point, it works.
+
+- **Cross-warning that must be named (11-07A).** A compiled RULE directive is **structurally a machine-generated mini-[[Skill]]** — imperative procedural guidance, loaded at the point of relevance. The Skill-misalignment row already showed **benign** procedural guidance raises unsafe-operation rate and accuracy **together** (+10.3 / +10.3). forge_dc's 95% compliance gain therefore **inherits that risk surface — and did not measure it.**
+- **Boundary.** vs this page's three stores — episodic/associative/semantic all answer *what was/is the case*; behavioural memory answers *how I should operate*. vs 11-05A prospective memory — intentions point at the **future**, compiled corrections point at the **past**; both are "memory beyond facts", opposite directions. vs 11-05B explicit-state filtering — a RULE directive *is* explicit state; the 10× token saving is the same mechanism's dividend, now measured on the behavioural axis.
+
+⚠️ **Limits:** two authors; **self-built benchmark** (DC-Bench); of the five-stage progression, **four predecessors are the authors' own prior work** — "the strongest system is our newest one" has a self-certification structure; workshop paper, not main conference. Quote as **single-system self-reported**; not for the main evidence chain.
+
+## Re-validate before reuse — the read-time duty this page's pipeline lacks *(ledger row 10-10; applied 2026-11-10)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-10-10 (recorded in `.workbuddy/memory/concept-radar/2026-10-10.md`, candidate 19; ledger row **10-10**); abstracts re-checked alive on 2026-11-10 (Concord now v2, MemTrace now v3 — claims unchanged). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**The assumption the whole pipeline above carries.** Intent gate → source router → three concurrent searches → integrated answer: every stage silently assumes **what was true when the record was written is still true when it is retrieved**. The second-half section already names one symptom ("stale entries get re-injected as if current"); this row supplies the **read-time duty** and two first-party instruments:
+
+- **MemTrace** (`arXiv:2610.04838`, Xu et al., 8 authors, v3 2026-10-10, code released): history stored as immutable Memory Traces anchored to files / symbols / tests; **before restoring historical evidence, its validity is checked against the current repository state**, retrieving only what the next action requires. DeepSWE pass@1 **+21.2** under Codex CLI, SWE-Milestone **+17.8** — the re-validation is not overhead, it *pays*.
+- **CASK / discourse ownership** (`arXiv:2610.09008`, Gu / Li, **NeurIPS 2026 Workshop LP4FM**, v1 2026-10-06): during deliberation an agent considers a plan, simulates a tool result, reports another speaker's belief — and rejects them all. If memory retains only the resulting sentences, those once-provisional contents **return later as facts**: "neither fabricated nor irrelevant — detached from the context in which it was valid." The missing context is named **discourse ownership** (the world / branch / speaker that *licenses* a proposition); CASK is a **commit rule** that lets shared-world facts enter durable memory while provisional content stays within its original scope.
+- **Concord** (`arXiv:2610.05281`, Liu / Fang / Qian, **AgenticOS Workshop @ SOSP 2026**, v2): the context-side twin — links each tool observation to its source, detects source change, and **update / annotate / suppress before reuse**; answers consistent with restored workspace state in all evaluated cases at **46.4% fewer tokens** than the strongest non-oracle baseline (its landing is [[Provenance]]'s section, not this one).
+
+- **Boundary.** vs the second half's **decay / TTL** — those are *time-based* (the record ages out); re-validation is *state-based* (the source can move in thirty seconds). vs 11-05A — both act at read time, but that row decides **when an intention becomes actionable**; this row decides **whether a record is still true**. vs [[Provenance]]'s read-time filter — that drops expired/low-trust entries **by their own metadata**; the metadata does not change when the world behind the record does. vs Tether (10-26A, dependency closure) — that row withdraws a record when an **ancestor record in the store** lapses; this row re-checks against the **external source** the observation was derived from. In-store propagation vs world-facing re-check: named, not merged.
 
 ## See Also
 - [[agent-memory-provenance]] — primary source (the reading discipline)

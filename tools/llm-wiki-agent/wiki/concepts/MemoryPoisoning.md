@@ -1,9 +1,9 @@
 ---
 title: "Memory Poisoning"
 type: concept
-tags: [agent-memory, memory-poisoning, security, prompt-injection, persistent-corruption, owner-attribution, exposure-behaviour-state]
+tags: [agent-memory, memory-poisoning, security, prompt-injection, persistent-corruption, owner-attribution, exposure-behaviour-state, self-voice-injection]
 sources: [memory-lifecycle]
-last_updated: 2026-10-21
+last_updated: 2026-11-10
 ---
 
 # Memory Poisoning
@@ -54,6 +54,22 @@ This is also why [[Provenance]] alone does not close the hole: PMPA's payload ar
 **Boundaries.** vs the two mechanisms above — **not a fourth poisoning mechanism**: the payload is *correct*; the *owner* is wrong. It is the **归属 / ownership** column of this page, not another row of the content table. vs ledger row 10-13「检索准入 × 跨主体状态隔离」— that row names the **variables** (attribution ≠ permission; reasoning state split per principal); this section supplies the **instrument** and the counter-intuitive measurement (*high exposure ≠ high harm*); record side by side and cross-reference, do not merge. vs [[LongTermMemory]]「The third carrier」(ledger row 10-17A) — the fix here **requires enumerability**, so on a continuous carrier **there is no line to mark**: **an addressable defence fails on non-addressable memory** — the exact complement of ledger row 10-20A, which shows the same carrier performing **unscoped revision**.
 
 ⚠️ **Limits:** the stress condition is **constructed** (own credential absent + one foreign credential presented as the user's own), not an estimate of real-world incidence; **84.7%** is one specific mixed store inside AppWorld; MemLeak self-reports **hand-written synthetic samples and small samples**, i.e. it demonstrates a **mechanism**, not a frequency; submitted **2026-10-19**, **no independent replication**.
+
+## The transient half has an adversary too — the model's own voice *(ledger row 11-09A; applied 2026-11-10)*
+
+> **Draft annotation, pending ingest.** Not yet backed by a source page in this wiki — verified against live sources on 2026-11-09 (recorded in `.workbuddy/memory/concept-radar/2026-11-09.md`, candidate 1; ledger row **11-09A**). Remove this banner when the material is ingested and human-reviewed, and move the source slug into the frontmatter `sources` field.
+
+**The boundary section above splits injection by persistence — transient (acts within the turn) vs the persistence step (this page). It never asked: on the *transient* side, what is the strongest disguise a payload can wear?** **Thought injection** (`arXiv:2611.08811`, Illendula / Livingston / Shamsi / Srinivasan / Liu, cs.AI + cs.CR, v1 2026-11-06) answers it: **the model's own reasoning voice**. Untrusted text styled as the target model's own deliberation is fed back to it; in a containerised agentic cyber range, against production-class open-weight reasoning models (GLM-5.3 / MiniMax-M2.5 / Qwen3.8-Flash-Next), this reaches **ASR up to 50%** on operational objectives (reverse-shell exfiltration, repository backdooring) — while **the same malicious objective in standard prompt-injection user voice never succeeds**. Thinking tags **suppress the agent's tendency to disclose the injection**, and the effect of tags and payload styles is **model-specific** — so tag stripping is an unreliable defence.
+
+- **Why it lands on this page.** The persistence dichotomy above is the *structural* half of the transient/persistent split; this row is its *adversarial* half. It stays on the **transient** side (the payload rides the current reasoning stream; nothing is written) — but it attacks the same trust this page's forged-history mechanism exploits: **the model believes what appears to be its own output.** A forged history manufactures a past; a thought injection manufactures a *present deliberation*. Same trust, different tense.
+- **The weaponised counterpart of a non-adversarial failure.** The 11-08B row (cleaner contamination) established that the model gets anchored by its own prior misreadings **with no adversary present**; this row is the same trust mechanism **with** one. Same trust, different attacker-model — record side by side, never as one line.
+- **What it breaks downstream.** Detection-style defences look for *instruction-like third-party text*; a payload in the model's own reasoning style does not look like one. And [[AgentIdentity]]'s per-hop attenuation has **no hop for the self** — it narrows trust across principals, and says nothing about the principal trusting its own voice.
+
+> **Engineering rule worth copying:** output re-entering the reasoning stage must be channel-checked the same way external input is — "it looks like something I wrote" must not be an exemption from verification.
+
+**Boundaries.** vs the two mechanisms in the table above — those **write** (durable belief); this row never writes, it hijacks the turn. vs [[Provenance]]'s garment gradient (10-19A) — that row swaps the *vessel* of a fixed payload; this row swaps the *voice* (style imitation with no stable source signature, so the provenance anchor moves with the target model). vs 11-08B — no-adversary self-anchoring vs adversarial exploitation of the same trust.
+
+⚠️ **Limits:** abstract-level citation (HTML tables not opened; "50%" is the upper-bound ASR, not a mean); **open-weight models only**, closed API models untested; 5-author team, **no independent replication**. The overview's open item ("no page for *transient* injection") now has **two sides of material**: field measurement (11-04A) and this, the adversarial half.
 
 ## Boundaries
 - **vs [[ToolHallucination]]** — existence of the tool vs **integrity of the record**. A poisoned agent calls tools that really exist; the closed-world rung passes it.
