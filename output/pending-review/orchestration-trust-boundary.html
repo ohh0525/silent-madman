@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>概念学习：同一个模型，换个框架安全性就变了——编排框架的授权与信任边界（Authorization &amp; Trust Boundaries in Agentic Orchestration）</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #57606a;
+    --accent: #4a5d23;
+    --accent-soft: #eef1e6;
+    --line: #e5e2dc;
+    --code-bg: #eef2f4;
+    --warn-bg: #fbf6e9;
+    --warn-line: #c8a94a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  header.cover {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  h1 { font-size: 30px; margin: 16px 0 6px; line-height: 1.35; }
+  .subtitle { color: var(--ink-soft); font-size: 13px; margin: 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 19px;
+    margin: 0 0 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+  }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: var(--ink); }
+  p { margin: 10px 0; }
+  ul, ol { margin: 10px 0; padding-left: 22px; }
+  li { margin: 6px 0; }
+  strong { color: var(--ink); }
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); }
+  .lead { font-size: 16px; color: var(--ink); }
+  .takeaway {
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  .warn {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-line);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #6b5316;
+  }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  th { background: var(--accent-soft); color: var(--accent); }
+  .foot { color: var(--ink-soft); font-size: 12px; text-align: center; margin-top: 32px; }
+  .mono { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <span class="tag">概念学习 · 草稿 · 待人工核查</span>
+  <h1>同一个模型，换个框架安全性就变了<br />—— 编排框架的授权与信任边界</h1>
+  <p class="subtitle">Authorization &amp; Trust Boundaries in Agentic Orchestration —— 用同一个 gpt-4o-mini 横测 LangChain / LangGraph / AutoGen / OpenClaw；风险不在模型权重里，在身份表示、操作授权、信息跨组件传播的编排边界上 · 草稿 2026-11-18 · 落 <code>output/pending-review/</code> · 核查通过后目标名 <code>learning-materials/orchestration-trust-boundary.html</code></p>
+</header>
+
+<section>
+  <p class="warn"><strong>必须与结论一起读的证据等级（第一屏）：</strong>① 承重来源是<strong>预印本 arXiv:2611.21259v1（2026-11-16，cs.MA，4 人），未经同行评审</strong>。② 一手 abs + HTML 全文均已抓取核验（<code>arxiv.org/html/2611.21259v1</code>），E1–E8 的逐框架判定与实验设置原文已核。③ <strong>关键限定：E1–E8 给的是符号判定（S/U/V/– 等），不是百分比</strong>；本页只用判定，不编造成功率。④ <strong>「受保护配置」是作者为实验搭建的配置，含应用自定义检查，不是四个框架的默认/内在安全保证</strong>——论文局限部分原话：observed outcomes describe those configurations, not intrinsic framework guarantees。⑤ 四个框架全部用<strong>同一个</strong> <code>gpt-4o-mini</code>（OpenAI API），差异来自编排层实现而非模型；但框架各自的工具接口/路由/状态/授权机制被保留，未强行统一实现，故这是<strong>配置层面的横测</strong>，不是严格受控的单一变量实验。⑥ 本页是<strong>草稿</strong>，落在 <code>output/pending-review/</code>，<strong>未写入 <code>learning-materials/</code></strong>（受 README 人工核查承诺约束）。</p>
+</section>
+
+<section>
+  <h2>1 · 一句话定义</h2>
+  <p class="lead">编排框架的授权与信任边界，指的是 agent 系统里「谁有权决定什么、信息跨组件传过去还算不算数」这套约束落在哪一层；它决定同一个模型换一个运行框架后，攻击者能不能借工具链、符号链接、委派伪装把未授权操作变成「合法任务的一部分」。</p>
+</section>
+
+<section>
+  <h2>2 · 个人解释</h2>
+  <p>想象一栋大楼，里面有个很能干的办事员（这就是大模型）。大楼有四种不同的物业管理制度（四个编排框架）：有的靠前台登记，有的靠门禁卡，有的靠主管签字，有的靠监控。办事员的脑子完全一样，你让他做的正经事也一样——但你会发现，同样一张伪造的访客条子，在 A 物业能混进档案室，在 B 物业就被拦下来了。</p>
+  <p>这正是这篇论文做的事：它不再问「模型够不够聪明、会不会被话术骗」，而是把**模型固定成同一个**，然后问「把它装进四种框架里，谁的边界会被突破、从哪里突破」。答案有点反直觉：最简单粗暴的「我命令你忽略之前的规则」四种框架全挡住了；真正管用的是**把恶意请求伪装成正当任务的一个必要环节**——「这份报告的摘要需要读一下受限文件才能完成」「这个退款争议得按对方发的政策来算」。攻击没让你放弃原任务，只是悄悄改了完成任务所需的一个决定。</p>
+  <p>更关键的是两类失败：一是**工具链组合**——每个工具单独看都合规，串起来就访问了本不该碰的敏感文件（四个框架全中）；二是**TOCTOU 符号链接**——路径检查时是干净的，真正读取前链接被换掉了（四个框架全中）。这说明「授权」不是一个签发时的一次性动作，而是必须在**每一次敏感操作的当口**重新成立的东西。防御侧也有好消息：加上显式授权、受控的能力分配、文件系统隔离和执行防护后，特定的越权被挡住了——但论文在局限部分特意提醒：这些「受保护配置」是作者搭出来的，含应用自定义检查，**不是框架出厂默认**，别把加固后的成绩当成现状。</p>
+</section>
+
+<section>
+  <h2>3 · 核心机制</h2>
+  <p>为什么边界会失守？因果链可以拆成四步：</p>
+  <ol>
+    <li><strong>身份被表示成一段可伪造的字符串</strong> —— 框架需要知道「这个请求是谁发的、有什么权限」，往往靠消息里的身份声明。攻击者只要能控制或冒充一个不可信主体，就能把「委派」「审计」这类正当流程的外衣套到恶意请求上。<em>为什么重要：边界的地基是身份，地基可伪造，上面所有授权判定都会被带偏。</em></li>
+    <li><strong>授权在签发时成立，在执行时失效</strong> —— 工具链组合与符号链接 TOCTOU 都属于这一类：检查发生在 A 时刻、消费发生在 B 时刻，中间状态变了。<em>为什么重要：它解释了为什么「每个工具都合规」推不出「整条链合规」，也解释了为什么授权必须挂在操作点上而不是任务入口。</em></li>
+    <li><strong>信息跨组件传播时，信任被默认继承</strong> —— 一条从外部内容、记忆或被委派子 agent 来的信息，进入下一步时被当作已授权的事实使用（记忆投毒、跨 agent 身份攻击都落在这里）。<em>为什么重要：传统访问控制管的是「谁能不能碰」，管不了「碰进来的内容有没有资格决定结果」——这是另一类风险。</em></li>
+    <li><strong>防御是组合式实现，不是统一原生保证</strong> —— 显式授权、能力分配、路径规范化、沙箱隔离、执行接口检测各自堵一段，四家组合方式不同。<em>为什么重要：它说明安全是应用层的工程活，换框架不会自动继承另一家的防护——这正好解释了标题里「换个框架安全性就变了」。</em></li>
+  </ol>
+  <p>论文把评估映射成 12 个实验、覆盖 OWASP Top 10 for Agentic Applications，考虑七类信任边界：user→model、external-content→model、model→tool、agent→filesystem、agent→execution、agent→memory、agent→agent。攻击算成功，当且仅当发生了实验特定的未授权效果（未授权工具调用、命令执行、资源访问，或接受了伪造指令）——不是「看起来可疑」就算。</p>
+</section>
+
+<section>
+  <h2>4 · 应用场景</h2>
+  <h3>场景一 · 给 agent 选型：把「框架安全」当成选型变量</h3>
+  <p><strong>背景：</strong>团队要在 LangChain / LangGraph / AutoGen / OpenClaw 之间为一个会读外部邮件、会调工具的客服 agent 选型。</p>
+  <p><strong>如何应用：</strong>不再只比生态和语法，而是用同一套越权用例横测：委派伪装能否诱出特权工具调用、工具链能否组合出敏感文件访问、符号链接检查能否被绕过。</p>
+  <p><strong>结果：</strong>把「默认配置下哪条边界会漏」变成可复现的选型依据，而不是凭厂商文档里的安全声明。</p>
+
+  <h3>场景二 · 给防御做分层：区分「命令注入」与「值篡改」</h3>
+  <p><strong>背景：</strong>你给 agent 上了提示注入检测，却发现攻击者绕过检测、直接篡改执行时取到的值（金额、收款人、文件路径）。</p>
+  <p><strong>如何应用：</strong>按论文的六部件分类（目标 / 决策规则 / 可用行动 / 预期后果 / 观测读取 / 状态信念）逐点检查——检测删除类防御对「目标改向」有效，对「观测读取」「状态信念」的攻击弱得多。</p>
+  <p><strong>结果：</strong>防御评测必须同时报攻击成功率与良性完成率，否则「挡住了多少」会被单一数字高估。</p>
+
+  <h3>场景三 · 把授权从入口挪到操作点</h3>
+  <p><strong>背景：</strong>你的 agent 通过了任务开始时的权限检查，却在第七步工具调用时经由一个早已失效的路径判断读走了不该读的文件。</p>
+  <p><strong>如何应用：</strong>在每次敏感操作（读文件、执行命令、委派）的当口重新校验权限，用规范化路径做容器约束，在执行接口做反向 shell 检测。</p>
+  <p><strong>结果：</strong>把「签发时授权」升级为「访问点授权」，直接堵住 TOCTOU 与工具链组合这两类四框架通吃的失败。</p>
+</section>
+
+<section>
+  <h2>5 · 边界辨析</h2>
+  <h3>不是什么</h3>
+  <ul>
+    <li><strong>不是「哪个框架最安全」的排行榜。</strong>受保护配置是作者搭的、含应用自定义检查，不是出厂默认；且框架原生机制被保留、未强行统一实现，所以排名会误导。</li>
+    <li><strong>不是模型安全评测。</strong>四个框架用的是同一个 <code>gpt-4o-mini</code>——差异被刻意定位在编排层，不是模型的指令遵循或拒答能力。</li>
+    <li><strong>不是传统访问控制的老问题换皮。</strong>记忆投毒表明「不可信状态能影响响应」是独立于越权访问的一类风险：数据读进来了是一回事，它有没有资格决定结果是另一回事。</li>
+    <li><strong>不是 OWASP 清单的复述。</strong>12 个实验映射到 OWASP Top 10 for Agentic Applications，但贡献是跨框架实测矩阵，不是列清单。</li>
+  </ul>
+  <h3>常见误解</h3>
+  <ul>
+    <li><strong>「框架支持某机制 = 默认强制执行了它」。</strong>论文原话：framework support for tool restrictions, workflow routing, or approval mechanisms does not imply automatic authorization enforcement——效果取决于怎么配置和集成。</li>
+    <li><strong>「越权 = 模型被话术骗到放弃任务」。</strong>Variant D 的委派/审计伪装、工具链组合、值篡改都不要求 agent 放弃原任务，反而借「正当任务」的外衣到达。</li>
+    <li><strong>「挡住了工具调用 = 挡住了攻击」。</strong>不泄露 canary 不等于没发生未授权工具调用；E1–E8 里多处是「调用了特权工具但没外泄」，这是两种不同的失败。</li>
+  </ul>
+  <h3>适用与不适用</h3>
+  <table>
+    <thead><tr><th>适用</th><th>不适用</th></tr></thead>
+    <tbody>
+      <tr><td>跨框架选型、编排层安全加固、写 agent 的授权威胁模型</td><td>单一模型的安全性排名（模型被固定，本就不测这个）</td></tr>
+      <tr><td>把「边界」拆成身份/授权/传播/执行四类逐点体检</td><td>当作框架出厂默认安全性的证明（受保护配置是搭建出来的）</td></tr>
+      <tr><td>解释「每个工具都合规但整条链越权」的组合失败</td><td>直接套用论文的具体 verdict 到你的生产配置（配置不同，结果未必一致）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>6 · 来源</h2>
+  <ol>
+    <li><a href="https://arxiv.org/abs/2611.21259">arXiv:2611.21259</a> —— <em>Evaluating Authorization and Trust Boundaries in Agentic Orchestration Frameworks</em>，Sahaya Jestus Lazer / Kshitiz Aryal / Maanak Gupta / Elisa Bertino，cs.MA，v1 2026-11-16 15:33 UTC <strong>[verified，一手 abs 已核]</strong></li>
+    <li><a href="https://arxiv.org/html/2611.21259v1">arXiv HTML 全文 v1</a> —— 表 3（E1/E2 注入判定矩阵）、表 4（E3–E7 资源访问）、表 5（E4–E8 命令执行）、威胁模型与局限段落一手核验 <strong>[verified，一手全文已核]</strong></li>
+    <li><a href="https://doi.org/10.48550/arXiv.2611.21259">doi:10.48550/arXiv.2611.21259</a> —— arXiv 官方 DOI（abs 页给出）<strong>[verified]</strong></li>
+    <li>库内交叉引用（非外部来源）：11-15A 授权漂移 / 11-15B 权限合取 / 11-18A 雷达台账 / 10-13「检索准入 × 跨主体状态隔离」结转项 / 第 20 条授权口径审计（见 <code>SCAN-LINES.md</code>）—— 详见 <code>.workbuddy/memory/concept-radar/</code></li>
+  </ol>
+  <p class="warn" style="margin-top:14px;"><strong>数字使用纪律：</strong>本页明确不引用论文未给出的百分比（E1–E8 只有 S/U/V/– 符号判定）。任何「成功率 XX%」的说法都需回到 PDF 正文 E9–E10 记忆投毒实验核实后才能写。作者 self-reported、单团队、未经同行评审——成篇入库前须人工逐条核查。</p>
+</section>
+
+<section>
+  <h2>7 · 一句话回顾</h2>
+  <p class="takeaway"><strong>模型没变，边界变了——安全不是模型的属性，是编排层在每个操作点上重新成立的决定权；「受保护配置」是搭出来的，不是出厂自带的。</strong></p>
+</section>
+
+<p class="foot">由 concept-explainer Skill 自动生成 · 2026-11-18 · <strong>待人工核查后入库</strong> · 当前位于 output/pending-review/，未进入 learning-materials/</p>
+
+</div>
+</body>
+</html>
