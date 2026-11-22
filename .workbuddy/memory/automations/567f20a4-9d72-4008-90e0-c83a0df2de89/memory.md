@@ -220,6 +220,7 @@
    ⇒ **判据 = 远端 tree == 本地 tree，且要比对新创建的那个远端 commit**；脚本那行只作参考。
    复核方式（不走 git 传输）：`urllib` 取 `https://api.github.com/repos/ohh0525/silent-madman/commits/main`，看 `sha` / `commit.tree.sha` / `files`。
 2. **对齐降级是自愈的，不要手动干预。** ⇒ 遇到 `ahead N` **不要** fetch / rebase / reset / `git push`，再跑一次 `api_push.py` 即可。
+   - **补（2026-11-22）：`api.github.com` 的 `GET /commits/main` 有 CDN 缓存滞后**——同日第二次 push 成功后，独立查询仍返回**上一次**的 sha/tree（差一个 commit），差点误判推送失败。⇒ 独立核实时 URL 加 `?t=<unix秒>` cache-buster + header `Cache-Control: no-cache`，或用 `GET /git/ref/heads/main`（无缓存）交叉验证。判据仍是远端 tree == 本地 tree，但**别被缓存的旧 sha 骗到**。
    - **补（2026-10-31）**：HTTPS git 传输**整段不可用**时，再跑一次**也不一定**能对齐（本次连跑两次都跳过对齐，`ahead 2`）。这时**仍不要手动操作** —— 推送已成功，本地 ref 滞后是无害的，**下次运行会自动抹平**。⇒ 判定健康的唯一标准是**远端 tree == 本地 tree**，不是 `git status -sb` 是否干净。
 3. **`Write` 写长中文 markdown 会渗乱码（成因待查，2026-10-31 首次确认）。**
    本期两份产出均出现**随机替换**：把正常的汉字词换成别的词（「若要落地」→「若要点萅」、「测量对象」→「钱大米」），或在句子里嵌入无关的英文 / 希腊字母串。
